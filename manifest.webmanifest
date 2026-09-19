@@ -1,0 +1,9 @@
+{
+  "name": "ETH Global Predictor",
+  "short_name": "ETH Predictor",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#070c16",
+  "theme_color": "#070c16",
+  "icons": []
+}
