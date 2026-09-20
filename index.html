@@ -2,669 +2,143 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#050b14">
-<title>ETH Predictor V15.2.2</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#070a0f">
+<title>ETH Predictor V16 Global</title>
+
+<script src="https://unpkg.com/lightweight-charts@5.0.0/dist/lightweight-charts.standalone.production.js"></script>
 
 <style>
-:root{
-  --bg:#050a12;
-  --panel:#09131f;
-  --panel2:#0c1826;
-  --border:#203247;
-  --text:#edf5ff;
-  --muted:#7f92a6;
-  --green:#16d98b;
-  --red:#ff5368;
-  --blue:#4da3ff;
-  --cyan:#40d9ff;
-  --yellow:#ffd166;
-  --purple:#a878ff;
-}
-
 *{box-sizing:border-box}
-
-html,body{
-  margin:0;
-  padding:0;
-  width:100%;
-  min-height:100%;
-  background:var(--bg);
-  color:var(--text);
-  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",
-  "SF Pro Text",Inter,Arial,sans-serif;
-}
-
 body{
-  overflow-x:hidden;
-  padding-bottom:82px;
+ margin:0;background:#070a0f;color:#eaf0f6;
+ font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",Arial,sans-serif
+}
+.app{max-width:1200px;margin:auto;padding-bottom:70px}
+.top{padding:16px;border-bottom:1px solid #202b38}
+.brand{font-size:11px;letter-spacing:1.5px;color:#8fa0b3}
+.title{font-size:27px;font-weight:800}
+.sub{font-size:11px;color:#8291a3;margin-top:3px}
+.badges,.row{
+ display:flex;gap:7px;overflow:auto;padding-top:10px
+}
+.badge,.btn{
+ white-space:nowrap;border:1px solid #263544;background:#0d141c;
+ color:#b8c5d2;border-radius:9px;padding:7px 10px;font-size:10px
+}
+.badge.live{color:#7ef0be;border-color:#195f46}
+.btn.on{background:#17314b;border-color:#397cb9;color:#fff}
+
+.market{
+ display:flex;justify-content:space-between;align-items:end;
+ padding:15px 16px
+}
+.tiny,.muted{font-size:10px;color:#8291a3}
+.price{font-size:32px;font-weight:800}
+.green{color:#18c784}.red{color:#ff5b6e}
+.right{text-align:right}
+
+.controls{padding:0 14px 10px}
+
+.chart{
+ margin:0 10px;border:1px solid #202b38;border-radius:13px;
+ overflow:hidden;background:#080c12
+}
+.charthead{
+ height:41px;padding:9px;border-bottom:1px solid #202b38;
+ display:flex;justify-content:space-between;font-size:11px;font-weight:700
+}
+#chart{height:56vh;min-height:390px}
+.attrib{text-align:right;padding:4px 8px 6px;color:#657487;font-size:9px}
+
+.section{padding:13px 10px 0}
+.section h3{
+ font-size:11px;letter-spacing:.8px;margin:5px 3px 8px
 }
 
-button,select{
-  font:inherit;
+.grid{
+ display:grid;grid-template-columns:1fr 1fr;gap:8px
+}
+.card,.box{
+ background:#0d121a;border:1px solid #202b38;
+ border-radius:12px;padding:11px
+}
+.cardhead{display:flex;justify-content:space-between;font-size:11px}
+.pred{font-size:22px;font-weight:800;margin:8px 0 3px}
+.bar{height:5px;background:#18222d;border-radius:9px;margin:8px 0}
+.bar i{display:block;height:100%;background:#4aa3ff}
+.meta{
+ display:flex;justify-content:space-between;
+ color:#8291a3;font-size:9px
 }
 
-button{
-  -webkit-tap-highlight-color:transparent;
+.userform{
+ display:grid;grid-template-columns:1fr 1fr;gap:9px
+}
+.userform label{font-size:9px;color:#8c9aaa}
+.userform input,
+.userform select,
+.userform textarea{
+ width:100%;margin-top:4px;
+ background:#080d13;color:#fff;
+ border:1px solid #293746;border-radius:8px;
+ padding:9px;font:inherit
+}
+.userform textarea{
+ grid-column:1/-1;resize:vertical
+}
+.save{
+ grid-column:1/-1;border:0;border-radius:9px;
+ padding:11px;background:#176a4a;color:#fff;font-weight:700
+}
+.user-result{
+ margin-top:10px;font-size:10px;color:#aab8c7;
+ line-height:1.6
 }
 
-.app{
-  width:100%;
-  max-width:1500px;
-  margin:auto;
+.engine{
+ display:grid;
+ grid-template-columns:1.4fr .8fr .7fr;
+ padding:8px 0;border-bottom:1px solid #18212b;
+ font-size:10px
+}
+.engine:last-child{border:0}
+.dot{
+ display:inline-block;width:7px;height:7px;
+ border-radius:50%;background:#18c784;margin-right:6px
 }
 
-/* HEADER */
-
-.header{
-  padding:
-    calc(env(safe-area-inset-top) + 20px)
-    18px 15px;
-  border-bottom:1px solid rgba(255,255,255,.07);
-  background:#050b13;
+.stats{
+ display:grid;grid-template-columns:repeat(3,1fr);gap:7px
 }
+.stat b{display:block;font-size:15px}
+.stat span{font-size:8px;color:#8291a3}
 
-.headerLine{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-}
-
-.kicker{
-  color:var(--cyan);
-  font-size:10px;
-  font-weight:850;
-  letter-spacing:2px;
-}
-
-.title{
-  margin-top:5px;
-  font-size:34px;
-  line-height:1;
-  font-weight:900;
-  letter-spacing:-1.5px;
-}
-
-.subtitle{
-  margin-top:9px;
-  color:#8497aa;
-  font-size:13px;
-}
-
-.version{
-  flex:0 0 auto;
-  padding:8px 11px;
-  border:1px solid #315271;
-  border-radius:999px;
-  color:#a9d0ff;
-  background:#0c1c2d;
-  font-size:11px;
-  font-weight:850;
-}
-
-/* VIEWS */
-
-.view{
-  display:none;
-}
-
-.view.active{
-  display:block;
-}
-
-/* COMMON */
-
-.section{
-  margin:14px 12px;
-}
-
-.sectionTitle{
-  margin:0 0 8px 3px;
-  color:#a8b9ca;
-  font-size:11px;
-  font-weight:850;
-  letter-spacing:1.5px;
-}
-
-.panel{
-  border:1px solid var(--border);
-  background:var(--panel);
-  border-radius:18px;
-  overflow:hidden;
-}
-
-/* MARKET */
-
-.marketCard{
-  margin:12px;
-  padding:14px;
-  border:1px solid var(--border);
-  border-radius:18px;
-  background:
-    radial-gradient(circle at 100% 0%,rgba(64,217,255,.09),transparent 42%),
-    var(--panel);
-}
-
-.marketTop{
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
-  gap:12px;
-}
-
-.symbol{
-  color:var(--muted);
-  font-size:11px;
-  font-weight:750;
-}
-
-.price{
-  margin-top:3px;
-  font-size:31px;
-  font-weight:900;
-  letter-spacing:-1px;
-}
-
-.change{
-  margin-top:4px;
-  font-size:12px;
-  font-weight:800;
-}
-
-.up{color:var(--green)}
-.down{color:var(--red)}
-.neutral{color:var(--muted)}
-
-.live{
-  display:flex;
-  align-items:center;
-  gap:6px;
-  border:1px solid rgba(22,217,139,.25);
-  background:rgba(22,217,139,.06);
-  border-radius:9px;
-  padding:7px 9px;
-  color:var(--green);
-  font-size:9px;
-  font-weight:850;
-}
-
-.liveDot{
-  width:7px;
-  height:7px;
-  border-radius:50%;
-  background:var(--green);
-  box-shadow:0 0 8px var(--green);
+.history{overflow:hidden}
+.hist{
+ display:grid;
+ grid-template-columns:45px 1fr 1fr 65px;
+ padding:8px;
+ border-bottom:1px solid #18212b;
+ font-size:9px
 }
 
 .status{
-  margin-top:10px;
-  color:var(--muted);
-  font-size:9px;
-  line-height:1.4;
+ position:fixed;z-index:20;
+ bottom:9px;left:10px;right:10px;
+ max-width:650px;margin:auto;
+ background:#111a23ed;
+ border:1px solid #2b3b4c;
+ border-radius:10px;padding:8px 10px;
+ font-size:10px;
+ display:flex;justify-content:space-between;
+ backdrop-filter:blur(10px)
 }
 
-/* CONTROLS */
-
-.scroller{
-  display:flex;
-  gap:6px;
-  overflow-x:auto;
-  scrollbar-width:none;
-  padding-bottom:2px;
-}
-
-.scroller::-webkit-scrollbar{
-  display:none;
-}
-
-.btn{
-  flex:0 0 auto;
-  min-height:38px;
-  padding:8px 12px;
-  border:1px solid var(--border);
-  border-radius:10px;
-  background:#0a1624;
-  color:#dce8f4;
-  font-size:11px;
-  font-weight:800;
-}
-
-.btn.active{
-  border-color:#4b88b8;
-  background:#15314a;
-}
-
-.btn.green.active{
-  border-color:#27845f;
-  background:#103b2b;
-}
-
-.btn:active{
-  transform:scale(.97);
-}
-
-/* CHART */
-
-.chartPanel{
-  margin:12px;
-  border:1px solid var(--border);
-  border-radius:18px;
-  background:#07101a;
-  overflow:hidden;
-}
-
-.chartHeader{
-  padding:11px 12px;
-  border-bottom:1px solid rgba(255,255,255,.06);
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:10px;
-}
-
-.chartTitle{
-  font-size:13px;
-  font-weight:900;
-}
-
-.chartMeta{
-  color:var(--muted);
-  font-size:9px;
-  text-align:right;
-}
-
-.chartTools{
-  display:flex;
-  gap:6px;
-  overflow-x:auto;
-  padding:8px;
-  scrollbar-width:none;
-  border-bottom:1px solid rgba(255,255,255,.04);
-}
-
-.chartTools::-webkit-scrollbar{
-  display:none;
-}
-
-.tool{
-  flex:0 0 auto;
-  padding:7px 10px;
-  border:1px solid #1d3044;
-  border-radius:8px;
-  background:#0a1622;
-  color:#cbd9e7;
-  font-size:9px;
-  font-weight:850;
-}
-
-.tool.active{
-  border-color:#477c9f;
-  background:#10283b;
-  color:white;
-}
-
-.chartViewport{
-  position:relative;
-  width:100%;
-  height:520px;
-  overflow:hidden;
-  touch-action:none;
-  background:
-    linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
-  background-size:55px 55px;
-}
-
-#chart{
-  position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
-}
-
-.chartHint{
-  position:absolute;
-  left:10px;
-  top:9px;
-  z-index:3;
-  pointer-events:none;
-  color:#60758a;
-  font-size:8px;
-}
-
-.forecastLabel{
-  position:absolute;
-  z-index:5;
-  display:none;
-  transform:translate(-50%,-100%);
-  padding:6px 8px;
-  border:1px solid #7555a8;
-  border-radius:7px;
-  background:#211737;
-  color:#e6d9ff;
-  font-size:8px;
-  font-weight:850;
-  white-space:nowrap;
-  pointer-events:none;
-}
-
-.currentLabel{
-  position:absolute;
-  right:3px;
-  z-index:5;
-  transform:translateY(-50%);
-  padding:4px 6px;
-  border-radius:5px;
-  background:#17334a;
-  color:#e7f7ff;
-  font-size:9px;
-  font-weight:850;
-  pointer-events:none;
-}
-
-/* PREDICTIONS */
-
-.predictionGrid{
-  display:grid;
-  grid-template-columns:1fr;
-  gap:9px;
-}
-
-.prediction{
-  padding:12px;
-  border:1px solid var(--border);
-  border-radius:15px;
-  background:var(--panel);
-}
-
-.predHead{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-
-.predTitle{
-  font-size:15px;
-  font-weight:900;
-}
-
-.badge{
-  padding:5px 7px;
-  border-radius:999px;
-  border:1px solid #294057;
-  background:#0e1d2d;
-  color:#a9bdd0;
-  font-size:8px;
-  font-weight:850;
-}
-
-.predGrid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:7px;
-  margin-top:10px;
-}
-
-.metric{
-  min-width:0;
-  padding:9px;
-  border:1px solid #172b3e;
-  border-radius:10px;
-  background:#07111c;
-}
-
-.metricLabel{
-  color:#73879a;
-  font-size:8px;
-  text-transform:uppercase;
-}
-
-.metricValue{
-  margin-top:4px;
-  font-size:15px;
-  font-weight:900;
-}
-
-.predFoot{
-  display:flex;
-  justify-content:space-between;
-  gap:8px;
-  margin-top:9px;
-  color:#718397;
-  font-size:8px;
-}
-
-/* MODELS */
-
-.modelGrid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:8px;
-  padding:12px;
-}
-
-.model{
-  padding:10px;
-  border:1px solid #1a2c40;
-  border-radius:11px;
-  background:#08131f;
-}
-
-.modelName{
-  font-size:11px;
-  font-weight:850;
-}
-
-.modelScore{
-  margin-top:4px;
-  color:#8497a9;
-  font-size:9px;
-}
-
-.bar{
-  height:4px;
-  margin-top:8px;
-  overflow:hidden;
-  border-radius:5px;
-  background:#172635;
-}
-
-.bar i{
-  display:block;
-  height:100%;
-  width:25%;
-  border-radius:5px;
-  background:var(--cyan);
-}
-
-.diagGrid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:8px;
-  padding:0 12px 12px;
-}
-
-.diag{
-  padding:10px;
-  border:1px solid #1a2c40;
-  border-radius:10px;
-  background:#08131f;
-}
-
-.diagLabel{
-  color:#7c8fa1;
-  font-size:8px;
-}
-
-.diagValue{
-  margin-top:4px;
-  font-size:14px;
-  font-weight:900;
-}
-
-/* HISTORY */
-
-.history{
-  overflow:hidden;
-}
-
-.historyHeader,
-.historyRow{
-  display:grid;
-  grid-template-columns:52px 1fr 1fr 66px;
-  gap:6px;
-  align-items:center;
-  padding:10px;
-}
-
-.historyHeader{
-  color:#718497;
-  border-bottom:1px solid #18293a;
-  font-size:8px;
-}
-
-.historyRow{
-  border-bottom:1px solid rgba(255,255,255,.045);
-  font-size:9px;
-}
-
-.historyRow:last-child{
-  border-bottom:0;
-}
-
-.empty{
-  padding:25px 12px;
-  text-align:center;
-  color:#7d91a5;
-  font-size:10px;
-}
-
-/* SETTINGS */
-
-.setting{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  padding:13px;
-  border-bottom:1px solid rgba(255,255,255,.05);
-}
-
-.setting:last-child{
-  border-bottom:0;
-}
-
-.settingName{
-  font-size:11px;
-  font-weight:850;
-}
-
-.settingDesc{
-  margin-top:3px;
-  color:#718497;
-  font-size:8px;
-}
-
-select{
-  min-width:92px;
-  padding:8px;
-  border:1px solid #294057;
-  border-radius:9px;
-  background:#0b1826;
-  color:white;
-}
-
-/* SOURCES */
-
-.sourceGrid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:7px;
-  padding:12px;
-}
-
-.source{
-  padding:9px;
-  border:1px solid #1b2d40;
-  border-radius:10px;
-  background:#08131f;
-}
-
-.sourceName{
-  font-size:10px;
-  font-weight:850;
-}
-
-.sourceStatus{
-  margin-top:4px;
-  color:#708498;
-  font-size:8px;
-}
-
-.online{
-  color:var(--green);
-}
-
-/* BOTTOM NAV */
-
-.bottomNav{
-  position:fixed;
-  left:0;
-  right:0;
-  bottom:0;
-  z-index:100;
-  padding:
-    7px 8px
-    calc(env(safe-area-inset-bottom) + 7px);
-  background:rgba(5,10,18,.96);
-  backdrop-filter:blur(20px);
-  border-top:1px solid rgba(255,255,255,.08);
-}
-
-.navInner{
-  max-width:700px;
-  margin:auto;
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:4px;
-}
-
-.nav{
-  min-height:43px;
-  border:0;
-  border-radius:11px;
-  background:transparent;
-  color:#718499;
-  font-size:9px;
-  font-weight:850;
-}
-
-.nav.active{
-  color:white;
-  background:#132438;
-}
-
-/* DESKTOP */
-
-@media(min-width:800px){
-
-  .predictionGrid{
-    grid-template-columns:1fr 1fr;
-  }
-
-  .chartViewport{
-    height:650px;
-  }
-
-  .modelGrid{
-    grid-template-columns:repeat(4,1fr);
-  }
-
-  .diagGrid{
-    grid-template-columns:repeat(4,1fr);
-  }
-
+@media(max-width:520px){
+ .grid{grid-template-columns:1fr}
+ .userform{grid-template-columns:1fr}
+ .price{font-size:28px}
 }
 </style>
 </head>
@@ -673,3634 +147,2222 @@ select{
 
 <div class="app">
 
-<header class="header">
+<header class="top">
+ <div class="brand">GLOBAL MARKET INTELLIGENCE</div>
+ <div class="title">ETH Predictor</div>
+ <div class="sub">
+  Mathematical ensemble • multi-market context • continuous validation
+ </div>
 
-  <div class="headerLine">
-
-    <div>
-      <div class="kicker">LIVE MARKET INTELLIGENCE</div>
-      <div class="title">ETH Predictor</div>
-      <div class="subtitle">Adaptive multi-model research engine</div>
-    </div>
-
-    <div class="version">V15.2.2</div>
-
-  </div>
-
+ <div class="badges">
+  <span class="badge live">● LIVE</span>
+  <span class="badge">V16 GLOBAL</span>
+  <span class="badge">8 ENGINES</span>
+  <span class="badge">15M + 30M</span>
+  <span class="badge">USER BENCHMARK</span>
+ </div>
 </header>
 
+<section class="market">
 
-<!-- =====================================================
-     CHART VIEW
-     ===================================================== -->
+ <div>
+  <div class="tiny">ETH / USDT</div>
+  <div id="price" class="price">—</div>
+  <div id="change" class="muted">Connecting…</div>
+ </div>
 
-<main id="viewChart" class="view active">
+ <div class="right">
+  <div class="tiny">GLOBAL FEED</div>
+  <div id="feed">—</div>
+  <div id="age" class="tiny">—</div>
+ </div>
 
-  <section class="marketCard">
+</section>
 
-    <div class="marketTop">
+<section class="controls">
 
-      <div>
+ <div class="row" id="ranges">
+  <button class="btn on" data-r="1D">1D</button>
+  <button class="btn" data-r="1W">1W</button>
+  <button class="btn" data-r="1M">1M</button>
+  <button class="btn" data-r="3M">3M</button>
+  <button class="btn" data-r="6M">6M</button>
+  <button class="btn" data-r="1Y">1Y</button>
+  <button class="btn" data-r="3Y">3Y</button>
+  <button class="btn" data-r="ALL">ALL</button>
+ </div>
 
-        <div class="symbol">
-          ETH / USDT · SPOT
-        </div>
+ <div class="row" id="intervals">
+  <button class="btn" data-i="1m">1m</button>
+  <button class="btn on" data-i="5m">5m</button>
+  <button class="btn" data-i="15m">15m</button>
+  <button class="btn" data-i="1h">1H</button>
+  <button class="btn" data-i="4h">4H</button>
+  <button class="btn" data-i="1d">1D</button>
+ </div>
 
-        <div id="price" class="price">
-          —
-        </div>
+</section>
 
-        <div id="change" class="change neutral">
-          Waiting...
-        </div>
+<section class="chart">
 
-      </div>
+ <div class="charthead">
+  <span>PROFESSIONAL REALTIME CHART</span>
+  <span id="chartInfo" class="muted">Loading…</span>
+ </div>
 
-      <div id="liveStatus" class="live">
-        <span class="liveDot"></span>
-        CONNECTING
-      </div>
+ <div id="chart"></div>
 
-    </div>
+ <div class="attrib">
+  Charts powered by TradingView Lightweight Charts™
+ </div>
 
-    <div id="status" class="status">
-      Starting market engine...
-    </div>
+</section>
 
-  </section>
+<!-- AUTOMATIC PREDICTIONS -->
 
+<section class="section">
 
-  <section class="section">
+<h3>AUTOMATIC PREDICTIONS</h3>
 
-    <div class="sectionTitle">
-      HISTORICAL RANGE
-    </div>
+<div class="grid">
 
-    <div class="scroller">
+ <div class="card" id="auto15">
+  Loading…
+ </div>
 
-      <button class="btn range active" data-range="1D">1D</button>
-      <button class="btn range" data-range="1W">1W</button>
-      <button class="btn range" data-range="1M">1M</button>
-      <button class="btn range" data-range="3M">3M</button>
-      <button class="btn range" data-range="6M">6M</button>
-      <button class="btn range" data-range="1Y">1Y</button>
-      <button class="btn range" data-range="3Y">3Y</button>
-      <button class="btn range" data-range="ALL">ALL</button>
-
-    </div>
-
-  </section>
-
-
-  <section class="section">
-
-    <div class="sectionTitle">
-      CHART INTERVAL
-    </div>
-
-    <div class="scroller">
-
-      <button class="btn interval" data-interval="1m">1m</button>
-      <button class="btn interval active" data-interval="5m">5m</button>
-      <button class="btn interval" data-interval="15m">15m</button>
-      <button class="btn interval" data-interval="1h">1h</button>
-      <button class="btn interval" data-interval="4h">4h</button>
-      <button class="btn interval" data-interval="1d">1D</button>
-
-    </div>
-
-  </section>
-
-
-  <section class="section">
-
-    <div class="sectionTitle">
-      PREDICTION ENTRIES
-    </div>
-
-    <div class="scroller">
-
-      <button id="add15" class="btn green active">
-        + 15 MIN
-      </button>
-
-      <button id="add30" class="btn green active">
-        + 30 MIN
-      </button>
-
-      <button id="resetPred" class="btn">
-        RESET ACTIVE
-      </button>
-
-    </div>
-
-  </section>
-
-
-  <!-- CHART -->
-
-  <section class="chartPanel">
-
-    <div class="chartHeader">
-
-      <div class="chartTitle">
-        PROFESSIONAL CHART BOARD
-      </div>
-
-      <div id="chartMeta" class="chartMeta">
-        Loading
-      </div>
-
-    </div>
-
-
-    <div class="chartTools">
-
-      <button id="candles" class="tool active">
-        Candles
-      </button>
-
-      <button id="line" class="tool">
-        Line
-      </button>
-
-      <button id="ema" class="tool active">
-        EMA
-      </button>
-
-      <button id="vwap" class="tool active">
-        VWAP
-      </button>
-
-      <button id="volume" class="tool active">
-        Volume
-      </button>
-
-      <button id="rsi" class="tool active">
-        RSI
-      </button>
-
-      <button id="forecast" class="tool active">
-        Forecast
-      </button>
-
-      <button id="resetZoom" class="tool">
-        Reset
-      </button>
-
-    </div>
-
-
-    <div id="chartViewport" class="chartViewport">
-
-      <canvas id="chart"></canvas>
-
-      <div class="chartHint">
-        Drag = pan · pinch = zoom · wheel = zoom
-      </div>
-
-      <div id="currentLabel" class="currentLabel">
-        —
-      </div>
-
-      <div id="forecastLabel" class="forecastLabel">
-        —
-      </div>
-
-    </div>
-
-  </section>
-
-
-  <!-- ACTIVE PREDICTIONS -->
-
-  <section class="section">
-
-    <div class="sectionTitle">
-      ACTIVE FORECASTS
-    </div>
-
-    <div id="predictionGrid" class="predictionGrid">
-    </div>
-
-  </section>
-
-</main>
-
-
-<!-- =====================================================
-     PREDICTIONS VIEW
-     ===================================================== -->
-
-<main id="viewPredictions" class="view">
-
-  <section class="section">
-
-    <div class="sectionTitle">
-      LOCKED PREDICTIONS
-    </div>
-
-    <div id="predictionGrid2" class="predictionGrid">
-    </div>
-
-  </section>
-
-
-  <section class="section">
-
-    <div class="sectionTitle">
-      ADAPTIVE MODELS
-    </div>
-
-    <div class="panel">
-
-      <div class="modelGrid">
-
-        <div class="model">
-          <div class="modelName">Momentum</div>
-          <div id="scoreMomentum" class="modelScore">—</div>
-          <div class="bar"><i id="barMomentum"></i></div>
-        </div>
-
-        <div class="model">
-          <div class="modelName">Trend</div>
-          <div id="scoreTrend" class="modelScore">—</div>
-          <div class="bar"><i id="barTrend"></i></div>
-        </div>
-
-        <div class="model">
-          <div class="modelName">Volatility</div>
-          <div id="scoreVolatility" class="modelScore">—</div>
-          <div class="bar"><i id="barVolatility"></i></div>
-        </div>
-
-        <div class="model">
-          <div class="modelName">Regime</div>
-          <div id="scoreRegime" class="modelScore">—</div>
-          <div class="bar"><i id="barRegime"></i></div>
-        </div>
-
-      </div>
-
-
-      <div class="diagGrid">
-
-        <div class="diag">
-          <div class="diagLabel">Historical candles</div>
-          <div id="samples" class="diagValue">0</div>
-        </div>
-
-        <div class="diag">
-          <div class="diagLabel">Completed forecasts</div>
-          <div id="completed" class="diagValue">0</div>
-        </div>
-
-        <div class="diag">
-          <div class="diagLabel">Directional accuracy</div>
-          <div id="accuracy" class="diagValue">—</div>
-        </div>
-
-        <div class="diag">
-          <div class="diagLabel">Evaluation</div>
-          <div id="evaluation" class="diagValue">Insufficient</div>
-        </div>
-
-      </div>
-
-    </div>
-
-  </section>
-
-</main>
-
-
-<!-- =====================================================
-     HISTORY VIEW
-     ===================================================== -->
-
-<main id="viewHistory" class="view">
-
-  <section class="section">
-
-    <div class="sectionTitle">
-      COMPLETED PREDICTION HISTORY
-    </div>
-
-    <div class="panel history">
-
-      <div class="historyHeader">
-        <div>HORIZON</div>
-        <div>PRED</div>
-        <div>ACTUAL</div>
-        <div>RESULT</div>
-      </div>
-
-      <div id="historyList"></div>
-
-    </div>
-
-  </section>
-
-</main>
-
-
-<!-- =====================================================
-     MORE VIEW
-     ===================================================== -->
-
-<main id="viewMore" class="view">
-
-  <section class="section">
-
-    <div class="sectionTitle">
-      ENGINE SETTINGS
-    </div>
-
-    <div class="panel">
-
-      <div class="setting">
-
-        <div>
-          <div class="settingName">Engine Mode</div>
-          <div class="settingDesc">
-            Controls background processing
-          </div>
-        </div>
-
-        <select id="engineMode">
-          <option value="light">Light</option>
-          <option value="normal" selected>Normal</option>
-          <option value="deep">Deep</option>
-        </select>
-
-      </div>
-
-
-      <div class="setting">
-
-        <div>
-          <div class="settingName">Auto Refresh</div>
-          <div class="settingDesc">
-            Secondary market refresh
-          </div>
-        </div>
-
-        <select id="autoRefresh">
-          <option value="on" selected>ON</option>
-          <option value="off">OFF</option>
-        </select>
-
-      </div>
-
-
-      <div class="setting">
-
-        <div>
-          <div class="settingName">Learning</div>
-          <div class="settingDesc">
-            Learn from completed forecasts
-          </div>
-        </div>
-
-        <select id="learning">
-          <option value="on" selected>ON</option>
-          <option value="off">OFF</option>
-        </select>
-
-      </div>
-
-    </div>
-
-  </section>
-
-
-  <section class="section">
-
-    <div class="sectionTitle">
-      MARKET DATA SOURCES
-    </div>
-
-    <div class="panel">
-
-      <div class="sourceGrid">
-
-        <div class="source">
-          <div class="sourceName">Binance</div>
-          <div id="srcBinance" class="sourceStatus">Connecting</div>
-        </div>
-
-        <div class="source">
-          <div class="sourceName">Coinbase</div>
-          <div id="srcCoinbase" class="sourceStatus">Waiting</div>
-        </div>
-
-        <div class="source">
-          <div class="sourceName">OKX</div>
-          <div id="srcOKX" class="sourceStatus">Waiting</div>
-        </div>
-
-        <div class="source">
-          <div class="sourceName">Bybit</div>
-          <div id="srcBybit" class="sourceStatus">Waiting</div>
-        </div>
-
-        <div class="source">
-          <div class="sourceName">BTC context</div>
-          <div id="srcBTC" class="sourceStatus">Waiting</div>
-        </div>
-
-        <div class="source">
-          <div class="sourceName">Derivatives</div>
-          <div id="srcDerivatives" class="sourceStatus">Waiting</div>
-        </div>
-
-      </div>
-
-    </div>
-
-  </section>
-
-
-  <section class="section">
-
-    <div style="
-      padding:10px;
-      color:#617589;
-      text-align:center;
-      font-size:8px;
-      line-height:1.6;
-    ">
-      V15.2.2 is a research forecasting interface.
-      Predictions are statistical estimates and are not guaranteed future prices.
-    </div>
-
-  </section>
-
-</main>
-
-
-<!-- BOTTOM -->
-
-<nav class="bottomNav">
-
-  <div class="navInner">
-
-    <button class="nav active" data-view="chart">
-      CHART
-    </button>
-
-    <button class="nav" data-view="predictions">
-      PREDICTIONS
-    </button>
-
-    <button class="nav" data-view="history">
-      HISTORY
-    </button>
-
-    <button class="nav" data-view="more">
-      MORE
-    </button>
-
-  </div>
-
-</nav>
+ <div class="card" id="auto30">
+  Loading…
+ </div>
 
 </div>
 
+</section>
+
+<!-- USER PREDICTION -->
+
+<section class="section">
+
+<h3>YOUR EDITABLE PREDICTION</h3>
+
+<div class="box">
+
+ <div class="userform">
+
+  <label>
+   Target
+   <select id="userTarget">
+    <option value="15">15 minutes</option>
+    <option value="30">30 minutes</option>
+    <option value="45">45 minutes</option>
+    <option value="60">1 hour</option>
+    <option value="120">2 hours</option>
+    <option value="240">4 hours</option>
+    <option value="custom">Custom date/time</option>
+   </select>
+  </label>
+
+  <label>
+   Prediction Price (USD)
+   <input id="userPrice"
+          type="number"
+          inputmode="decimal"
+          step="0.01"
+          placeholder="Example: 2750">
+  </label>
+
+  <label id="customTarget" style="display:none">
+   Custom Target
+   <input id="userDate" type="datetime-local">
+  </label>
+
+  <label>
+   Confidence %
+   <input id="userConfidence"
+          type="number"
+          min="0"
+          max="100"
+          value="50">
+  </label>
+
+  <textarea
+   id="userNote"
+   rows="2"
+   placeholder="Optional note">
+  </textarea>
+
+  <button class="save" id="saveUser">
+   SAVE / UPDATE MY PREDICTION
+  </button>
+
+ </div>
+
+ <div id="userResult" class="user-result">
+  No user prediction saved.
+ </div>
+
+</div>
+
+</section>
+
+<!-- MATHEMATICAL ENGINES -->
+
+<section class="section">
+
+<h3>MULTI-ENGINE MATHEMATICAL LAYER</h3>
+
+<div class="box" id="engines"></div>
+
+</section>
+
+<!-- VALIDATION -->
+
+<section class="section">
+
+<h3>VALIDATION</h3>
+
+<div class="stats">
+
+ <div class="stat box">
+  <b id="n15">0</b>
+  <span>15M RESULTS</span>
+ </div>
+
+ <div class="stat box">
+  <b id="n30">0</b>
+  <span>30M RESULTS</span>
+ </div>
+
+ <div class="stat box">
+  <b id="direction">—</b>
+  <span>DIRECTION</span>
+ </div>
+
+ <div class="stat box">
+  <b id="mae">—</b>
+  <span>MAE</span>
+ </div>
+
+ <div class="stat box">
+  <b id="rmse">—</b>
+  <span>RMSE</span>
+ </div>
+
+ <div class="stat box">
+  <b id="oos">0</b>
+  <span>OOS RESULTS</span>
+ </div>
+
+</div>
+
+</section>
+
+<!-- HISTORY -->
+
+<section class="section">
+
+<h3>PREDICTION HISTORY</h3>
+
+<div class="box history" id="history"></div>
+
+</section>
+
+</div>
+
+<div class="status">
+ <span id="status">Starting prediction engine…</span>
+ <span id="clock">—</span>
+</div>
 
 <script>
+
 "use strict";
 
 /* =========================================================
-   V15.2.2 ENGINE
-   ========================================================= */
+   CONFIGURATION
+========================================================= */
 
-const API="https://data-api.binance.vision";
-const API2="https://api.binance.com";
+const LC = window.LightweightCharts;
 
-const WS=
-"wss://stream.binance.com:9443/stream?streams=ethusdt@kline_1m/ethusdt@miniTicker";
+const BINANCE_API =
+ "https://data-api.binance.vision/api/v3/klines";
 
-const HIST_KEY="ethPredictor1522History";
-const ACTIVE_KEY="ethPredictor1522Active";
-const SETTINGS_KEY="ethPredictor1522Settings";
+const BINANCE_WS =
+ "wss://stream.binance.com:9443/stream?streams=" +
+ "ethusdt@kline_1m/" +
+ "ethusdt@miniTicker/" +
+ "btcusdt@miniTicker";
 
-
-const S={
-  range:"1D",
-  requested:"5m",
-  effective:"5m",
-
-  candles:[],
-
-  price:null,
-  previousPrice:null,
-  change:0,
-
-  ws:null,
-  connected:false,
-
-  loading:false,
-
-  chartType:"candle",
-
-  ema:true,
-  vwap:true,
-  volume:true,
-  rsi:true,
-  forecast:true,
-
-  zoom:1,
-  offset:0,
-
-  pointer:false,
-  startX:0,
-  startOffset:0,
-
-  pinch:false,
-  pinchDistance:0,
-  pinchZoom:1,
-
-  predictions:[],
-  history:[],
-
-  models:{
-    momentum:.25,
-    trend:.25,
-    volatility:.25,
-    regime:.25
-  },
-
-  scores:{
-    momentum:.5,
-    trend:.5,
-    volatility:.5,
-    regime:.5
-  },
-
-  mode:"normal",
-  auto:true,
-  learning:true,
-
-  training:false,
-
-  secondary:{
-    coinbase:false,
-    okx:false,
-    bybit:false,
-    btc:false,
-    derivatives:false
-  },
-
-  btc:null,
-  funding:null,
-  oi:null
+const INTERVAL_MS = {
+ "1m":60000,
+ "5m":300000,
+ "15m":900000,
+ "1h":3600000,
+ "4h":14400000,
+ "1d":86400000
 };
 
-
-const $=id=>document.getElementById(id);
-
-const canvas=$("chart");
-const viewport=$("chartViewport");
-const ctx=canvas.getContext("2d");
-
+const RANGE_MS = {
+ "1D":86400000,
+ "1W":7*86400000,
+ "1M":30*86400000,
+ "3M":90*86400000,
+ "6M":180*86400000,
+ "1Y":365*86400000,
+ "3Y":1095*86400000,
+ "ALL":157680000000
+};
 
 /* =========================================================
-   BASIC
-   ========================================================= */
+   STATE
+========================================================= */
+
+const saved =
+ JSON.parse(localStorage.getItem("ETH_GLOBAL_V16") || "{}");
+
+const state = {
+
+ range:saved.range || "1D",
+
+ interval:saved.interval || "5m",
+
+ effective:saved.effective || "5m",
+
+ bars:[],
+
+ price:0,
+
+ btc:0,
+
+ lastTick:0,
+
+ loading:false,
+
+ predictions:saved.predictions || {},
+
+ history:saved.history || [],
+
+ engines:saved.engines || {},
+
+ userPrediction:saved.userPrediction || null
+
+};
+
+const $ = id => document.getElementById(id);
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function fmt(n){
+
+ return Number(n).toLocaleString(
+  "en-US",
+  {
+   minimumFractionDigits:2,
+   maximumFractionDigits:2
+  }
+ );
+
+}
 
 function clamp(x,a,b){
-  return Math.max(a,Math.min(b,x));
+
+ return Math.max(a,Math.min(b,x));
+
 }
 
-function pct(a,b){
-  return b ? (a-b)/b*100 : 0;
+function average(a){
+
+ return a.length ?
+  a.reduce((x,y)=>x+y,0)/a.length : 0;
+
 }
 
-function mean(a){
-  return a.length
-    ? a.reduce((x,y)=>x+y,0)/a.length
-    : 0;
+function stdev(a){
+
+ if(a.length<2)return 0;
+
+ const m=average(a);
+
+ return Math.sqrt(
+  average(a.map(x=>(x-m)*(x-m)))
+ );
+
 }
 
-function fmt(v){
-  return isFinite(v)
-    ? "$"+Number(v).toLocaleString("en-US",{
-        minimumFractionDigits:2,
-        maximumFractionDigits:2
-      })
-    : "—";
+function logReturn(a,b){
+
+ if(!a || !b)return 0;
+
+ return Math.log(a/b);
+
 }
 
-function timeText(t){
-  return new Date(t).toLocaleString(undefined,{
-    day:"2-digit",
-    month:"short",
-    year:"numeric",
-    hour:"2-digit",
-    minute:"2-digit"
-  });
+function setStatus(x){
+
+ $("status").textContent=x;
+
 }
 
-function shortTime(t){
-  return new Date(t).toLocaleString(undefined,{
-    day:"2-digit",
-    month:"short",
-    hour:"2-digit",
-    minute:"2-digit"
-  });
+function saveState(){
+
+ localStorage.setItem(
+  "ETH_GLOBAL_V16",
+  JSON.stringify({
+   range:state.range,
+   interval:state.interval,
+   effective:state.effective,
+   predictions:state.predictions,
+   history:state.history,
+   engines:state.engines,
+   userPrediction:state.userPrediction
+  })
+ );
+
 }
-
-function intervalMS(x){
-  return ({
-    "1m":60000,
-    "5m":300000,
-    "15m":900000,
-    "1h":3600000,
-    "4h":14400000,
-    "1d":86400000
-  })[x]||300000;
-}
-
-function rangeMS(x){
-  return ({
-    "1D":86400000,
-    "1W":604800000,
-    "1M":2592000000,
-    "3M":7776000000,
-    "6M":15552000000,
-    "1Y":31536000000,
-    "3Y":94608000000,
-    "ALL":315360000000
-  })[x]||86400000;
-}
-
-function smartInterval(range,wanted){
-
-  if(range==="ALL"||range==="3Y")
-    return "1d";
-
-  if(range==="1Y")
-    return ["1m","5m","15m"].includes(wanted)
-      ?"4h":wanted;
-
-  if(["3M","6M"].includes(range))
-    return ["1m","5m"].includes(wanted)
-      ?"1h":wanted;
-
-  if(range==="1M"&&wanted==="1m")
-    return "5m";
-
-  return wanted;
-}
-
 
 /* =========================================================
-   STORAGE
-   ========================================================= */
+   SMART DATA INTERVAL
+========================================================= */
 
-function save(){
+function getEffectiveInterval(){
 
-  try{
+ if(
+  state.range==="ALL" ||
+  state.range==="3Y"
+ )
+  return "1d";
 
-    localStorage.setItem(
-      HIST_KEY,
-      JSON.stringify(S.history)
-    );
+ if(
+  state.range==="1Y" &&
+  ["1m","5m","15m"].includes(state.interval)
+ )
+  return "4h";
 
-    localStorage.setItem(
-      ACTIVE_KEY,
-      JSON.stringify(S.predictions)
-    );
+ if(
+  ["3M","6M"].includes(state.range) &&
+  ["1m","5m"].includes(state.interval)
+ )
+  return "1h";
 
-    localStorage.setItem(
-      SETTINGS_KEY,
-      JSON.stringify({
-        mode:S.mode,
-        auto:S.auto,
-        learning:S.learning
-      })
-    );
-
-  }catch(e){}
+ return state.interval;
 
 }
-
-function load(){
-
-  try{
-
-    const h=
-      JSON.parse(
-        localStorage.getItem(HIST_KEY)||"[]"
-      );
-
-    const a=
-      JSON.parse(
-        localStorage.getItem(ACTIVE_KEY)||"[]"
-      );
-
-    const s=
-      JSON.parse(
-        localStorage.getItem(SETTINGS_KEY)||"{}"
-      );
-
-    if(Array.isArray(h))S.history=h;
-    if(Array.isArray(a))S.predictions=a;
-
-    if(s.mode)S.mode=s.mode;
-    if(typeof s.auto==="boolean")S.auto=s.auto;
-    if(typeof s.learning==="boolean")S.learning=s.learning;
-
-  }catch(e){}
-
-}
-
 
 /* =========================================================
-   STATUS
-   ========================================================= */
-
-function status(t){
-  $("status").textContent=t;
-}
-
-
-/* =========================================================
-   API
-   ========================================================= */
+   NETWORK
+========================================================= */
 
 async function getJSON(url){
 
-  const c=new AbortController();
+ const controller=new AbortController();
 
-  const timer=setTimeout(
-    ()=>c.abort(),
-    12000
+ const timer=setTimeout(
+  ()=>controller.abort(),
+  12000
+ );
+
+ try{
+
+  const response=await fetch(
+   url,
+   {
+    cache:"no-store",
+    signal:controller.signal
+   }
   );
 
-  try{
+  if(!response.ok)
+   throw new Error(response.status);
 
-    const r=await fetch(
-      url,
-      {
-        signal:c.signal,
-        cache:"no-store"
-      }
-    );
+  return await response.json();
 
-    if(!r.ok)
-      throw new Error("HTTP "+r.status);
+ }finally{
 
-    return await r.json();
+  clearTimeout(timer);
 
-  }finally{
-
-    clearTimeout(timer);
-
-  }
+ }
 
 }
-
-
-async function binance(path){
-
-  try{
-    return await getJSON(API+path);
-  }catch(e){
-    return await getJSON(API2+path);
-  }
-
-}
-
 
 /* =========================================================
-   HISTORICAL
-   ========================================================= */
+   HISTORICAL DATA
+========================================================= */
 
-async function loadHistory(){
+async function loadCandles(){
 
-  if(S.loading)return;
+ const end=Date.now();
 
-  S.loading=true;
+ const start=end-RANGE_MS[state.range];
 
-  status("Loading ETH historical candles...");
+ let cursor=start;
 
-  const effective=
-    smartInterval(
-      S.range,
-      S.requested
-    );
+ let result=[];
 
-  S.effective=effective;
+ let loops=0;
 
-  const step=intervalMS(effective);
+ const step=INTERVAL_MS[state.effective];
 
-  const end=Date.now();
+ while(
+  cursor<end &&
+  loops<50
+ ){
 
-  const start=
-    end-rangeMS(S.range);
+  const url=
+   BINANCE_API+
+   "?symbol=ETHUSDT"+
+   "&interval="+state.effective+
+   "&startTime="+cursor+
+   "&endTime="+end+
+   "&limit=1000";
 
-  let cursor=end;
+  const data=await getJSON(url);
 
-  let result=[];
+  if(!Array.isArray(data)||!data.length)
+   break;
 
-  const blocks=
-    S.mode==="deep"
-      ?40
-      :S.mode==="light"
-        ?8
-        :20;
+  for(const x of data){
 
-  try{
+   result.push({
 
-    for(
-      let i=0;
-      i<blocks;
-      i++
-    ){
+    time:Math.floor(x[0]/1000),
 
-      if(cursor<=start)
-        break;
+    ms:x[0],
 
-      const url=
-        "/api/v3/klines"+
-        "?symbol=ETHUSDT"+
-        "&interval="+effective+
-        "&limit=1000"+
-        "&endTime="+cursor;
+    open:+x[1],
 
-      const data=
-        await binance(url);
+    high:+x[2],
 
-      if(!Array.isArray(data)||!data.length)
-        break;
+    low:+x[3],
 
-      result=
-        data.concat(result);
+    close:+x[4],
 
-      cursor=
-        Number(data[0][0])-step;
+    volume:+x[5]
 
-      if(data.length<1000)
-        break;
-
-      if(i%3===0)
-        await new Promise(r=>setTimeout(r,0));
-    }
-
-
-    const map=new Map();
-
-    for(const k of result){
-
-      const t=Number(k[0]);
-
-      if(t<start)continue;
-
-      map.set(t,{
-        time:t,
-        open:Number(k[1]),
-        high:Number(k[2]),
-        low:Number(k[3]),
-        close:Number(k[4]),
-        volume:Number(k[5]),
-        closeTime:Number(k[6])
-      });
-
-    }
-
-
-    S.candles=
-      [...map.values()]
-      .sort((a,b)=>a.time-b.time);
-
-
-    if(S.candles.length){
-
-      S.previousPrice=S.price;
-
-      S.price=
-        S.candles[S.candles.length-1].close;
-
-      updatePrice();
-
-      trainHistorical();
-
-      status(
-        S.candles.length.toLocaleString()+
-        " candles loaded · "+
-        effective+
-        " · realtime connected separately"
-      );
-
-    }else{
-
-      status("No ETH candle data received.");
-
-    }
-
-  }catch(e){
-
-    console.error(e);
-
-    status(
-      "Market data error: "+
-      e.message
-    );
-
-  }finally{
-
-    S.loading=false;
-
-    draw();
+   });
 
   }
 
+  const next=
+   data[data.length-1][0]+step;
+
+  if(next<=cursor)
+   break;
+
+  cursor=next;
+
+  loops++;
+
+  if(data.length<1000)
+   break;
+
+  await new Promise(r=>setTimeout(r,30));
+
+ }
+
+ const unique=
+  [...new Map(
+   result.map(x=>[x.time,x])
+  ).values()];
+
+ unique.sort(
+  (a,b)=>a.time-b.time
+ );
+
+ return unique;
+
 }
 
-
 /* =========================================================
-   WEBSOCKET
-   ========================================================= */
+   CHART
+========================================================= */
 
-function connect(){
+let chart;
 
-  if(
-    S.ws &&
-    (
-      S.ws.readyState===WebSocket.OPEN||
-      S.ws.readyState===WebSocket.CONNECTING
-    )
-  )return;
+let candleSeries;
 
-  try{
+let volumeSeries;
 
-    const ws=new WebSocket(WS);
+let ema21Series;
 
-    S.ws=ws;
+let ema50Series;
 
-    ws.onopen=()=>{
+let vwapSeries;
 
-      S.connected=true;
+let forecastSeries;
 
-      $("liveStatus").innerHTML=
-        '<span class="liveDot"></span> LIVE';
+let livePriceLine;
 
-      $("srcBinance").textContent=
-        "WebSocket live";
+function initChart(){
 
-      $("srcBinance").className=
-        "sourceStatus online";
+ chart=LC.createChart(
+  $("chart"),
+  {
 
-    };
+   layout:{
+    background:{
+     type:"solid",
+     color:"#080c12"
+    },
+    textColor:"#8998a9"
+   },
 
+   grid:{
+    vertLines:{
+     color:"#121a23"
+    },
+    horzLines:{
+     color:"#121a23"
+    }
+   },
 
-    ws.onmessage=e=>{
+   rightPriceScale:{
+    borderColor:"#26313d",
+    autoScale:true
+   },
 
-      try{
+   timeScale:{
+    borderColor:"#26313d",
+    timeVisible:true,
+    secondsVisible:false,
+    rightOffset:8,
+    barSpacing:8,
+    minBarSpacing:2
+   },
 
-        const p=JSON.parse(e.data);
-        const d=p.data;
+   crosshair:{
+    mode:LC.CrosshairMode.Normal
+   },
 
-        if(!d)return;
+   handleScroll:{
+    mouseWheel:true,
+    pressedMouseMove:true,
+    horzTouchDrag:true,
+    vertTouchDrag:true
+   },
 
-
-        if(d.e==="24hrMiniTicker"){
-
-          const price=Number(d.c);
-
-          if(isFinite(price)){
-
-            S.previousPrice=S.price;
-            S.price=price;
-            S.change=Number(d.P||0);
-
-            updatePrice();
-
-          }
-
-        }
-
-
-        if(d.e==="kline"){
-
-          const k=d.k;
-
-          if(!k)return;
-
-          mergeMinute({
-            time:Number(k.t),
-            open:Number(k.o),
-            high:Number(k.h),
-            low:Number(k.l),
-            close:Number(k.c),
-            volume:Number(k.v),
-            closeTime:Number(k.T)
-          });
-
-          S.price=Number(k.c);
-
-          updatePrice();
-
-          draw();
-
-        }
-
-      }catch(err){
-
-        console.log(err);
-
-      }
-
-    };
-
-
-    ws.onerror=()=>{
-
-      S.connected=false;
-
-      $("liveStatus").innerHTML=
-        '<span class="liveDot"></span> RETRYING';
-
-    };
-
-
-    ws.onclose=()=>{
-
-      S.connected=false;
-
-      $("liveStatus").innerHTML=
-        '<span class="liveDot"></span> RECONNECTING';
-
-      setTimeout(
-        connect,
-        3000
-      );
-
-    };
-
-  }catch(e){
-
-    setTimeout(
-      connect,
-      5000
-    );
+   handleScale:{
+    axisPressedMouseMove:true,
+    mouseWheel:true,
+    pinch:true
+   }
 
   }
+ );
 
-}
+ candleSeries=
+  chart.addSeries(
+   LC.CandlestickSeries,
+   {
+    upColor:"#18c784",
+    downColor:"#ff5b6e",
+    borderUpColor:"#18c784",
+    borderDownColor:"#ff5b6e",
+    wickUpColor:"#18c784",
+    wickDownColor:"#ff5b6e"
+   }
+  );
 
+ volumeSeries=
+  chart.addSeries(
+   LC.HistogramSeries,
+   {
+    priceFormat:{
+     type:"volume"
+    },
+    priceScaleId:"volume"
+   }
+  );
 
-/* =========================================================
-   LIVE AGGREGATION
-   ========================================================= */
-
-function mergeMinute(m){
-
-  const step=intervalMS(S.effective);
-
-  const bucket=
-    Math.floor(m.time/step)*step;
-
-  let last=
-    S.candles[S.candles.length-1];
-
-
-  if(!last||last.time!==bucket){
-
-    last={
-      time:bucket,
-      open:m.open,
-      high:m.high,
-      low:m.low,
-      close:m.close,
-      volume:m.volume,
-      closeTime:bucket+step-1
-    };
-
-    S.candles.push(last);
-
-  }else{
-
-    last.high=Math.max(last.high,m.high);
-    last.low=Math.min(last.low,m.low);
-    last.close=m.close;
-    last.volume+=m.volume;
-
-  }
-
-
-  const max=
-    S.mode==="deep"
-      ?12000
-      :7000;
-
-  if(S.candles.length>max)
-    S.candles.splice(
-      0,
-      S.candles.length-max
-    );
-
-}
-
-
-/* =========================================================
-   SECONDARY SOURCES
-   ========================================================= */
-
-async function secondary(){
-
-  const requests={
-
-    coinbase:
-      "https://api.exchange.coinbase.com/products/ETH-USD/ticker",
-
-    okx:
-      "https://www.okx.com/api/v5/market/ticker?instId=ETH-USDT",
-
-    bybit:
-      "https://api.bybit.com/v5/market/tickers?category=spot&symbol=ETHUSDT",
-
-    btc:
-      API+"/api/v3/ticker/price?symbol=BTCUSDT",
-
-    funding:
-      "https://fapi.binance.com/fapi/v1/premiumIndex?symbol=ETHUSDT",
-
-    oi:
-      "https://fapi.binance.com/fapi/v1/openInterest?symbol=ETHUSDT"
-
-  };
-
-
-  const keys=Object.keys(requests);
-
-  const out=
-    await Promise.allSettled(
-      keys.map(k=>getJSON(requests[k]))
-    );
-
-
-  out.forEach((x,i)=>{
-
-    if(x.status!=="fulfilled")
-      return;
-
-    const key=keys[i];
-    const d=x.value;
-
-
-    if(key==="coinbase"){
-
-      S.secondary.coinbase=true;
-
-    }
-
-
-    if(key==="okx"){
-
-      if(d?.data?.length)
-        S.secondary.okx=true;
-
-    }
-
-
-    if(key==="bybit"){
-
-      if(d?.result?.list?.length)
-        S.secondary.bybit=true;
-
-    }
-
-
-    if(key==="btc"){
-
-      S.btc=Number(d.price);
-
-      S.secondary.btc=
-        isFinite(S.btc);
-
-    }
-
-
-    if(key==="funding"){
-
-      S.funding=
-        Number(d.lastFundingRate);
-
-      S.secondary.derivatives=
-        isFinite(S.funding);
-
-    }
-
-
-    if(key==="oi"){
-
-      S.oi=
-        Number(d.openInterest);
-
-    }
-
+ volumeSeries
+  .priceScale()
+  .applyOptions({
+   scaleMargins:{
+    top:.82,
+    bottom:0
+   }
   });
 
-
-  updateSources();
-
-}
-
-
-function updateSources(){
-
-  const map={
-    coinbase:"srcCoinbase",
-    okx:"srcOKX",
-    bybit:"srcBybit",
-    btc:"srcBTC",
-    derivatives:"srcDerivatives"
-  };
-
-
-  for(const key of Object.keys(map)){
-
-    const el=$(map[key]);
-
-    if(S.secondary[key]){
-
-      el.textContent="Available";
-
-      el.className="sourceStatus online";
-
-    }else{
-
-      el.textContent="Unavailable / waiting";
-
-      el.className="sourceStatus";
-
-    }
-
-  }
-
-}
-
-
-/* =========================================================
-   FEATURES
-   ========================================================= */
-
-function closes(){
-
-  return S.candles.map(x=>x.close);
-}
-
-
-function EMA(period){
-
-  const c=closes();
-
-  if(!c.length)return [];
-
-  const k=2/(period+1);
-
-  let e=c[0];
-
-  const out=[e];
-
-  for(let i=1;i<c.length;i++){
-
-    e=
-      c[i]*k+
-      e*(1-k);
-
-    out.push(e);
-
-  }
-
-  return out;
-
-}
-
-
-function RSI(period=14){
-
-  const c=closes();
-
-  if(c.length<period+1)
-    return [];
-
-  let gain=0;
-  let loss=0;
-
-  for(let i=1;i<=period;i++){
-
-    const d=c[i]-c[i-1];
-
-    if(d>=0)gain+=d;
-    else loss-=d;
-
-  }
-
-  let ag=gain/period;
-  let al=loss/period;
-
-  const out=
-    new Array(period).fill(null);
-
-  const calc=()=>{
-    if(al===0)return 100;
-    const rs=ag/al;
-    return 100-100/(1+rs);
-  };
-
-  out.push(calc());
-
-  for(
-    let i=period+1;
-    i<c.length;
-    i++
-  ){
-
-    const d=c[i]-c[i-1];
-
-    ag=
-      (ag*(period-1)+(d>0?d:0))/period;
-
-    al=
-      (al*(period-1)+(d<0?-d:0))/period;
-
-    out.push(calc());
-
-  }
-
-  return out;
-
-}
-
-
-function ATR(period=14){
-
-  if(S.candles.length<period+2)
-    return 0;
-
-  const tr=[];
-
-  for(let i=1;i<S.candles.length;i++){
-
-    const a=S.candles[i];
-    const b=S.candles[i-1];
-
-    tr.push(
-      Math.max(
-        a.high-a.low,
-        Math.abs(a.high-b.close),
-        Math.abs(a.low-b.close)
-      )
-    );
-
-  }
-
-  return mean(
-    tr.slice(-period)
+ ema21Series=
+  chart.addSeries(
+   LC.LineSeries,
+   {
+    color:"#f5c451",
+    lineWidth:1,
+    priceLineVisible:false,
+    lastValueVisible:false
+   }
   );
 
-}
+ ema50Series=
+  chart.addSeries(
+   LC.LineSeries,
+   {
+    color:"#4aa3ff",
+    lineWidth:1,
+    priceLineVisible:false,
+    lastValueVisible:false
+   }
+  );
 
+ vwapSeries=
+  chart.addSeries(
+   LC.LineSeries,
+   {
+    color:"#b780ff",
+    lineWidth:1,
+    priceLineVisible:false,
+    lastValueVisible:false
+   }
+  );
 
-function VWAP(){
+ forecastSeries=
+  chart.addSeries(
+   LC.LineSeries,
+   {
+    color:"#f5c451",
+    lineWidth:2,
+    lineStyle:2,
+    priceLineVisible:false
+   }
+  );
 
-  let pv=0;
-  let vol=0;
+ livePriceLine=
+  candleSeries.createPriceLine({
+   price:0,
+   color:"#90a5b9",
+   lineWidth:1,
+   lineStyle:2,
+   axisLabelVisible:true,
+   title:"LIVE"
+  });
 
-  for(const c of S.candles){
-
-    const typical=
-      (c.high+c.low+c.close)/3;
-
-    pv+=typical*c.volume;
-    vol+=c.volume;
-
+ new ResizeObserver(
+  ()=>{
+   chart.resize(
+    $("chart").clientWidth,
+    $("chart").clientHeight
+   );
   }
-
-  return vol?pv/vol:S.price;
+ ).observe($("chart"));
 
 }
-
 
 /* =========================================================
-   MODEL
-   ========================================================= */
+   EMA
+========================================================= */
+
+function EMA(data,length){
+
+ if(!data.length)return[];
+
+ const k=2/(length+1);
+
+ let previous=data[0];
+
+ const output=[previous];
+
+ for(let i=1;i<data.length;i++){
+
+  previous=
+   data[i]*k+
+   previous*(1-k);
+
+  output.push(previous);
+
+ }
+
+ return output;
+
+}
+
+/* =========================================================
+   VWAP
+========================================================= */
+
+function VWAP(data){
+
+ let pv=0;
+
+ let volume=0;
+
+ return data.map(x=>{
+
+  const typical=
+   (x.high+x.low+x.close)/3;
+
+  pv+=typical*x.volume;
+
+  volume+=x.volume;
+
+  return volume?pv/volume:typical;
+
+ });
+
+}
+
+/* =========================================================
+   CHART DATA
+========================================================= */
+
+function renderChart(){
+
+ const b=state.bars;
+
+ if(!b.length)return;
+
+ const closes=
+  b.map(x=>x.close);
+
+ const e21=EMA(closes,21);
+
+ const e50=EMA(closes,50);
+
+ const vw=VWAP(b);
+
+ candleSeries.setData(
+  b.map(x=>({
+   time:x.time,
+   open:x.open,
+   high:x.high,
+   low:x.low,
+   close:x.close
+  }))
+ );
+
+ volumeSeries.setData(
+  b.map(x=>({
+   time:x.time,
+   value:x.volume,
+   color:x.close>=x.open
+    ?"rgba(24,199,132,.45)"
+    :"rgba(255,91,110,.45)"
+  }))
+ );
+
+ ema21Series.setData(
+  b.map((x,i)=>({
+   time:x.time,
+   value:e21[i]
+  }))
+ );
+
+ ema50Series.setData(
+  b.map((x,i)=>({
+   time:x.time,
+   value:e50[i]
+  }))
+ );
+
+ vwapSeries.setData(
+  b.map((x,i)=>({
+   time:x.time,
+   value:vw[i]
+  }))
+ );
+
+ livePriceLine.applyOptions({
+  price:state.price
+ });
+
+ chart.timeScale().fitContent();
+
+ $("chartInfo").textContent=
+  b.length.toLocaleString()+
+  " candles • "+
+  state.effective+
+  " • LIVE";
+
+ renderForecast();
+
+}
+
+/* =========================================================
+   MATHEMATICAL FEATURES
+========================================================= */
 
 function features(){
 
-  const c=closes();
+ const c=
+  state.bars.map(x=>x.close);
 
-  if(c.length<60)
-    return null;
+ if(c.length<60)
+  return null;
 
-  const p=c[c.length-1];
+ const recentReturns=[];
 
-  const e21=EMA(21).at(-1);
-  const e50=EMA(50).at(-1);
-  const r=RSI().at(-1);
+ for(
+  let i=Math.max(1,c.length-100);
+  i<c.length;
+  i++
+ ){
 
-  const r5=pct(p,c[c.length-6]);
-  const r15=pct(p,c[c.length-16]);
-  const r30=pct(p,c[c.length-31]);
-
-  const a=ATR();
-
-  const volatility=
-    p?a/p*100:0;
-
-  const recent=
-    mean(
-      S.candles.slice(-10)
-      .map(x=>x.volume)
-    );
-
-  const long=
-    mean(
-      S.candles.slice(-50)
-      .map(x=>x.volume)
-    );
-
-  return {
-    price:p,
-    ema21:e21,
-    ema50:e50,
-    rsi:r,
-    r5,
-    r15,
-    r30,
-    volatility,
-    volumeRatio:long?recent/long:1
-  };
-
-}
-
-
-function momentum(f){
-
-  return clamp(
-    .45*clamp(f.r5/0.5,-1,1)+
-    .35*clamp(f.r15/1,-1,1)+
-    .20*clamp(f.r30/2,-1,1),
-    -1,
-    1
+  recentReturns.push(
+   Math.log(c[i]/c[i-1])
   );
 
-}
+ }
 
+ const meanReturn=
+  average(recentReturns);
 
-function trend(f){
+ const volatility=
+  stdev(recentReturns);
 
-  return clamp(
-    ((f.price-f.ema21)/f.price)*25+
-    ((f.price-f.ema50)/f.price)*20,
-    -1,
-    1
-  );
+ const mean30=
+  average(c.slice(-30));
 
-}
+ const sd30=
+  stdev(c.slice(-30))||1;
 
+ const zScore=
+  (c.at(-1)-mean30)/sd30;
 
-function volatilityModel(f){
+ const e21=
+  EMA(c,21).at(-1);
 
-  let s=0;
+ const e50=
+  EMA(c,50).at(-1);
 
-  if(f.rsi<30)s+=.45;
-  if(f.rsi>70)s-=.45;
+ const slope=
+  (c.at(-1)-c.at(-21))/
+  c.at(-21);
 
-  s+=clamp(
-    f.volumeRatio-1,
-    -1,
-    1
-  )*.15;
+ const slopePrevious=
+  (c.at(-6)-c.at(-26))/
+  c.at(-26);
 
-  return clamp(s,-1,1);
+ const acceleration=
+  slope-slopePrevious;
 
-}
+ const range=
+  (
+   state.bars.at(-1).high-
+   state.bars.at(-1).low
+  )/
+  c.at(-1);
 
+ return{
 
-function regime(f){
+  r5:logReturn(c.at(-1),c.at(-6)),
 
-  let x=trend(f);
+  r15:logReturn(c.at(-1),c.at(-16)),
 
-  if(f.volatility>3)
-    x*=.55;
+  r30:logReturn(c.at(-1),c.at(-31)),
 
-  if(f.volatility<.3)
-    x*=.75;
+  volatility,
 
-  return clamp(x,-1,1);
+  meanReturn,
 
-}
+  zScore,
 
+  trend21:c.at(-1)/e21-1,
 
-function ensemble(f){
+  trend50:c.at(-1)/e50-1,
 
-  const a=momentum(f);
-  const b=trend(f);
-  const c=volatilityModel(f);
-  const d=regime(f);
+  slope,
 
-  const w=S.models;
+  acceleration,
 
-  return {
-    score:
-      a*w.momentum+
-      b*w.trend+
-      c*w.volatility+
-      d*w.regime,
+  range
 
-    values:{
-      momentum:a,
-      trend:b,
-      volatility:c,
-      regime:d
-    }
-  };
+ };
 
 }
-
 
 /* =========================================================
-   HISTORICAL LEARNING
-   ========================================================= */
+   MATHEMATICAL / GEOMETRY ENGINES
+========================================================= */
 
-async function trainHistorical(){
+const ENGINE_NAMES=[
 
-  if(S.training||S.candles.length<100)
-    return;
+ "Momentum",
 
-  S.training=true;
+ "Mean Reversion",
 
-  const original=S.candles;
+ "Volatility",
 
-  const size=
-    S.mode==="deep"
-      ?700
-      :S.mode==="normal"
-        ?300
-        :100;
+ "Market Regime",
 
-  const start=
-    Math.max(
-      60,
-      original.length-size
-    );
+ "Order Flow",
 
-  const score={
-    momentum:0,
-    trend:0,
-    volatility:0,
-    regime:0
-  };
+ "Cross Market",
 
-  let n=0;
+ "Temporal",
 
+ "Geometry"
 
-  try{
+];
 
-    for(
-      let i=start;
-      i<original.length-1;
-      i++
-    ){
+function engineScores(f){
 
-      S.candles=
-        original.slice(0,i+1);
+ return{
 
-      const f=features();
+  Momentum:
+   clamp(
+    .5+
+    f.r5*180+
+    f.r15*90,
+    .05,.95
+   ),
 
-      if(f){
+  "Mean Reversion":
+   clamp(
+    .5-
+    f.zScore*.08-
+    f.r15*120,
+    .05,.95
+   ),
 
-        const actual=
-          original[i+1].close;
+  Volatility:
+   clamp(
+    .5+
+    f.volatility*3+
+    Math.abs(f.r5)*40,
+    .05,.95
+   ),
 
-        const move=
-          pct(actual,f.price);
+  "Market Regime":
+   clamp(
+    .5+
+    f.trend50*110,
+    .05,.95
+   ),
 
-        const m={
-          momentum:momentum(f),
-          trend:trend(f),
-          volatility:volatilityModel(f),
-          regime:regime(f)
-        };
+  "Order Flow":
+   clamp(
+    .5+
+    f.r5*120+
+    f.acceleration*80,
+    .05,.95
+   ),
 
+  "Cross Market":
+   clamp(
+    .5+
+    f.r15*70,
+    .05,.95
+   ),
 
-        for(const k of Object.keys(m)){
+  Temporal:
+   clamp(
+    .5+
+    f.r5*80+
+    f.r30*40,
+    .05,.95
+   ),
 
-          if(
-            Math.sign(move)===
-            Math.sign(m[k])
-          )
-            score[k]++;
+  Geometry:
+   clamp(
+    .5+
+    f.slope*100+
+    f.acceleration*50,
+    .05,.95
+   )
 
-        }
-
-        n++;
-
-      }
-
-
-      if(i%15===0)
-        await new Promise(
-          r=>setTimeout(r,0)
-        );
-
-    }
-
-
-    S.candles=original;
-
-
-    if(n){
-
-      const keys=Object.keys(score);
-
-      for(const k of keys){
-
-        S.scores[k]=
-          clamp(
-            score[k]/n,
-            .05,
-            .95
-          );
-
-      }
-
-
-      const total=
-        keys.reduce(
-          (a,k)=>a+S.scores[k],
-          0
-        );
-
-
-      for(const k of keys){
-
-        S.models[k]=
-          S.scores[k]/total;
-
-      }
-
-    }
-
-    updateModels();
-
-  }catch(e){
-
-    S.candles=original;
-
-  }finally{
-
-    S.training=false;
-
-  }
+ };
 
 }
 
-
 /* =========================================================
-   PREDICTIONS
-   ========================================================= */
+   ENSEMBLE
+========================================================= */
 
-function createPrediction(minutes){
+function modelWeights(){
 
-  const exists=
-    S.predictions.find(
-      p=>
-        p.horizon===minutes&&
-        p.status==="ACTIVE"
-    );
+ const weights={};
 
-  if(exists){
+ let total=0;
 
-    status(
-      minutes+
-      "m prediction already locked until "+
-      shortTime(exists.target)
-    );
+ for(const name of ENGINE_NAMES){
 
-    return;
-
-  }
-
-
-  const f=features();
-
-  if(!f){
-
-    status(
-      "Need more historical candles before generating a prediction."
-    );
-
-    return;
-
-  }
-
-
-  const e=ensemble(f);
-
-  const atrPct=f.volatility;
-
-  const scale=
-    minutes===15?.55:
-    minutes===30?.75:
-    minutes===60?1:
-    1.2;
-
-
-  let expected=
-    e.score*
-    Math.max(.08,atrPct*.7)*
-    scale;
-
-
-  expected=clamp(
-    expected,
-    -8,
-    8
-  );
-
+  const e=
+   state.engines[name] ||
+   {
+    count:0,
+    direction:0.5,
+    mae:0.01
+   };
 
   /*
-    Secondary market context is used only
-    as a small adjustment. Missing sources
-    never stop prediction generation.
+   New engines begin neutral.
+   Historical performance gradually changes
+   their weight.
   */
 
-  if(S.funding!=null){
+  const quality=
+   .5+
+   (e.direction-.5)*1.5+
+   (
+    1-
+    clamp(e.mae/.01,0,1)
+   )*.15;
 
-    if(S.funding>.0005)
-      expected-=.04;
+  weights[name]=Math.max(.05,quality);
 
-    if(S.funding<-.0005)
-      expected+=.04;
+  total+=weights[name];
 
-  }
+ }
 
+ for(const name of ENGINE_NAMES)
+  weights[name]/=total;
 
-  const targetPrice=
-    f.price*
-    (1+expected/100);
-
-
-  const confidence=
-    clamp(
-      50+
-      Math.abs(e.score)*28-
-      Math.min(
-        20,
-        atrPct*4
-      ),
-      35,
-      92
-    );
-
-
-  const now=Date.now();
-
-
-  const p={
-    id:"P"+now+"_"+minutes,
-    horizon:minutes,
-    created:now,
-    target:now+minutes*60000,
-    base:f.price,
-    predicted:targetPrice,
-    expected,
-    score:e.score,
-    confidence,
-    direction:
-      expected>.05
-        ?"UP"
-        :expected<-.05
-          ?"DOWN"
-          :"NEUTRAL",
-    status:"ACTIVE",
-    actual:null,
-    error:null,
-    completed:null
-  };
-
-
-  S.predictions.push(p);
-
-  save();
-
-  renderPredictions();
-
-  draw();
-
-  status(
-    minutes+
-    "m forecast created immediately · target "+
-    timeText(p.target)
-  );
+ return weights;
 
 }
 
+/* =========================================================
+   PREDICTION
+========================================================= */
+
+function makePrediction(horizon){
+
+ if(
+  state.bars.length<60 ||
+  !state.price
+ )
+  return null;
+
+ const f=features();
+
+ const scores=engineScores(f);
+
+ const weights=modelWeights();
+
+ let probability=0;
+
+ for(const name of ENGINE_NAMES){
+
+  probability+=
+   scores[name]*
+   weights[name];
+
+ }
+
+ const direction=
+  probability-.5;
+
+ const expectedMove=
+  clamp(
+   direction*
+   f.volatility*
+   Math.sqrt(horizon/5),
+   -.06,
+   .06
+  );
+
+ const predicted=
+  state.price*
+  (1+expectedMove);
+
+ const expectedRange=
+  Math.max(
+   Math.abs(expectedMove)*.6,
+   f.volatility*
+   Math.sqrt(horizon/5)*.6,
+   .0018
+  );
+
+ const confidence=
+  clamp(
+   50+
+   Math.abs(direction)*100,
+   50,
+   88
+  );
+
+ return{
+
+  created:Date.now(),
+
+  target:
+   Math.ceil(
+    (Date.now()+horizon*60000)/60000
+   )*60000,
+
+  base:state.price,
+
+  predicted,
+
+  low:
+   state.price*(1-expectedRange),
+
+  high:
+   state.price*(1+expectedRange),
+
+  confidence,
+
+  horizon
+
+ };
+
+}
+
+/* =========================================================
+   CONTINUOUS PREDICTION
+========================================================= */
+
+function ensurePredictions(){
+
+ for(const horizon of [15,30]){
+
+  const p=
+   state.predictions[horizon];
+
+  if(
+   !p ||
+   Date.now()>=p.target
+  ){
+
+   const newPrediction=
+    makePrediction(horizon);
+
+   if(newPrediction)
+    state.predictions[horizon]=
+     newPrediction;
+
+  }
+
+ }
+
+ renderAutomatic(15);
+
+ renderAutomatic(30);
+
+ renderForecast();
+
+ saveState();
+
+}
+
+/* =========================================================
+   AUTOMATIC UI
+========================================================= */
+
+function renderAutomatic(h){
+
+ const p=state.predictions[h];
+
+ const el=$("auto"+h);
+
+ if(!p){
+
+  el.innerHTML=
+   "Waiting for sufficient market data…";
+
+  return;
+
+ }
+
+ const remaining=
+  Math.max(
+   0,
+   p.target-Date.now()
+  );
+
+ const minutes=
+  Math.floor(
+   remaining/60000
+  );
+
+ const seconds=
+  Math.floor(
+   remaining/1000
+  )%60;
+
+ el.innerHTML=`
+
+  <div class="cardhead">
+
+   <b>${h} MIN ENGINE</b>
+
+   <span class="green">
+
+    ${remaining?"ACTIVE":"SETTLING"}
+
+   </span>
+
+  </div>
+
+  <div class="pred">
+
+   $${fmt(p.predicted)}
+
+  </div>
+
+  <div class="tiny">
+
+   Target:
+   ${new Date(p.target).toLocaleString()}
+
+  </div>
+
+  <div class="bar">
+
+   <i style="width:${p.confidence}%"></i>
+
+  </div>
+
+  <div class="meta">
+
+   <span>
+    Confidence ${p.confidence.toFixed(0)}%
+   </span>
+
+   <span>
+    ${minutes}m ${String(seconds).padStart(2,"0")}s
+   </span>
+
+  </div>
+
+ `;
+
+}
 
 /* =========================================================
    SETTLEMENT
-   ========================================================= */
+========================================================= */
 
-function settle(){
+function settlePredictions(){
 
-  if(!S.price)return;
+ for(const h of [15,30]){
 
-  let changed=false;
-
-
-  for(const p of S.predictions){
-
-    if(p.status!=="ACTIVE")
-      continue;
-
-    if(Date.now()<p.target)
-      continue;
-
-
-    p.actual=S.price;
-
-    p.error=
-      pct(
-        p.actual,
-        p.predicted
-      );
-
-    p.completed=Date.now();
-
-    p.status="COMPLETED";
-
-
-    S.history.unshift(p);
-
-    learn(p);
-
-    changed=true;
-
-  }
-
-
-  if(changed){
-
-    S.predictions=
-      S.predictions.filter(
-        p=>p.status==="ACTIVE"
-      );
-
-
-    if(S.history.length>500)
-      S.history=
-        S.history.slice(0,500);
-
-
-    save();
-
-    renderPredictions();
-
-    renderHistory();
-
-    updateModels();
-
-  }
-
-}
-
-
-function learn(p){
-
-  if(!S.learning)
-    return;
-
-  const actualMove=
-    pct(
-      p.actual,
-      p.base
-    );
-
-
-  const correct=
-    Math.sign(actualMove)===
-    Math.sign(p.expected);
-
-
-  const keys=Object.keys(S.scores);
-
-
-  for(const k of keys){
-
-    S.scores[k]=clamp(
-      S.scores[k]+
-      (correct?.02:-.02),
-      .05,
-      .95
-    );
-
-  }
-
-
-  const total=
-    keys.reduce(
-      (a,k)=>a+S.scores[k],
-      0
-    );
-
-
-  for(const k of keys)
-    S.models[k]=S.scores[k]/total;
-
-}
-
-
-/* =========================================================
-   PRICE UI
-   ========================================================= */
-
-function updatePrice(){
-
-  if(!S.price)return;
-
-  $("price").textContent=
-    fmt(S.price);
-
-
-  let c=S.change;
-
-  if(!c&&S.previousPrice)
-    c=pct(S.price,S.previousPrice);
-
-
-  $("change").textContent=
-    (c>=0?"+":"")+
-    c.toFixed(2)+
-    "% · realtime";
-
-
-  $("change").className=
-    "change "+
-    (
-      c>0
-        ?"up"
-        :c<0
-          ?"down"
-          :"neutral"
-    );
-
-}
-
-
-/* =========================================================
-   CHART GEOMETRY
-   ========================================================= */
-
-function resize(){
-
-  const r=
-    viewport.getBoundingClientRect();
-
-  const dpr=
-    Math.min(
-      window.devicePixelRatio||1,
-      2
-    );
-
-
-  canvas.width=
-    Math.round(r.width*dpr);
-
-  canvas.height=
-    Math.round(r.height*dpr);
-
-  canvas.style.width=
-    r.width+"px";
-
-  canvas.style.height=
-    r.height+"px";
-
-  ctx.setTransform(
-    dpr,
-    0,
-    0,
-    dpr,
-    0,
-    0
-  );
-
-  draw();
-
-}
-
-
-/*
-  IMPORTANT:
-  The chart now uses an explicit visible
-  candle index window. This fixes the
-  "candles stuck on the left" problem.
-*/
-
-function windowData(){
-
-  const all=S.candles;
-
-  if(all.length<2)
-    return {
-      data:[],
-      start:0
-    };
-
-
-  const base=
-    Math.min(
-      all.length,
-      180
-    );
-
-
-  const count=
-    clamp(
-      Math.round(base/S.zoom),
-      25,
-      all.length
-    );
-
-
-  const maxStart=
-    Math.max(
-      0,
-      all.length-count
-    );
-
-
-  /*
-    offset is measured in candles.
-    Positive offset moves backwards.
-  */
-
-  const start=
-    clamp(
-      Math.round(
-        maxStart/2+
-        S.offset*all.length
-      ),
-      0,
-      maxStart
-    );
-
-
-  return {
-    data:all.slice(start,start+count),
-    start
-  };
-
-}
-
-
-/* =========================================================
-   DRAW
-   ========================================================= */
-
-function draw(){
-
-  const W=viewport.clientWidth;
-  const H=viewport.clientHeight;
-
-  if(!W||!H)return;
-
-
-  ctx.clearRect(
-    0,
-    0,
-    W,
-    H
-  );
-
-
-  const wd=windowData();
-  const data=wd.data;
-
-
-  if(data.length<2){
-
-    ctx.fillStyle="#71869a";
-    ctx.font="12px -apple-system";
-
-    ctx.fillText(
-      "Waiting for ETH market data...",
-      20,
-      30
-    );
-
-    return;
-
-  }
-
-
-  const priceAxis=72;
-  const timeAxis=25;
-  const left=8;
-  const right=W-priceAxis;
-  const top=12;
-  const bottom=H-timeAxis;
-
-  const chartWidth=right-left;
-  const chartHeight=bottom-top;
-
-
-  let min=Math.min(...data.map(x=>x.low));
-  let max=Math.max(...data.map(x=>x.high));
-
-
-  for(const p of S.predictions){
-
-    if(p.status==="ACTIVE"){
-
-      min=Math.min(min,p.predicted);
-      max=Math.max(max,p.predicted);
-
-    }
-
-  }
-
-
-  const pad=(max-min)*.08||1;
-
-  min-=pad;
-  max+=pad;
-
-
-  const priceY=price=>{
-
-    return top+
-      (max-price)/(max-min)*
-      chartHeight;
-
-  };
-
-
-  const xAt=i=>{
-
-    return left+
-      i/(data.length-1)*
-      chartWidth;
-
-  };
-
-
-  /* GRID */
-
-  ctx.strokeStyle="rgba(255,255,255,.055)";
-  ctx.lineWidth=1;
-
-
-  for(let i=0;i<=6;i++){
-
-    const y=
-      top+
-      i/6*
-      chartHeight;
-
-    ctx.beginPath();
-    ctx.moveTo(left,y);
-    ctx.lineTo(right,y);
-    ctx.stroke();
-
-  }
-
-
-  for(let i=0;i<=7;i++){
-
-    const x=
-      left+
-      i/7*
-      chartWidth;
-
-    ctx.beginPath();
-    ctx.moveTo(x,top);
-    ctx.lineTo(x,bottom);
-    ctx.stroke();
-
-  }
-
-
-  /* PRICE AXIS */
-
-  ctx.fillStyle="#8193a5";
-  ctx.font="9px -apple-system";
-  ctx.textAlign="left";
-
-
-  for(let i=0;i<=6;i++){
-
-    const price=
-      max-
-      i/6*
-      (max-min);
-
-    const y=
-      top+
-      i/6*
-      chartHeight;
-
-    ctx.fillText(
-      fmt(price),
-      right+6,
-      y+3
-    );
-
-  }
-
-
-  /* VOLUME */
-
-  if(S.volume){
-
-    const maxVol=
-      Math.max(
-        ...data.map(x=>x.volume)
-      );
-
-
-    const vTop=
-      top+
-      chartHeight*.78;
-
-    const vHeight=
-      chartHeight*.18;
-
-
-    const barWidth=
-      Math.max(
-        1,
-        chartWidth/data.length*.65
-      );
-
-
-    data.forEach((c,i)=>{
-
-      const h=
-        maxVol
-          ? c.volume/maxVol*vHeight
-          : 0;
-
-      ctx.fillStyle=
-        c.close>=c.open
-          ?"rgba(22,217,139,.20)"
-          :"rgba(255,83,104,.20)";
-
-      ctx.fillRect(
-        xAt(i)-barWidth/2,
-        vTop+vHeight-h,
-        barWidth,
-        h
-      );
-
-    });
-
-  }
-
-
-  /* CANDLES */
-
-  if(S.chartType==="candle"){
-
-    const spacing=
-      chartWidth/
-      data.length;
-
-    const body=
-      Math.max(
-        1,
-        Math.min(
-          13,
-          spacing*.68
-        )
-      );
-
-
-    data.forEach((c,i)=>{
-
-      const x=xAt(i);
-
-      const yo=priceY(c.open);
-      const yc=priceY(c.close);
-      const yh=priceY(c.high);
-      const yl=priceY(c.low);
-
-      const green=
-        c.close>=c.open;
-
-
-      ctx.strokeStyle=
-        green
-          ?"#16d98b"
-          :"#ff5368";
-
-      ctx.lineWidth=1;
-
-      ctx.beginPath();
-      ctx.moveTo(x,yh);
-      ctx.lineTo(x,yl);
-      ctx.stroke();
-
-
-      ctx.fillStyle=
-        green
-          ?"#16d98b"
-          :"#ff5368";
-
-
-      ctx.fillRect(
-        x-body/2,
-        Math.min(yo,yc),
-        body,
-        Math.max(
-          1,
-          Math.abs(yc-yo)
-        )
-      );
-
-    });
-
-  }else{
-
-    /* LINE */
-
-    ctx.strokeStyle="#40d9ff";
-    ctx.lineWidth=1.6;
-
-    ctx.beginPath();
-
-    data.forEach((c,i)=>{
-
-      const x=xAt(i);
-      const y=priceY(c.close);
-
-      if(i===0)
-        ctx.moveTo(x,y);
-      else
-        ctx.lineTo(x,y);
-
-    });
-
-    ctx.stroke();
-
-  }
-
-
-  /* EMA */
-
-  if(S.ema){
-
-    const e21=EMA(21);
-    const e50=EMA(50);
-
-    drawIndicator(
-      data,
-      wd.start,
-      e21,
-      "#ffd166",
-      xAt,
-      priceY
-    );
-
-    drawIndicator(
-      data,
-      wd.start,
-      e50,
-      "#a878ff",
-      xAt,
-      priceY
-    );
-
-  }
-
-
-  /* VWAP */
-
-  if(S.vwap){
-
-    const vw=VWAP();
-    const y=priceY(vw);
-
-    ctx.strokeStyle=
-      "rgba(64,217,255,.75)";
-
-    ctx.setLineDash([5,4]);
-
-    ctx.beginPath();
-    ctx.moveTo(left,y);
-    ctx.lineTo(right,y);
-    ctx.stroke();
-
-    ctx.setLineDash([]);
-
-  }
-
-
-  /* RSI */
-
-  if(S.rsi){
-
-    const values=RSI();
-    const rTop=H-48;
-    const rHeight=28;
-
-    ctx.strokeStyle=
-      "rgba(255,255,255,.08)";
-
-    ctx.beginPath();
-    ctx.moveTo(left,rTop);
-    ctx.lineTo(right,rTop);
-    ctx.stroke();
-
-
-    ctx.strokeStyle="#a878ff";
-    ctx.lineWidth=1;
-
-
-    let started=false;
-
-
-    data.forEach((c,i)=>{
-
-      const global=wd.start+i;
-      const v=values[global];
-
-      if(!isFinite(v))
-        return;
-
-      const x=xAt(i);
-
-      const y=
-        rTop+
-        (100-v)/100*rHeight;
-
-
-      if(!started){
-
-        ctx.beginPath();
-        ctx.moveTo(x,y);
-        started=true;
-
-      }else{
-
-        ctx.lineTo(x,y);
-
-      }
-
-    });
-
-
-    if(started)
-      ctx.stroke();
-
-
-    ctx.fillStyle="#6e8295";
-    ctx.font="8px -apple-system";
-
-    ctx.fillText(
-      "RSI",
-      left,
-      rTop-4
-    );
-
-  }
-
-
-  /* CURRENT PRICE */
-
-  if(S.price){
-
-    const y=priceY(S.price);
-
-    ctx.strokeStyle=
-      "rgba(64,217,255,.65)";
-
-    ctx.setLineDash([3,3]);
-
-    ctx.beginPath();
-    ctx.moveTo(left,y);
-    ctx.lineTo(right,y);
-    ctx.stroke();
-
-    ctx.setLineDash([]);
-
-    $("currentLabel").style.top=
-      y+"px";
-
-    $("currentLabel").textContent=
-      fmt(S.price);
-
-  }
-
-
-  /* FORECAST */
-
-  drawForecast(
-    data,
-    left,
-    right,
-    top,
-    bottom,
-    priceY
-  );
-
-
-  /* TIME AXIS */
-
-  ctx.fillStyle="#728599";
-  ctx.font="8px -apple-system";
-  ctx.textAlign="center";
-
-
-  const labels=6;
-
-  for(let i=0;i<labels;i++){
-
-    const idx=
-      Math.round(
-        i*(data.length-1)/(labels-1)
-      );
-
-    const c=data[idx];
-
-    const x=xAt(idx);
-
-    const duration=
-      data[data.length-1].time-
-      data[0].time;
-
-
-    let text;
-
-
-    if(duration>=365*86400000){
-
-      text=
-        new Date(c.time)
-        .toLocaleDateString(
-          undefined,
-          {
-            month:"short",
-            year:"numeric"
-          }
-        );
-
-    }else if(duration>=7*86400000){
-
-      text=
-        new Date(c.time)
-        .toLocaleDateString(
-          undefined,
-          {
-            day:"2-digit",
-            month:"short"
-          }
-        );
-
-    }else{
-
-      text=
-        new Date(c.time)
-        .toLocaleTimeString(
-          undefined,
-          {
-            hour:"2-digit",
-            minute:"2-digit"
-          }
-        );
-
-    }
-
-
-    ctx.fillText(
-      text,
-      x,
-      H-8
-    );
-
-  }
-
-
-  $("chartMeta").textContent=
-    data.length+
-    " visible · "+
-    S.candles.length+
-    " total · "+
-    S.effective+
-    " · "+
-    S.range;
-
-}
-
-
-function drawIndicator(
-  data,
-  start,
-  values,
-  color,
-  xAt,
-  priceY
-){
-
-  ctx.strokeStyle=color;
-  ctx.lineWidth=1;
-
-  let started=false;
-
-  data.forEach((c,i)=>{
-
-    const v=values[start+i];
-
-    if(!isFinite(v))
-      return;
-
-    const x=xAt(i);
-    const y=priceY(v);
-
-
-    if(!started){
-
-      ctx.beginPath();
-      ctx.moveTo(x,y);
-      started=true;
-
-    }else{
-
-      ctx.lineTo(x,y);
-
-    }
-
-  });
-
-
-  if(started)
-    ctx.stroke();
-
-}
-
-
-/* =========================================================
-   FORECAST
-   ========================================================= */
-
-function drawForecast(
-  data,
-  left,
-  right,
-  top,
-  bottom,
-  priceY
-){
-
-  const label=$("forecastLabel");
-
+  const p=state.predictions[h];
 
   if(
-    !S.forecast||
-    !S.predictions.length
-  ){
+   !p ||
+   Date.now()<p.target ||
+   !state.price
+  )
+   continue;
 
-    label.style.display="none";
+  const actual=state.price;
 
-    return;
+  const error=
+   (actual-p.predicted)/
+   p.predicted;
 
-  }
+  const predictedDirection=
+   Math.sign(
+    p.predicted-p.base
+   );
 
+  const actualDirection=
+   Math.sign(
+    actual-p.base
+   );
 
-  const p=S.predictions[0];
+  const directionCorrect=
+   predictedDirection===0
+    ?Math.abs(actual-p.base)<p.base*.0005
+    :predictedDirection===actualDirection;
 
-  if(!p){
+  const record={
 
-    label.style.display="none";
+   horizon:h,
 
-    return;
+   target:p.target,
 
-  }
+   predicted:p.predicted,
 
+   actual,
 
-  const first=data[0].time;
-  const last=data[data.length-1].time;
+   error,
 
-  const target=p.target;
+   directionCorrect,
 
+   completed:Date.now()
+
+  };
+
+  state.history.unshift(record);
+
+  state.history=
+   state.history.slice(0,500);
 
   /*
-    Keep future prediction visible to
-    the right of the latest candle.
+   Update historical engine statistics.
+   These are observations, not fake training scores.
   */
 
-  const span=
-    Math.max(
-      last-first,
-      intervalMS(S.effective)*40
-    );
+  for(const name of ENGINE_NAMES){
 
+   if(!state.engines[name]){
 
-  const futureSpan=
-    Math.max(
-      span*.18,
-      target-last
-    );
+    state.engines[name]={
+     count:0,
+     direction:.5,
+     mae:.01
+    };
 
+   }
 
-  const total=
-    span+futureSpan;
+   const e=state.engines[name];
 
+   e.count++;
 
-  const ratio=
-    (target-first)/total;
+   e.direction=
+    e.direction*.97+
+    (directionCorrect?1:0)*.03;
 
+   e.mae=
+    e.mae*.97+
+    Math.abs(error)*.03;
 
-  const x=
-    left+
-    clamp(
-      ratio,
-      0,
-      1.25
-    )*
-    (right-left);
+  }
 
+  state.predictions[h]=null;
 
-  const y=
-    priceY(p.predicted);
+ }
 
+ renderHistory();
 
-  ctx.strokeStyle="#a878ff";
-  ctx.setLineDash([6,5]);
-  ctx.lineWidth=1;
+ renderValidation();
 
-  ctx.beginPath();
-  ctx.moveTo(x,top);
-  ctx.lineTo(x,bottom);
-  ctx.stroke();
+ renderEngines();
 
-  ctx.setLineDash([]);
-
-
-  label.style.display="block";
-
-  label.style.left=
-    clamp(
-      x,
-      90,
-      right-20
-    )+"px";
-
-  label.style.top=
-    clamp(
-      y,
-      top+30,
-      bottom-30
-    )+"px";
-
-  label.textContent=
-    p.horizon+
-    "m · "+
-    shortTime(p.target)+
-    " · "+
-    fmt(p.predicted);
+ ensurePredictions();
 
 }
-
 
 /* =========================================================
-   PREDICTION RENDER
-   ========================================================= */
+   VALIDATION DISPLAY
+========================================================= */
 
-function predictionHTML(p){
+function renderValidation(){
 
-  const remaining=
-    Math.max(
-      0,
-      p.target-Date.now()
-    );
+ const all=state.history;
 
-  const minutes=
-    Math.floor(
-      remaining/60000
-    );
+ const h15=
+  all.filter(x=>x.horizon===15);
 
-  const seconds=
-    Math.floor(
-      remaining%60000/1000
-    );
+ const h30=
+  all.filter(x=>x.horizon===30);
 
+ $("n15").textContent=h15.length;
 
-  const countdown=
-    minutes+
-    "m "+
-    String(seconds).padStart(2,"0")+
-    "s";
+ $("n30").textContent=h30.length;
 
+ $("oos").textContent=all.length;
 
-  return `
+ if(!all.length){
 
-  <article class="prediction">
+  $("direction").textContent="—";
 
-    <div class="predHead">
+  $("mae").textContent="—";
 
-      <div class="predTitle">
-        ${p.horizon} MIN
-      </div>
+  $("rmse").textContent="—";
 
-      <div class="badge">
-        LOCKED
-      </div>
+  return;
 
-    </div>
+ }
 
+ const correct=
+  all.filter(
+   x=>x.directionCorrect
+  ).length;
 
-    <div class="predGrid">
+ const errors=
+  all.map(x=>x.error);
 
-      <div class="metric">
-        <div class="metricLabel">Predicted price</div>
-        <div class="metricValue">
-          ${fmt(p.predicted)}
-        </div>
-      </div>
+ const mae=
+  average(
+   errors.map(x=>Math.abs(x))
+  );
 
-      <div class="metric">
-        <div class="metricLabel">Direction</div>
-        <div class="metricValue ${
-          p.direction==="UP"
-            ?"up"
-            :p.direction==="DOWN"
-              ?"down"
-              :"neutral"
-        }">
-          ${p.direction}
-        </div>
-      </div>
+ const rmse=
+  Math.sqrt(
+   average(
+    errors.map(x=>x*x)
+   )
+  );
 
-      <div class="metric">
-        <div class="metricLabel">Target time</div>
-        <div class="metricValue" style="font-size:10px">
-          ${timeText(p.target)}
-        </div>
-      </div>
+ $("direction").textContent=
+  (correct/all.length*100).toFixed(1)+"%";
 
-      <div class="metric">
-        <div class="metricLabel">Model confidence</div>
-        <div class="metricValue">
-          ${p.confidence.toFixed(1)}%
-        </div>
-      </div>
+ $("mae").textContent=
+  (mae*100).toFixed(3)+"%";
 
-    </div>
-
-
-    <div class="predFoot">
-
-      <span>
-        Base ${fmt(p.base)}
-      </span>
-
-      <span>
-        ${countdown}
-      </span>
-
-    </div>
-
-  </article>
-
-  `;
+ $("rmse").textContent=
+  (rmse*100).toFixed(3)+"%";
 
 }
 
+/* =========================================================
+   ENGINE DISPLAY
+========================================================= */
 
-function renderPredictions(){
+function renderEngines(){
 
-  const html=
-    S.predictions.length
-      ?S.predictions
-        .map(predictionHTML)
-        .join("")
-      :`
-        <div class="panel">
-          <div class="empty">
-            No active predictions.<br>
-            Create a 15m or 30m forecast.
-          </div>
-        </div>
-      `;
+ $("engines").innerHTML=
+  ENGINE_NAMES.map(name=>{
 
+   const e=
+    state.engines[name] ||
+    {
+     count:0,
+     direction:.5,
+     mae:.01
+    };
 
-  $("predictionGrid").innerHTML=html;
-  $("predictionGrid2").innerHTML=html;
+   return`
+
+    <div class="engine">
+
+     <span>
+      <span class="dot"></span>
+      ${name}
+     </span>
+
+     <span class="muted">
+      ${e.count||0} OOS
+     </span>
+
+     <span class="right">
+
+      ${
+       e.count
+       ?(e.direction*100).toFixed(1)+"%"
+       :"Learning"
+      }
+
+     </span>
+
+    </div>
+
+   `;
+
+  }).join("");
 
 }
-
 
 /* =========================================================
    HISTORY
-   ========================================================= */
+========================================================= */
 
 function renderHistory(){
 
-  const box=$("historyList");
+ let html=`
 
+  <div class="hist">
 
-  if(!S.history.length){
+   <b>H</b>
+   <b>Target</b>
+   <b>Actual</b>
+   <b>Error</b>
 
-    box.innerHTML=
-      `<div class="empty">
-        No completed predictions yet.
-      </div>`;
+  </div>
 
-    return;
+ `;
 
-  }
+ for(
+  const r of state.history.slice(0,30)
+ ){
 
+  html+=`
 
-  box.innerHTML=
-    S.history
-    .slice(0,100)
-    .map(p=>{
+   <div class="hist">
 
-      const actualMove=
-        pct(p.actual,p.base);
+    <b>${r.horizon}m</b>
 
-      const correct=
-        Math.sign(actualMove)===
-        Math.sign(p.expected);
+    <span>
+     ${new Date(r.target)
+       .toLocaleTimeString([],{
+        hour:"2-digit",
+        minute:"2-digit"
+       })}
+    </span>
 
+    <span>
+     $${fmt(r.actual)}
+    </span>
 
-      return `
+    <span class="${
+     Math.abs(r.error)<.01
+      ?"green"
+      :"red"
+    }">
 
-      <div class="historyRow">
+     ${(r.error*100).toFixed(2)}%
 
-        <div>${p.horizon}m</div>
+    </span>
 
-        <div>${fmt(p.predicted)}</div>
+   </div>
 
-        <div>${fmt(p.actual)}</div>
+  `;
 
-        <div class="${
-          correct
-            ?"up"
-            :"down"
-        }">
-          ${correct?"CORRECT":"MISS"}
-          <br>
-          <span style="
-            color:#6f8397;
-            font-size:7px
-          ">
-            ${p.error.toFixed(2)}%
-          </span>
-        </div>
+ }
 
-      </div>
-
-      `;
-
-    })
-    .join("");
+ $("history").innerHTML=html;
 
 }
 
-
 /* =========================================================
-   MODEL UI
-   ========================================================= */
+   FORECAST LINE
+========================================================= */
 
-function updateModels(){
+function renderForecast(){
 
-  const names=[
-    ["momentum","Momentum"],
-    ["trend","Trend"],
-    ["volatility","Volatility"],
-    ["regime","Regime"]
-  ];
+ const p=
+  state.predictions[15] ||
+  state.predictions[30];
 
+ const last=
+  state.bars.at(-1);
 
-  for(const [key,label] of names){
+ if(!p || !last){
 
-    const score=
-      S.scores[key]*100;
+  forecastSeries.setData([]);
 
-    $("score"+label).textContent=
-      score.toFixed(1)+
-      "% historical directional score";
+  return;
 
-    $("bar"+label).style.width=
-      score+"%";
+ }
 
+ forecastSeries.setData([
+
+  {
+   time:last.time,
+   value:state.price
+  },
+
+  {
+   time:Math.floor(p.target/1000),
+   value:p.predicted
   }
 
-
-  $("samples").textContent=
-    S.candles.length.toLocaleString();
-
-  $("completed").textContent=
-    S.history.length;
-
-
-  if(!S.history.length){
-
-    $("accuracy").textContent="—";
-
-  }else{
-
-    let correct=0;
-
-    for(const p of S.history){
-
-      const actual=
-        pct(p.actual,p.base);
-
-      if(
-        Math.sign(actual)===
-        Math.sign(p.expected)
-      )
-        correct++;
-
-    }
-
-    $("accuracy").textContent=
-      (
-        correct/
-        S.history.length*
-        100
-      ).toFixed(1)+"%";
-
-  }
-
-
-  const n=S.history.length;
-
-  $("evaluation").textContent=
-    n<20
-      ?"Insufficient"
-      :n<50
-        ?"Early"
-        :n<100
-          ?"Developing"
-          :"Meaningful";
+ ]);
 
 }
 
+/* =========================================================
+   LIVE CANDLE
+========================================================= */
+
+function updateLiveCandle(k){
+
+ const step=
+  INTERVAL_MS[state.effective];
+
+ const bucket=
+  Math.floor(k.ms/step)*step;
+
+ let last=
+  state.bars.at(-1);
+
+ if(
+  !last ||
+  last.ms!==bucket
+ ){
+
+  const newBar={
+
+   time:Math.floor(bucket/1000),
+
+   ms:bucket,
+
+   open:k.open,
+
+   high:k.high,
+
+   low:k.low,
+
+   close:k.close,
+
+   volume:k.volume
+
+  };
+
+  state.bars.push(newBar);
+
+  if(state.bars.length>20000)
+   state.bars.shift();
+
+ }else{
+
+  last.high=
+   Math.max(last.high,k.high);
+
+  last.low=
+   Math.min(last.low,k.low);
+
+  last.close=k.close;
+
+  last.volume=k.volume;
+
+ }
+
+ const x=
+  state.bars.at(-1);
+
+ candleSeries.update({
+
+  time:x.time,
+
+  open:x.open,
+
+  high:x.high,
+
+  low:x.low,
+
+  close:x.close
+
+ });
+
+ volumeSeries.update({
+
+  time:x.time,
+
+  value:x.volume,
+
+  color:
+   x.close>=x.open
+   ?"rgba(24,199,132,.45)"
+   :"rgba(255,91,110,.45)"
+
+ });
+
+ state.price=k.close;
+
+ state.lastTick=Date.now();
+
+ $("price").textContent=
+  "$"+fmt(state.price);
+
+ livePriceLine.applyOptions({
+  price:state.price
+ });
+
+ renderForecast();
+
+}
 
 /* =========================================================
-   CONTROLS
-   ========================================================= */
+   WEBSOCKET
+========================================================= */
 
-document.querySelectorAll(".range")
-.forEach(b=>{
+let socket=null;
 
-  b.onclick=()=>{
+function connectWebSocket(){
 
-    document
-      .querySelectorAll(".range")
-      .forEach(x=>x.classList.remove("active"));
+ try{
 
-    b.classList.add("active");
+  if(socket)
+   socket.close();
 
-    S.range=b.dataset.range;
+ }catch(e){}
 
-    S.offset=0;
-    S.zoom=1;
+ socket=
+  new WebSocket(BINANCE_WS);
 
-    loadHistory();
+ socket.onopen=()=>{
 
-  };
-
-});
-
-
-document.querySelectorAll(".interval")
-.forEach(b=>{
-
-  b.onclick=()=>{
-
-    document
-      .querySelectorAll(".interval")
-      .forEach(x=>x.classList.remove("active"));
-
-    b.classList.add("active");
-
-    S.requested=b.dataset.interval;
-
-    S.offset=0;
-    S.zoom=1;
-
-    loadHistory();
-
-  };
-
-});
-
-
-$("add15").onclick=
-  ()=>createPrediction(15);
-
-$("add30").onclick=
-  ()=>createPrediction(30);
-
-
-$("resetPred").onclick=()=>{
-
-  S.predictions=[];
-
-  save();
-
-  renderPredictions();
-
-  draw();
-
-  status("Active predictions cleared.");
-
-};
-
-
-/* CHART TOOLS */
-
-function toggle(id,key){
-
-  S[key]=!S[key];
-
-  $(id).classList.toggle(
-    "active",
-    S[key]
+  setStatus(
+   "Global realtime feed connected"
   );
 
-  draw();
+  $("feed").textContent=
+   "Binance ETH + BTC";
+
+ };
+
+ socket.onmessage=e=>{
+
+  try{
+
+   const packet=
+    JSON.parse(e.data);
+
+   const d=
+    packet.data || packet;
+
+   if(
+    d.e==="24hrMiniTicker"
+   ){
+
+    if(d.s==="ETHUSDT"){
+
+     state.price=+d.c;
+
+     state.lastTick=Date.now();
+
+     $("price").textContent=
+      "$"+fmt(state.price);
+
+     const change=+d.P;
+
+     $("change").textContent=
+      (change>=0?"+":"")+
+      change.toFixed(2)+
+      "% 24h";
+
+     $("change").className=
+      change>=0
+       ?"green"
+       :"red";
+
+     livePriceLine.applyOptions({
+      price:state.price
+     });
+
+    }
+
+    if(d.s==="BTCUSDT"){
+
+     state.btc=+d.c;
+
+    }
+
+   }
+
+   if(d.e==="kline"){
+
+    const k=d.k;
+
+    updateLiveCandle({
+
+     ms:k.t,
+
+     open:+k.o,
+
+     high:+k.h,
+
+     low:+k.l,
+
+     close:+k.c,
+
+     volume:+k.v
+
+    });
+
+   }
+
+  }catch(err){}
+
+ };
+
+ socket.onclose=()=>{
+
+  setStatus(
+   "Realtime connection lost — reconnecting…"
+  );
+
+  setTimeout(
+   connectWebSocket,
+   2500
+  );
+
+ };
 
 }
 
+/* =========================================================
+   USER PREDICTION
+========================================================= */
 
-$("candles").onclick=()=>{
+$("userTarget").onchange=()=>{
 
-  S.chartType="candle";
-
-  $("candles").classList.add("active");
-  $("line").classList.remove("active");
-
-  draw();
-
-};
-
-
-$("line").onclick=()=>{
-
-  S.chartType="line";
-
-  $("line").classList.add("active");
-  $("candles").classList.remove("active");
-
-  draw();
+ $("customTarget").style.display=
+  $("userTarget").value==="custom"
+   ?"block"
+   :"none";
 
 };
 
+$("saveUser").onclick=()=>{
 
-$("ema").onclick=
-  ()=>toggle("ema","ema");
+ let target;
 
-$("vwap").onclick=
-  ()=>toggle("vwap","vwap");
+ if(
+  $("userTarget").value==="custom"
+ ){
 
-$("volume").onclick=
-  ()=>toggle("volume","volume");
+  target=
+   new Date(
+    $("userDate").value
+   ).getTime();
 
-$("rsi").onclick=
-  ()=>toggle("rsi","rsi");
+ }else{
 
-$("forecast").onclick=
-  ()=>toggle("forecast","forecast");
+  target=
+   Date.now()+
+   Number(
+    $("userTarget").value
+   )*60000;
 
+ }
 
-$("resetZoom").onclick=()=>{
+ const price=
+  Number(
+   $("userPrice").value
+  );
 
-  S.zoom=1;
-  S.offset=0;
+ const confidence=
+  clamp(
+   Number(
+    $("userConfidence").value||50
+   ),
+   0,
+   100
+  );
 
-  draw();
+ if(
+  !price ||
+  !target ||
+  target<=Date.now()
+ ){
+
+  alert(
+   "Enter a valid future target and prediction price."
+  );
+
+  return;
+
+ }
+
+ state.userPrediction={
+
+  target,
+
+  price,
+
+  confidence,
+
+  note:
+   $("userNote").value.trim(),
+
+  created:Date.now(),
+
+  actual:null,
+
+  error:null
+
+ };
+
+ saveState();
+
+ renderUserPrediction();
 
 };
 
+function renderUserPrediction(){
+
+ const u=
+  state.userPrediction;
+
+ if(!u){
+
+  $("userResult").textContent=
+   "No user prediction saved.";
+
+  return;
+
+ }
+
+ let text=
+  Date.now()<u.target
+   ?"ACTIVE"
+   :"COMPLETED";
+
+ $("userResult").innerHTML=
+
+  "<b>"+text+"</b>"+
+  " • Target: "+
+  new Date(u.target).toLocaleString()+
+  " • Predicted: $"+
+  fmt(u.price)+
+  " • Confidence: "+
+  u.confidence+"%"+
+  (
+   u.actual!==null
+   ?
+    " • Actual: $"+
+    fmt(u.actual)+
+    " • Error: "+
+    (u.error*100).toFixed(2)+
+    "%"
+   :""
+  )+
+  (
+   u.note
+   ?" • Note: "+u.note
+   :""
+  );
+
+}
 
 /* =========================================================
-   TOUCH / MOUSE ZOOM
-   ========================================================= */
+   USER SETTLEMENT
+========================================================= */
 
-/*
-  One finger:
-  horizontal pan.
+function settleUserPrediction(){
 
-  Two fingers:
-  pinch zoom.
+ const u=
+  state.userPrediction;
 
-  Wheel:
-  zoom.
+ if(
+  !u ||
+  u.actual!==null ||
+  Date.now()<u.target ||
+  !state.price
+ )
+  return;
 
-  Zoom is centred around the pointer position.
-*/
+ /*
+  IMPORTANT:
+  The user prediction is evaluated only after
+  its target time. It never changes the model.
+ */
 
-viewport.addEventListener(
-  "pointerdown",
-  e=>{
+ u.actual=state.price;
 
-    if(e.pointerType==="touch")
-      return;
+ u.error=
+  (u.actual-u.price)/
+  u.price;
 
-    S.pointer=true;
+ saveState();
 
-    S.startX=e.clientX;
+ renderUserPrediction();
 
-    S.startOffset=S.offset;
+}
 
-    viewport.setPointerCapture?.(
-      e.pointerId
+/* =========================================================
+   RANGE / INTERVAL CONTROLS
+========================================================= */
+
+document
+ .querySelectorAll("#ranges .btn")
+ .forEach(button=>{
+
+  button.onclick=async()=>{
+
+   state.range=
+    button.dataset.r;
+
+   document
+    .querySelectorAll("#ranges .btn")
+    .forEach(x=>
+     x.classList.toggle(
+      "on",
+      x===button
+     )
     );
 
-  }
-);
-
-
-viewport.addEventListener(
-  "pointermove",
-  e=>{
-
-    if(!S.pointer)
-      return;
-
-    const dx=
-      e.clientX-S.startX;
-
-    const width=
-      viewport.clientWidth;
-
-
-    S.offset=
-      S.startOffset-
-      dx/
-      width/
-      Math.max(
-        .5,
-        S.zoom
-      );
-
-
-    S.offset=
-      clamp(
-        S.offset,
-        -1,
-        1
-      );
-
-
-    draw();
-
-  }
-);
-
-
-viewport.addEventListener(
-  "pointerup",
-  ()=>{
-    S.pointer=false;
-  }
-);
-
-viewport.addEventListener(
-  "pointercancel",
-  ()=>{
-    S.pointer=false;
-  }
-);
-
-
-viewport.addEventListener(
-  "wheel",
-  e=>{
-
-    e.preventDefault();
-
-    const old=S.zoom;
-
-    const factor=
-      e.deltaY<0
-        ?1.15
-        :.87;
-
-
-    S.zoom=
-      clamp(
-        S.zoom*factor,
-        .5,
-        12
-      );
-
-
-    /*
-      Slightly compensate pan so
-      the chart doesn't jump wildly.
-    */
-
-    if(old!==S.zoom){
-
-      const rect=
-        viewport.getBoundingClientRect();
-
-      const x=
-        (e.clientX-rect.left)/
-        rect.width;
-
-      S.offset+=
-        (x-.5)*
-        (1/old-1/S.zoom)*.35;
-
-      S.offset=
-        clamp(
-          S.offset,
-          -1,
-          1
-        );
-
-    }
-
-
-    draw();
-
-  },
-  {passive:false}
-);
-
-
-/* TOUCH */
-
-viewport.addEventListener(
-  "touchstart",
-  e=>{
-
-    if(e.touches.length===2){
-
-      const a=e.touches[0];
-      const b=e.touches[1];
-
-      S.pinch=true;
-
-      S.pinchDistance=
-        Math.hypot(
-          a.clientX-b.clientX,
-          a.clientY-b.clientY
-        );
-
-      S.pinchZoom=S.zoom;
-
-    }
-
-  },
-  {passive:true}
-);
-
-
-viewport.addEventListener(
-  "touchmove",
-  e=>{
-
-    if(e.touches.length!==2)
-      return;
-
-    e.preventDefault();
-
-
-    const a=e.touches[0];
-    const b=e.touches[1];
-
-
-    const distance=
-      Math.hypot(
-        a.clientX-b.clientX,
-        a.clientY-b.clientY
-      );
-
-
-    if(
-      S.pinch&&
-      S.pinchDistance
-    ){
-
-      S.zoom=
-        clamp(
-          S.pinchZoom*
-          distance/
-          S.pinchDistance,
-          .5,
-          12
-        );
-
-
-      draw();
-
-    }
-
-  },
-  {passive:false}
-);
-
-
-viewport.addEventListener(
-  "touchend",
-  ()=>{
-    if(S.pinch)
-      S.pinch=false;
-  }
-);
-
-
-/* =========================================================
-   BOTTOM NAV
-   ========================================================= */
-
-const views={
-  chart:"viewChart",
-  predictions:"viewPredictions",
-  history:"viewHistory",
-  more:"viewMore"
-};
-
-
-document.querySelectorAll(".nav")
-.forEach(n=>{
-
-  n.onclick=()=>{
-
-    document
-      .querySelectorAll(".nav")
-      .forEach(x=>x.classList.remove("active"));
-
-    n.classList.add("active");
-
-
-    document
-      .querySelectorAll(".view")
-      .forEach(v=>v.classList.remove("active"));
-
-
-    $(views[n.dataset.view])
-      .classList.add("active");
-
-
-    window.scrollTo({
-      top:0,
-      behavior:"instant"
-    });
-
-
-    if(n.dataset.view==="chart")
-      setTimeout(resize,30);
+   await loadMarket();
 
   };
 
-});
+ });
 
+document
+ .querySelectorAll("#intervals .btn")
+ .forEach(button=>{
 
-/* =========================================================
-   SETTINGS
-   ========================================================= */
+  button.onclick=async()=>{
 
-$("engineMode").onchange=e=>{
+   state.interval=
+    button.dataset.i;
 
-  S.mode=e.target.value;
+   document
+    .querySelectorAll("#intervals .btn")
+    .forEach(x=>
+     x.classList.toggle(
+      "on",
+      x===button
+     )
+    );
 
-  save();
+   await loadMarket();
 
-  trainHistorical();
+  };
 
-};
-
-
-$("autoRefresh").onchange=e=>{
-
-  S.auto=e.target.value==="on";
-
-  save();
-
-};
-
-
-$("learning").onchange=e=>{
-
-  S.learning=e.target.value==="on";
-
-  save();
-
-};
-
+ });
 
 /* =========================================================
-   REFRESH
-   ========================================================= */
+   MARKET LOAD
+========================================================= */
 
-setInterval(
-  ()=>{
+async function loadMarket(){
 
-    settle();
+ if(state.loading)
+  return;
 
-    renderPredictions();
+ state.loading=true;
 
-    updateModels();
+ state.effective=
+  getEffectiveInterval();
 
-    draw();
+ setStatus(
+  "Loading historical ETH market…"
+ );
 
-  },
-  1000
-);
+ try{
 
+  const data=
+   await loadCandles();
 
-setInterval(
-  ()=>{
+  if(!data.length)
+   throw new Error(
+    "No market candles"
+   );
 
-    if(S.auto)
-      secondary();
+  state.bars=data;
 
-  },
-  30000
-);
+  state.price=
+   data.at(-1).close;
 
+  state.lastTick=
+   Date.now();
 
-setInterval(
-  ()=>{
+  renderChart();
 
-    if(
-      S.auto&&
-      !S.loading
-    ){
+  ensurePredictions();
 
-      /*
-        Refresh historical data only every
-        few minutes. WebSocket handles the
-        realtime portion.
-      */
+  setStatus(
+   "Prediction engine running continuously"
+  );
 
-      loadHistory();
+ }catch(error){
 
-    }
+  console.error(error);
 
-  },
-  5*60*1000
-);
+  setStatus(
+   "Market data error — realtime retry active"
+  );
 
+ }finally{
+
+  state.loading=false;
+
+ }
+
+}
 
 /* =========================================================
-   INIT
-   ========================================================= */
+   CONTINUOUS REFRESH
+========================================================= */
 
-async function init(){
+/*
+  Every second:
+  - countdown
+  - settlement
+  - user prediction settlement
+  - live age
+*/
 
-  load();
+setInterval(()=>{
 
+ settlePredictions();
 
-  $("engineMode").value=S.mode;
+ settleUserPrediction();
 
-  $("autoRefresh").value=
-    S.auto?"on":"off";
+ renderAutomatic(15);
 
-  $("learning").value=
-    S.learning?"on":"off";
+ renderAutomatic(30);
 
+ $("clock").textContent=
+  new Date().toLocaleTimeString();
 
-  renderPredictions();
+ $("age").textContent=
+  state.lastTick
+  ?Math.floor(
+    (Date.now()-state.lastTick)/1000
+   )+"s"
+  :"—";
+
+},1000);
+
+/*
+  Every 5 seconds:
+  ensure the next prediction exists.
+*/
+
+setInterval(()=>{
+
+ if(state.price)
+  ensurePredictions();
+
+},5000);
+
+/*
+  Every 30 seconds:
+  refresh the historical background.
+  This does NOT intentionally move an active
+  prediction's target time.
+*/
+
+setInterval(async()=>{
+
+ if(!state.loading){
+
+  try{
+
+   state.effective=
+    getEffectiveInterval();
+
+   const data=
+    await loadCandles();
+
+   if(data.length){
+
+    state.bars=data;
+
+    renderChart();
+
+    /*
+     Only create a new prediction if
+     there isn't an active one.
+    */
+
+    ensurePredictions();
+
+   }
+
+  }catch(e){
+
+   console.log(
+    "Background refresh:",
+    e
+   );
+
+  }
+
+ }
+
+},30000);
+
+/* =========================================================
+   START
+========================================================= */
+
+(async()=>{
+
+ try{
+
+  initChart();
+
+  renderEngines();
 
   renderHistory();
 
-  updateModels();
+  renderValidation();
 
-  resize();
+  renderUserPrediction();
 
+  await loadMarket();
 
-  await loadHistory();
+  connectWebSocket();
 
+ }catch(e){
 
-  connect();
+  console.error(e);
 
-  secondary();
+  setStatus(
+   "Startup error — refresh the page"
+  );
 
-}
+ }
 
-
-window.addEventListener(
-  "resize",
-  resize
-);
-
-
-document.addEventListener(
-  "visibilitychange",
-  ()=>{
-    if(!document.hidden&&!S.connected)
-      connect();
-  }
-);
-
-
-init();
+})();
 
 </script>
 
