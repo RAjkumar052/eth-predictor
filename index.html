@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#070c16">
-<title>ETH Global Predictor V10</title>
+<title>ETH Global Predictor V11</title>
 
 <style>
 :root{
@@ -17,43 +17,30 @@
  --yellow:#f3c653;
  --blue:#5ca7ff;
 }
-
-*{
- box-sizing:border-box;
-}
-
+*{box-sizing:border-box}
 body{
  margin:0;
  background:var(--bg);
  color:#f4f7fc;
- font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif
 }
-
 main{
  max-width:620px;
  margin:auto;
- padding:20px 14px calc(30px + env(safe-area-inset-bottom));
+ padding:20px 14px calc(30px + env(safe-area-inset-bottom))
 }
-
 header{
  display:flex;
  justify-content:space-between;
  align-items:flex-start;
- gap:12px;
+ gap:12px
 }
-
-h1{
- font-size:28px;
- line-height:1.1;
- margin:0;
-}
-
+h1{font-size:28px;line-height:1.1;margin:0}
 .muted{
  color:var(--muted);
  font-size:12px;
- line-height:1.45;
+ line-height:1.45
 }
-
 button{
  background:#294777;
  color:#fff;
@@ -61,98 +48,64 @@ button{
  border-radius:10px;
  padding:11px 15px;
  font-weight:700;
- font-size:15px;
+ font-size:15px
 }
-
-button:disabled{
- opacity:.6;
-}
-
+button:disabled{opacity:.6}
 .card{
  background:var(--card);
  border:1px solid var(--line);
  border-radius:18px;
  padding:14px;
- margin:12px 0;
+ margin:12px 0
 }
-
 .price{
  font-size:36px;
  font-weight:800;
- margin-top:4px;
+ margin-top:4px
 }
-
-.label{
- font-size:13px;
- color:var(--muted);
-}
-
+.label{font-size:13px;color:var(--muted)}
 .selector-title{
  margin-top:14px;
  color:#9aa4b5;
  font-size:14px;
- font-weight:600;
+ font-weight:600
 }
-
 .tf{
  display:flex;
  gap:7px;
  overflow-x:auto;
  margin-top:8px;
  padding-bottom:3px;
- scrollbar-width:none;
+ scrollbar-width:none
 }
-
-.tf::-webkit-scrollbar{
- display:none;
-}
-
+.tf::-webkit-scrollbar{display:none}
 .tf button{
  background:#17263d;
  min-width:58px;
  padding:10px 9px;
  font-size:13px;
- white-space:nowrap;
+ white-space:nowrap
 }
-
-.tf button.active{
- background:#3e70b0;
-}
-
+.tf button.active{background:#3e70b0}
 .grid{
  display:grid;
  grid-template-columns:1fr 1fr;
- gap:9px;
+ gap:9px
 }
-
 .box{
  background:#0b1321;
  padding:12px;
- border-radius:12px;
+ border-radius:12px
 }
-
 .value{
  font-size:20px;
  font-weight:700;
- margin-top:4px;
+ margin-top:4px
 }
-
-.green{
- color:var(--green);
-}
-
-.red{
- color:var(--red);
-}
-
-.yellow{
- color:var(--yellow);
-}
-
-.blue{
- color:var(--blue);
-}
-
+.green{color:var(--green)}
+.red{color:var(--red)}
+.yellow{color:var(--yellow)}
+.blue{color:var(--blue)}
 canvas{
  display:block;
  width:100%;
@@ -160,53 +113,38 @@ canvas{
  background:#0a1220;
  border-radius:12px;
  margin-top:12px;
- touch-action:none;
+ touch-action:none
 }
-
-.status{
- line-height:1.45;
- margin-top:10px;
-}
-
-.error{
- color:#ff9aaa;
-}
-
+.status{line-height:1.45;margin-top:10px}
+.error{color:#ff9aaa}
 .chartbar{
  display:flex;
  justify-content:space-between;
  margin-top:12px;
  color:#9aa4b5;
  font-size:12px;
- font-weight:600;
+ font-weight:600
 }
-
-.chartbar span:last-child{
- color:#55d98d;
-}
-
+.chartbar span:last-child{color:#55d98d}
 .small{
  font-size:11px;
  color:var(--muted);
  margin-top:8px;
- line-height:1.45;
+ line-height:1.45
 }
-
 .note{
  font-size:11px;
  color:var(--muted);
  line-height:1.5;
  margin-top:12px;
  padding-top:10px;
- border-top:1px solid var(--line);
+ border-top:1px solid var(--line)
 }
-
 .target{
  font-size:26px;
  font-weight:800;
- color:var(--blue);
+ color:var(--blue)
 }
-
 .modelBadge{
  display:inline-block;
  margin-top:7px;
@@ -215,64 +153,56 @@ canvas{
  background:#17263d;
  color:#9ec7ff;
  font-size:10px;
- font-weight:800;
- letter-spacing:.2px;
+ font-weight:800
 }
-
-.locked{
- color:var(--green);
- font-weight:800;
-}
-
+.locked{color:var(--green);font-weight:800}
 .diag{
  display:grid;
  grid-template-columns:repeat(3,1fr);
  gap:8px;
- margin-top:9px;
+ margin-top:9px
 }
-
 .diagBox{
  background:#0b1321;
  border-radius:12px;
- padding:10px;
+ padding:10px
 }
-
 .diagBox .v{
  font-size:16px;
  font-weight:800;
- margin-top:3px;
+ margin-top:3px
 }
-
 .chartControls{
  display:flex;
  align-items:center;
  justify-content:center;
  gap:8px;
- margin-top:8px;
+ margin-top:8px
 }
-
 .chartControls button{
  background:#17263d;
  padding:7px 13px;
- font-size:14px;
+ font-size:14px
 }
-
 .chartControls span{
  min-width:38px;
  text-align:center;
  color:#9aa4b5;
  font-size:12px;
- font-weight:700;
+ font-weight:700
 }
-
+.connection{
+ margin-top:8px;
+ padding:8px 10px;
+ border-radius:10px;
+ background:#0b1321;
+ font-size:11px;
+ color:var(--muted);
+ word-break:break-word
+}
 @media(max-width:390px){
- h1{
-  font-size:25px;
- }
-
- .price{
-  font-size:32px;
- }
+ h1{font-size:25px}
+ .price{font-size:32px}
 }
 </style>
 </head>
@@ -282,290 +212,179 @@ canvas{
 <main>
 
 <header>
-
 <div>
-
 <h1>ETH Global Predictor</h1>
 
 <div class="muted">
 Live ETH research dashboard<br>
-Live ETH research • V10 multi-market ML • no trading or Buy/Sell signals<br>
+V11 multi-market ML • no trading or Buy/Sell signals<br>
 
 <span class="modelBadge">
-V10 • ETH + BTC regime model • point-in-time validation
+V11 • ETH + BTC regime model • point-in-time validation
 </span>
-
 </div>
-
 </div>
 
 <button id="refresh">↻ Refresh</button>
-
 </header>
+
 
 <section class="card">
 
-<div class="label">
-ETH / USDT
-</div>
+<div class="label">ETH / USDT</div>
 
-<div id="price" class="price">
-Loading…
-</div>
+<div id="price" class="price">Connecting…</div>
 
-<div class="selector-title">
-Predict ETH after:
-</div>
+<div class="selector-title">Predict ETH after:</div>
 
 <div class="tf" id="horizonSelector">
 
-<button data-horizon="30m" class="active">
-30m
-</button>
-
-<button data-horizon="1h">
-1H
-</button>
-
-<button data-horizon="2h">
-2H
-</button>
-
-<button data-horizon="4h">
-4H
-</button>
-
-<button data-horizon="6h">
-6H
-</button>
-
-<button data-horizon="12h">
-12H
-</button>
-
-<button data-horizon="24h">
-24H
-</button>
-
-<button data-horizon="2d">
-2D
-</button>
-
-<button data-horizon="3d">
-3D
-</button>
-
-<button data-horizon="5d">
-5D
-</button>
-
-<button data-horizon="7d">
-7D
-</button>
+<button data-horizon="30m" class="active">30m</button>
+<button data-horizon="1h">1H</button>
+<button data-horizon="2h">2H</button>
+<button data-horizon="4h">4H</button>
+<button data-horizon="6h">6H</button>
+<button data-horizon="12h">12H</button>
+<button data-horizon="24h">24H</button>
+<button data-horizon="2d">2D</button>
+<button data-horizon="3d">3D</button>
+<button data-horizon="5d">5D</button>
+<button data-horizon="7d">7D</button>
 
 </div>
 
 <div class="chartbar">
-
-<span>
-Live 5-minute ETH/USDT chart
-</span>
-
-<span>
-● LIVE
-</span>
-
+<span>Live 5-minute ETH/USDT chart</span>
+<span>● LIVE</span>
 </div>
 
 <canvas id="chart"></canvas>
 
 <div class="chartControls">
-
-<button id="zoomOut">
-−
-</button>
-
-<span id="zoomLevel">
-1×
-</span>
-
-<button id="zoomIn">
-+
-</button>
-
-<button id="zoomReset">
-Reset
-</button>
-
+<button id="zoomOut">−</button>
+<span id="zoomLevel">1×</span>
+<button id="zoomIn">+</button>
+<button id="zoomReset">Reset</button>
 </div>
 
 <div id="chartInfo" class="small">
-Loading market data…
+Connecting to market data…
 </div>
 
 <div id="rangeOnChart" class="small">
 Forecast range: —
 </div>
 
+<div id="connectionInfo" class="connection">
+Market connection: starting…
+</div>
+
 </section>
+
 
 <section class="card">
 
 <div class="grid">
 
 <div class="box">
-<div class="label">
-Up estimate
-</div>
-<div id="bullish" class="value green">
-—
-</div>
+<div class="label">Up estimate</div>
+<div id="bullish" class="value green">—</div>
 </div>
 
 <div class="box">
-<div class="label">
-Neutral
-</div>
-<div id="neutral" class="value">
-—
-</div>
+<div class="label">Neutral</div>
+<div id="neutral" class="value">—</div>
 </div>
 
 <div class="box">
-<div class="label">
-Down estimate
-</div>
-<div id="bearish" class="value red">
-—
-</div>
+<div class="label">Down estimate</div>
+<div id="bearish" class="value red">—</div>
 </div>
 
 <div class="box">
-<div class="label">
-Walk-forward accuracy
-</div>
-<div id="confidence" class="value yellow">
-—
-</div>
+<div class="label">Walk-forward accuracy</div>
+<div id="confidence" class="value yellow">—</div>
 </div>
 
 <div class="box">
-<div class="label">
-Predicted price
-</div>
-<div id="target" class="target">
-—
-</div>
+<div class="label">Predicted price</div>
+<div id="target" class="target">—</div>
 </div>
 
 <div class="box">
-<div class="label">
-Expected range
-</div>
-<div id="range" class="value blue">
-—
-</div>
+<div class="label">Expected range</div>
+<div id="range" class="value blue">—</div>
 </div>
 
 <div class="box">
-<div class="label">
-Funding
-</div>
-<div id="funding" class="value">
-—
-</div>
+<div class="label">Funding</div>
+<div id="funding" class="value">—</div>
 </div>
 
 <div class="box">
-<div class="label">
-RSI
-</div>
-<div id="rsi" class="value">
-—
-</div>
+<div class="label">RSI</div>
+<div id="rsi" class="value">—</div>
 </div>
 
 <div class="box">
-<div class="label">
-BTC 1H
-</div>
-<div id="btc1h" class="value">
-—
-</div>
+<div class="label">BTC 1H</div>
+<div id="btc1h" class="value">—</div>
 </div>
 
 <div class="box">
-<div class="label">
-ETH Open Interest
-</div>
-<div id="openInterest" class="value">
-—
-</div>
+<div class="label">ETH Open Interest</div>
+<div id="openInterest" class="value">—</div>
 </div>
 
 </div>
+
 
 <div id="status" class="status">
-Connecting to Binance…
+Connecting to market data…
 </div>
+
 
 <div class="box" style="margin-top:10px">
 
-<div class="label">
-Predicted price time
-</div>
+<div class="label">Predicted price time</div>
 
-<div id="predictionTime" class="value blue">
-—
-</div>
+<div id="predictionTime" class="value blue">—</div>
 
-<div id="predictionCountdown" class="small">
-—
-</div>
+<div id="predictionCountdown" class="small">—</div>
 
 </div>
+
 
 <div class="diag">
 
 <div class="diagBox">
-<div class="label">
-Balanced accuracy
-</div>
-<div id="balancedAccuracy" class="v yellow">
-—
-</div>
+<div class="label">Balanced accuracy</div>
+<div id="balancedAccuracy" class="v yellow">—</div>
 </div>
 
 <div class="diagBox">
-<div class="label">
-Log loss
-</div>
-<div id="logLoss" class="v">
-—
-</div>
+<div class="label">Log loss</div>
+<div id="logLoss" class="v">—</div>
 </div>
 
 <div class="diagBox">
-<div class="label">
-Baseline
-</div>
-<div id="baselineAccuracy" class="v">
-—
-</div>
+<div class="label">Baseline</div>
+<div id="baselineAccuracy" class="v">—</div>
 </div>
 
 </div>
+
 
 <div id="modelStatus" class="small">
 Model diagnostics loading…
 </div>
 
 </section>
+
+
 <section class="card">
 
-<div class="label">
-Prediction Track Record
-</div>
+<div class="label">Prediction Track Record</div>
 
 <div id="historySummary" class="small">
 No completed predictions yet.
@@ -576,40 +395,37 @@ Waiting for prediction history…
 </div>
 
 <div class="note">
-Predictions are stored only in this browser. A prediction is evaluated
-after its locked target time using the closest available Binance 5-minute
-ETH/USDT candle. Historical results are feedback for the model and are
-not a guarantee of future performance.
+Predictions are stored only in this browser. Results are historical
+feedback and are not a guarantee of future performance.
 </div>
 
 </section>
 
+
 <section class="card">
 
-<div class="label">
-Model methodology
-</div>
+<div class="label">Model methodology</div>
 
 <div class="small">
 
-<b>Training:</b> chronological walk-forward validation followed by
-training on the available historical dataset.
+<b>Training:</b>
+Chronological walk-forward validation followed by final training.
 
 <br><br>
 
-<b>Inputs:</b> ETH momentum, EMA trend, RSI, volume, candle range,
-ATR volatility, BTC momentum/trend/RSI, and ETH/BTC relative movement.
+<b>Inputs:</b>
+ETH momentum, EMA trend, RSI, volume, candle range,
+ATR volatility, BTC momentum/trend/RSI and ETH/BTC movement.
 
 <br><br>
 
-<b>Classes:</b> Up / Neutral / Down using a point-in-time volatility
-threshold.
+<b>Classes:</b>
+Up / Neutral / Down.
 
 <br><br>
 
-<b>Validation:</b> accuracy, balanced accuracy, log loss and majority-class
-baseline are calculated from future observations that were not used to
-train each validation fold.
+<b>Validation:</b>
+Accuracy, balanced accuracy, log loss and majority-class baseline.
 
 </div>
 
@@ -617,18 +433,24 @@ train each validation fold.
 
 </main>
 
+
 <script>
 
 "use strict";
 
-const BINANCE =
-"https://api.binance.com";
 
-const FUTURES =
+/* =========================================================
+   CONFIGURATION
+========================================================= */
+
+const MARKET_API =
+"https://data-api.binance.vision";
+
+const FUTURES_API =
 "https://fapi.binance.com";
 
 const HISTORY_KEY =
-"eth_predictor_v10_history";
+"eth_predictor_v11_history";
 
 const MAX_HISTORY =
 200;
@@ -636,3404 +458,2326 @@ const MAX_HISTORY =
 const REFRESH_MS =
 60000;
 
-const horizons = {
+const REQUEST_TIMEOUT =
+12000;
 
-"30m":30,
-"1h":60,
-"2h":120,
-"4h":240,
-"6h":360,
-"12h":720,
-"24h":1440,
-"2d":2880,
-"3d":4320,
-"5d":7200,
-"7d":10080
 
+const horizons={
+ "30m":30,
+ "1h":60,
+ "2h":120,
+ "4h":240,
+ "6h":360,
+ "12h":720,
+ "24h":1440,
+ "2d":2880,
+ "3d":4320,
+ "5d":7200,
+ "7d":10080
 };
 
-let selectedHorizon =
-"30m";
 
-let liveCandles = [];
-
-let currentPrice = NaN;
-
-let currentPrediction = null;
-
-let modelResult = null;
-
-let zoomFactor = 1;
-
-let chartOffset = 0;
-
-let isDragging = false;
-
-let dragStartX = 0;
-
-let dragStartOffset = 0;
-
-let lastTouchDistance = null;
-
-let refreshTimer = null;
+let selectedHorizon="30m";
+let liveCandles=[];
+let currentPrice=NaN;
+let currentPrediction=null;
+let zoomFactor=1;
+let chartOffset=0;
+let isDragging=false;
+let dragStartX=0;
+let dragStartOffset=0;
+let lastTouchDistance=null;
+let refreshBusy=false;
 
 
-/* -------------------------------------------------
-   BASIC HELPERS
-------------------------------------------------- */
+/* =========================================================
+   HELPERS
+========================================================= */
 
 function $(id){
+ return document.getElementById(id);
+}
 
-return document.getElementById(id);
 
+function clamp(x,a,b){
+ return Math.max(a,Math.min(b,x));
+}
+
+
+function mean(a){
+ if(!a.length)return 0;
+ return a.reduce((s,x)=>s+x,0)/a.length;
+}
+
+
+function std(a){
+ if(a.length<2)return 0;
+ const m=mean(a);
+ return Math.sqrt(
+  mean(a.map(x=>(x-m)*(x-m)))
+ );
 }
 
 
 function fmtPrice(x){
 
-if(!Number.isFinite(x))
-return "—";
+ if(!Number.isFinite(x))return "—";
 
-if(x >= 1000)
-return x.toLocaleString(
-"en-US",
-{
-minimumFractionDigits:2,
-maximumFractionDigits:2
-}
-);
+ if(x>=1000){
+  return x.toLocaleString(
+   "en-US",
+   {
+    minimumFractionDigits:2,
+    maximumFractionDigits:2
+   }
+  );
+ }
 
-if(x >= 1)
-return x.toFixed(2);
+ if(x>=1)return x.toFixed(2);
 
-return x.toFixed(4);
-
+ return x.toFixed(4);
 }
 
 
 function fmtPct(x){
 
-if(!Number.isFinite(x))
-return "—";
+ if(!Number.isFinite(x))return "—";
 
-const sign =
-x > 0 ? "+" : "";
+ const sign=x>0?"+":"";
 
-return sign + x.toFixed(2) + "%";
-
-}
-
-
-function clamp(x,a,b){
-
-return Math.max(a,Math.min(b,x));
-
-}
-
-
-function mean(a){
-
-if(!a.length)
-return 0;
-
-return a.reduce(
-(s,x)=>s+x,
-0
-)/a.length;
-
-}
-
-
-function std(a){
-
-if(a.length < 2)
-return 0;
-
-const m = mean(a);
-
-return Math.sqrt(
-mean(
-a.map(
-x=>(x-m)*(x-m)
-)
-)
-);
-
-}
-
-
-function median(a){
-
-if(!a.length)
-return 0;
-
-const b = [...a].sort(
-(a,b)=>a-b
-);
-
-const mid =
-Math.floor(b.length/2);
-
-return b.length % 2
-? b[mid]
-: (b[mid-1]+b[mid])/2;
-
-}
-
-
-function sigmoid(x){
-
-if(x < -30)
-return 0;
-
-if(x > 30)
-return 1;
-
-return 1/(1+Math.exp(-x));
-
-}
-
-
-function softmax(z){
-
-const mx =
-Math.max(...z);
-
-const e =
-z.map(
-x=>Math.exp(x-mx)
-);
-
-const s =
-e.reduce(
-(a,b)=>a+b,
-0
-);
-
-return e.map(
-x=>x/s
-);
-
-}
-
-
-function safeNum(x){
-
-const n =
-Number(x);
-
-return Number.isFinite(n)
-? n
-: NaN;
-
-}
-
-
-/* -------------------------------------------------
-   TIME / HORIZON HELPERS
-------------------------------------------------- */
-
-function horizonMinutes(){
-
-return horizons[selectedHorizon];
-
-}
-
-
-function intervalForHorizon(){
-
-const m =
-horizonMinutes();
-
-if(m <= 240)
-return "5m";
-
-if(m <= 1440)
-return "15m";
-
-if(m <= 4320)
-return "1h";
-
-return "4h";
-
-}
-
-
-function intervalMinutes(interval){
-
-const map = {
-
-"5m":5,
-"15m":15,
-"1h":60,
-"4h":240
-
-};
-
-return map[interval] || 5;
-
-}
-
-
-function roundUpToFiveMinutes(ms){
-
-const five =
-5 * 60 * 1000;
-
-return Math.ceil(ms/five)*five;
-
-}
-
-
-function makeTargetTime(){
-
-const now =
-Date.now();
-
-const raw =
-now +
-horizonMinutes()*60*1000;
-
-return roundUpToFiveMinutes(raw);
-
+ return sign+x.toFixed(2)+"%";
 }
 
 
 function formatDate(ms){
 
-if(!Number.isFinite(ms))
-return "—";
+ if(!Number.isFinite(ms))return "—";
 
-return new Date(ms).toLocaleString(
-"en-IN",
-{
-year:"numeric",
-month:"short",
-day:"2-digit",
-hour:"2-digit",
-minute:"2-digit",
-second:"2-digit",
-hour12:true
-}
-);
-
-
+ return new Date(ms).toLocaleString(
+  "en-IN",
+  {
+   year:"numeric",
+   month:"short",
+   day:"2-digit",
+   hour:"2-digit",
+   minute:"2-digit",
+   second:"2-digit",
+   hour12:true
+  }
+ );
 }
 
 
 function formatCountdown(target){
 
-if(!target)
-return "—";
+ if(!target)return "—";
 
-const diff =
-target-Date.now();
+ const diff=target-Date.now();
 
-if(diff <= 0)
-return "Target time reached — evaluating…";
+ if(diff<=0)
+  return "Target time reached — evaluating…";
 
-let seconds =
-Math.floor(diff/1000);
+ let s=Math.floor(diff/1000);
 
-const d =
-Math.floor(seconds/86400);
+ const d=Math.floor(s/86400);
+ s%=86400;
 
-seconds %= 86400;
+ const h=Math.floor(s/3600);
+ s%=3600;
 
-const h =
-Math.floor(seconds/3600);
+ const m=Math.floor(s/60);
+ s%=60;
 
-seconds %= 3600;
+ const parts=[];
 
-const m =
-Math.floor(seconds/60);
+ if(d)parts.push(d+"d");
+ if(h||d)parts.push(h+"h");
+ if(m||h||d)parts.push(m+"m");
 
-const s =
-seconds%60;
+ parts.push(s+"s");
 
-const parts = [];
-
-if(d)
-parts.push(d+"d");
-
-if(h || d)
-parts.push(h+"h");
-
-if(m || h || d)
-parts.push(m+"m");
-
-parts.push(s+"s");
-
-return "Locked target countdown: "
-+ parts.join(" ");
-
+ return "Locked target countdown: "+
+ parts.join(" ");
 }
 
 
-/* -------------------------------------------------
-   LOCAL PREDICTION HISTORY
-------------------------------------------------- */
+function softmax(z){
 
-function loadHistory(){
+ const mx=Math.max(...z);
 
-try{
+ const e=z.map(x=>Math.exp(x-mx));
 
-const raw =
-localStorage.getItem(
-HISTORY_KEY
-);
+ const s=e.reduce((a,b)=>a+b,0);
 
-if(!raw)
-return [];
-
-const parsed =
-JSON.parse(raw);
-
-return Array.isArray(parsed)
-? parsed
-: [];
-
-}catch(e){
-
-return [];
-
-}
-
+ return e.map(x=>x/s);
 }
 
 
-function saveHistory(history){
+function dot(a,b){
 
-try{
+ let s=0;
 
-localStorage.setItem(
-HISTORY_KEY,
-JSON.stringify(
-history.slice(-MAX_HISTORY)
-)
-);
+ for(let i=0;i<a.length;i++)
+  s+=a[i]*b[i];
 
-}catch(e){}
-
+ return s;
 }
 
 
-function getPendingPrediction(){
+function argMax(a){
 
-const history =
-loadHistory();
+ let best=0;
 
-const pending =
-history
-.filter(
-x =>
-!x.evaluated &&
-Number.isFinite(x.targetTime)
-)
-.sort(
-(a,b)=>
-b.createdAt-a.createdAt
-)[0];
+ for(let i=1;i<a.length;i++)
+  if(a[i]>a[best])best=i;
 
-return pending || null;
-
+ return best;
 }
 
 
-function createLockedPrediction(pred){
+/* =========================================================
+   API WITH TIMEOUT + FALLBACK
+========================================================= */
 
-const history =
-loadHistory();
+async function fetchWithTimeout(url){
 
-const existing =
-history.find(
-x =>
-!x.evaluated &&
-x.horizon === selectedHorizon
-);
+ const controller=
+  new AbortController();
 
-if(existing)
-return existing;
+ const timer=setTimeout(
+  ()=>controller.abort(),
+  REQUEST_TIMEOUT
+ );
 
-const item = {
+ try{
 
-id:
-Date.now()+"_"+Math.random()
-.toString(36)
-.slice(2),
+  const response=
+   await fetch(
+    url,
+    {
+     method:"GET",
+     cache:"no-store",
+     signal:controller.signal
+    }
+   );
 
-createdAt:
-Date.now(),
+  if(!response.ok)
+   throw new Error(
+    "HTTP "+response.status
+   );
 
-targetTime:
-makeTargetTime(),
+  return await response.json();
 
-horizon:
-selectedHorizon,
+ }catch(error){
 
-createdPrice:
-pred.createdPrice,
+  if(error.name==="AbortError")
+   throw new Error(
+    "Request timed out"
+   );
 
-predictedPrice:
-pred.predictedPrice,
+  throw error;
 
-low:
-pred.low,
+ }finally{
 
-high:
-pred.high,
+  clearTimeout(timer);
 
-probabilities:
-pred.probabilities,
-
-validation:
-pred.validation,
-
-modelVersion:
-"V10",
-
-evaluated:false
-
-};
-
-history.push(item);
-
-saveHistory(history);
-
-return item;
-
+ }
 }
 
 
-async function evaluateCompletedPredictions(){
+async function fetchMarketJSON(path){
 
-const history =
-loadHistory();
+ const endpoints=[
+  MARKET_API+path,
+  "https://api.binance.com"+path
+ ];
 
-const pending =
-history.filter(
-x =>
-!x.evaluated &&
-Number.isFinite(x.targetTime) &&
-x.targetTime <= Date.now()
-);
+ let lastError=null;
 
-if(!pending.length)
-return;
+ for(const url of endpoints){
 
-for(const item of pending){
+  try{
 
-try{
+   const result=
+    await fetchWithTimeout(url);
 
-const start =
-item.targetTime -
-10*60*1000;
+   $("connectionInfo").textContent=
+    "Market connection: Binance public market data ✓";
 
-const end =
-item.targetTime +
-10*60*1000;
+   return result;
 
-const url =
-BINANCE+
-"/api/v3/klines?symbol=ETHUSDT&interval=5m"+
-"&startTime="+start+
-"&endTime="+end+
-"&limit=10";
+  }catch(error){
 
-const response =
-await fetch(url);
+   lastError=error;
 
-if(!response.ok)
-continue;
+  }
 
-const rows =
-await response.json();
+ }
 
-if(!rows.length)
-continue;
-
-let closest =
-rows[0];
-
-let bestDistance =
-Math.abs(
-Number(rows[0][0])-
-item.targetTime
-);
-
-for(const row of rows){
-
-const distance =
-Math.abs(
-Number(row[0])-
-item.targetTime
-);
-
-if(distance < bestDistance){
-
-closest = row;
-
-bestDistance = distance;
-
-}
-
-}
-
-const actualPrice =
-Number(closest[4]);
-
-if(!Number.isFinite(actualPrice))
-continue;
-
-item.actualPrice =
-actualPrice;
-
-item.errorPct =
-((actualPrice-item.predictedPrice)/
-item.predictedPrice)*100;
-
-item.actualReturnPct =
-((actualPrice-item.createdPrice)/
-item.createdPrice)*100;
-
-const predictedDirection =
-item.predictedPrice >
-item.createdPrice
-? 1
-: item.predictedPrice <
-item.createdPrice
-? -1
-: 0;
-
-const actualDirection =
-actualPrice >
-item.createdPrice
-? 1
-: actualPrice <
-item.createdPrice
-? -1
-: 0;
-
-item.directionCorrect =
-predictedDirection === actualDirection;
-
-item.evaluated = true;
-
-item.evaluatedAt =
-Date.now();
-
-}catch(e){}
-
-}
-
-saveHistory(history);
-
-}
-
-
-/* -------------------------------------------------
-   HISTORY DISPLAY
-------------------------------------------------- */
-
-function renderHistory(){
-
-const history =
-loadHistory();
-
-const completed =
-history.filter(
-x=>x.evaluated
-);
-
-const summary =
-$("historySummary");
-
-const list =
-$("historyList");
-
-if(!completed.length){
-
-summary.textContent =
-"No completed predictions yet. "
-+"The first prediction will be evaluated after its locked target time.";
-
-list.textContent =
-"";
-
-return;
-
-}
-
-const correct =
-completed.filter(
-x=>x.directionCorrect
-).length;
-
-const accuracy =
-100*correct/completed.length;
-
-const mae =
-mean(
-completed
-.filter(
-x=>Number.isFinite(x.errorPct)
-)
-.map(
-x=>Math.abs(x.errorPct)
-)
-);
-
-summary.innerHTML =
-"<b>"+completed.length+
-"</b> completed predictions • "+
-"<b>"+accuracy.toFixed(1)+
-"%</b> directional accuracy • "+
-"<b>"+mae.toFixed(2)+
-"%</b> mean absolute price error";
-
-const recent =
-completed
-.slice(-5)
-.reverse();
-
-list.innerHTML =
-recent.map(
-x=>{
-
-const result =
-x.directionCorrect
-? '<span class="green">✓ Direction correct</span>'
-: '<span class="red">✕ Direction wrong</span>';
-
-return `
-<div style="
-padding:9px 0;
-border-bottom:1px solid var(--line);
-">
-<b>${x.horizon}</b>
- • Target ${formatDate(x.targetTime)}
-<br>
-Predicted:
-${fmtPrice(x.predictedPrice)}
- • Actual:
-${fmtPrice(x.actualPrice)}
-<br>
-Error:
-${fmtPct(x.errorPct)}
- • ${result}
-</div>
-`;
-
-}
-).join("");
-
-}
-
-
-/* -------------------------------------------------
-   API HELPERS
-------------------------------------------------- */
-
-async function fetchJSON(url){
-
-const r =
-await fetch(url);
-
-if(!r.ok)
-throw new Error(
-"HTTP "+r.status
-);
-
-return await r.json();
-
+ throw new Error(
+  "Binance market data unavailable: "+
+  (lastError?.message||"connection failed")
+ );
 }
 
 
 async function fetchKlines(
-symbol,
-interval,
-limit
+ symbol,
+ interval,
+ limit
 ){
 
-const url =
-BINANCE+
-"/api/v3/klines?symbol="+
-symbol+
-"&interval="+
-interval+
-"&limit="+
-limit;
+ const path=
+  "/api/v3/klines"+
+  "?symbol="+symbol+
+  "&interval="+interval+
+  "&limit="+limit;
 
-return await fetchJSON(url);
+ return await fetchMarketJSON(path);
+}
+
+
+async function fetchFutures(path){
+
+ return await fetchWithTimeout(
+  FUTURES_API+path
+ );
 
 }
 
 
-async function fetchFuturesJSON(
-path
-){
-
-return await fetchJSON(
-FUTURES+path
-);
-
-}
-
+/* =========================================================
+   CANDLE DATA
+========================================================= */
 
 function parseKlines(rows){
 
-return rows.map(
-r=>({
-
-time:Number(r[0]),
-
-open:Number(r[1]),
-
-high:Number(r[2]),
-
-low:Number(r[3]),
-
-close:Number(r[4]),
-
-volume:Number(r[5])
-
-})
-);
+ return rows.map(r=>({
+  time:Number(r[0]),
+  open:Number(r[1]),
+  high:Number(r[2]),
+  low:Number(r[3]),
+  close:Number(r[4]),
+  volume:Number(r[5])
+ }));
 
 }
 
 
 function returnsFromCandles(c){
 
-const out=[];
+ const r=[];
 
-for(let i=1;i<c.length;i++){
+ for(let i=1;i<c.length;i++){
 
-if(c[i-1].close > 0){
+  if(c[i-1].close>0)
+   r.push(
+    c[i].close/c[i-1].close-1
+   );
 
-out.push(
-c[i].close/
-c[i-1].close-1
-);
+ }
 
-}
-
-}
-
-return out;
-
-}
- function calcRSI(closes, period=14){
-
-if(closes.length <= period)
-return 50;
-
-let gains = 0;
-let losses = 0;
-
-for(let i=closes.length-period;i<closes.length;i++){
-
-const change =
-closes[i]-closes[i-1];
-
-if(change >= 0)
-gains += change;
-else
-losses -= change;
-
-}
-
-const avgGain =
-gains/period;
-
-const avgLoss =
-losses/period;
-
-if(avgLoss === 0)
-return 100;
-
-const rs =
-avgGain/avgLoss;
-
-return 100-(100/(1+rs));
-
+ return r;
 }
 
 
-function ema(values, period){
+/* =========================================================
+   INDICATORS
+========================================================= */
 
-if(!values.length)
-return [];
+function calcRSI(closes,period=14){
 
-const k =
-2/(period+1);
+ if(closes.length<=period)
+  return 50;
 
-const out =
-new Array(values.length);
+ let gains=0;
+ let losses=0;
 
-out[0] =
-values[0];
+ for(
+  let i=closes.length-period;
+  i<closes.length;
+  i++
+ ){
 
-for(let i=1;i<values.length;i++){
+  const change=
+   closes[i]-closes[i-1];
 
-out[i] =
-values[i]*k+
-out[i-1]*(1-k);
+  if(change>=0)
+   gains+=change;
+  else
+   losses-=change;
+ }
 
+ const avgGain=gains/period;
+ const avgLoss=losses/period;
+
+ if(avgLoss===0)return 100;
+
+ const rs=avgGain/avgLoss;
+
+ return 100-(100/(1+rs));
 }
 
-return out;
 
+function ema(values,period){
+
+ if(!values.length)return [];
+
+ const k=2/(period+1);
+
+ const out=new Array(values.length);
+
+ out[0]=values[0];
+
+ for(let i=1;i<values.length;i++){
+
+  out[i]=
+   values[i]*k+
+   out[i-1]*(1-k);
+
+ }
+
+ return out;
 }
 
 
 function emaLast(values,period){
 
-const e =
-ema(values,period);
+ const e=ema(values,period);
 
-return e.length
-? e[e.length-1]
-: NaN;
-
+ return e.length?e[e.length-1]:NaN;
 }
 
 
 function volumeZScore(candles,period=30){
 
-if(candles.length < period)
-return 0;
+ if(candles.length<period)return 0;
 
-const volumes =
-candles
-.slice(-period)
-.map(x=>x.volume);
+ const v=
+  candles
+   .slice(-period)
+   .map(x=>x.volume);
 
-const m =
-mean(volumes);
+ const m=mean(v);
+ const s=std(v);
 
-const s =
-std(volumes);
+ if(!s)return 0;
 
-if(s === 0)
-return 0;
-
-return (
-volumes[volumes.length-1]-m
-)/s;
-
+ return (
+  v[v.length-1]-m
+ )/s;
 }
 
 
 function candleRangePct(c){
 
-if(!c || c.close <= 0)
-return 0;
+ if(!c||c.close<=0)return 0;
 
-return (
-c.high-c.low
-)/c.close;
-
+ return (c.high-c.low)/c.close;
 }
 
 
 function atrPct(candles,period=14){
 
-if(candles.length <= period)
-return 0;
+ if(candles.length<=period)return 0;
 
-const tr=[];
+ const tr=[];
 
-for(let i=1;i<candles.length;i++){
+ for(let i=1;i<candles.length;i++){
 
-const c =
-candles[i];
+  const c=candles[i];
+  const p=candles[i-1];
 
-const prev =
-candles[i-1];
+  tr.push(
+   Math.max(
+    c.high-c.low,
+    Math.abs(c.high-p.close),
+    Math.abs(c.low-p.close)
+   )
+  );
+ }
 
-const trueRange =
-Math.max(
-c.high-c.low,
-Math.abs(c.high-prev.close),
-Math.abs(c.low-prev.close)
-);
+ const atr=mean(
+  tr.slice(-period)
+ );
 
-tr.push(trueRange);
-
+ return candles[candles.length-1].close>0
+  ?atr/candles[candles.length-1].close
+  :0;
 }
 
-const recent =
-tr.slice(-period);
 
-const atr =
-mean(recent);
-
-const close =
-candles[candles.length-1].close;
-
-return close > 0
-? atr/close
-: 0;
-
-}
-
+/* =========================================================
+   FEATURES
+========================================================= */
 
 function candleFeatureVector(
-eth,
-btc,
-index
+ eth,
+ btc,
+ index
 ){
 
-if(
-index < 48 ||
-index >= eth.length ||
-index >= btc.length
-)
-return null;
+ if(
+  index<48||
+  index>=eth.length||
+  index>=btc.length
+ )
+ return null;
 
-const e =
-eth.slice(0,index+1);
+ const e=eth.slice(0,index+1);
+ const b=btc.slice(0,index+1);
 
-const b =
-btc.slice(0,index+1);
+ const ec=e.map(x=>x.close);
+ const bc=b.map(x=>x.close);
 
-const ec =
-e.map(x=>x.close);
+ const eNow=ec.at(-1);
+ const bNow=bc.at(-1);
 
-const bc =
-b.map(x=>x.close);
+ const eth1=
+  eNow/ec.at(-2)-1;
 
-const eNow =
-ec[ec.length-1];
+ const eth3=
+  eNow/ec.at(-4)-1;
 
-const bNow =
-bc[bc.length-1];
+ const eth12=
+  eNow/ec.at(-13)-1;
 
-const eth1 =
-ec.length >= 2
-? eNow/ec[ec.length-2]-1
-: 0;
+ const e12=emaLast(ec,12);
+ const e48=emaLast(ec,48);
 
-const eth3 =
-ec.length >= 4
-? eNow/ec[ec.length-4]-1
-: 0;
+ const ethTrend=
+  e48?e12/e48-1:0;
 
-const eth12 =
-ec.length >= 13
-? eNow/ec[ec.length-13]-1
-: 0;
+ const ethRSI=
+  (calcRSI(ec)-50)/50;
 
-const ethEma12 =
-emaLast(ec,12);
+ const volZ=
+  clamp(
+   volumeZScore(e,30),
+   -4,4
+  )/4;
 
-const ethEma48 =
-emaLast(ec,48);
+ const range=
+  clamp(
+   candleRangePct(e.at(-1)),
+   0,.2
+  )/.2;
 
-const ethTrend =
-ethEma48
-? ethEma12/ethEma48-1
-: 0;
+ const atr=
+  clamp(
+   atrPct(e,14),
+   0,.1
+  )/.1;
 
-const ethRSI =
-(calcRSI(ec)-50)/50;
+ const btc1=
+  bNow/bc.at(-2)-1;
 
-const volZ =
-clamp(
-volumeZScore(e,30),
--4,
-4
-)/4;
+ const btc3=
+  bNow/bc.at(-4)-1;
 
-const range =
-clamp(
-candleRangePct(e[e.length-1]),
-0,
-0.2
-)/0.2;
+ const b12=emaLast(bc,12);
+ const b48=emaLast(bc,48);
 
-const atr =
-clamp(
-atrPct(e,14),
-0,
-0.1
-)/0.1;
+ const btcTrend=
+  b48?b12/b48-1:0;
 
-const btc1 =
-bc.length >= 2
-? bNow/bc[bc.length-2]-1
-: 0;
+ const btcRSI=
+  (calcRSI(bc)-50)/50;
 
-const btc3 =
-bc.length >= 4
-? bNow/bc[bc.length-4]-1
-: 0;
+ const ethBtc=
+  eth1-btc1;
 
-const btcEma12 =
-emaLast(bc,12);
+ return [
 
-const btcEma48 =
-emaLast(bc,48);
+  clamp(eth1,-.05,.05)/.05,
 
-const btcTrend =
-btcEma48
-? btcEma12/btcEma48-1
-: 0;
+  clamp(eth3,-.10,.10)/.10,
 
-const btcRSI =
-(calcRSI(bc)-50)/50;
+  clamp(eth12,-.25,.25)/.25,
 
-const ethBtcReturn =
-(
-eth1-btc1
-);
+  clamp(ethTrend,-.10,.10)/.10,
 
-return [
+  ethRSI,
 
-clamp(eth1,-0.05,0.05)/0.05,
+  volZ,
 
-clamp(eth3,-0.10,0.10)/0.10,
+  range,
 
-clamp(eth12,-0.25,0.25)/0.25,
+  atr,
 
-clamp(ethTrend,-0.10,0.10)/0.10,
+  clamp(btc1,-.05,.05)/.05,
 
-ethRSI,
+  clamp(btc3,-.10,.10)/.10,
 
-volZ,
+  clamp(btcTrend,-.10,.10)/.10,
 
-range,
+  btcRSI,
 
-atr,
+  clamp(ethBtc,-.05,.05)/.05
 
-clamp(btc1,-0.05,0.05)/0.05,
-
-clamp(btc3,-0.10,0.10)/0.10,
-
-clamp(btcTrend,-0.10,0.10)/0.10,
-
-btcRSI,
-
-clamp(
-ethBtcReturn,
--0.05,
-0.05
-)/0.05
-
-];
-
+ ];
 }
 
 
-function featureNames(){
+/* =========================================================
+   DATASET
+========================================================= */
 
-return [
+function intervalForHorizon(){
 
-"ETH 1-bar return",
+ const m=horizons[selectedHorizon];
 
-"ETH 3-bar return",
+ if(m<=240)return "5m";
+ if(m<=1440)return "15m";
+ if(m<=4320)return "1h";
 
-"ETH 12-bar return",
-
-"ETH EMA trend",
-
-"ETH RSI",
-
-"ETH volume z-score",
-
-"ETH candle range",
-
-"ETH ATR%",
-
-"BTC 1-bar return",
-
-"BTC 3-bar return",
-
-"BTC EMA trend",
-
-"BTC RSI",
-
-"ETH/BTC return"
-
-];
-
+ return "4h";
 }
 
 
-/* -------------------------------------------------
-   POINT-IN-TIME NEUTRAL THRESHOLD
-------------------------------------------------- */
+function intervalMinutes(i){
+
+ if(i==="5m")return 5;
+ if(i==="15m")return 15;
+ if(i==="1h")return 60;
+
+ return 240;
+}
+
+
+function horizonMinutes(){
+
+ return horizons[selectedHorizon];
+}
+
 
 function localVolatilityThreshold(
-eth,
-index
+ eth,
+ index
 ){
 
-const closes =
-eth
-.slice(
-Math.max(1,index-30),
-index+1
-)
-.map(
-x=>x.close
-);
+ const start=
+  Math.max(1,index-30);
 
-const r =
-returnsFromCandles(
-closes.map(
-x=>({
-close:x
-})
-)
-);
+ const values=
+  eth.slice(start,index+1)
+  .map(x=>x.close);
 
-if(r.length < 10)
-return 0.0025;
+ const r=[];
 
-const sigma =
-std(
-r.map(
-x=>Math.abs(x)
-)
-);
+ for(let i=1;i<values.length;i++)
+  r.push(
+   values[i]/values[i-1]-1
+  );
 
-return clamp(
-sigma*1.5,
-0.0015,
-0.02
-);
+ if(r.length<10)
+  return .0025;
 
+ return clamp(
+  std(r)*1.5,
+  .0015,
+  .02
+ );
 }
 
 
-function makeClass(
-futureReturn,
-threshold
-){
+function makeClass(r,t){
 
-if(
-futureReturn > threshold
-)
-return 2;
+ if(r>t)return 2;
+ if(r<-t)return 0;
 
-if(
-futureReturn < -threshold
-)
-return 0;
-
-return 1;
-
+ return 1;
 }
 
-
-/* -------------------------------------------------
-   DATASET CREATION
-------------------------------------------------- */
 
 function buildDataset(
-eth,
-btc,
-horizonBars
+ eth,
+ btc,
+ horizonBars
 ){
 
-const X=[];
-const y=[];
-const meta=[];
+ const X=[];
+ const y=[];
 
-const start =
-Math.max(
-50,
-horizonBars+2
-);
+ const start=
+  Math.max(50,horizonBars+2);
 
-const end =
-Math.min(
-eth.length,
-btc.length
-) - horizonBars - 1;
+ const end=
+  Math.min(
+   eth.length,
+   btc.length
+  )-horizonBars-1;
 
-for(
-let i=start;
-i<end;
-i++
-){
+ for(let i=start;i<end;i++){
 
-const features =
-candleFeatureVector(
-eth,
-btc,
-i
-);
+  const features=
+   candleFeatureVector(
+    eth,
+    btc,
+    i
+   );
 
-if(!features)
-continue;
+  if(!features)continue;
 
-const now =
-eth[i].close;
+  const now=eth[i].close;
+  const future=
+   eth[i+horizonBars].close;
 
-const future =
-eth[i+horizonBars].close;
+  if(!Number.isFinite(now)||
+     !Number.isFinite(future)||
+     now<=0)
+   continue;
 
-if(
-!Number.isFinite(now) ||
-!Number.isFinite(future) ||
-now <= 0
-)
-continue;
+  const futureReturn=
+   future/now-1;
 
-const futureReturn =
-future/now-1;
+  const threshold=
+   localVolatilityThreshold(
+    eth,
+    i
+   );
 
-const threshold =
-localVolatilityThreshold(
-eth,
-i
-);
+  X.push(features);
 
-const cls =
-makeClass(
-futureReturn,
-threshold
-);
+  y.push(
+   makeClass(
+    futureReturn,
+    threshold
+   )
+  );
+ }
 
-X.push(features);
-
-y.push(cls);
-
-meta.push({
-
-index:i,
-
-futureReturn,
-
-threshold
-
-});
-
-}
-
-return {
-X,
-y,
-meta
-};
-
+ return {X,y};
 }
 
 
-/* -------------------------------------------------
-   SIMPLE MULTICLASS LOGISTIC MODEL
-------------------------------------------------- */
-
-function dot(a,b){
-
-let s=0;
-
-for(
-let i=0;
-i<a.length;
-i++
-){
-
-s +=
-a[i]*b[i];
-
-}
-
-return s;
-
-}
-
+/* =========================================================
+   SOFTMAX MODEL
+========================================================= */
 
 function addIntercept(x){
-
-return [1,...x];
-
+ return [1,...x];
 }
 
 
 function trainSoftmax(
-X,
-y,
-options={}
+ X,
+ y,
+ options={}
 ){
 
-const epochs =
-options.epochs || 180;
+ const epochs=
+  options.epochs||160;
 
-const lr =
-options.lr || 0.025;
+ const lr=
+  options.lr||.025;
 
-const l2 =
-options.l2 || 0.002;
+ const l2=
+  options.l2||.002;
 
-if(
-!X.length ||
-!y.length
-)
-return null;
+ const d=X[0].length+1;
 
-const d =
-X[0].length+1;
+ const W=
+  Array.from(
+   {length:3},
+   ()=>Array(d).fill(0)
+  );
 
-const W =
-Array.from(
-{length:3},
-() =>
-Array(d).fill(0)
-);
+ for(
+  let epoch=0;
+  epoch<epochs;
+  epoch++
+ ){
 
-for(
-let epoch=0;
-epoch<epochs;
-epoch++
-){
+  for(
+   let i=0;
+   i<X.length;
+   i++
+  ){
 
-const order =
-Array.from(
-{length:X.length},
-(_,i)=>i
-);
+   const x=
+    addIntercept(X[i]);
 
-for(
-let i=order.length-1;
-i>0;
-i--
-){
+   const p=
+    softmax(
+     W.map(w=>dot(w,x))
+    );
 
-const j =
-Math.floor(
-Math.random()*(i+1)
-);
+   for(let k=0;k<3;k++){
 
-[
-order[i],
-order[j]
-] =
-[
-order[j],
-order[i]
-];
+    const target=
+     y[i]===k?1:0;
 
-}
+    const err=
+     p[k]-target;
 
-for(
-const idx of order
-){
+    for(let j=0;j<d;j++){
 
-const x =
-addIntercept(X[idx]);
+     const reg=
+      j===0?0:l2*W[k][j];
 
-const scores =
-W.map(
-w=>dot(w,x)
-);
+     W[k][j]-=
+      lr*(err*x[j]+reg);
+    }
+   }
+  }
+ }
 
-const p =
-softmax(scores);
-
-for(
-let k=0;
-k<3;
-k++
-){
-
-const target =
-y[idx]===k ? 1 : 0;
-
-const err =
-p[k]-target;
-
-for(
-let j=0;
-j<d;
-j++
-){
-
-const reg =
-j===0
-? 0
-: l2*W[k][j];
-
-W[k][j] -=
-lr*(
-err*x[j]+reg
-);
-
-}
-
-}
-
-}
-
-}
-
-return {
-W,
-features:d-1
-};
-
+ return {W};
 }
 
 
-function predictModel(
-model,
-x
-){
+function predictModel(model,x){
 
-const xx =
-addIntercept(x);
+ const xx=addIntercept(x);
 
-const scores =
-model.W.map(
-w=>dot(w,xx)
-);
-
-return softmax(scores);
-
+ return softmax(
+  model.W.map(
+   w=>dot(w,xx)
+  )
+ );
 }
 
 
-/* -------------------------------------------------
-   METRICS
-------------------------------------------------- */
+/* =========================================================
+   VALIDATION
+========================================================= */
 
-function argMax(a){
+function accuracy(pred,labels){
 
-let best=0;
+ if(!labels.length)return 0;
 
-for(
-let i=1;
-i<a.length;
-i++
-){
+ let correct=0;
 
-if(a[i]>a[best])
-best=i;
+ for(let i=0;i<labels.length;i++)
+  if(
+   argMax(pred[i])===labels[i]
+  )
+   correct++;
 
-}
-
-return best;
-
-}
-
-
-function logLoss(
-predictions,
-labels
-){
-
-let total=0;
-
-for(
-let i=0;
-i<labels.length;
-i++
-){
-
-const p =
-clamp(
-predictions[i][labels[i]],
-1e-12,
-1
-);
-
-total -=
-Math.log(p);
-
-}
-
-return total/labels.length;
-
-}
-
-
-function accuracy(
-predictions,
-labels
-){
-
-if(!labels.length)
-return 0;
-
-let correct=0;
-
-for(
-let i=0;
-i<labels.length;
-i++
-){
-
-if(
-argMax(predictions[i])===
-labels[i]
-)
-correct++;
-
-}
-
-return correct/labels.length;
-
+ return correct/labels.length;
 }
 
 
 function balancedAccuracy(
-predictions,
-labels
+ pred,
+ labels
 ){
 
-const recalls =
-[];
+ const recalls=[];
 
-for(
-let cls=0;
-cls<3;
-cls++
-){
+ for(let cls=0;cls<3;cls++){
 
-let total=0;
-let correct=0;
+  let total=0;
+  let correct=0;
 
-for(
-let i=0;
-i<labels.length;
-i++
-){
+  for(
+   let i=0;
+   i<labels.length;
+   i++
+  ){
 
-if(labels[i]===cls){
+   if(labels[i]===cls){
 
-total++;
+    total++;
 
-if(
-argMax(predictions[i])===cls
-)
-correct++;
+    if(
+     argMax(pred[i])===cls
+    )
+     correct++;
+   }
+  }
 
+  if(total)
+   recalls.push(
+    correct/total
+   );
+ }
+
+ return recalls.length
+  ?mean(recalls)
+  :0;
 }
 
-}
 
-if(total)
-recalls.push(
-correct/total
-);
+function logLoss(pred,labels){
 
-}
+ if(!labels.length)return 0;
 
-return recalls.length
-? mean(recalls)
-: 0;
+ let total=0;
 
+ for(let i=0;i<labels.length;i++){
+
+  const p=
+   clamp(
+    pred[i][labels[i]],
+    1e-12,
+    1
+   );
+
+  total-=Math.log(p);
+ }
+
+ return total/labels.length;
 }
 
 
 function majorityBaseline(labels){
 
-if(!labels.length)
-return 0;
+ if(!labels.length)return 0;
 
-const counts =
-[0,0,0];
+ const c=[0,0,0];
 
-for(
-const y of labels
-)
-counts[y]++;
+ labels.forEach(x=>c[x]++);
 
-return Math.max(
-...counts
-)/labels.length;
-
-}
- function walkForwardValidation(X,y){
-
-if(X.length < 180){
-
-return {
-accuracy:NaN,
-balancedAccuracy:NaN,
-logLoss:NaN,
-baseline:majorityBaseline(y),
-folds:0
-};
-
-}
-
-const n =
-X.length;
-
-const initialTrain =
-Math.max(
-120,
-Math.floor(n*0.45)
-);
-
-const testSize =
-Math.max(
-30,
-Math.floor(n*0.10)
-);
-
-let allPredictions=[];
-let allLabels=[];
-
-let start =
-initialTrain;
-
-let folds=0;
-
-while(
-start < n
-){
-
-const end =
-Math.min(
-start+testSize,
-n
-);
-
-const trainX =
-X.slice(0,start);
-
-const trainY =
-y.slice(0,start);
-
-const testX =
-X.slice(start,end);
-
-const testY =
-y.slice(start,end);
-
-if(
-trainX.length < 30 ||
-testX.length < 1
-)
-break;
-
-const model =
-trainSoftmax(
-trainX,
-trainY,
-{
-epochs:150,
-lr:0.025,
-l2:0.002
-}
-);
-
-for(
-let i=0;
-i<testX.length;
-i++
-){
-
-allPredictions.push(
-predictModel(
-model,
-testX[i]
-)
-);
-
-allLabels.push(
-testY[i]
-);
-
-}
-
-folds++;
-
-start=end;
-
-}
-
-return {
-
-accuracy:
-accuracy(
-allPredictions,
-allLabels
-),
-
-balancedAccuracy:
-balancedAccuracy(
-allPredictions,
-allLabels
-),
-
-logLoss:
-logLoss(
-allPredictions,
-allLabels
-),
-
-baseline:
-majorityBaseline(
-allLabels
-),
-
-folds,
-
-samples:
-allLabels.length
-
-};
-
+ return Math.max(...c)/labels.length;
 }
 
 
-/* -------------------------------------------------
-   RECENT MARKET VOLATILITY
-------------------------------------------------- */
+function walkForwardValidation(X,y){
+
+ if(X.length<180){
+
+  return {
+   accuracy:NaN,
+   balancedAccuracy:NaN,
+   logLoss:NaN,
+   baseline:majorityBaseline(y),
+   folds:0,
+   samples:0
+  };
+ }
+
+ const n=X.length;
+
+ const initialTrain=
+  Math.max(
+   120,
+   Math.floor(n*.45)
+  );
+
+ const testSize=
+  Math.max(
+   30,
+   Math.floor(n*.10)
+  );
+
+ let start=initialTrain;
+
+ const preds=[];
+ const labels=[];
+
+ let folds=0;
+
+ while(start<n){
+
+  const end=
+   Math.min(
+    start+testSize,
+    n
+   );
+
+  const model=
+   trainSoftmax(
+    X.slice(0,start),
+    y.slice(0,start),
+    {
+     epochs:100,
+     lr:.025,
+     l2:.002
+    }
+   );
+
+  for(
+   let i=start;
+   i<end;
+   i++
+  ){
+
+   preds.push(
+    predictModel(
+     model,
+     X[i]
+    )
+   );
+
+   labels.push(y[i]);
+  }
+
+  folds++;
+
+  start=end;
+ }
+
+ return {
+  accuracy:accuracy(preds,labels),
+  balancedAccuracy:
+   balancedAccuracy(
+    preds,
+    labels
+   ),
+  logLoss:
+   logLoss(
+    preds,
+    labels
+   ),
+  baseline:
+   majorityBaseline(labels),
+  folds,
+  samples:labels.length
+ };
+}
+
+
+/* =========================================================
+   FORECAST
+========================================================= */
 
 function recentSigma(candles){
 
-const returns =
-returnsFromCandles(candles);
+ const r=
+  returnsFromCandles(candles);
 
-if(returns.length < 10)
-return 0.01;
+ if(r.length<10)return .01;
 
-return clamp(
-std(
-returns.slice(-60)
-),
-0.001,
-0.08
-);
-
+ return clamp(
+  std(r.slice(-60)),
+  .001,
+  .08
+ );
 }
 
 
-/* -------------------------------------------------
-   FINAL MODEL + FORECAST
-------------------------------------------------- */
+function buildForecast(eth,btc){
 
-function buildForecast(
-eth,
-btc
-){
+ const interval=
+  intervalForHorizon();
 
-const interval =
-intervalForHorizon();
+ const barMinutes=
+  intervalMinutes(interval);
 
-const barMinutes =
-intervalMinutes(
-interval
-);
+ const horizonBars=
+  Math.max(
+   1,
+   Math.round(
+    horizonMinutes()/barMinutes
+   )
+  );
 
-const horizonBars =
-Math.max(
-1,
-Math.round(
-horizonMinutes()/barMinutes
-)
-);
+ const dataset=
+  buildDataset(
+   eth,
+   btc,
+   horizonBars
+  );
 
-const dataset =
-buildDataset(
-eth,
-btc,
-horizonBars
-);
+ if(dataset.X.length<180)
+  throw new Error(
+   "Not enough historical data."
+  );
 
-if(
-dataset.X.length < 180
-)
-throw new Error(
-"Not enough historical data for V10 validation."
-);
+ const validation=
+  walkForwardValidation(
+   dataset.X,
+   dataset.y
+  );
 
-const validation =
-walkForwardValidation(
-dataset.X,
-dataset.y
-);
+ const model=
+  trainSoftmax(
+   dataset.X,
+   dataset.y,
+   {
+    epochs:180,
+    lr:.022,
+    l2:.002
+   }
+  );
 
-const finalModel =
-trainSoftmax(
-dataset.X,
-dataset.y,
-{
-epochs:220,
-lr:0.022,
-l2:0.002
-}
-);
+ const index=
+  Math.min(
+   eth.length,
+   btc.length
+  )-1;
 
-const latestIndex =
-Math.min(
-eth.length,
-btc.length
-)-1;
+ const features=
+  candleFeatureVector(
+   eth,
+   btc,
+   index
+  );
 
-const features =
-candleFeatureVector(
-eth,
-btc,
-latestIndex
-);
+ const probabilities=
+  predictModel(
+   model,
+   features
+  );
 
-const probabilities =
-predictModel(
-finalModel,
-features
-);
+ const down=probabilities[0];
+ const up=probabilities[2];
 
-const down =
-probabilities[0];
+ const directionalEdge=
+  up-down;
 
-const neutral =
-probabilities[1];
+ const sigma=
+  recentSigma(eth);
 
-const up =
-probabilities[2];
+ const scale=
+  Math.sqrt(
+   Math.max(
+    1,
+    horizonBars
+   )
+  );
 
-const directionalEdge =
-up-down;
+ let expectedReturn=
+  directionalEdge*
+  sigma*
+  scale*
+  2;
 
-const sigma =
-recentSigma(
-eth
-);
+ expectedReturn=
+  clamp(
+   expectedReturn,
+   -.30,
+   .30
+  );
 
-const scale =
-Math.sqrt(
-Math.max(
-1,
-horizonBars
-)
-);
+ const createdPrice=
+  eth.at(-1).close;
 
-let expectedReturn =
-directionalEdge*
-sigma*
-scale*
-2;
+ const predictedPrice=
+  createdPrice*
+  (1+expectedReturn);
 
-expectedReturn =
-clamp(
-expectedReturn,
--0.30,
-0.30
-);
+ const atr=
+  atrPct(eth,14);
 
-const createdPrice =
-eth[eth.length-1].close;
+ const uncertainty=
+  clamp(
+   Math.max(
+    atr*scale,
+    sigma*scale
+   ),
+   .005,
+   .20
+  );
 
-const predictedPrice =
-createdPrice*
-(1+expectedReturn);
+ const rangePct=
+  clamp(
+   uncertainty*1.65,
+   .008,
+   .40
+  );
 
-
-/* ATR-based forecast range */
-
-const atr =
-atrPct(
-eth,
-14
-);
-
-const uncertainty =
-clamp(
-Math.max(
-atr*
-Math.sqrt(
-Math.max(
-1,
-horizonBars
-)
-),
-sigma*
-Math.sqrt(
-Math.max(
-1,
-horizonBars
-)
-)
-),
-0.005,
-0.20
-);
-
-const rangePct =
-clamp(
-uncertainty*1.65,
-0.008,
-0.40
-);
-
-const low =
-predictedPrice*
-(1-rangePct);
-
-const high =
-predictedPrice*
-(1+rangePct);
-
-return {
-
-interval,
-
-horizonBars,
-
-datasetSize:
-dataset.X.length,
-
-validation,
-
-probabilities,
-
-createdPrice,
-
-predictedPrice,
-
-low,
-
-high,
-
-expectedReturn,
-
-sigma,
-
-atr,
-
-features
-
-};
-
+ return {
+  interval,
+  horizonBars,
+  datasetSize:dataset.X.length,
+  validation,
+  probabilities,
+  createdPrice,
+  predictedPrice,
+  low:
+   predictedPrice*(1-rangePct),
+  high:
+   predictedPrice*(1+rangePct)
+ };
 }
 
 
-/* -------------------------------------------------
-   PREDICTION LOCK
-------------------------------------------------- */
+/* =========================================================
+   LOCKED PREDICTIONS
+========================================================= */
 
-function getOrCreateLockedForecast(
-forecast
-){
+function loadHistory(){
 
-const history =
-loadHistory();
+ try{
 
-const pending =
-history
-.filter(
-x =>
-!x.evaluated &&
-x.horizon === selectedHorizon
-)
-.sort(
-(a,b)=>
-b.createdAt-a.createdAt
-)[0];
+  const raw=
+   localStorage.getItem(
+    HISTORY_KEY
+   );
 
-if(pending){
+  if(!raw)return [];
 
-return {
+  const data=JSON.parse(raw);
 
-...forecast,
+  return Array.isArray(data)
+   ?data
+   :[];
 
-locked:true,
+ }catch(e){
 
-createdAt:
-pending.createdAt,
-
-targetTime:
-pending.targetTime,
-
-createdPrice:
-pending.createdPrice,
-
-predictedPrice:
-pending.predictedPrice,
-
-low:
-pending.low,
-
-high:
-pending.high,
-
-probabilities:
-pending.probabilities,
-
-validation:
-pending.validation
-
-};
-
-}
-
-const item =
-createLockedPrediction(
-forecast
-);
-
-return {
-
-...forecast,
-
-locked:true,
-
-createdAt:
-item.createdAt,
-
-targetTime:
-item.targetTime,
-
-createdPrice:
-item.createdPrice,
-
-predictedPrice:
-item.predictedPrice,
-
-low:
-item.low,
-
-high:
-item.high,
-
-probabilities:
-item.probabilities,
-
-validation:
-item.validation
-
-};
-
+  return [];
+ }
 }
 
 
-/* -------------------------------------------------
-   UI UPDATE
-------------------------------------------------- */
+function saveHistory(h){
 
-function updatePredictionUI(
-p
-){
+ try{
 
-const probs =
-p.probabilities || [0,0,0];
+  localStorage.setItem(
+   HISTORY_KEY,
+   JSON.stringify(
+    h.slice(-MAX_HISTORY)
+   )
+  );
 
-$("bullish").textContent =
-(upPercent(probs[2]));
-
-$("neutral").textContent =
-(upPercent(probs[1]));
-
-$("bearish").textContent =
-(upPercent(probs[0]));
-
-$("target").textContent =
-"$"+fmtPrice(
-p.predictedPrice
-);
-
-$("range").textContent =
-"$"+fmtPrice(p.low)+
-" – $"+fmtPrice(p.high);
-
-$("confidence").textContent =
-Number.isFinite(
-p.validation?.accuracy
-)
-? (
-p.validation.accuracy*100
-).toFixed(1)+"%"
-: "—";
-
-$("balancedAccuracy").textContent =
-Number.isFinite(
-p.validation?.balancedAccuracy
-)
-? (
-p.validation.balancedAccuracy*100
-).toFixed(1)+"%"
-: "—";
-
-$("logLoss").textContent =
-Number.isFinite(
-p.validation?.logLoss
-)
-? p.validation.logLoss.toFixed(3)
-: "—";
-
-$("baselineAccuracy").textContent =
-Number.isFinite(
-p.validation?.baseline
-)
-? (
-p.validation.baseline*100
-).toFixed(1)+"%"
-: "—";
-
-$("predictionTime").textContent =
-formatDate(
-p.targetTime
-);
-
-$("predictionCountdown").textContent =
-formatCountdown(
-p.targetTime
-);
-
-$("rangeOnChart").textContent =
-"Forecast range: $"+
-fmtPrice(p.low)+
-" – $"+
-fmtPrice(p.high);
-
-const accuracyText =
-Number.isFinite(
-p.validation?.accuracy
-)
-? (
-p.validation.accuracy*100
-).toFixed(1)+"%"
-: "—";
-
-$("modelStatus").innerHTML =
-"V10 walk-forward model • "+
-p.datasetSize+
-" usable samples • "+
-p.validation.folds+
-" chronological validation folds • "+
-accuracyText+
-" accuracy • "+
-(
-p.validation.samples || 0
-)+
-" out-of-sample observations";
-
-if(p.locked){
-
-$("status").innerHTML =
-'<span class="locked">● Prediction time locked</span> • '+
-formatDate(p.targetTime);
-
-}
-
+ }catch(e){}
 }
 
 
-function upPercent(x){
+function makeTargetTime(){
 
-return (
-100*x
-).toFixed(1)+"%";
+ const five=5*60*1000;
 
+ return Math.ceil(
+  (
+   Date.now()+
+   horizonMinutes()*60*1000
+  )/five
+ )*five;
 }
 
 
-/* -------------------------------------------------
-   MARKET DISPLAY
-------------------------------------------------- */
+function getPending(){
+
+ return loadHistory()
+  .filter(
+   x=>
+    !x.evaluated&&
+    x.horizon===selectedHorizon
+  )
+  .sort(
+   (a,b)=>b.createdAt-a.createdAt
+  )[0]||null;
+}
+
+
+function getOrCreateLockedForecast(f){
+
+ const existing=getPending();
+
+ if(existing){
+
+  return {
+   ...f,
+   locked:true,
+   createdAt:existing.createdAt,
+   targetTime:existing.targetTime,
+   createdPrice:existing.createdPrice,
+   predictedPrice:existing.predictedPrice,
+   low:existing.low,
+   high:existing.high,
+   probabilities:existing.probabilities,
+   validation:existing.validation
+  };
+ }
+
+ const item={
+  id:
+   Date.now()+"_"+Math.random()
+    .toString(36)
+    .slice(2),
+  createdAt:Date.now(),
+  targetTime:makeTargetTime(),
+  horizon:selectedHorizon,
+  createdPrice:f.createdPrice,
+  predictedPrice:f.predictedPrice,
+  low:f.low,
+  high:f.high,
+  probabilities:f.probabilities,
+  validation:f.validation,
+  evaluated:false,
+  modelVersion:"V11"
+ };
+
+ const h=loadHistory();
+
+ h.push(item);
+
+ saveHistory(h);
+
+ return {
+  ...f,
+  locked:true,
+  ...item
+ };
+}
+
+
+/* =========================================================
+   EVALUATION
+========================================================= */
+
+async function evaluateCompleted(){
+
+ const history=loadHistory();
+
+ let changed=false;
+
+ for(const item of history){
+
+  if(
+   item.evaluated||
+   item.targetTime>Date.now()
+  )
+   continue;
+
+  try{
+
+   const start=
+    item.targetTime-
+    15*60*1000;
+
+   const end=
+    item.targetTime+
+    15*60*1000;
+
+   const rows=
+    await fetchKlines(
+     "ETHUSDT",
+     "5m",
+     10
+    );
+
+   if(!rows.length)continue;
+
+   let closest=rows[0];
+
+   let distance=
+    Math.abs(
+     Number(rows[0][0])-
+     item.targetTime
+    );
+
+   for(const row of rows){
+
+    const d=
+     Math.abs(
+      Number(row[0])-
+      item.targetTime
+     );
+
+    if(d<distance){
+
+     distance=d;
+     closest=row;
+    }
+   }
+
+   const actual=
+    Number(closest[4]);
+
+   if(!Number.isFinite(actual))
+    continue;
+
+   item.actualPrice=actual;
+
+   item.errorPct=
+    (
+     (actual-item.predictedPrice)/
+     item.predictedPrice
+    )*100;
+
+   const predictedDirection=
+    item.predictedPrice>
+    item.createdPrice
+     ?1
+     :item.predictedPrice<
+      item.createdPrice
+       ?-1:0;
+
+   const actualDirection=
+    actual>
+    item.createdPrice
+     ?1
+     :actual<
+      item.createdPrice
+       ?-1:0;
+
+   item.directionCorrect=
+    predictedDirection===
+    actualDirection;
+
+   item.evaluated=true;
+
+   item.evaluatedAt=
+    Date.now();
+
+   changed=true;
+
+  }catch(e){}
+ }
+
+ if(changed)
+  saveHistory(history);
+}
+
+
+/* =========================================================
+   HISTORY DISPLAY
+========================================================= */
+
+function renderHistory(){
+
+ const completed=
+  loadHistory()
+   .filter(x=>x.evaluated);
+
+ if(!completed.length){
+
+  $("historySummary").textContent=
+   "No completed predictions yet.";
+
+  $("historyList").textContent="";
+
+  return;
+ }
+
+ const correct=
+  completed.filter(
+   x=>x.directionCorrect
+  ).length;
+
+ const accuracy=
+  correct/completed.length*100;
+
+ const errors=
+  completed
+   .map(x=>Math.abs(x.errorPct))
+   .filter(Number.isFinite);
+
+ const mae=
+  errors.length
+   ?mean(errors)
+   :0;
+
+ $("historySummary").innerHTML=
+  "<b>"+completed.length+
+  "</b> completed • "+
+  "<b>"+accuracy.toFixed(1)+
+  "%</b> directional accuracy • "+
+  "<b>"+mae.toFixed(2)+
+  "%</b> mean absolute error";
+
+ const recent=
+  completed
+   .slice(-5)
+   .reverse();
+
+ $("historyList").innerHTML=
+  recent.map(x=>`
+
+  <div style="
+   padding:9px 0;
+   border-bottom:1px solid var(--line)
+  ">
+
+  <b>${x.horizon}</b>
+  • ${formatDate(x.targetTime)}
+
+  <br>
+
+  Predicted:
+  ${fmtPrice(x.predictedPrice)}
+
+  • Actual:
+  ${fmtPrice(x.actualPrice)}
+
+  <br>
+
+  Error:
+  ${fmtPct(x.errorPct)}
+  •
+  <span class="${
+   x.directionCorrect?"green":"red"
+  }">
+
+  ${
+   x.directionCorrect
+    ?"✓ Direction correct"
+    :"✕ Direction wrong"
+  }
+
+  </span>
+
+  </div>
+
+ `).join("");
+}
+
+
+/* =========================================================
+   UI
+========================================================= */
+
+function updatePredictionUI(p){
+
+ const q=p.probabilities;
+
+ $("bullish").textContent=
+  (q[2]*100).toFixed(1)+"%";
+
+ $("neutral").textContent=
+  (q[1]*100).toFixed(1)+"%";
+
+ $("bearish").textContent=
+  (q[0]*100).toFixed(1)+"%";
+
+ $("target").textContent=
+  "$"+fmtPrice(
+   p.predictedPrice
+  );
+
+ $("range").textContent=
+  "$"+fmtPrice(p.low)+
+  " – $"+fmtPrice(p.high);
+
+ $("confidence").textContent=
+  Number.isFinite(
+   p.validation.accuracy
+  )
+   ?(
+    p.validation.accuracy*100
+   ).toFixed(1)+"%"
+   :"—";
+
+ $("balancedAccuracy").textContent=
+  Number.isFinite(
+   p.validation.balancedAccuracy
+  )
+   ?(
+    p.validation.balancedAccuracy*100
+   ).toFixed(1)+"%"
+   :"—";
+
+ $("logLoss").textContent=
+  Number.isFinite(
+   p.validation.logLoss
+  )
+   ?p.validation.logLoss.toFixed(3)
+   :"—";
+
+ $("baselineAccuracy").textContent=
+  Number.isFinite(
+   p.validation.baseline
+  )
+   ?(
+    p.validation.baseline*100
+   ).toFixed(1)+"%"
+   :"—";
+
+ $("predictionTime").textContent=
+  formatDate(p.targetTime);
+
+ $("predictionCountdown").textContent=
+  formatCountdown(p.targetTime);
+
+ $("rangeOnChart").textContent=
+  "Forecast range: $"+
+  fmtPrice(p.low)+
+  " – $"+
+  fmtPrice(p.high);
+
+ $("modelStatus").textContent=
+  "V11 • "+
+  p.datasetSize+
+  " usable samples • "+
+  p.validation.folds+
+  " chronological validation folds • "+
+  p.validation.samples+
+  " out-of-sample observations";
+
+ $("status").innerHTML=
+  '<span class="locked">● Prediction time locked</span> • '+
+  formatDate(p.targetTime);
+}
+
 
 function updateMarketUI(){
 
-if(!liveCandles.length)
-return;
+ if(!liveCandles.length)return;
 
-const last =
-liveCandles[
-liveCandles.length-1
-];
+ const last=liveCandles.at(-1);
 
-currentPrice =
-last.close;
+ currentPrice=last.close;
 
-$("price").textContent =
-"$"+fmtPrice(
-currentPrice
-);
+ $("price").textContent=
+  "$"+fmtPrice(currentPrice);
 
-const rsi =
-calcRSI(
-liveCandles.map(
-x=>x.close
-)
-);
+ $("rsi").textContent=
+  calcRSI(
+   liveCandles.map(x=>x.close)
+  ).toFixed(1);
 
-$("rsi").textContent =
-rsi.toFixed(1);
+ $("chartInfo").textContent=
+  "Live candles: "+
+  liveCandles.length+
+  " • Last update: "+
+  formatDate(last.time);
+}
 
+
+/* =========================================================
+   LIVE DATA
+========================================================= */
+
+async function loadLiveChart(){
+
+ const rows=
+  await fetchKlines(
+   "ETHUSDT",
+   "5m",
+   200
+  );
+
+ liveCandles=
+  parseKlines(rows);
+
+ if(!liveCandles.length)
+  throw new Error(
+   "ETH chart returned no data."
+  );
+
+ updateMarketUI();
+
+ drawChart();
+}
+
+
+async function updateBTC(){
+
+ try{
+
+  const rows=
+   await fetchKlines(
+    "BTCUSDT",
+    "1h",
+    3
+   );
+
+  const c=parseKlines(rows);
+
+  if(c.length>=2){
+
+   const r=
+    c.at(-1).close/
+    c.at(-2).close-1;
+
+   $("btc1h").textContent=
+    fmtPct(r*100);
+  }
+
+ }catch(e){
+
+  $("btc1h").textContent="—";
+ }
 }
 
 
 async function updateFunding(){
 
-try{
+ try{
 
-const data =
-await fetchFuturesJSON(
-"/fapi/v1/premiumIndex?symbol=ETHUSDT"
-);
+  const d=
+   await fetchFutures(
+    "/fapi/v1/premiumIndex?symbol=ETHUSDT"
+   );
 
-const funding =
-Number(
-data.lastFundingRate
-);
+  const f=
+   Number(d.lastFundingRate);
 
-if(Number.isFinite(funding)){
+  if(Number.isFinite(f))
+   $("funding").textContent=
+    (f*100).toFixed(4)+"%";
 
-$("funding").textContent =
-(
-funding*100
-).toFixed(4)+"%";
+ }catch(e){
 
-}
-
-}catch(e){
-
-$("funding").textContent =
-"—";
-
-}
-
+  $("funding").textContent="—";
+ }
 }
 
 
 async function updateOpenInterest(){
 
-try{
+ try{
 
-const data =
-await fetchFuturesJSON(
-"/fapi/v1/openInterest?symbol=ETHUSDT"
-);
+  const d=
+   await fetchFutures(
+    "/fapi/v1/openInterest?symbol=ETHUSDT"
+   );
 
-const oi =
-Number(
-data.openInterest
-);
+  const oi=
+   Number(d.openInterest);
 
-if(Number.isFinite(oi)){
+  if(Number.isFinite(oi))
+   $("openInterest").textContent=
+    (oi/1000).toFixed(1)+"K ETH";
 
-$("openInterest").textContent =
-(
-oi/1000
-).toFixed(1)+"K ETH";
+ }catch(e){
 
-}
-
-}catch(e){
-
-$("openInterest").textContent =
-"—";
-
-}
-
+  $("openInterest").textContent="—";
+ }
 }
 
 
-async function updateBTC1H(){
+/* =========================================================
+   CHART
+========================================================= */
 
-try{
+function drawChart(){
 
-const rows =
-await fetchKlines(
-"BTCUSDT",
-"1h",
-3
-);
+ const canvas=$("chart");
 
-const c =
-parseKlines(rows);
+ const ctx=
+  canvas.getContext("2d");
 
-if(c.length >= 2){
+ const rect=
+  canvas.getBoundingClientRect();
 
-const r =
-c[c.length-1].close/
-c[c.length-2].close-1;
+ const dpr=
+  window.devicePixelRatio||1;
 
-$("btc1h").textContent =
-fmtPct(r*100);
+ const W=rect.width;
+ const H=rect.height;
 
-}
+ canvas.width=
+  Math.floor(W*dpr);
 
-}catch(e){
+ canvas.height=
+  Math.floor(H*dpr);
 
-$("btc1h").textContent =
-"—";
+ ctx.setTransform(
+  dpr,0,0,dpr,0,0
+ );
 
-}
+ ctx.clearRect(0,0,W,H);
 
-}
- function drawChart(){
+ if(liveCandles.length<2){
 
-const canvas =
-$("chart");
+  ctx.fillStyle="#8290a8";
 
-const ctx =
-canvas.getContext("2d");
+  ctx.font="13px sans-serif";
 
-const rect =
-canvas.getBoundingClientRect();
+  ctx.fillText(
+   "Waiting for chart data…",
+   16,30
+  );
 
-const dpr =
-window.devicePixelRatio || 1;
+  return;
+ }
 
-const width =
-Math.max(
-1,
-Math.floor(rect.width*dpr)
-);
+ const maxVisible=
+  Math.max(
+   20,
+   Math.floor(
+    Math.min(
+     liveCandles.length,
+     90*zoomFactor
+    )
+   )
+  );
 
-const height =
-Math.max(
-1,
-Math.floor(rect.height*dpr)
-);
+ const end=
+  liveCandles.length-
+  1-
+  Math.floor(chartOffset);
 
-if(
-canvas.width !== width ||
-canvas.height !== height
-){
+ const start=
+  Math.max(
+   0,
+   end-maxVisible+1
+  );
 
-canvas.width = width;
-canvas.height = height;
+ const candles=
+  liveCandles.slice(
+   start,
+   end+1
+  );
 
-}
+ if(!candles.length)return;
 
-ctx.setTransform(
-dpr,
-0,
-0,
-dpr,
-0,
-0
-);
+ let min=
+  Math.min(
+   ...candles.map(x=>x.low)
+  );
 
-const W =
-rect.width;
+ let max=
+  Math.max(
+   ...candles.map(x=>x.high)
+  );
 
-const H =
-rect.height;
+ if(currentPrediction){
 
-ctx.clearRect(
-0,
-0,
-W,
-H
-);
+  min=Math.min(
+   min,
+   currentPrediction.low
+  );
 
-if(liveCandles.length < 2){
+  max=Math.max(
+   max,
+   currentPrediction.high
+  );
+ }
 
-ctx.fillStyle =
-"#8290a8";
+ const pad=
+  (max-min)*.08||1;
 
-ctx.font =
-"13px -apple-system,BlinkMacSystemFont,sans-serif";
+ min-=pad;
+ max+=pad;
 
-ctx.fillText(
-"Waiting for chart data…",
-16,
-30
-);
+ const left=48;
+ const right=12;
+ const top=14;
+ const bottom=30;
 
-return;
+ const pw=W-left-right;
+ const ph=H-top-bottom;
 
-}
+ const x=i=>
+  left+
+  i*(pw/Math.max(1,candles.length-1));
 
+ const y=p=>
+  top+
+  (max-p)/(max-min)*ph;
 
-/* visible candle window */
 
-const maxVisible =
-Math.max(
-20,
-Math.floor(
-Math.min(
-liveCandles.length,
-90*zoomFactor
-)
-)
-);
+ /* grid */
 
-const endIndex =
-liveCandles.length-1-
-Math.max(
-0,
-Math.floor(chartOffset)
-);
+ ctx.strokeStyle="#172235";
+ ctx.lineWidth=1;
 
-const startIndex =
-Math.max(
-0,
-endIndex-maxVisible+1
-);
+ for(let i=0;i<=4;i++){
 
-const candles =
-liveCandles.slice(
-startIndex,
-endIndex+1
-);
+  const yy=
+   top+ph*i/4;
 
-if(!candles.length)
-return;
+  ctx.beginPath();
+  ctx.moveTo(left,yy);
+  ctx.lineTo(W-right,yy);
+  ctx.stroke();
 
+  const value=
+   max-(max-min)*i/4;
 
-/* price range */
+  ctx.fillStyle="#6e7c92";
+  ctx.font="10px sans-serif";
 
-let minPrice =
-Math.min(
-...candles.map(x=>x.low)
-);
+  ctx.fillText(
+   fmtPrice(value),
+   5,
+   yy+3
+  );
+ }
 
-let maxPrice =
-Math.max(
-...candles.map(x=>x.high)
-);
 
-if(
-currentPrediction
-){
+ /* candles */
 
-minPrice =
-Math.min(
-minPrice,
-currentPrediction.low
-);
+ const candleWidth=
+  Math.max(
+   2,
+   Math.min(
+    10,
+    pw/candles.length*.68
+   )
+  );
 
-maxPrice =
-Math.max(
-maxPrice,
-currentPrediction.high
-);
+ candles.forEach((c,i)=>{
 
-}
+  const xx=x(i);
 
-const padding =
-(maxPrice-minPrice)*0.08;
+  const rising=
+   c.close>=c.open;
 
-minPrice -= padding;
-maxPrice += padding;
+  ctx.strokeStyle=
+   rising?"#55d98d":"#ff7185";
 
-if(maxPrice <= minPrice)
-return;
+  ctx.fillStyle=ctx.strokeStyle;
 
+  ctx.beginPath();
 
-const left =
-48;
+  ctx.moveTo(
+   xx,y(c.high)
+  );
 
-const right =
-12;
+  ctx.lineTo(
+   xx,y(c.low)
+  );
 
-const top =
-14;
+  ctx.stroke();
 
-const bottom =
-30;
+  const topBody=
+   Math.min(
+    y(c.open),
+    y(c.close)
+   );
 
-const plotW =
-W-left-right;
+  const bodyHeight=
+   Math.max(
+    1,
+    Math.abs(
+     y(c.close)-y(c.open)
+    )
+   );
 
-const plotH =
-H-top-bottom;
+  ctx.fillRect(
+   xx-candleWidth/2,
+   topBody,
+   candleWidth,
+   bodyHeight
+  );
+ });
 
 
-function xFor(i){
+ /* current price */
 
-if(candles.length <= 1)
-return left;
+ if(Number.isFinite(currentPrice)){
 
-return left+
-i*
-(plotW/(candles.length-1));
+  const yy=y(currentPrice);
 
-}
+  ctx.strokeStyle="#5ca7ff";
+  ctx.setLineDash([5,4]);
 
+  ctx.beginPath();
+  ctx.moveTo(left,yy);
+  ctx.lineTo(W-right,yy);
+  ctx.stroke();
 
-function yFor(price){
+  ctx.setLineDash([]);
 
-return top+
-(maxPrice-price)/
-(maxPrice-minPrice)*
-plotH;
+  ctx.fillStyle="#5ca7ff";
+  ctx.font="11px sans-serif";
 
-}
+  ctx.fillText(
+   "$"+fmtPrice(currentPrice),
+   W-85,
+   yy-5
+  );
+ }
 
 
-/* grid */
+ /* forecast */
 
-ctx.strokeStyle =
-"#172235";
+ if(currentPrediction){
 
-ctx.lineWidth =
-1;
+  [
+   {
+    p:currentPrediction.low,
+    label:"LOW"
+   },
+   {
+    p:currentPrediction.predictedPrice,
+    label:"TARGET"
+   },
+   {
+    p:currentPrediction.high,
+    label:"HIGH"
+   }
+  ].forEach(line=>{
 
-for(let i=0;i<=4;i++){
+   const yy=y(line.p);
 
-const y =
-top+
-plotH*i/4;
+   ctx.strokeStyle=
+    line.label==="TARGET"
+     ?"#5ca7ff"
+     :"#8290a8";
 
-ctx.beginPath();
+   ctx.setLineDash([4,5]);
 
-ctx.moveTo(
-left,
-y
-);
+   ctx.beginPath();
+   ctx.moveTo(left,yy);
+   ctx.lineTo(W-right,yy);
+   ctx.stroke();
 
-ctx.lineTo(
-W-right,
-y
-);
+   ctx.setLineDash([]);
 
-ctx.stroke();
+   ctx.fillStyle=ctx.strokeStyle;
+   ctx.font="10px sans-serif";
 
-const value =
-maxPrice-
-(maxPrice-minPrice)*i/4;
-
-ctx.fillStyle =
-"#6e7c92";
-
-ctx.font =
-"10px -apple-system,BlinkMacSystemFont,sans-serif";
-
-ctx.fillText(
-fmtPrice(value),
-5,
-y+3
-);
-
-}
-
-
-/* candles */
-
-const candleWidth =
-Math.max(
-2,
-Math.min(
-10,
-plotW/candles.length*0.68
-)
-);
-
-candles.forEach(
-(c,i)=>{
-
-const x =
-xFor(i);
-
-const openY =
-yFor(c.open);
-
-const closeY =
-yFor(c.close);
-
-const highY =
-yFor(c.high);
-
-const lowY =
-yFor(c.low);
-
-const rising =
-c.close >= c.open;
-
-ctx.strokeStyle =
-rising
-? "#55d98d"
-: "#ff7185";
-
-ctx.fillStyle =
-ctx.strokeStyle;
-
-ctx.lineWidth =
-1;
-
-ctx.beginPath();
-
-ctx.moveTo(
-x,
-highY
-);
-
-ctx.lineTo(
-x,
-lowY
-);
-
-ctx.stroke();
-
-const bodyTop =
-Math.min(
-openY,
-closeY
-);
-
-const bodyHeight =
-Math.max(
-1,
-Math.abs(
-closeY-openY
-)
-);
-
-ctx.fillRect(
-x-candleWidth/2,
-bodyTop,
-candleWidth,
-bodyHeight
-);
-
-}
-);
-
-
-/* current price line */
-
-if(
-Number.isFinite(currentPrice)
-){
-
-const y =
-yFor(currentPrice);
-
-ctx.strokeStyle =
-"#5ca7ff";
-
-ctx.setLineDash(
-[5,4]
-);
-
-ctx.beginPath();
-
-ctx.moveTo(
-left,
-y
-);
-
-ctx.lineTo(
-W-right,
-y
-);
-
-ctx.stroke();
-
-ctx.setLineDash([]);
-
-ctx.fillStyle =
-"#5ca7ff";
-
-ctx.font =
-"11px -apple-system,BlinkMacSystemFont,sans-serif";
-
-ctx.fillText(
-"$"+fmtPrice(currentPrice),
-W-85,
-y-5
-);
-
+   ctx.fillText(
+    line.label+
+    " $"+
+    fmtPrice(line.p),
+    left+5,
+    yy-4
+   );
+  });
+ }
 }
 
 
-/* forecast lines */
+/* =========================================================
+   ZOOM
+========================================================= */
 
-if(currentPrediction){
+function setZoom(v){
 
-const lines = [
+ zoomFactor=
+  clamp(v,1,8);
 
-{
-price:currentPrediction.low,
-label:"LOW",
-text:"#8290a8"
-},
+ $("zoomLevel").textContent=
+  zoomFactor+"×";
 
-{
-price:currentPrediction.predictedPrice,
-label:"TARGET",
-text:"#5ca7ff"
-},
-
-{
-price:currentPrediction.high,
-label:"HIGH",
-text:"#8290a8"
-}
-
-];
-
-lines.forEach(
-line=>{
-
-const y =
-yFor(line.price);
-
-ctx.strokeStyle =
-line.text;
-
-ctx.setLineDash(
-[4,5]
-);
-
-ctx.beginPath();
-
-ctx.moveTo(
-left,
-y
-);
-
-ctx.lineTo(
-W-right,
-y
-);
-
-ctx.stroke();
-
-ctx.setLineDash([]);
-
-ctx.fillStyle =
-line.text;
-
-ctx.font =
-"10px -apple-system,BlinkMacSystemFont,sans-serif";
-
-ctx.fillText(
-line.label+
-" $"+
-fmtPrice(line.price),
-left+5,
-y-4
-);
-
-}
-);
-
-
-/* prediction time marker */
-
-const target =
-currentPrediction.targetTime;
-
-const lastTime =
-candles[candles.length-1].time;
-
-const firstTime =
-candles[0].time;
-
-if(
-target >= firstTime &&
-target <= lastTime
-){
-
-const ratio =
-(target-firstTime)/
-(lastTime-firstTime);
-
-const x =
-left+ratio*plotW;
-
-ctx.strokeStyle =
-"#5ca7ff";
-
-ctx.setLineDash(
-[2,4]
-);
-
-ctx.beginPath();
-
-ctx.moveTo(
-x,
-top
-);
-
-ctx.lineTo(
-x,
-H-bottom
-);
-
-ctx.stroke();
-
-ctx.setLineDash([]);
-
-}
-
+ drawChart();
 }
 
 
-/* -------------------------------------------------
-   CHART ZOOM
-------------------------------------------------- */
+$("zoomIn").onclick=
+ ()=>setZoom(zoomFactor+1);
 
-function setZoom(value){
+$("zoomOut").onclick=
+ ()=>setZoom(zoomFactor-1);
 
-zoomFactor =
-clamp(
-value,
-1,
-8
-);
-
-$("zoomLevel").textContent =
-zoomFactor+"×";
-
-chartOffset =
-clamp(
-chartOffset,
-0,
-Math.max(
-0,
-liveCandles.length-
-20
-)
-);
-
-drawChart();
-
-}
+$("zoomReset").onclick=
+ ()=>{
+  zoomFactor=1;
+  chartOffset=0;
+  $("zoomLevel").textContent="1×";
+  drawChart();
+ };
 
 
-function resetZoom(){
-
-zoomFactor =
-1;
-
-chartOffset =
-0;
-
-$("zoomLevel").textContent =
-"1×";
-
-drawChart();
-
-}
-
-
-$("zoomIn").addEventListener(
-"click",
-()=>setZoom(
-zoomFactor+1
-)
-);
-
-$("zoomOut").addEventListener(
-"click",
-()=>setZoom(
-zoomFactor-1
-)
-);
-
-$("zoomReset").addEventListener(
-"click",
-resetZoom
-);
-
-
-/* -------------------------------------------------
-   MOUSE / TRACKPAD PAN + ZOOM
-------------------------------------------------- */
+/* =========================================================
+   CHART PAN
+========================================================= */
 
 $("chart").addEventListener(
-"wheel",
-e=>{
+ "pointerdown",
+ e=>{
 
-e.preventDefault();
+  isDragging=true;
 
-if(
-Math.abs(e.deltaY)>
-Math.abs(e.deltaX)
-){
+  dragStartX=e.clientX;
 
-setZoom(
-zoomFactor+
-(e.deltaY<0 ? 1 : -1)
-);
+  dragStartOffset=
+   chartOffset;
 
-}else{
-
-chartOffset =
-clamp(
-chartOffset+
-(e.deltaX>0 ? 3 : -3),
-0,
-Math.max(
-0,
-liveCandles.length-20
-)
-);
-
-drawChart();
-
-}
-
-},
-{
-passive:false
-}
+  $("chart").setPointerCapture(
+   e.pointerId
+  );
+ }
 );
 
 
 $("chart").addEventListener(
-"pointerdown",
-e=>{
+ "pointermove",
+ e=>{
 
-isDragging=true;
+  if(!isDragging)return;
 
-dragStartX =
-e.clientX;
+  const dx=
+   e.clientX-dragStartX;
 
-dragStartOffset =
-chartOffset;
+  const count=
+   Math.max(
+    20,
+    Math.floor(
+     90*zoomFactor
+    )
+   );
 
-$("chart").setPointerCapture(
-e.pointerId
-);
+  const px=
+   $("chart").clientWidth/count;
 
-}
-);
+  chartOffset=
+   clamp(
+    dragStartOffset-
+    Math.round(dx/Math.max(1,px)),
+    0,
+    Math.max(
+     0,
+     liveCandles.length-20
+    )
+   );
 
-
-$("chart").addEventListener(
-"pointermove",
-e=>{
-
-if(!isDragging)
-return;
-
-const dx =
-e.clientX-dragStartX;
-
-const candleCount =
-Math.max(
-20,
-Math.floor(
-90*zoomFactor
-)
-);
-
-const pxPerCandle =
-$("chart").clientWidth/
-candleCount;
-
-const movement =
-Math.round(
--dx/
-Math.max(
-1,
-pxPerCandle
-)
-);
-
-chartOffset =
-clamp(
-dragStartOffset+movement,
-0,
-Math.max(
-0,
-liveCandles.length-20
-)
-);
-
-drawChart();
-
-}
+  drawChart();
+ }
 );
 
 
 $("chart").addEventListener(
-"pointerup",
-()=>{
-isDragging=false;
-}
+ "pointerup",
+ ()=>{
+  isDragging=false;
+ }
 );
 
 $("chart").addEventListener(
-"pointercancel",
-()=>{
-isDragging=false;
-}
+ "pointercancel",
+ ()=>{
+  isDragging=false;
+ }
 );
 
 
-/* -------------------------------------------------
-   TOUCH PINCH ZOOM
-------------------------------------------------- */
+/* =========================================================
+   TOUCH PINCH
+========================================================= */
 
 $("chart").addEventListener(
-"touchstart",
-e=>{
+ "touchstart",
+ e=>{
 
-if(e.touches.length===2){
+  if(e.touches.length===2){
 
-lastTouchDistance =
-Math.hypot(
-e.touches[0].clientX-
-e.touches[1].clientX,
-
-e.touches[0].clientY-
-e.touches[1].clientY
-);
-
-}
-
-},
-{
-passive:true
-}
+   lastTouchDistance=
+    Math.hypot(
+     e.touches[0].clientX-
+     e.touches[1].clientX,
+     e.touches[0].clientY-
+     e.touches[1].clientY
+    );
+  }
+ },
+ {passive:true}
 );
 
 
 $("chart").addEventListener(
-"touchmove",
-e=>{
+ "touchmove",
+ e=>{
 
-if(e.touches.length!==2)
-return;
+  if(e.touches.length!==2)return;
 
-const distance =
-Math.hypot(
-e.touches[0].clientX-
-e.touches[1].clientX,
+  const d=
+   Math.hypot(
+    e.touches[0].clientX-
+    e.touches[1].clientX,
+    e.touches[0].clientY-
+    e.touches[1].clientY
+   );
 
-e.touches[0].clientY-
-e.touches[1].clientY
-);
+  if(
+   lastTouchDistance&&
+   Math.abs(d-lastTouchDistance)>10
+  ){
 
-if(
-lastTouchDistance &&
-Math.abs(
-distance-lastTouchDistance
-)>8
-){
+   setZoom(
+    zoomFactor+
+    (d>lastTouchDistance?1:-1)
+   );
 
-if(
-distance>lastTouchDistance
-)
-setZoom(
-zoomFactor+1
-);
-else
-setZoom(
-zoomFactor-1
-);
-
-lastTouchDistance =
-distance;
-
-}
-
-},
-{
-passive:true
-}
+   lastTouchDistance=d;
+  }
+ },
+ {passive:true}
 );
 
 
 $("chart").addEventListener(
-"touchend",
-()=>{
-lastTouchDistance=null;
-}
+ "touchend",
+ ()=>{
+  lastTouchDistance=null;
+ }
 );
 
 
-/* -------------------------------------------------
-   HORIZON SELECTION
-------------------------------------------------- */
+/* =========================================================
+   HORIZONS
+========================================================= */
 
 document
 .querySelectorAll(
-"#horizonSelector button"
+ "#horizonSelector button"
 )
-.forEach(
-button=>{
+.forEach(button=>{
 
-button.addEventListener(
-"click",
-async ()=>{
+ button.addEventListener(
+  "click",
+  async ()=>{
 
-document
-.querySelectorAll(
-"#horizonSelector button"
-)
-.forEach(
-b=>b.classList.remove(
-"active"
-)
-);
+   document
+    .querySelectorAll(
+     "#horizonSelector button"
+    )
+    .forEach(
+     b=>b.classList.remove("active")
+    );
 
-button.classList.add(
-"active"
-);
+   button.classList.add("active");
 
-selectedHorizon =
-button.dataset.horizon;
+   selectedHorizon=
+    button.dataset.horizon;
 
-currentPrediction =
-null;
-
-$("status").textContent =
-"Loading V10 model for "+
-selectedHorizon+"…";
-
-await refresh();
-
-}
-);
-
-}
-);
+   await refresh();
+  }
+ );
+});
 
 
-/* -------------------------------------------------
-   MODEL DATA LOADING
-------------------------------------------------- */
-
-async function loadModelMarketData(){
-
-const interval =
-intervalForHorizon();
-
-const ethRows =
-await fetchKlines(
-"ETHUSDT",
-interval,
-1000
-);
-
-const btcRows =
-await fetchKlines(
-"BTCUSDT",
-interval,
-1000
-);
-
-const eth =
-parseKlines(
-ethRows
-);
-
-const btc =
-parseKlines(
-btcRows
-);
-
-if(
-eth.length < 200 ||
-btc.length < 200
-){
-
-throw new Error(
-"Insufficient historical market data."
-);
-
-}
-
-return {
-eth,
-btc,
-interval
-};
-
-}
-
-
-/* -------------------------------------------------
-   LIVE CHART DATA
-------------------------------------------------- */
-
-async function loadLiveChart(){
-
-const rows =
-await fetchKlines(
-"ETHUSDT",
-"5m",
-200
-);
-
-liveCandles =
-parseKlines(
-rows
-);
-
-if(
-!liveCandles.length
-)
-throw new Error(
-"No ETH chart data."
-);
-
-updateMarketUI();
-
-drawChart();
-
-}
-
-
-/* -------------------------------------------------
+/* =========================================================
    MAIN REFRESH
-------------------------------------------------- */
+========================================================= */
 
 async function refresh(){
 
-const refreshButton =
-$("refresh");
+ if(refreshBusy)return;
 
-refreshButton.disabled =
-true;
+ refreshBusy=true;
 
-$("status").textContent =
-"Updating live ETH market data…";
+ $("refresh").disabled=true;
 
-try{
+ $("status").textContent=
+  "Updating ETH market data…";
 
-await evaluateCompletedPredictions();
+ $("connectionInfo").textContent=
+  "Market connection: connecting…";
 
-renderHistory();
+ try{
 
-await loadLiveChart();
+  await evaluateCompleted();
 
-const data =
-await loadModelMarketData();
+  renderHistory();
 
-const forecast =
-buildForecast(
-data.eth,
-data.btc
-);
+  await loadLiveChart();
 
-const locked =
-getOrCreateLockedForecast(
-forecast
-);
+  const interval=
+   intervalForHorizon();
 
-currentPrediction =
-locked;
+  $("status").textContent=
+   "Downloading "+
+   interval+
+   " ETH + BTC history…";
 
-modelResult =
-locked;
+  const [
+   ethRows,
+   btcRows
+  ]=
+   await Promise.all([
+    fetchKlines(
+     "ETHUSDT",
+     interval,
+     1000
+    ),
+    fetchKlines(
+     "BTCUSDT",
+     interval,
+     1000
+    )
+   ]);
 
-updatePredictionUI(
-locked
-);
+  const eth=parseKlines(ethRows);
+  const btc=parseKlines(btcRows);
 
-drawChart();
+  if(
+   eth.length<200||
+   btc.length<200
+  )
+   throw new Error(
+    "Insufficient historical data."
+   );
 
-await Promise.all([
-updateFunding(),
-updateOpenInterest(),
-updateBTC1H()
-]);
+  $("status").textContent=
+   "Training V11 walk-forward model…";
 
-$("status").innerHTML =
-'<span class="locked">● Live model ready</span> • '+
-selectedHorizon+
-' forecast locked until '+
-formatDate(
-locked.targetTime
-);
+  const forecast=
+   buildForecast(
+    eth,
+    btc
+   );
 
-}catch(error){
+  currentPrediction=
+   getOrCreateLockedForecast(
+    forecast
+   );
 
-console.error(error);
+  updatePredictionUI(
+   currentPrediction
+  );
 
-$("status").innerHTML =
-'<span class="error">Model error:</span> '+
-(
-error.message ||
-"Unable to load market data."
-);
+  drawChart();
 
-}finally{
+  await Promise.all([
+   updateFunding(),
+   updateOpenInterest(),
+   updateBTC()
+  ]);
 
-refreshButton.disabled =
-false;
+  $("status").innerHTML=
+   '<span class="locked">● V11 model ready</span> • '+
+   selectedHorizon+
+   ' locked until '+
+   formatDate(
+    currentPrediction.targetTime
+   );
 
+ }catch(error){
+
+  console.error(error);
+
+  $("status").innerHTML=
+   '<span class="error">Connection/model error:</span><br>'+
+   error.message;
+
+  $("connectionInfo").textContent=
+   "Market connection: "+
+   error.message;
+
+ }finally{
+
+  refreshBusy=false;
+
+  $("refresh").disabled=false;
+ }
 }
 
-}
 
-
-/* -------------------------------------------------
-   REFRESH BUTTON
-------------------------------------------------- */
-
-$("refresh").addEventListener(
-"click",
-refresh
-);
-
-
-/* -------------------------------------------------
-   COUNTDOWN REFRESH
-------------------------------------------------- */
-
-function updateCountdown(){
-
-if(
-currentPrediction &&
-Number.isFinite(
-currentPrediction.targetTime
-)
-){
-
-$("predictionCountdown").textContent =
-formatCountdown(
-currentPrediction.targetTime
-);
-
-if(
-currentPrediction.targetTime <= Date.now()
-){
-
-$("predictionCountdown").textContent =
-"Target reached — waiting for evaluation.";
-
-}
-
-}
-
-}
-
+/* =========================================================
+   COUNTDOWN
+========================================================= */
 
 setInterval(
-updateCountdown,
-1000
+ ()=>{
+
+  if(currentPrediction){
+
+   $("predictionCountdown").textContent=
+    formatCountdown(
+     currentPrediction.targetTime
+    );
+  }
+
+ },
+ 1000
 );
 
 
-/* -------------------------------------------------
-   AUTOMATIC MARKET REFRESH
-------------------------------------------------- */
+/* =========================================================
+   AUTOMATIC REFRESH
+========================================================= */
 
-refreshTimer =
 setInterval(
-async ()=>{
+ ()=>{
 
-await refresh();
+  refresh();
 
-},
-REFRESH_MS
+ },
+ REFRESH_MS
 );
 
 
-/* -------------------------------------------------
+/* =========================================================
    RESIZE
-------------------------------------------------- */
+========================================================= */
 
 window.addEventListener(
-"resize",
-()=>{
-drawChart();
-}
+ "resize",
+ drawChart
 );
 
 
-/* -------------------------------------------------
-   INITIAL START
-------------------------------------------------- */
+/* =========================================================
+   START
+========================================================= */
 
-(async function(){
+(async()=>{
 
-renderHistory();
+ renderHistory();
 
-$("status").textContent =
-"Connecting to Binance and training V10…";
-
-await refresh();
+ await refresh();
 
 })();
 
