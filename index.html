@@ -1,1502 +1,3755 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>ETH/USDT Neural Matrix</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#020609">
+<title>ETH/USDT • Matrix Core</title>
 
-<!-- Include Lightweight Charts from CDN -->
 <script src="https://unpkg.com/lightweight-charts@5.2.1/dist/lightweight-charts.standalone.production.js"></script>
 
 <style>
-:root {
-  /* Cyberpunk “Neon Glass” color scheme */
-  --bg: #02070a;
-  --panel: #061116;
-  --cyan: #00f6ff;
-  --green: #00ff9d;
-  --purple: #b84dff;
-  --pink: #ff32d1;
-  --yellow: #ffe66d;
-  --text: #e7ffff;
-  --muted: #6d8992;
-  --line: #12343b;
-}
-* { box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
-html, body {
-  margin: 0; padding: 0;
-  background: var(--bg);
-  color: var(--text);
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
-}
-body {
-  /* Safe-area padding for notch */
-  padding-top: env(safe-area-inset-top);
-  padding-bottom: env(safe-area-inset-bottom);
-  min-height: 100vh;
-}
-.app {
-  max-width: 600px;
-  margin: auto;
-  padding: 0 8px;
+:root{
+--bg:#020609;
+--panel:#071116;
+--cyan:#59f5ff;
+--green:#4dffa5;
+--red:#ff5475;
+--violet:#d66cff;
+--yellow:#ffe56b;
+--text:#dffcff;
+--muted:#6e8991;
+--line:#15343d
 }
 
-/* HEADER */
-.header {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 10px 0;
-}
-.brand {
-  display: flex; align-items: center; gap: 8px;
-}
-.eth-logo {
-  width: 36px; height: 36px; line-height: 36px;
-  border: 2px solid var(--cyan);
-  border-radius: 8px;
-  color: var(--cyan); font-size: 20px;
-  text-align: center;
-  box-shadow: 0 0 8px rgba(0,246,255,0.4);
-}
-.brand-title {
-  font-size: 18px; font-weight: 900;
-  letter-spacing: 1px;
-}
-.brand-sub {
-  color: #5d8189; font-size: 8px; letter-spacing: 1px;
-}
-.live {
-  display: flex; align-items: center; gap: 4px;
-  border: 1px solid #174a45; border-radius: 12px;
-  padding: 6px 10px;
-  color: var(--green); font-size: 9px;
-  box-shadow: 0 0 8px rgba(0,255,157,0.2);
-}
-.live-dot {
-  width: 7px; height: 7px; border-radius: 50%;
-  background: var(--green);
-  box-shadow: 0 0 6px var(--green);
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+
+html,body{
+margin:0;
+background:var(--bg);
+color:var(--text);
+font-family:ui-monospace,SFMono-Regular,Menlo,monospace
 }
 
-/* SCREENS */
-.screen { display: none; }
-.screen.active { display: block; }
-
-/* ===========================
-   CHART SCREEN
-=========================== */
-#screen-chart {}
-
-/* PRICE PANEL */
-.price-panel {
-  border: 1px solid #12434a;
-  border-radius: 12px;
-  background: linear-gradient(135deg, rgba(0,246,255,0.05), rgba(184,77,255,0.02)), var(--panel);
-  padding: 12px;
-  box-shadow: 0 0 10px rgba(0,246,255,0.1);
-  margin-bottom: 10px;
-}
-.price-row {
-  display: flex; justify-content: space-between;
-}
-.price {
-  font-size: 28px; font-weight: 900;
-  color: var(--green);
-  letter-spacing: -1px;
-}
-.change {
-  font-size: 10px; margin-top: 4px;
-}
-.change.green { color: #00ff9d; }
-.change.red { color: #ff4966; }
-.symbol-small {
-  color: #60828a; font-size: 9px;
-  margin-top: 4px; text-align: right;
-  opacity: 0.7;
-}
-.stats {
-  display: grid; grid-template-columns: repeat(3,1fr);
-  gap: 5px; margin-top: 10px;
-}
-.stat {
-  border-top: 1px solid #12343b; padding-top: 6px;
-}
-.stat-label {
-  color: #58757d; font-size: 7px; text-transform: uppercase;
-}
-.stat-value {
-  font-size: 10px; margin-top: 3px;
+body{
+min-height:100vh;
+padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)
 }
 
-/* TIMEFRAME BAR */
-.timebar {
-  display: flex; gap: 4px;
-  overflow-x: auto; margin: 8px 0 6px;
-}
-.timebar::-webkit-scrollbar { display: none; }
-.tf {
-  flex: 0 0 auto;
-  border: 1px solid #14333b;
-  background: #071319;
-  color: #68858d;
-  padding: 6px 10px; border-radius: 6px;
-  font-family: inherit; font-size: 9px;
-}
-.tf.active {
-  color: #001215; background: var(--cyan);
-  border-color: var(--cyan);
-  box-shadow: 0 0 8px rgba(0,246,255,0.3);
+button,input{font:inherit}
+button{cursor:pointer}
+
+.app{
+width:min(100%,620px);
+margin:auto;
+padding:8px 12px 92px
 }
 
-/* CHART CONTAINER */
-.chart-shell {
-  position: relative;
-  border: 1px solid #16434b;
-  border-radius: 12px;
-  background: #030b10;
-  box-shadow: 0 0 20px rgba(0,246,255,0.05);
-}
-.chart-head {
-  height: 28px;
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 0 10px;
-  color: #66838b; font-size: 8px;
-  border-bottom: 1px solid #102a31;
-}
-.chart-title { color: #91b1b8; }
-#chart { width: 100%; height: 350px; }
-
-/* SVG DRAWING LAYER (overlaid on chart) */
-#drawingLayer {
-  position: absolute; top: 28px; bottom: 0; left: 0; right: 0;
-  width: 100%; height: calc(100% - 28px);
-  pointer-events: none; /* enable only when drawing mode */
-  z-index: 5;
-}
-#drawingLayer.active { pointer-events: auto; }
-.drawing-line {
-  stroke: var(--yellow); stroke-width: 2;
-  vector-effect: non-scaling-stroke;
-}
-.draw-text {
-  font-size: 11px; fill: var(--yellow); paint-order: stroke;
-  stroke: var(--bg); stroke-width: 3; font-family: monospace;
-}
-.measure-text {
-  font-size: 10px; fill: #fff; font-family: monospace;
+.top{
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:10px 2px 12px
 }
 
-/* RANGE BAR */
-.rangebar {
-  display: flex; gap: 4px;
-  overflow-x: auto; padding: 8px 0;
-  border-top: 1px solid #102a31;
-}
-.rangebar::-webkit-scrollbar { display: none; }
-.range-btn {
-  flex: 0 0 auto;
-  background: none; border: none;
-  color: #55727b; padding: 6px 10px;
-  font-family: inherit; font-size: 9px;
-}
-.range-btn.active {
-  color: var(--cyan); background: #082a31;
+.brand{
+display:flex;
+align-items:center;
+gap:10px
 }
 
-/* DRAWING TOOLBAR */
-.toolbar {
-  display: flex; gap: 4px; overflow-x: auto;
-  padding: 8px 0; margin-top: 4px; margin-bottom: 6px;
-}
-.toolbar::-webkit-scrollbar { display: none; }
-.tool {
-  flex: 0 0 auto;
-  border: 1px solid #153840;
-  background: #061116;
-  color: #71929a;
-  border-radius: 8px;
-  padding: 6px 8px; font-size: 9px;
-}
-.tool.active {
-  color: var(--yellow); border-color: var(--yellow);
-  box-shadow: 0 0 8px rgba(255,230,109,0.3);
+.logo{
+width:42px;
+height:42px;
+border:2px solid var(--cyan);
+border-radius:12px;
+display:grid;
+place-items:center;
+color:var(--cyan);
+font-size:20px;
+box-shadow:0 0 18px #59f5ff22
 }
 
-/* FORECAST CARDS */
-.forecast-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr; gap: 6px;
-  margin-top: 8px;
-}
-.card {
-  background: var(--panel);
-  border: 1px solid #143940;
-  border-radius: 10px;
-  padding: 8px;
-}
-.card.purple {
-  border-color: #4d1d59;
-}
-.card-title {
-  font-size: 7px; color: #68858d; letter-spacing: 0.7px;
-}
-.card-price {
-  margin-top: 4px;
-  font-size: 18px; font-weight: 900;
-  color: var(--green);
-}
-.card-change {
-  font-size: 8px; margin-top: 3px;
-}
-.conf {
-  margin-top: 6px; font-size: 7px; color: #5e7b83;
-}
-.conf-bar {
-  height: 3px; background: #11262c; border-radius: 4px;
-  margin-top: 4px; overflow: hidden;
-}
-.conf-bar span {
-  display: block; height: 100%; background: var(--cyan);
+.title{
+font-weight:900;
+font-size:20px;
+letter-spacing:1px
 }
 
-/* CUSTOM FORECAST PANEL */
-.panel {
-  margin-top: 10px;
-  background: linear-gradient(120deg, rgba(0,246,255,0.025), rgba(184,77,255,0.025)), var(--panel);
-  border: 1px solid #14353d; border-radius: 10px;
-  padding: 10px;
-}
-.panel-title {
-  font-size: 8px; color: #74a1a8; letter-spacing: 1px;
-  margin-bottom: 6px;
-}
-.custom-row {
-  display: flex; gap: 6px;
-}
-.custom-row input {
-  flex: 1;
-  padding: 8px;
-  background: #030b10;
-  border: 1px solid #1c4850;
-  border-radius: 6px;
-  font-family: inherit; font-size: 9px;
-  color: #dfffff;
-}
-.custom-button {
-  background: #21091f;
-  border: 1px solid var(--pink);
-  color: #ff75e4; font-weight: 700;
-  border-radius: 6px;
-  padding: 8px 10px; font-size: 8px;
-  flex: 0 0 auto;
+.sub{
+font-size:8px;
+color:var(--muted);
+letter-spacing:2px;
+margin-top:3px
 }
 
-/* FIVE ENGINES PANEL */
-.engines {
-  display: grid; grid-template-columns: repeat(5,1fr); gap: 4px;
-}
-.engine {
-  background: var(--panel); border: 1px solid #17343b;
-  border-radius: 6px; padding: 5px 4px;
-  text-align: center;
-}
-.engine-number {
-  font-size: 7px; color: #536f78;
-}
-.engine-name {
-  font-size: 7px; color: #86a4aa; margin-top: 4px;
-  min-height: 22px;
-}
-.engine-value {
-  margin-top: 4px; font-size: 8px; color: var(--green);
+.status{
+font-size:9px;
+color:var(--green);
+border:1px solid #164d3d;
+border-radius:20px;
+padding:7px 9px;
+background:#06110f
 }
 
-/* ACTIVE TARGETS */
-.active-targets {
-  margin-top: 10px;
-}
-.active-row {
-  display: flex; justify-content: space-between;
-  border-bottom: 1px solid #10282f;
-  padding: 6px 0; font-size: 8px;
-}
-.active-row:last-child { border-bottom: 0; }
-
-/* HISTORY PANEL */
-.history {
-  max-height: 180px; overflow: auto;
-  margin-top: 6px;
-}
-.history-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  gap: 4px; padding: 6px 0;
-  border-bottom: 1px solid #10272d;
-  font-size: 8px;
-}
-.history-row:last-child { border-bottom: 0; }
-.green { color: #00ff9d; }
-.red { color: #ff4966; }
-
-/* SETTINGS PANEL */
-.settings {
-  padding: 8px 0;
-}
-.setting-group {
-  margin-top: 10px;
-}
-.setting-group label {
-  display: block; font-size: 9px; margin-bottom: 4px;
-}
-.setting-group select, .setting-group input[type=checkbox] {
-  margin-right: 6px;
+.dot{
+display:inline-block;
+width:7px;
+height:7px;
+border-radius:50%;
+background:var(--green);
+box-shadow:0 0 10px var(--green);
+margin-right:5px
 }
 
-/* BOTTOM NAV */
-.bottom-nav {
-  position: sticky; bottom: 0; margin-top: 12px;
-  display: grid; grid-template-columns: repeat(4,1fr); gap: 4px;
-  padding: 6px; border: 1px solid #12383f; border-radius: 12px;
-  background: rgba(3,11,16,0.93); backdrop-filter: blur(12px);
-}
-.nav {
-  background: none; border: none;
-  color: #57757d; padding: 6px 2px;
-  font-size: 8px; line-height: 1.1;
-  border-radius: 8px; font-family: inherit;
-}
-.nav.active {
-  color: var(--cyan); background: #08262d;
-  box-shadow: inset 0 0 8px rgba(0,246,255,0.06);
-}
-.nav span { display: block; }
-.footer {
-  text-align: center; color: #3e5b63; font-size: 7px;
-  padding: 12px 0 6px;
+.screen{display:none}
+.screen.active{display:block}
+
+.panel{
+background:linear-gradient(140deg,#08151b,#050c10);
+border:1px solid var(--line);
+border-radius:16px;
+padding:12px;
+margin-bottom:10px;
+box-shadow:0 0 24px #0008
 }
 
-@media (min-width: 700px) {
-  /* For wider screens, allow chart to grow */
-  #chart { height: 450px; }
+.price{
+font-size:30px;
+font-weight:900;
+color:var(--green)
+}
+
+.price-row{
+display:flex;
+justify-content:space-between;
+gap:8px
+}
+
+.ticker{
+font-size:9px;
+color:var(--muted);
+text-align:right
+}
+
+.change{
+font-size:10px;
+margin-top:3px
+}
+
+.green{color:var(--green)}
+.red{color:var(--red)}
+
+.stats{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:8px;
+margin-top:12px
+}
+
+.stat{
+border-top:1px solid var(--line);
+padding-top:7px
+}
+
+.lab{
+font-size:7px;
+color:var(--muted)
+}
+
+.val{
+font-size:10px;
+margin-top:3px
+}
+
+.scroll{
+display:flex;
+gap:6px;
+overflow:auto;
+scrollbar-width:none;
+margin:8px 0
+}
+
+.scroll::-webkit-scrollbar{display:none}
+
+.chip{
+flex:0 0 auto;
+background:#061116;
+color:var(--muted);
+border:1px solid var(--line);
+border-radius:9px;
+padding:8px 12px;
+font-size:10px
+}
+
+.chip.active{
+background:var(--cyan);
+color:#001114;
+border-color:var(--cyan);
+box-shadow:0 0 14px #59f5ff33
+}
+
+.chartbox{
+border:1px solid var(--line);
+border-radius:16px;
+overflow:hidden;
+background:#03090d
+}
+
+.charthead{
+height:32px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:0 10px;
+border-bottom:1px solid #102a31;
+font-size:8px;
+color:var(--muted)
+}
+
+#chart{
+height:390px
+}
+
+.chartwrap{
+position:relative
+}
+
+/* FIXED DRAWING OVERLAY */
+.draw-layer{
+position:absolute;
+inset:0;
+width:100%;
+height:100%;
+pointer-events:none;
+z-index:4
+}
+
+.draw-layer.active{
+pointer-events:auto
+}
+
+.range{
+display:flex;
+gap:2px;
+overflow:auto;
+border-top:1px solid #102a31;
+padding:5px;
+scrollbar-width:none
+}
+
+.range button{
+background:none;
+border:0;
+color:var(--muted);
+padding:7px 10px;
+border-radius:7px;
+font-size:9px
+}
+
+.range button.active{
+background:#0b2c34;
+color:var(--cyan)
+}
+
+.tools{
+display:flex;
+gap:5px;
+overflow:auto;
+padding:8px 0;
+scrollbar-width:none
+}
+
+.tools::-webkit-scrollbar{display:none}
+
+.tool{
+flex:0 0 auto;
+background:#061116;
+color:var(--muted);
+border:1px solid var(--line);
+border-radius:9px;
+padding:8px 9px;
+font-size:9px
+}
+
+.tool.active{
+color:var(--yellow);
+border-color:var(--yellow);
+box-shadow:0 0 12px #ffe56b22
+}
+
+.forecast-grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:8px
+}
+
+.forecast{
+padding:11px;
+border:1px solid #16414a;
+border-radius:13px;
+background:#061116
+}
+
+.forecast.violet{
+border-color:#4c2357
+}
+
+.ftitle{
+font-size:8px;
+color:var(--muted);
+letter-spacing:1px
+}
+
+.fprice{
+font-size:21px;
+font-weight:900;
+margin-top:5px
+}
+
+.fmeta{
+font-size:8px;
+margin-top:4px;
+color:var(--muted)
+}
+
+.bar{
+height:4px;
+background:#10242b;
+border-radius:4px;
+margin-top:7px;
+overflow:hidden
+}
+
+.bar i{
+display:block;
+height:100%;
+background:var(--cyan)
+}
+
+.violet .bar i{
+background:var(--violet)
+}
+
+.section-title{
+font-size:8px;
+color:#88a6ad;
+letter-spacing:1.4px;
+margin-bottom:8px
+}
+
+.engines{
+display:grid;
+grid-template-columns:repeat(5,1fr);
+gap:4px
+}
+
+.engine{
+min-width:0;
+text-align:center;
+border:1px solid var(--line);
+border-radius:9px;
+padding:7px 3px;
+background:#061015
+}
+
+.en{
+font-size:6px;
+color:#4f6d75
+}
+
+.ename{
+font-size:7px;
+color:#88a4aa;
+min-height:22px;
+margin-top:4px
+}
+
+.ev{
+font-size:8px;
+color:var(--green);
+margin-top:4px
+}
+
+.row{
+display:flex;
+justify-content:space-between;
+gap:8px;
+padding:8px 0;
+border-bottom:1px solid #10282f;
+font-size:9px
+}
+
+.row:last-child{border:0}
+
+.inputrow{
+display:flex;
+gap:6px
+}
+
+.inputrow input{
+min-width:0;
+flex:1;
+background:#03090d;
+color:var(--text);
+border:1px solid var(--line);
+border-radius:9px;
+padding:9px;
+font-size:10px
+}
+
+.primary{
+background:#0a3038;
+color:var(--cyan);
+border:1px solid var(--cyan);
+border-radius:9px;
+padding:9px 11px;
+font-size:9px
+}
+
+.danger{
+background:#250b13;
+color:#ff8098;
+border:1px solid #6b2032;
+border-radius:9px;
+padding:8px 10px
+}
+
+.historyrow{
+display:grid;
+grid-template-columns:.7fr 1fr 1fr 1fr;
+gap:4px;
+padding:8px 0;
+border-bottom:1px solid #10282f;
+font-size:8px
+}
+
+.empty{
+color:var(--muted);
+font-size:9px;
+padding:10px 0
+}
+
+.nav{
+position:fixed;
+z-index:20;
+bottom:calc(8px + env(safe-area-inset-bottom));
+left:50%;
+transform:translateX(-50%);
+width:min(calc(100% - 24px),596px);
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:4px;
+padding:6px;
+border:1px solid #1a3d45;
+border-radius:18px;
+background:#050c10ee;
+backdrop-filter:blur(18px);
+box-shadow:0 10px 35px #000b
+}
+
+.nav button{
+border:0;
+background:none;
+color:var(--muted);
+padding:9px 2px;
+border-radius:11px;
+font-size:8px
+}
+
+.nav button.active{
+background:#0a252c;
+color:var(--cyan);
+box-shadow:inset 0 0 18px #59f5ff0c
+}
+
+.navicon{
+font-size:13px;
+display:block;
+margin-bottom:2px
+}
+
+.notice{
+font-size:8px;
+color:var(--muted);
+line-height:1.5
+}
+
+.ok{color:var(--green)}
+.warn{color:var(--yellow)}
+.err{color:var(--red)}
+
+.settings button{
+margin:4px 4px 0 0
+}
+
+.footer{
+text-align:center;
+color:#3e5960;
+font-size:7px;
+margin-top:10px
 }
 </style>
 </head>
+
 <body>
 
 <div class="app">
 
-  <!-- HEADER -->
-  <div class="header">
-    <div class="brand">
-      <div class="eth-logo">◆</div>
-      <div>
-        <div class="brand-title">ETH/USDT</div>
-        <div class="brand-sub">NEURAL MATRIX • PREDICTION CORE</div>
-      </div>
-    </div>
-    <div class="live">
-      <div class="live-dot"></div>
-      <span id="connection">CONNECTING</span>
-    </div>
-  </div>
-
-  <!-- Screen: CHART -->
-  <div id="screen-chart" class="screen active">
-    <!-- PRICE PANEL -->
-    <div class="price-panel">
-      <div class="price-row">
-        <div>
-          <div class="price" id="price">--</div>
-          <div class="change" id="change">--</div>
-        </div>
-        <div class="symbol-small">BINANCE / ETHUSDT</div>
-      </div>
-      <div class="stats">
-        <div class="stat">
-          <div class="stat-label">24H HIGH</div>
-          <div class="stat-value" id="high">--</div>
-        </div>
-        <div class="stat">
-          <div class="stat-label">24H LOW</div>
-          <div class="stat-value" id="low">--</div>
-        </div>
-        <div class="stat">
-          <div class="stat-label">24H VOLUME</div>
-          <div class="stat-value" id="volume">--</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- TIMEFRAME BUTTONS -->
-    <div class="timebar">
-      <button class="tf" data-tf="1">1m</button>
-      <button class="tf" data-tf="5">5m</button>
-      <button class="tf active" data-tf="15">15m</button>
-      <button class="tf" data-tf="30">30m</button>
-      <button class="tf" data-tf="60">1h</button>
-      <button class="tf" data-tf="240">4h</button>
-    </div>
-
-    <!-- CHART -->
-    <div class="chart-shell">
-      <div class="chart-head">
-        <span class="chart-title">ETH/USDT • LIVE MARKET</span>
-        <span id="chartStatus">LOADING</span>
-      </div>
-      <div id="chart"></div>
-      <svg id="drawingLayer"></svg>
-      <div class="rangebar">
-        <button class="range-btn active" data-range="1D">1D</button>
-        <button class="range-btn" data-range="1W">1W</button>
-        <button class="range-btn" data-range="1M">1M</button>
-        <button class="range-btn" data-range="3M">3M</button>
-        <button class="range-btn" data-range="6M">6M</button>
-        <button class="range-btn" data-range="1Y">1Y</button>
-        <button class="range-btn" data-range="ALL">ALL</button>
-      </div>
-    </div>
-
-    <!-- DRAW TOOLS -->
-    <div class="toolbar">
-      <button class="tool active" data-tool="none">MOVE</button>
-      <button class="tool" data-tool="trend">╱ TREND</button>
-      <button class="tool" data-tool="horizontal">━ S/R</button>
-      <button class="tool" data-tool="vertical">│ VLINE</button>
-      <button class="tool" data-tool="fib">FIB</button>
-      <button class="tool" data-tool="measure">MEASURE</button>
-      <button class="tool" data-tool="text">T TEXT</button>
-      <button class="tool" onclick="undoDrawing()">↶</button>
-      <button class="tool" onclick="deleteLastDrawing()">DEL</button>
-      <button class="tool" onclick="clearDrawings()">CLEAR</button>
-    </div>
-
-    <!-- FORECAST PANES -->
-    <div class="forecast-grid">
-      <div class="card">
-        <div class="card-title">15 MIN FORECAST</div>
-        <div class="card-price" id="p15">--</div>
-        <div class="card-change" id="c15">--</div>
-        <div class="conf">CONFIDENCE <span id="conf15">--</span>%</div>
-        <div class="conf-bar"><span id="bar15" style="width:0%"></span></div>
-      </div>
-      <div class="card purple">
-        <div class="card-title">30 MIN FORECAST</div>
-        <div class="card-price" id="p30">--</div>
-        <div class="card-change" id="c30">--</div>
-        <div class="conf">CONFIDENCE <span id="conf30">--</span>%</div>
-        <div class="conf-bar"><span id="bar30" style="width:0%;background:var(--pink)"></span></div>
-      </div>
-    </div>
-
-    <!-- CUSTOM FORECAST -->
-    <div class="panel">
-      <div class="panel-title">CUSTOM FORECAST</div>
-      <div class="custom-row">
-        <input type="datetime-local" id="customTime">
-        <button class="custom-button" onclick="createCustomForecast()">FORECAST</button>
-      </div>
-      <div id="customResult" class="conf" style="margin-top:6px; font-size:7px;">
-        (Set a target time ≥5 minutes ahead, ≤7 days.)
-      </div>
-    </div>
-
-    <!-- FIVE ENGINES CONSENSUS -->
-    <div class="panel">
-      <div class="panel-title">FIVE ENGINE CONSENSUS</div>
-      <div class="engines">
-        <div class="engine"><div class="engine-number">01</div><div class="engine-name">Chronological</div><div class="engine-value" id="e1">--</div></div>
-        <div class="engine"><div class="engine-number">02</div><div class="engine-name">Mathematical</div><div class="engine-value" id="e2">--</div></div>
-        <div class="engine"><div class="engine-number">03</div><div class="engine-name">Regime Info</div><div class="engine-value" id="e3">--</div></div>
-        <div class="engine"><div class="engine-number">04</div><div class="engine-name">Adaptive</div><div class="engine-value" id="e4">--</div></div>
-        <div class="engine"><div class="engine-number">05</div><div class="engine-name">Consultation</div><div class="engine-value" id="e5">--</div></div>
-      </div>
-    </div>
-
-    <!-- ACTIVE TARGETS -->
-    <div class="panel active-targets">
-      <div class="panel-title">ACTIVE TARGETS</div>
-      <div id="activeList"><div class="conf" style="font-size:7px;">No active targets.</div></div>
-    </div>
-  </div>
-
-  <!-- Screen: PREDICT -->
-  <div id="screen-predict" class="screen">
-    <!-- Reuse forecast info or summarize current forecasts -->
-    <div class="panel">
-      <div class="panel-title">CURRENT FORECASTS</div>
-      <div class="forecast-grid">
-        <!-- Repeat of forecast cards or summary -->
-        <div class="card">
-          <div class="card-title">15 MIN</div>
-          <div class="card-price" id="p15_small">--</div>
-          <div class="card-change" id="c15_small">--</div>
-        </div>
-        <div class="card purple">
-          <div class="card-title">30 MIN</div>
-          <div class="card-price" id="p30_small">--</div>
-          <div class="card-change" id="c30_small">--</div>
-        </div>
-      </div>
-    </div>
-    <div class="panel">
-      <div class="panel-title">FIVE ENGINE OUTPUTS</div>
-      <div class="active-row"><span>Engine 1</span><span id="e1_small">--</span></div>
-      <div class="active-row"><span>Engine 2</span><span id="e2_small">--</span></div>
-      <div class="active-row"><span>Engine 3</span><span id="e3_small">--</span></div>
-      <div class="active-row"><span>Engine 4</span><span id="e4_small">--</span></div>
-      <div class="active-row"><span>Engine 5 (ens.)</span><span id="e5_small">--</span></div>
-    </div>
-    <div class="panel active-targets">
-      <div class="panel-title">ACTIVE TARGETS</div>
-      <div id="activeList2"><div class="conf" style="font-size:7px;">No active targets.</div></div>
-    </div>
-  </div>
-
-  <!-- Screen: HISTORY -->
-  <div id="screen-history" class="screen">
-    <div class="panel">
-      <div class="panel-title">COMPLETED PREDICTIONS</div>
-      <div class="history" id="history">
-        <div class="conf" style="font-size:7px;">No completed predictions.</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Screen: SETTINGS -->
-  <div id="screen-settings" class="screen">
-    <div class="panel">
-      <div class="panel-title">SETTINGS</div>
-      <div class="setting-group">
-        <label><input type="checkbox" id="toggleVolume" checked> Show Volume</label>
-        <label><input type="checkbox" id="toggleForecasts" checked> Show Forecast Paths</label>
-      </div>
-      <div class="setting-group">
-        <label><button onclick="clearDrawings()">Clear All Drawings</button></label>
-      </div>
-      <div class="setting-group">
-        <label><button onclick="resetApp()">Reset All Data</button></label>
-      </div>
-    </div>
-  </div>
-
-  <!-- BOTTOM NAV -->
-  <div class="bottom-nav">
-    <button class="nav active" data-screen="chart">◈<span>CHART</span></button>
-    <button class="nav" data-screen="predict">◉<span>PREDICT</span></button>
-    <button class="nav" data-screen="history">◷<span>HISTORY</span></button>
-    <button class="nav" data-screen="settings">⚙<span>SETTINGS</span></button>
-  </div>
-
-  <div class="footer">
-    ETH/USDT NEURAL MATRIX • BINANCE PUBLIC DATA • FORECASTS ARE ESTIMATES
-  </div>
+<header class="top">
+<div class="brand">
+<div class="logo">◆</div>
+<div>
+<div class="title">ETH/USDT</div>
+<div class="sub">MATRIX MARKET CORE</div>
+</div>
 </div>
 
+<div class="status">
+<span class="dot"></span>
+<span id="status">STARTING</span>
+</div>
+</header>
+
+
+<!-- CHART -->
+
+<section id="screen-chart" class="screen active">
+
+<div class="panel">
+
+<div class="price-row">
+
+<div>
+<div id="price" class="price">--</div>
+<div id="change" class="change">--</div>
+</div>
+
+<div class="ticker">
+BINANCE SPOT<br>
+ETHUSDT
+</div>
+
+</div>
+
+<div class="stats">
+
+<div class="stat">
+<div class="lab">24H HIGH</div>
+<div id="high" class="val">--</div>
+</div>
+
+<div class="stat">
+<div class="lab">24H LOW</div>
+<div id="low" class="val">--</div>
+</div>
+
+<div class="stat">
+<div class="lab">24H VOLUME</div>
+<div id="vol" class="val">--</div>
+</div>
+
+</div>
+</div>
+
+
+<!-- TIMEFRAME -->
+
+<div class="scroll" id="tfbar">
+
+<button class="chip" data-tf="1m">1m</button>
+<button class="chip" data-tf="5m">5m</button>
+<button class="chip active" data-tf="15m">15m</button>
+<button class="chip" data-tf="30m">30m</button>
+<button class="chip" data-tf="1h">1h</button>
+<button class="chip" data-tf="4h">4h</button>
+
+</div>
+
+
+<!-- CHART -->
+
+<div class="chartbox">
+
+<div class="charthead">
+<span>ETH/USDT • LIVE</span>
+<span id="chartStatus">LOADING</span>
+</div>
+
+<div class="chartwrap">
+
+<div id="chart"></div>
+
+<svg id="drawLayer" class="draw-layer"></svg>
+
+</div>
+
+
+<div class="range" id="rangebar">
+
+<button class="active" data-range="1D">1D</button>
+<button data-range="1W">1W</button>
+<button data-range="1M">1M</button>
+<button data-range="3M">3M</button>
+<button data-range="6M">6M</button>
+<button data-range="1Y">1Y</button>
+<button data-range="ALL">ALL</button>
+
+</div>
+
+</div>
+
+
+<!-- DRAWING TOOLS -->
+
+<div class="tools" id="tools">
+
+<button class="tool active" data-tool="move">MOVE</button>
+<button class="tool" data-tool="trend">↗ TREND</button>
+<button class="tool" data-tool="horizontal">— S/R</button>
+<button class="tool" data-tool="vertical">│ VLINE</button>
+<button class="tool" data-tool="fib">FIB</button>
+<button class="tool" data-tool="measure">MEASURE</button>
+<button class="tool" data-tool="text">T TEXT</button>
+<button class="tool" id="undo">↶</button>
+<button class="tool" id="delete">DEL</button>
+<button class="tool" id="clear">CLEAR</button>
+
+</div>
+
+
+<!-- FORECAST -->
+
+<div class="forecast-grid">
+
+<div class="forecast">
+
+<div class="ftitle">15 MIN</div>
+
+<div id="p15" class="fprice">--</div>
+
+<div id="m15" class="fmeta">waiting</div>
+
+<div class="bar">
+<i id="b15" style="width:0"></i>
+</div>
+
+</div>
+
+
+<div class="forecast violet">
+
+<div class="ftitle">30 MIN</div>
+
+<div id="p30" class="fprice">--</div>
+
+<div id="m30" class="fmeta">waiting</div>
+
+<div class="bar">
+<i id="b30" style="width:0"></i>
+</div>
+
+</div>
+
+</div>
+
+
+<!-- CUSTOM FORECAST -->
+
+<div class="panel" style="margin-top:10px">
+
+<div class="section-title">
+CUSTOM FORECAST • TARGET TIME ONLY
+</div>
+
+<div class="inputrow">
+
+<input id="customTime" type="datetime-local">
+
+<button class="primary" id="customBtn">
+FORECAST
+</button>
+
+</div>
+
+<div id="customMsg" class="notice" style="margin-top:7px">
+Choose a target at least 5 minutes ahead.
+</div>
+
+</div>
+
+
+<!-- ENGINES -->
+
+<div class="panel">
+
+<div class="section-title">
+ENGINE TRANSPARENCY
+</div>
+
+<div class="engines">
+
+<div class="engine">
+<div class="en">01</div>
+<div class="ename">Chronological</div>
+<div id="e1" class="ev">--</div>
+</div>
+
+<div class="engine">
+<div class="en">02</div>
+<div class="ename">Mathematical</div>
+<div id="e2" class="ev">--</div>
+</div>
+
+<div class="engine">
+<div class="en">03</div>
+<div class="ename">Information</div>
+<div id="e3" class="ev">--</div>
+</div>
+
+<div class="engine">
+<div class="en">04</div>
+<div class="ename">Adaptive</div>
+<div id="e4" class="ev">--</div>
+</div>
+
+<div class="engine">
+<div class="en">05</div>
+<div class="ename">Consultation</div>
+<div id="e5" class="ev">--</div>
+</div>
+
+</div>
+
+<div id="modelNote" class="notice" style="margin-top:8px">
+Deterministic statistical heuristics; not a trained neural network.
+</div>
+
+</div>
+
+
+<!-- ACTIVE -->
+
+<div class="panel">
+
+<div class="section-title">
+ACTIVE PREDICTIONS
+</div>
+
+<div id="active">
+No active prediction.
+</div>
+
+</div>
+
+</section>
+
+
+<!-- PREDICT -->
+
+<section id="screen-predict" class="screen">
+
+<div class="panel">
+
+<div class="section-title">
+PREDICTION CENTER
+</div>
+
+<div class="notice">
+Predictions are created from the latest completed market data.
+Target timestamps are locked when created.
+</div>
+
+</div>
+
+
+<div class="panel">
+
+<div class="row">
+<span>15m</span>
+<span id="pred15">--</span>
+</div>
+
+<div class="row">
+<span>30m</span>
+<span id="pred30">--</span>
+</div>
+
+</div>
+
+
+<div class="panel">
+
+<div class="section-title">
+ACTIVE TARGETS
+</div>
+
+<div id="active2">
+No active prediction.
+</div>
+
+</div>
+
+</section>
+
+
+<!-- HISTORY -->
+
+<section id="screen-history" class="screen">
+
+<div class="panel">
+
+<div class="section-title">
+COMPLETED PREDICTIONS
+</div>
+
+<div id="history"></div>
+
+</div>
+
+
+<div class="panel">
+
+<div class="section-title">
+VALIDATION / LEARNING
+</div>
+
+<div id="metrics" class="notice">
+Not enough completed observations yet.
+</div>
+
+</div>
+
+</section>
+
+
+<!-- SETTINGS -->
+
+<section id="screen-settings" class="screen">
+
+<div class="panel settings">
+
+<div class="section-title">
+SETTINGS
+</div>
+
+<div class="row">
+<span>Volume</span>
+<button id="volumeToggle" class="primary">ON</button>
+</div>
+
+<div class="row">
+<span>Forecast paths</span>
+<button id="forecastToggle" class="primary">ON</button>
+</div>
+
+<div class="row">
+<span>Data source</span>
+<span>Binance public</span>
+</div>
+
+<div style="margin-top:10px">
+
+<button id="clearDrawings" class="danger">
+CLEAR DRAWINGS
+</button>
+
+<button id="reset" class="danger">
+RESET APP DATA
+</button>
+
+</div>
+
+</div>
+
+
+<div class="panel">
+
+<div class="section-title">
+ABOUT DATA
+</div>
+
+<div class="notice">
+No private keys are used. If Binance is unreachable,
+the app reports the connection error instead of inventing market values.
+</div>
+
+</div>
+
+</section>
+
+
+<div class="footer">
+PUBLIC MARKET DATA • ESTIMATES ONLY • NO TRADE EXECUTION
+</div>
+
+</div>
+
+
+<!-- NAVIGATION -->
+
+<nav class="nav">
+
+<button class="active" data-screen="chart">
+<span class="navicon">◆</span>
+CHART
+</button>
+
+<button data-screen="predict">
+<span class="navicon">◉</span>
+PREDICT
+</button>
+
+<button data-screen="history">
+<span class="navicon">◷</span>
+HISTORY
+</button>
+
+<button data-screen="settings">
+<span class="navicon">⚙</span>
+SETTINGS
+</button>
+
+</nav>
+
+
 <script>
-// =====================
-//   Configuration
-// =====================
-const REST = "https://api.binance.com/api/v3";
-const WS = "wss://stream.binance.com:9443/ws/ethusdt@kline_1m";
+'use strict';
 
-const ACTIVE_KEY = "eth_matrix_active";
-const HISTORY_KEY = "eth_matrix_history";
-const DRAW_KEY = "eth_matrix_drawings";
+const API='https://data-api.binance.vision/api/v3';
 
-// =====================
-//   State Variables
-// =====================
-let chart, candleSeries, volumeSeries, priceLine;
-let candles = [];            // Array of candle objects {time, open, high, low, close, volume}
-let currentPrice = null;
-let intervalMinutes = 15;    // selected timeframe in minutes
-let selectedRange = "1D";    // selected history range
-let activePredictions = JSON.parse(localStorage.getItem(ACTIVE_KEY) || "[]");
-let history = JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
-let drawings = JSON.parse(localStorage.getItem(DRAW_KEY) || "[]");
-let forecastLines = [];
+const WSURL='wss://stream.binance.com:9443/ws/ethusdt@kline_1m';
 
-// Drawing state
-let selectedTool = "none";
-let drawingStart = null;
-let drawingPreview = null;
+const KEY={
+active:'matrix_active_v2',
+history:'matrix_history_v2',
+draw:'matrix_draw_v2',
+settings:'matrix_settings_v2'
+};
 
-// =====================
-//   Helpers
-// =====================
-// Format price with 2 decimals
-function fmtPrice(v) {
-  return (isFinite(v) ? Number(v).toLocaleString("en-US", {minimumFractionDigits:2, maximumFractionDigits:2}) : "--");
+const TF={
+'1m':{api:'1m',min:1},
+'5m':{api:'5m',min:5},
+'15m':{api:'15m',min:15},
+'30m':{api:'30m',min:30},
+'1h':{api:'1h',min:60},
+'4h':{api:'4h',min:240}
+};
+
+const RANGE={
+'1D':1,
+'1W':7,
+'1M':30,
+'3M':90,
+'6M':180,
+'1Y':365,
+'ALL':1095
+};
+
+let chart,candle,volume,priceLine,ws,reconnectTimer;
+
+let tf='15m';
+let range='1D';
+
+let candles=[];
+let lastPrice=null;
+
+let forecastSeries=[];
+
+let showForecast=true;
+let showVolume=true;
+
+let active=load(KEY.active,[]);
+let history=load(KEY.history,[]);
+let drawings=load(KEY.draw,[]);
+let settings=load(KEY.settings,{});
+
+let tool='move';
+let draft=null;
+let selectedId=null;
+
+
+function load(k,f){
+try{
+return JSON.parse(localStorage.getItem(k)||JSON.stringify(f))
+}catch{
+return f
 }
-// Format percentage with sign
-function fmtPct(v) {
-  return (isFinite(v) ? (v>=0?"+":"") + v.toFixed(2) + "%" : "--");
-}
-// Save data to localStorage
-function saveAll() {
-  localStorage.setItem(ACTIVE_KEY, JSON.stringify(activePredictions));
-  localStorage.setItem(HISTORY_KEY, JSON.stringify(history.slice(-200)));
-  localStorage.setItem(DRAW_KEY, JSON.stringify(drawings));
-}
-
-// =====================
-//   Chart Initialization
-// =====================
-function initChart() {
-  const chartDiv = document.getElementById("chart");
-  chart = LightweightCharts.createChart(chartDiv, {
-    layout: {
-      background: { type: 'solid', color: '#030b10' },
-      textColor: '#65818a'
-    },
-    grid: { vertLines: { color:'#0b2027' }, horzLines: { color:'#0b2027' } },
-    rightPriceScale: {
-      borderColor: '#14343b',
-      scaleMargins: { top: 0.08, bottom: 0.23 }
-    },
-    timeScale: {
-      borderColor: '#14343b',
-      timeVisible: true,
-      secondsVisible: false,
-      rightOffset: 10,
-      barSpacing: 6,
-      minBarSpacing: 2
-    },
-    crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
-    handleScroll: { mouseWheel: true, pressedMouseMove: true, horzTouchDrag: true, vertTouchDrag: false },
-    handleScale: { mouseWheel: true, pinch: true, axisPressedMouseMove: true }
-  });
-
-  // Candlestick series
-  candleSeries = chart.addSeries(LightweightCharts.CandlestickSeries, {
-    upColor: "#00e89a", downColor: "#ff4966",
-    borderUpColor: "#00e89a", borderDownColor: "#ff4966",
-    wickUpColor: "#00e89a", wickDownColor: "#ff4966"
-  });
-  // Volume series (as overlay)
-  volumeSeries = chart.addSeries(LightweightCharts.HistogramSeries, {
-    priceFormat: { type: 'volume' },
-    priceScaleId: '',
-    priceLineVisible: false, lastValueVisible: false,
-    scaleMargins: { top: 0.7, bottom: 0 }
-  });
-
-  // Resize handling
-  window.addEventListener("resize", () => {
-    const { width, height } = chartDiv.getBoundingClientRect();
-    chart.resize(width, height);
-  });
 }
 
-// =====================
-//   Data Fetching
-// =====================
 
-// Calculate interval string (e.g. '15m' or '1h' or '4h')
-function getIntervalString() {
-  return intervalMinutes < 60 ? intervalMinutes + "m"
-       : intervalMinutes===60 ? "1h"
-       : intervalMinutes===240 ? "4h"
-       : (intervalMinutes/60) + "h"; // handles 120, etc.
+function save(){
+
+localStorage.setItem(
+KEY.active,
+JSON.stringify(active)
+);
+
+localStorage.setItem(
+KEY.history,
+JSON.stringify(history.slice(-300))
+);
+
+localStorage.setItem(
+KEY.draw,
+JSON.stringify(drawings)
+);
+
+localStorage.setItem(
+KEY.settings,
+JSON.stringify(settings)
+);
+
 }
 
-// Determine how many minutes of history for selected range
-function rangeToMinutes(range) {
-  switch(range) {
-    case "1D": return 24*60;
-    case "1W": return 7*24*60;
-    case "1M": return 30*24*60;
-    case "3M": return 90*24*60;
-    case "6M": return 180*24*60;
-    case "1Y": return 365*24*60;
-    case "ALL": return 365*3*24*60; // assume 3 years for ALL
-    default: return 24*60;
-  }
+
+function $(id){
+return document.getElementById(id)
 }
 
-// Fetch historical kline data from Binance REST
-async function getKlines() {
-  const rangeMin = rangeToMinutes(selectedRange);
-  const intervalStr = getIntervalString();
-  // Calculate how many bars needed (limit to 1500)
-  const neededBars = Math.ceil(rangeMin / intervalMinutes);
-  const limit = Math.min(1500, neededBars);
 
-  const url = `${REST}/klines?symbol=ETHUSDT&interval=${intervalStr}&limit=${limit}`;
-  const res = await fetch(url, { cache: 'no-store' });
-  if (!res.ok) throw new Error("Binance klines error "+res.status);
-  const data = await res.json();
-  // Map to our candle objects
-  return data.map(k => ({
-    time: Math.floor(Number(k[0]) / 1000),
-    open:  Number(k[1]),
-    high:  Number(k[2]),
-    low:   Number(k[3]),
-    close: Number(k[4]),
-    volume:Number(k[5]),
-    trades: Number(k[8]),
-    buyVol: Number(k[9])
-  }));
+function price(v){
+
+if(!Number.isFinite(v))
+return '--';
+
+return Number(v).toLocaleString(
+'en-US',
+{
+minimumFractionDigits:2,
+maximumFractionDigits:2
+}
+);
+
 }
 
-// Fetch 24h ticker (last price, 24h change, volume, etc.)
-async function getTicker24h() {
-  const res = await fetch(`${REST}/ticker/24hr?symbol=ETHUSDT`, { cache: 'no-store' });
-  if (!res.ok) throw new Error("Ticker24h error");
-  return await res.json();
+
+function pct(v){
+
+return Number.isFinite(v)
+?
+(v>=0?'+':'')+v.toFixed(2)+'%'
+:
+'--';
+
 }
 
-// =====================
-//   Drawing the Chart
-// =====================
 
-function drawChart(preserveZoom = true) {
-  if (!candles.length) return;
-  // Preserve current zoom/scroll if requested
-  let oldRange = null;
-  if (preserveZoom) {
-    const visible = chart.timeScale().getVisibleLogicalRange();
-    if (visible) oldRange = { from: visible.from, to: visible.to };
-  }
+function setStatus(s,cls=''){
 
-  // Set candlestick data
-  candleSeries.setData(candles.map(c=>({
-    time: c.time,
-    open: c.open,
-    high: c.high,
-    low:  c.low,
-    close: c.close
-  })));
-  // Set volume data (using same times)
-  volumeSeries.setData(candles.map(c=>({
-    time: c.time,
-    value: c.volume,
-    color: c.close >= c.open ? 'rgba(0,232,154,0.45)' : 'rgba(255,73,102,0.45)'
-  })));
+$('status').textContent=s;
 
-  // Update current price line
-  if (currentPrice != null) {
-    if (!priceLine) {
-      priceLine = candleSeries.createPriceLine({
-        price: currentPrice,
-        color: var(--cyan),
-        lineWidth: 1,
-        lineStyle: LightweightCharts.LineStyle.Dotted,
-        axisLabelVisible: true,
-        title: 'LIVE'
-      });
-    } else {
-      priceLine.applyOptions({ price: currentPrice });
-    }
-  }
+if(cls)
+$('status').className=cls;
 
-  // Restore zoom/scroll if possible, otherwise fit content
-  if (oldRange) {
-    try { chart.timeScale().setVisibleLogicalRange(oldRange); }
-    catch(e) { chart.timeScale().fitContent(); }
-  } else {
-    chart.timeScale().fitContent();
-  }
-
-  // Update status text
-  document.getElementById("chartStatus").textContent = `${candles.length} bars • ${intervalMinutes}m`;
-
-  // Draw forecast dashed lines
-  drawForecastLines();
-
-  // Redraw saved drawings
-  renderDrawings();
 }
 
-// =====================
-//   Forecast Engines (heuristic) 
-// =====================
-// Given recent candle data, compute features
-function getFeatures() {
-  if (candles.length < 60) return null;
-  const closes = candles.map(c=>c.close);
-  // log returns
-  const returns = [];
-  for (let i=1; i<closes.length; i++) {
-    returns.push(Math.log(closes[i] / closes[i-1]));
-  }
-  const last = candles[candles.length-1];
-  // Averages of recent returns
-  const mean = arr => arr.reduce((a,b)=>a+b,0)/arr.length;
-  const short = mean(returns.slice(-15));
-  const medium = mean(returns.slice(-30));
-  const long = mean(returns.slice(-60));
-  const volatility = Math.sqrt(mean(returns.map(x => (x - mean(returns))**2)));
-  // EMAs (21,50) via simple loop
-  const calcEMA = (period) => {
-    if (candles.length < period) return [last.close];
-    let ema = mean(candles.slice(0,period).map(c=>c.close));
-    const mult = 2/(period+1);
-    const res = [];
-    for (let i=period; i<candles.length; i++) {
-      ema = (candles[i].close - ema) * mult + ema;
-      res.push(ema);
-    }
-    return res;
-  };
-  const ema21 = calcEMA(21).slice(-1)[0] || last.close;
-  const ema50 = calcEMA(50).slice(-1)[0] || last.close;
-  // Volume ratio (compared to avg of last 20)
-  const vols = candles.slice(-20).map(c=>c.volume);
-  const avgVol = mean(vols) || last.volume;
-  const volumeRatio = last.volume / avgVol;
-  const buyRatio = last.volume ? last.buyVol / last.volume : 0.5;
-  // Simple regime classification
-  let regime = "SIDEWAYS";
-  if (short>0 && medium>0 && last.close>ema21 && ema21>ema50) regime="UP";
-  if (short<0 && medium<0 && last.close<ema21 && ema21<ema50) regime="DOWN";
-  return { price: last.close, short, medium, long, volatility, ema21, ema50, volumeRatio, buyRatio, regime };
+
+function tfMs(){
+
+return TF[tf].min*60000;
+
 }
 
-// Engine 1: Chronological (momentum)
-function engineChrono(f, minutes) {
-  return Math.max(-0.08, Math.min(0.08, (f.short*0.5 + f.medium*0.3 + f.long*0.2) * Math.sqrt(minutes/15)));
-}
-// Engine 2: Mathematical (trend/ema bias)
-function engineMath(f, minutes) {
-  const trend = (f.price - f.ema50) / f.price;
-  const bias  = (f.price - f.ema21) / f.price;
-  return Math.max(-0.08, Math.min(0.08, (trend*0.55 + bias*0.45) * Math.sqrt(minutes/15)));
-}
-// Engine 3: Information (vol/regime)
-function engineInfo(f, minutes) {
-  let x = 0;
-  if (f.regime === "UP")   x += 0.009;
-  if (f.regime === "DOWN") x -= 0.009;
-  if (f.volumeRatio > 1.25) {
-    if (f.buyRatio > 0.53) x += 0.006;
-    if (f.buyRatio < 0.47) x -= 0.006;
-  }
-  return Math.max(-0.06, Math.min(0.06, x * Math.sqrt(minutes/15)));
-}
-// Engine 4: Adaptive (weighted avg)
-function engineAdaptive(a,b,c) {
-  return a*0.35 + b*0.30 + c*0.35;
-}
-// Engine 5: Consultation (ensemble)
-function engineConsultation(a,b,c,d, f) {
-  const arr = [a,b,c,d];
-  const avg = arr.reduce((x,y)=>x+y,0)/arr.length;
-  const disagreement = Math.sqrt(arr.map(x=>(x-avg)**2).reduce((x,y)=>x+y,0)/arr.length);
-  let agreement = 1 - Math.min(disagreement/0.025, 0.45);
-  // Adjust for regime
-  if (f.regime==="UP" && avg<0) agreement *= 0.9;
-  if (f.regime==="DOWN" && avg>0) agreement *= 0.9;
-  if (f.volumeRatio < 0.5) agreement *= 0.85;
-  return { result: avg * agreement, agreement };
-}
-// Compute forecast (target price and confidence)
-function makeForecast(minutes) {
-  const f = getFeatures();
-  if (!f) return null;
-  const a = engineChrono(f, minutes);
-  const b = engineMath(f, minutes);
-  const c = engineInfo(f, minutes);
-  const d = engineAdaptive(a,b,c);
-  const eObj = engineConsultation(a,b,c,d,f);
-  const target = f.price * Math.exp(eObj.result);
-  // Confidence: base 50%, +agreement*35%, penalize extreme volume diff
-  const confidence = Math.min(91, Math.max(35, 50 + eObj.agreement*35 - Math.abs(f.volumeRatio-1)*5));
-  return { price: f.price, target, confidence: confidence, a,b,c,d, e:eObj.result, agreement:eObj.agreement, regime:f.regime };
+
+function rangeLimit(){
+
+return Math.min(
+1500,
+Math.max(
+100,
+Math.ceil(
+RANGE[range]*1440/TF[tf].min
+)
+)
+);
+
 }
 
-// =====================
-//   Updating UI
-// =====================
-function updateForecastUI() {
-  const f15 = makeForecast(15);
-  const f30 = makeForecast(30);
-  if (f15) {
-    document.getElementById("p15").textContent = fmtPrice(f15.target);
-    document.getElementById("c15").textContent = fmtPct((f15.target/f15.price-1)*100);
-    document.getElementById("conf15").textContent = f15.confidence.toFixed(0);
-    document.getElementById("bar15").style.width = f15.confidence + "%";
-    // Update engine values
-    document.getElementById("e1").textContent = fmtPct(f15.a*100);
-    document.getElementById("e2").textContent = fmtPct(f15.b*100);
-    document.getElementById("e3").textContent = fmtPct(f15.c*100);
-    document.getElementById("e4").textContent = fmtPct(f15.d*100);
-    document.getElementById("e5").textContent = fmtPct(f15.e*100);
-    // Also update Predict screen summary
-    document.getElementById("p15_small").textContent = fmtPrice(f15.target);
-    document.getElementById("c15_small").textContent = fmtPct((f15.target/f15.price-1)*100);
-    document.getElementById("e1_small").textContent = fmtPct(f15.a*100);
-    document.getElementById("e2_small").textContent = fmtPct(f15.b*100);
-    document.getElementById("e3_small").textContent = fmtPct(f15.c*100);
-    document.getElementById("e4_small").textContent = fmtPct(f15.d*100);
-    document.getElementById("e5_small").textContent = fmtPct(f15.e*100);
-  }
-  if (f30) {
-    document.getElementById("p30").textContent = fmtPrice(f30.target);
-    document.getElementById("c30").textContent = fmtPct((f30.target/f30.price-1)*100);
-    document.getElementById("conf30").textContent = f30.confidence.toFixed(0);
-    document.getElementById("bar30").style.width = f30.confidence + "%";
-    document.getElementById("p30_small").textContent = fmtPrice(f30.target);
-    document.getElementById("c30_small").textContent = fmtPct((f30.target/f30.price-1)*100);
-  }
+
+/* =========================
+   CHART
+========================= */
+
+function initChart(){
+
+const el=$('chart');
+
+chart=LightweightCharts.createChart(
+el,
+{
+layout:{
+background:{
+type:'solid',
+color:'#03090d'
+},
+textColor:'#6e8991'
+},
+
+grid:{
+vertLines:{
+color:'#0b1b21'
+},
+horzLines:{
+color:'#0b1b21'
+}
+},
+
+rightPriceScale:{
+borderColor:'#15343d',
+scaleMargins:{
+top:.08,
+bottom:.20
+}
+},
+
+timeScale:{
+borderColor:'#15343d',
+timeVisible:true,
+secondsVisible:false,
+rightOffset:6,
+barSpacing:7,
+minBarSpacing:2
+},
+
+crosshair:{
+mode:LightweightCharts.CrosshairMode.Normal
+},
+
+handleScroll:{
+mouseWheel:true,
+pressedMouseMove:true,
+horzTouchDrag:true,
+vertTouchDrag:false
+},
+
+handleScale:{
+mouseWheel:true,
+pinch:true,
+axisPressedMouseMove:true
 }
 
-// =====================
-//   Managing Predictions
-// =====================
-// Create a new prediction record
-function createPrediction(minutes, type) {
-  const f = makeForecast(minutes);
-  if (!f) return null;
-  const now = Date.now();
-  return {
-    id: now + "_" + type,
-    type: type,
-    createdAt: now,
-    targetAt: now + minutes*60000,
-    entry: f.price,
-    forecast: f.target,
-    confidence: f.confidence,
-    settled: false
-  };
 }
-// Ensure automatic 15m and 30m predictions are always active (unless settled)
-function ensureAutoPredictions() {
-  ["15m","30m"].forEach(type => {
-    const minutes = type==="15m"?15:30;
-    const exists = activePredictions.some(p => p.type===type && !p.settled && p.targetAt > Date.now());
-    if (!exists) {
-      const p = createPrediction(minutes, type);
-      if (p) activePredictions.push(p);
-    }
-  });
-  saveAll();
-  renderActiveList();
-  drawForecastLines();
-}
+);
 
-// Handle custom forecast button
-function createCustomForecast() {
-  const input = document.getElementById("customTime");
-  const val = input.value;
-  if (!val) return;
-  const target = new Date(val).getTime();
-  const now = Date.now();
-  if (target <= now + 300000) {
-    document.getElementById("customResult").textContent = "Target must be ≥5 minutes ahead.";
-    return;
-  }
-  if (target > now + 7*24*3600*1000) {
-    document.getElementById("customResult").textContent = "Max custom horizon is 7 days.";
-    return;
-  }
-  const minutes = Math.round((target - now)/60000);
-  const p = createPrediction(minutes, "CUSTOM");
-  if (!p) {
-    document.getElementById("customResult").textContent = "Waiting for market data.";
-    return;
-  }
-  // Remove any existing custom prediction
-  activePredictions = activePredictions.filter(p2 => p2.type!=="CUSTOM");
-  activePredictions.push(p);
-  saveAll();
-  renderActiveList();
-  drawForecastLines();
-  document.getElementById("customResult").textContent =
-    `LOCKED: ${new Date(target).toLocaleString()} → ${fmtPrice(p.forecast)} (conf ${p.confidence.toFixed(0)}%)`;
-}
 
-// Draw forecast paths as dashed lines on chart
-function drawForecastLines() {
-  // Remove old lines
-  forecastLines.forEach(s => chart.removeSeries(s));
-  forecastLines = [];
-  const nowSec = Math.floor(Date.now()/1000);
-  // Draw each active, unsettled prediction
-  activePredictions.forEach(p => {
-    if (p.settled) return;
-    // Determine end time in seconds and price
-    const endTime = Math.floor(p.targetAt/1000);
-    const startPrice = currentPrice || candles[candles.length-1].close;
-    const endPrice = p.forecast;
-    const midTime = Math.floor((nowSec + endTime)/2);
-    const midPrice = startPrice + (endPrice - startPrice)*0.5;
-    const series = chart.addLineSeries({
-      color: p.type==="CUSTOM" ? "#ffe66d" : (p.type==="15m" ? "#00f6ff" : "#ff32d1"),
-      lineWidth: 2, lineStyle: LightweightCharts.LineStyle.Dashed,
-      lastValueVisible: false, priceLineVisible: false, crosshairMarkerVisible: false
-    });
-    series.setData([
-      { time: nowSec, value: startPrice },
-      { time: midTime, value: midPrice },
-      { time: endTime, value: endPrice }
-    ]);
-    forecastLines.push(series);
-  });
+candle=chart.addSeries(
+LightweightCharts.CandlestickSeries,
+{
+upColor:'#4dffa5',
+downColor:'#ff5475',
+borderUpColor:'#4dffa5',
+borderDownColor:'#ff5475',
+wickUpColor:'#4dffa5',
+wickDownColor:'#ff5475'
 }
+);
 
-// =====================
-//   Active List & History Rendering
-// =====================
-function renderActiveList() {
-  const el1 = document.getElementById("activeList");
-  const el2 = document.getElementById("activeList2");
-  const active = activePredictions.filter(p => !p.settled);
-  if (!active.length) {
-    el1.innerHTML = '<div class="conf" style="font-size:7px;">No active targets.</div>';
-    el2.innerHTML = '<div class="conf" style="font-size:7px;">No active targets.</div>';
-    return;
-  }
-  const now = Date.now();
-  el1.innerHTML = el2.innerHTML =
-    active.map(p => {
-      const mins = Math.max(0, Math.ceil((p.targetAt - now)/60000));
-      return `<div class="active-row"><span>${p.type}</span><span>${fmtPrice(p.forecast)}</span><span>${mins}m</span></div>`;
-    }).join("");
+
+volume=chart.addSeries(
+LightweightCharts.HistogramSeries,
+{
+priceFormat:{
+type:'volume'
+},
+
+priceScaleId:'',
+
+lastValueVisible:false,
+priceLineVisible:false
 }
+);
 
-function renderHistory() {
-  const el = document.getElementById("history");
-  if (!history.length) {
-    el.innerHTML = '<div class="conf" style="font-size:7px;">No completed predictions.</div>';
-    return;
-  }
-  el.innerHTML = history.slice(-15).reverse().map(h => {
-    const cls = h.errorPct >= 0 ? "green" : "red";
-    return `
-      <div class="history-row">
-        <span>${h.type}</span>
-        <span>${fmtPrice(h.forecast)}</span>
-        <span>${fmtPrice(h.actual)}</span>
-        <span class="${cls}">${fmtPct(h.errorPct)}</span>
-      </div>`;
-  }).join("");
+
+volume.priceScale().applyOptions({
+scaleMargins:{
+top:.78,
+bottom:0
 }
-
-// =====================
-//   Settlement (check if due predictions have completed)
-// =====================
-async function checkSettlements() {
-  const now = Date.now();
-  for (let p of activePredictions) {
-    if (p.settled || now < p.targetAt) continue;
-    // Target minute boundary
-    const minute = Math.floor(p.targetAt/60000) * 60000;
-    try {
-      const res = await fetch(`${REST}/klines?symbol=ETHUSDT&interval=1m&startTime=${minute}&limit=3`);
-      if (!res.ok) continue;
-      const data = await res.json();
-      // Find the candle with matching open time
-      const k = data.find(k => Number(k[0])===minute);
-      if (!k) continue;
-      // If target time not yet past that minute, skip
-      if (Date.now() < minute + 60000) continue;
-      const actual = Number(k[4]); // close price of that minute
-      const error = actual - p.forecast;
-      const errorPct = error / p.forecast * 100;
-      // Record in history
-      history.push({ type:p.type, forecast: p.forecast, actual, error, errorPct });
-      p.actual = actual;
-      p.error = error;
-      p.errorPct = errorPct;
-      p.settled = true;
-      // Immediately schedule next auto prediction
-      if (p.type === "15m" || p.type === "30m") {
-        const minutes = p.type==="15m"?15:30;
-        const next = createPrediction(minutes, p.type);
-        if (next) activePredictions.push(next);
-      }
-    } catch(e) {
-      console.warn("Settlement fetch error", e);
-    }
-  }
-  saveAll();
-  renderActiveList();
-  renderHistory();
-  drawForecastLines();
-}
-
-// =====================
-//   Market Data and UI Updates
-// =====================
-function updateMarketUI(ticker) {
-  const price = Number(ticker.lastPrice);
-  currentPrice = price;
-  document.getElementById("price").textContent = fmtPrice(price);
-  // 24h change
-  const changePct = Number(ticker.priceChangePercent);
-  const changeEl = document.getElementById("change");
-  changeEl.textContent = fmtPct(changePct);
-  changeEl.className = "change " + (changePct>=0 ? "green" : "red");
-  document.getElementById("high").textContent = fmtPrice(Number(ticker.highPrice));
-  document.getElementById("low").textContent  = fmtPrice(Number(ticker.lowPrice));
-  document.getElementById("volume").textContent = Number(ticker.volume).toLocaleString();
-  // Update price line
-  if (priceLine) priceLine.applyOptions({ price });
-}
-
-// =====================
-//   Initial Load and WebSocket
-// =====================
-async function loadMarket(initial=false) {
-  try {
-    const [klines, ticker] = await Promise.all([getKlines(), getTicker24h()]);
-    candles = klines;
-    updateMarketUI(ticker);
-    drawChart(!initial);
-    updateForecastUI();
-    if (initial) {
-      ensureAutoPredictions();
-      renderHistory();
-    }
-    document.getElementById("connection").textContent = "LIVE";
-  } catch(err) {
-    console.error(err);
-    document.getElementById("connection").textContent = "RETRY";
-    document.getElementById("chartStatus").textContent = "DATA ERROR";
-  }
-}
-
-function connectWS() {
-  if (typeof ws !== 'undefined' && ws) {
-    ws.close();
-  }
-  const socket = new WebSocket(WS);
-  ws = socket;
-  socket.onopen = () => {
-    document.getElementById("connection").textContent = "LIVE";
-  };
-  socket.onclose = () => {
-    document.getElementById("connection").textContent = "RECONNECT";
-    setTimeout(connectWS, 3000);
-  };
-  socket.onerror = () => {
-    document.getElementById("connection").textContent = "ERROR";
-  };
-  socket.onmessage = event => {
-    try {
-      const msg = JSON.parse(event.data);
-      const k = msg.k;
-      if (!k || k.x!==false) return; // use final only? or update every tick? Here we use intermediate updates too.
-      // Build one 1m candle object
-      const one = {
-        time: Math.floor(k.t/1000),
-        open: Number(k.o),
-        high: Number(k.h),
-        low:  Number(k.l),
-        close: Number(k.c),
-        volume: Number(k.v),
-        buyVol: Number(k.V),
-        trades: Number(k.n)
-      };
-      updateLive(one);
-    } catch(e) {
-      console.warn("WS parse error", e);
-    }
-  };
-}
-
-// Update live aggregation at current timeframe
-function updateLive(one) {
-  currentPrice = one.close;
-  // Determine bucket start based on selected interval
-  const bucketMs = intervalMinutes * 60000;
-  const bucketTime = Math.floor(one.time*1000 / bucketMs) * bucketMs / 1000;
-  let last = candles[candles.length-1];
-  // If new candle needed
-  if (!last || last.time !== bucketTime) {
-    last = {
-      time: bucketTime,
-      open: one.open,
-      high: one.high,
-      low:  one.low,
-      close: one.close,
-      volume: one.volume,
-      buyVol: one.buyVol,
-      trades: one.trades
-    };
-    candles.push(last);
-  } else {
-    // Update the existing last candle
-    last.high = Math.max(last.high, one.high);
-    last.low  = Math.min(last.low, one.low);
-    last.close = one.close;
-    last.volume += one.volume;
-    last.buyVol += one.buyVol;
-    last.trades += one.trades;
-  }
-  // Update chart series with new last bar
-  candleSeries.update({ time: last.time, open:last.open, high:last.high, low:last.low, close:last.close });
-  volumeSeries.update({ time: last.time, value: last.volume, color: last.close>=last.open ? 'rgba(0,232,154,0.45)' : 'rgba(255,73,102,0.45)' });
-  // Update UI
-  document.getElementById("price").textContent = fmtPrice(currentPrice);
-  document.getElementById("update").textContent = new Date().toLocaleTimeString();
-  updateForecastUI();
-  drawForecastLines();
-}
-
-// =====================
-//   Drawing Tools
-// =====================
-const svg = document.getElementById("drawingLayer");
-
-// Set drawing tool
-function setTool(tool) {
-  selectedTool = tool;
-  drawingStart = null; drawingPreview = null;
-  document.querySelectorAll(".tool").forEach(b => b.classList.toggle("active", b.dataset.tool===tool));
-  if (tool==="none") svg.classList.remove("active");
-  else svg.classList.add("active");
-}
-document.querySelectorAll(".tool[data-tool]").forEach(b => {
-  b.addEventListener("click", () => setTool(b.dataset.tool));
 });
 
-// Convert screen coords to chart time & price
-function screenToChart(x, y) {
-  const rect = svg.getBoundingClientRect();
-  const cx = x - rect.left;
-  const cy = y - rect.top;
-  const time = chart.timeScale().coordinateToTime(cx);
-  const price = candleSeries.coordinateToPrice(cy);
-  return { x: cx, y: cy, time, price };
+
+priceLine=candle.createPriceLine(
+{
+price:0,
+color:'#59f5ff',
+lineWidth:1,
+lineStyle:LightweightCharts.LineStyle.Dotted,
+axisLabelVisible:true,
+title:'LIVE'
 }
-// Convert chart time&price to screen coords
-function chartToScreen(time, price) {
-  const rect = svg.getBoundingClientRect();
-  const cx = chart.timeScale().timeToCoordinate(time);
-  const cy = candleSeries.priceToCoordinate(price);
-  if (cx==null||cy==null) return null;
-  return { x: cx, y: cy };
+);
+
+
+new ResizeObserver(()=>{
+
+const r=el.getBoundingClientRect();
+
+chart.resize(
+r.width,
+r.height
+);
+
+}).observe(el);
+
+
+chart.timeScale()
+.subscribeVisibleLogicalRangeChange(
+()=>{
+renderDrawings()
+}
+);
+
 }
 
-// Pointer event handlers
-svg.addEventListener("pointerdown", e => {
-  if (selectedTool==="none") return;
-  svg.setPointerCapture(e.pointerId);
-  const p = screenToChart(e.clientX, e.clientY);
-  drawingStart = p; drawingPreview = p;
-});
-svg.addEventListener("pointermove", e => {
-  if (!drawingStart) return;
-  drawingPreview = screenToChart(e.clientX, e.clientY);
-  renderTemporary();
-});
-svg.addEventListener("pointerup", e => {
-  if (!drawingStart) return;
-  const end = screenToChart(e.clientX, e.clientY);
-  finalizeDrawing(drawingStart, end);
-  drawingStart = null; drawingPreview = null;
-});
 
-// Finalize and save a drawing
-function finalizeDrawing(a, b) {
-  if (!a || !b) return;
-  const id = Date.now();
-  if (selectedTool==="text") {
-    const txt = prompt("Enter label:");
-    if (!txt) return;
-    drawings.push({ id, type:"text", time:b.time, price:b.price, text:txt });
-  }
-  else if (selectedTool==="horizontal") {
-    drawings.push({ id, type:"horizontal", price:b.price });
-  }
-  else if (selectedTool==="vertical") {
-    drawings.push({ id, type:"vertical", time:b.time });
-  }
-  else if (selectedTool==="trend") {
-    drawings.push({ id, type:"trend", t1:a.time, p1:a.price, t2:b.time, p2:b.price });
-  }
-  else if (selectedTool==="fib") {
-    drawings.push({ id, type:"fib", t1:a.time, p1:a.price, t2:b.time, p2:b.price });
-  }
-  else if (selectedTool==="measure") {
-    drawings.push({ id, type:"measure", t1:a.time, p1:a.price, t2:b.time, p2:b.price });
-  }
-  saveAll();
-  renderDrawings();
-  setTool("none");
+/* =========================
+   DATA
+========================= */
+
+async function fetchJSON(url){
+
+const r=await fetch(
+url,
+{
+cache:'no-store'
+}
+);
+
+if(!r.ok)
+throw new Error('HTTP '+r.status);
+
+return r.json();
+
 }
 
-// Render all saved drawings
-function renderDrawings() {
-  // Clear existing SVG shapes
-  while (svg.firstChild) svg.removeChild(svg.firstChild);
-  drawings.forEach(d => drawShape(d, false));
+
+async function loadMarket(){
+
+try{
+
+$('chartStatus').textContent='LOADING';
+
+
+const [ks,t]=await Promise.all([
+
+fetchJSON(
+`${API}/klines?symbol=ETHUSDT&interval=${TF[tf].api}&limit=${rangeLimit()}`
+),
+
+fetchJSON(
+`${API}/ticker/24hr?symbol=ETHUSDT`
+)
+
+]);
+
+
+candles=ks.map(k=>({
+
+time:Math.floor(k[0]/1000),
+
+open:+k[1],
+
+high:+k[2],
+
+low:+k[3],
+
+close:+k[4],
+
+volume:+k[5],
+
+buyVol:+k[9],
+
+trades:+k[8]
+
+}));
+
+
+lastPrice=+t.lastPrice;
+
+updateTicker(t);
+
+setChartData(false);
+
+updateForecasts();
+
+ensureAuto();
+
+setStatus('LIVE');
+
+$('chartStatus').textContent=
+`${candles.length} bars • ${tf}`;
+
 }
-// Render a preview shape while drawing
-function renderTemporary() {
-  renderDrawings();
-  if (!drawingStart || !drawingPreview) return;
-  const temp = {
-    type: selectedTool,
-    t1: drawingStart.time, p1: drawingStart.price,
-    t2: drawingPreview.time, p2: drawingPreview.price,
-    time: drawingPreview.time, price: drawingPreview.price
-  };
-  drawShape(temp, true);
+catch(e){
+
+console.error(e);
+
+setStatus('DATA ERROR');
+
+$('chartStatus').textContent=
+'BINANCE UNAVAILABLE';
+
 }
 
-// Draw a single shape (permanent or temporary)
-function drawShape(d, temp) {
-  const color = temp ? var(--yellow) 
-              : d.type==="horizontal" ? "#00f6ff"
-              : d.type==="vertical"   ? "#b84dff"
-              : d.type==="fib"        ? "#ff32d1"
-              : "#00ff9d";
-  if (d.type==="horizontal") {
-    const y = candleSeries.priceToCoordinate(d.price);
-    if (y==null) return;
-    drawLine(0, y, svg.clientWidth, y, color, 1, "6 4");
-  }
-  else if (d.type==="vertical") {
-    const x = chart.timeScale().timeToCoordinate(d.time);
-    if (x==null) return;
-    drawLine(x, 0, x, svg.clientHeight, color, 1, "6 4");
-  }
-  else if (d.type==="text") {
-    const p = chartToScreen(d.time, d.price);
-    if (!p) return;
-    const txt = document.createElementNS("http://www.w3.org/2000/svg","text");
-    txt.setAttribute("x", p.x);
-    txt.setAttribute("y", p.y);
-    txt.setAttribute("class", "draw-text");
-    txt.textContent = d.text;
-    svg.appendChild(txt);
-  }
-  else {
-    // Two-point shapes
-    const a = chartToScreen(d.t1, d.p1);
-    const b = chartToScreen(d.t2, d.p2);
-    if (!a || !b) return;
-    if (d.type==="trend") {
-      drawLine(a.x, a.y, b.x, b.y, color, 2);
-    }
-    else if (d.type==="measure") {
-      drawLine(a.x, a.y, b.x, b.y, color, 2, "5 4");
-      // Show percentage/time label
-      const pct = ((d.p2/d.p1 - 1)*100).toFixed(1) + "%";
-      const minutes = Math.abs(d.t2 - d.t1)/60;
-      const lbl = document.createElementNS("http://www.w3.org/2000/svg","text");
-      lbl.setAttribute("x", (a.x+b.x)/2);
-      lbl.setAttribute("y", (a.y+b.y)/2 - 8);
-      lbl.setAttribute("class", "measure-text");
-      lbl.textContent = `${pct} • ${Math.round(minutes)}m`;
-      svg.appendChild(lbl);
-    }
-    else if (d.type==="fib") {
-      // Draw fib levels from p1 to p2
-      const high = Math.max(d.p1, d.p2);
-      const low  = Math.min(d.p1, d.p2);
-      [0, 0.236, 0.382, 0.5, 0.618, 0.786, 1].forEach(level => {
-        const price = high - (high-low)*level;
-        const y = candleSeries.priceToCoordinate(price);
-        if (y==null) return;
-        const x1 = Math.min(a.x,b.x), x2 = Math.max(a.x,b.x);
-        drawLine(x1, y, x2, y, color, 1, "3 4");
-        // Label percentage
-        const lbl = document.createElementNS("http://www.w3.org/2000/svg","text");
-        lbl.setAttribute("x", x2+4);
-        lbl.setAttribute("y", y-2);
-        lbl.setAttribute("class", "draw-text");
-        lbl.textContent = (level*100).toFixed(0) + "%";
-        svg.appendChild(lbl);
-      });
-      // Draw bounding line
-      drawLine(a.x, a.y, b.x, b.y, color, 1);
-    }
-  }
-}
-// Utility to draw an SVG line
-function drawLine(x1,y1,x2,y2,color,width=1,dash="") {
-  const ln = document.createElementNS("http://www.w3.org/2000/svg","line");
-  ln.setAttribute("x1",x1); ln.setAttribute("y1",y1);
-  ln.setAttribute("x2",x2); ln.setAttribute("y2",y2);
-  ln.setAttribute("stroke",color);
-  ln.setAttribute("stroke-width",width);
-  if (dash) ln.setAttribute("stroke-dasharray", dash);
-  ln.setAttribute("vector-effect","non-scaling-stroke");
-  svg.appendChild(ln);
 }
 
-// Undo, Delete, Clear drawings
-function undoDrawing() {
-  if (!drawings.length) return;
-  drawings.pop(); saveAll(); renderDrawings();
-}
-function deleteLastDrawing() {
-  undoDrawing();
-}
-function clearDrawings() {
-  if (!confirm("Clear all drawings?")) return;
-  drawings = []; saveAll(); renderDrawings();
-}
 
-// =====================
-//   Nav (screen switching)
-// =====================
-function showScreen(name) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.nav').forEach(b => b.classList.remove('active'));
-  document.getElementById('screen-' + name).classList.add('active');
-  document.querySelector(`.nav[data-screen="${name}"]`).classList.add('active');
+function updateTicker(t){
+
+const p=+t.lastPrice;
+
+lastPrice=p;
+
+$('price').textContent=price(p);
+
+const c=+t.priceChangePercent;
+
+$('change').textContent=pct(c);
+
+$('change').className=
+'change '+(c>=0?'green':'red');
+
+$('high').textContent=
+price(+t.highPrice);
+
+$('low').textContent=
+price(+t.lowPrice);
+
+$('vol').textContent=
+(+t.volume).toLocaleString(
+'en-US',
+{
+maximumFractionDigits:0
 }
-document.querySelectorAll('.nav').forEach(btn => {
-  btn.addEventListener('click', () => {
-    showScreen(btn.dataset.screen);
-    if (btn.dataset.screen==="chart") {
-      chart.timeScale().fitContent();
-    }
-  });
+);
+
+priceLine.applyOptions({
+price:p
 });
 
-// =====================
-//   Settings toggles
-// =====================
-document.getElementById("toggleVolume").addEventListener("change", (e) => {
-  volumeSeries.applyOptions({ visible: e.target.checked });
-});
-document.getElementById("toggleForecasts").addEventListener("change", (e) => {
-  if (e.target.checked) drawForecastLines();
-  else forecastLines.forEach(s=>chart.removeSeries(s));
-});
-
-// Reset all data
-function resetApp() {
-  if (!confirm("Reset all data and forecasts?")) return;
-  localStorage.removeItem(ACTIVE_KEY);
-  localStorage.removeItem(HISTORY_KEY);
-  localStorage.removeItem(DRAW_KEY);
-  location.reload();
 }
 
-// Periodic tasks
-setInterval(loadMarket, 60000);      // reload history/prices every minute
-setInterval(checkSettlements, 15000); // check for due settlements
-setInterval(() => {
-  renderActiveList();
-  updateForecastUI();
-  drawForecastLines();
-  renderDrawings();
-}, 5000);
 
-// =====================
-//   Startup
-// =====================
-(async function start() {
-  initChart();
-  renderDrawings();
-  renderActiveList();
-  renderHistory();
-  connectWS();
-  await loadMarket(true);
-  await checkSettlements();
-  renderActiveList(); renderHistory(); renderDrawings();
-})();
+function setChartData(initial){
+
+const old=
+!initial
+?
+chart.timeScale().getVisibleLogicalRange()
+:
+null;
+
+
+candle.setData(
+candles.map(c=>({
+time:c.time,
+open:c.open,
+high:c.high,
+low:c.low,
+close:c.close
+}))
+);
+
+
+volume.setData(
+candles.map(c=>({
+
+time:c.time,
+
+value:c.volume,
+
+color:
+c.close>=c.open
+?
+'rgba(77,255,165,.42)'
+:
+'rgba(255,84,117,.42)'
+
+}))
+);
+
+
+if(old){
+
+try{
+
+chart.timeScale()
+.setVisibleLogicalRange(old);
+
+}catch{}
+
+}
+else{
+
+chart.timeScale().fitContent();
+
+}
+
+
+renderDrawings();
+
+drawForecasts();
+
+}
+
+
+/* =========================
+   LIVE WEBSOCKET
+========================= */
+
+function updateLive1m(k){
+
+if(!candles.length)
+return;
+
+
+const m=TF[tf].min;
+
+const bucket=
+Math.floor(
+(k.t/1000)/(m*60)
+)*m*60;
+
+
+let c=
+candles[candles.length-1];
+
+
+if(c.time!==bucket){
+
+c={
+
+time:bucket,
+
+open:+k.o,
+
+high:+k.h,
+
+low:+k.l,
+
+close:+k.c,
+
+volume:+k.v,
+
+buyVol:+k.V,
+
+trades:+k.n
+
+};
+
+candles.push(c);
+
+
+if(candles.length>rangeLimit()+10)
+candles.shift();
+
+}
+
+else{
+
+c.high=Math.max(c.high,+k.h);
+
+c.low=Math.min(c.low,+k.l);
+
+c.close=+k.c;
+
+c.volume=+k.v;
+
+c.buyVol=+k.V;
+
+c.trades=+k.n;
+
+}
+
+
+lastPrice=+k.c;
+
+
+candle.update({
+
+time:c.time,
+
+open:c.open,
+
+high:c.high,
+
+low:c.low,
+
+close:c.close
+
+});
+
+
+volume.update({
+
+time:c.time,
+
+value:c.volume,
+
+color:
+c.close>=c.open
+?
+'rgba(77,255,165,.42)'
+:
+'rgba(255,84,117,.42)'
+
+});
+
+
+priceLine.applyOptions({
+price:lastPrice
+});
+
+
+$('price').textContent=
+price(lastPrice);
+
+
+updateForecasts();
+
+drawForecasts();
+
+renderDrawings();
+
+}
+
+
+function connectWS(){
+
+try{
+
+if(ws)
+ws.close();
+
+}catch{}
+
+clearTimeout(reconnectTimer);
+
+ws=new WebSocket(WSURL);
+
+
+ws.onopen=()=>{
+
+setStatus('LIVE');
+
+};
+
+
+ws.onmessage=e=>{
+
+try{
+
+const x=JSON.parse(e.data);
+
+if(x.k)
+updateLive1m(x.k);
+
+}catch{}
+
+};
+
+
+ws.onerror=()=>{
+
+setStatus('WS ERROR');
+
+};
+
+
+ws.onclose=()=>{
+
+setStatus('RECONNECT');
+
+reconnectTimer=setTimeout(
+connectWS,
+3000
+);
+
+};
+
+}
+
+
+/* =========================
+   STATISTICS
+========================= */
+
+function mean(a){
+
+return a.length
+?
+a.reduce((x,y)=>x+y,0)/a.length
+:
+0;
+
+}
+
+
+function std(a){
+
+const m=mean(a);
+
+return Math.sqrt(
+mean(
+a.map(
+x=>(x-m)**2
+)
+)
+);
+
+}
+
+
+function ema(vals,n){
+
+if(vals.length<n)
+return vals.at(-1)||0;
+
+let e=mean(vals.slice(0,n));
+
+const k=2/(n+1);
+
+for(
+let i=n;
+i<vals.length;
+i++
+)
+
+e=
+vals[i]*k+
+e*(1-k);
+
+return e;
+
+}
+
+
+function features(){
+
+if(candles.length<80)
+return null;
+
+
+const cl=
+candles.map(
+c=>c.close
+);
+
+
+const ret=[];
+
+
+for(
+let i=1;
+i<cl.length;
+i++
+)
+
+ret.push(
+Math.log(
+cl[i]/cl[i-1]
+)
+);
+
+
+const p=cl.at(-1);
+
+const e21=ema(cl,21);
+
+const e50=ema(cl,50);
+
+
+const v20=
+candles
+.slice(-20)
+.map(c=>c.volume);
+
+
+const vr=
+(candles.at(-1).volume||0)/
+(mean(v20)||1);
+
+
+const buy=
+mean(
+candles
+.slice(-20)
+.map(
+c=>c.volume
+?
+c.buyVol/c.volume
+:
+.5
+)
+);
+
+
+const s=mean(
+ret.slice(-10)
+);
+
+const m=mean(
+ret.slice(-30)
+);
+
+const l=mean(
+ret.slice(-60)
+);
+
+const vol=std(
+ret.slice(-60)
+);
+
+
+let regime='NEUTRAL';
+
+
+if(
+p>e21 &&
+e21>e50 &&
+m>0
+)
+
+regime='UP';
+
+
+else if(
+p<e21 &&
+e21<e50 &&
+m<0
+)
+
+regime='DOWN';
+
+
+return{
+p,
+e21,
+e50,
+s,
+m,
+l,
+vol,
+vr,
+buy,
+regime
+};
+
+}
+
+
+/* =========================
+   FIVE ENGINES
+========================= */
+
+function engine1(f,h){
+
+return clamp(
+(
+f.s*.5+
+f.m*.3+
+f.l*.2
+)
+*
+Math.sqrt(h/15),
+-.06,
+.06
+);
+
+}
+
+
+function engine2(f,h){
+
+return clamp(
+(
+((f.p-f.e21)/f.p)*.55+
+((f.p-f.e50)/f.p)*.45
+)
+*
+Math.sqrt(h/15),
+-.06,
+.06
+);
+
+}
+
+
+function engine3(f,h){
+
+let x=0;
+
+
+if(f.regime==='UP')
+x+=.002;
+
+
+if(f.regime==='DOWN')
+x-=.002;
+
+
+if(f.vr>1.5)
+x+=(f.buy-.5)*.025;
+
+
+return clamp(
+x*Math.sqrt(h/15),
+-.05,
+.05
+);
+
+}
+
+
+function engine4(a,b,c){
+
+return .35*a+.3*b+.35*c;
+
+}
+
+
+/* ENGINE 5:
+   CONSULTATION / META-ENSEMBLE
+*/
+
+function engine5(a,b,c,d,f){
+
+const xs=[
+a,
+b,
+c,
+d
+];
+
+
+const avg=mean(xs);
+
+const dis=std(xs);
+
+const agreement=
+clamp(
+1-dis/.012,
+0,
+1
+);
+
+
+let r=
+avg*
+(
+.35+
+.65*agreement
+);
+
+
+if(
+f.regime==='UP' &&
+r<0
+)
+
+r*=.8;
+
+
+if(
+f.regime==='DOWN' &&
+r>0
+)
+
+r*=.8;
+
+
+return{
+r,
+agreement
+};
+
+}
+
+
+function clamp(x,a,b){
+
+return Math.max(
+a,
+Math.min(b,x)
+);
+
+}
+
+
+/* =========================
+   FORECAST
+========================= */
+
+function forecast(h){
+
+const f=features();
+
+if(!f)
+return null;
+
+
+const a=engine1(f,h);
+
+const b=engine2(f,h);
+
+const c=engine3(f,h);
+
+const d=engine4(a,b,c);
+
+const e=engine5(
+a,b,c,d,f
+);
+
+
+const target=
+f.p*
+Math.exp(e.r);
+
+
+const uncertainty=
+Math.max(
+f.vol*Math.sqrt(h),
+.0008
+);
+
+
+const confidence=
+Math.round(
+clamp(
+48+
+35*e.agreement-
+180*uncertainty,
+20,
+88
+)
+);
+
+
+return{
+
+entry:f.p,
+
+target,
+
+ret:e.r,
+
+confidence,
+
+a,
+
+b,
+
+c,
+
+d,
+
+e:e.r,
+
+agreement:e.agreement,
+
+regime:f.regime,
+
+uncertainty
+
+};
+
+}
+
+
+/* =========================
+   DISPLAY FORECASTS
+========================= */
+
+function updateForecasts(){
+
+const a=forecast(15);
+
+const b=forecast(30);
+
+
+if(a){
+
+$('p15').textContent=
+price(a.target);
+
+$('m15').textContent=
+`${pct((a.target/a.entry-1)*100)} • ${a.confidence}% • ${a.regime}`;
+
+$('b15').style.width=
+a.confidence+'%';
+
+
+$('e1').textContent=
+pct(a.a*100);
+
+$('e2').textContent=
+pct(a.b*100);
+
+$('e3').textContent=
+pct(a.c*100);
+
+$('e4').textContent=
+pct(a.d*100);
+
+$('e5').textContent=
+pct(a.e*100);
+
+
+$('pred15').textContent=
+price(a.target);
+
+}
+
+
+if(b){
+
+$('p30').textContent=
+price(b.target);
+
+$('m30').textContent=
+`${pct((b.target/b.entry-1)*100)} • ${b.confidence}% • ${b.regime}`;
+
+$('b30').style.width=
+b.confidence+'%';
+
+$('pred30').textContent=
+price(b.target);
+
+}
+
+}
+
+
+/* =========================
+   AUTOMATIC PREDICTIONS
+========================= */
+
+function ensureAuto(){
+
+if(!features())
+return;
+
+
+for(
+const type of ['15m','30m']
+){
+
+if(
+!active.some(
+p=>
+p.type===type &&
+!p.settled &&
+p.targetAt>Date.now()
+)
+){
+
+const h=
+type==='15m'
+?
+15
+:
+30;
+
+
+const f=forecast(h);
+
+
+if(f){
+
+active.push({
+
+id:crypto.randomUUID(),
+
+type,
+
+createdAt:Date.now(),
+
+targetAt:
+Date.now()+h*60000,
+
+entry:f.entry,
+
+forecast:f.target,
+
+confidence:f.confidence,
+
+engines:{
+a:f.a,
+b:f.b,
+c:f.c,
+d:f.d,
+e:f.e
+}
+
+});
+
+}
+
+}
+
+}
+
+
+save();
+
+renderActive();
+
+}
+
+
+/* =========================
+   ACTIVE PREDICTIONS
+========================= */
+
+function renderActive(){
+
+const html=
+
+active
+.filter(p=>!p.settled)
+.sort(
+(a,b)=>a.targetAt-b.targetAt
+)
+.map(p=>{
+
+const left=
+Math.max(
+0,
+Math.ceil(
+(p.targetAt-Date.now())/60000
+)
+);
+
+
+return `
+<div class="row">
+
+<span>
+${p.type} •
+${new Date(p.targetAt)
+.toLocaleTimeString(
+[],
+{
+hour:'2-digit',
+minute:'2-digit'
+}
+)}
+</span>
+
+<span>
+${price(p.forecast)}
+•
+${left}m
+</span>
+
+</div>
+`;
+
+})
+.join('')
+||
+'<div class="empty">No active prediction.</div>';
+
+
+$('active').innerHTML=html;
+
+$('active2').innerHTML=html;
+
+}
+
+
+/* =========================
+   EXACT TARGET SETTLEMENT
+========================= */
+
+async function targetTradePrice(target){
+
+const start=
+target-120000;
+
+const end=
+target+120000;
+
+
+try{
+
+const rows=
+await fetchJSON(
+`${API}/aggTrades?symbol=ETHUSDT&startTime=${start}&endTime=${end}&limit=1000`
+);
+
+
+const trades=
+rows
+.map(
+r=>({
+t:+r.T,
+p:+r.p
+})
+)
+.filter(
+x=>x.t<=target
+);
+
+
+if(trades.length){
+
+return{
+
+price:trades.at(-1).p,
+
+time:trades.at(-1).t,
+
+method:
+'last trade at/before target'
+
+};
+
+}
+
+}catch(e){
+
+console.warn(e);
+
+}
+
+
+try{
+
+const minute=
+Math.floor(target/60000)*60000;
+
+
+const ks=
+await fetchJSON(
+`${API}/klines?symbol=ETHUSDT&interval=1m&startTime=${minute}&limit=2`
+);
+
+
+const k=
+ks.find(
+x=>+x[0]===minute
+);
+
+
+if(
+k &&
+Date.now()>=minute+60000
+){
+
+return{
+
+price:+k[4],
+
+time:minute+60000,
+
+method:'completed 1m close'
+
+};
+
+}
+
+}catch(e){
+
+console.warn(e);
+
+}
+
+
+return null;
+
+}
+
+
+/* =========================
+   SETTLE + NEXT PREDICTION
+========================= */
+
+async function settle(){
+
+for(
+const p of active.filter(
+x=>
+!x.settled &&
+Date.now()>=x.targetAt
+)
+){
+
+const obs=
+await targetTradePrice(
+p.targetAt
+);
+
+
+if(!obs)
+continue;
+
+
+const errPct=
+(
+obs.price-p.forecast
+)/
+p.forecast*
+100;
+
+
+p.actual=
+obs.price;
+
+p.actualTime=
+obs.time;
+
+p.settlementMethod=
+obs.method;
+
+p.errorPct=
+errPct;
+
+p.settled=true;
+
+
+history.push({
+...p,
+settledAt:Date.now()
+});
+
+
+if(
+p.type==='15m' ||
+p.type==='30m'
+){
+
+const h=
+p.type==='15m'
+?
+15
+:
+30;
+
+
+const f=
+forecast(h);
+
+
+if(f){
+
+active.push({
+
+id:crypto.randomUUID(),
+
+type:p.type,
+
+createdAt:Date.now(),
+
+targetAt:
+Date.now()+h*60000,
+
+entry:f.entry,
+
+forecast:f.target,
+
+confidence:f.confidence,
+
+engines:{
+a:f.a,
+b:f.b,
+c:f.c,
+d:f.d,
+e:f.e
+}
+
+});
+
+}
+
+}
+
+}
+
+
+save();
+
+renderActive();
+
+renderHistory();
+
+drawForecasts();
+
+}
+
+
+/* =========================
+   HISTORY
+========================= */
+
+function renderHistory(){
+
+if(!history.length){
+
+$('history').innerHTML=
+'<div class="empty">No completed predictions yet.</div>';
+
+$('metrics').textContent=
+'Not enough completed observations yet.';
+
+return;
+
+}
+
+
+const hs=
+history
+.slice(-50)
+.reverse();
+
+
+$('history').innerHTML=
+
+'<div class="historyrow">'+
+'<b>TYPE</b>'+
+'<b>FORECAST</b>'+
+'<b>ACTUAL</b>'+
+'<b>ERROR</b>'+
+'</div>'+
+
+hs.map(h=>`
+
+<div class="historyrow">
+
+<span>${h.type}</span>
+
+<span>${price(h.forecast)}</span>
+
+<span>${price(h.actual)}</span>
+
+<span class="${h.errorPct>=0?'green':'red'}">
+${pct(h.errorPct)}
+</span>
+
+</div>
+
+`).join('');
+
+
+const mae=
+mean(
+hs.map(
+h=>Math.abs(h.errorPct)
+)
+);
+
+
+const dir=
+mean(
+hs.map(
+h=>
+(
+(h.actual-h.entry)*
+(h.forecast-h.entry)
+>=0
+)
+?
+1
+:
+0
+)
+)
+*100;
+
+
+$('metrics').innerHTML=
+
+`Completed: <b>${hs.length}</b><br>
+Mean absolute percentage error:
+<b>${mae.toFixed(3)}%</b><br>
+Directional hit rate:
+<b>${dir.toFixed(1)}%</b><br>
+<span class="warn">
+These are historical measurements, not guarantees.
+</span>`;
+
+}
+
+
+/* =========================
+   CUSTOM FORECAST
+========================= */
+
+function createCustom(){
+
+const v=
+$('customTime').value;
+
+
+if(!v){
+
+$('customMsg').textContent=
+'Choose a target time.';
+
+return;
+
+}
+
+
+const target=
+new Date(v).getTime();
+
+const now=
+Date.now();
+
+
+if(
+target<
+now+5*60000
+){
+
+$('customMsg').textContent=
+'Target must be at least 5 minutes ahead.';
+
+return;
+
+}
+
+
+if(
+target>
+now+7*86400000
+){
+
+$('customMsg').textContent=
+'Maximum horizon is 7 days.';
+
+return;
+
+}
+
+
+if(
+active.some(
+p=>
+p.type==='CUSTOM' &&
+!p.settled
+)
+){
+
+$('customMsg').textContent=
+'One custom forecast is already active.';
+
+return;
+
+}
+
+
+const mins=
+(target-now)/60000;
+
+
+const f=
+forecast(mins);
+
+
+if(!f){
+
+$('customMsg').textContent=
+'Not enough market data yet.';
+
+return;
+
+}
+
+
+active.push({
+
+id:crypto.randomUUID(),
+
+type:'CUSTOM',
+
+createdAt:now,
+
+targetAt:target,
+
+entry:f.entry,
+
+forecast:f.target,
+
+confidence:f.confidence,
+
+engines:{
+a:f.a,
+b:f.b,
+c:f.c,
+d:f.d,
+e:f.e
+}
+
+});
+
+
+save();
+
+renderActive();
+
+drawForecasts();
+
+
+$('customMsg').innerHTML=
+
+`<span class="ok">LOCKED</span>
+${new Date(target).toLocaleString()}
+→ ${price(f.target)}
+•
+${f.confidence}%`;
+
+}
+
+
+/* =========================
+   FORECAST PATHS
+========================= */
+
+function drawForecasts(){
+
+forecastSeries.forEach(
+s=>{
+try{
+chart.removeSeries(s)
+}catch{}
+}
+);
+
+
+forecastSeries=[];
+
+
+if(
+!showForecast ||
+!candles.length
+)
+return;
+
+
+const start=
+Math.floor(Date.now()/1000);
+
+
+const sp=
+lastPrice ||
+candles.at(-1).close;
+
+
+for(
+const p of active.filter(
+x=>!x.settled
+)
+){
+
+const end=
+Math.floor(p.targetAt/1000);
+
+
+if(end<=start)
+continue;
+
+
+const mid=
+Math.floor(
+(start+end)/2
+);
+
+
+const mp=
+sp+
+(p.forecast-sp)*.5;
+
+
+const s=
+chart.addSeries(
+LightweightCharts.LineSeries,
+{
+
+color:
+p.type==='CUSTOM'
+?
+'#ffe56b'
+:
+p.type==='15m'
+?
+'#59f5ff'
+:
+'#d66cff',
+
+lineWidth:2,
+
+lineStyle:
+LightweightCharts.LineStyle.Dashed,
+
+lastValueVisible:false,
+
+priceLineVisible:false,
+
+crosshairMarkerVisible:false
+
+}
+);
+
+
+s.setData([
+{
+time:start,
+value:sp
+},
+{
+time:mid,
+value:mp
+},
+{
+time:end,
+value:p.forecast
+}
+]);
+
+
+forecastSeries.push(s);
+
+}
+
+}
+
+
+/* =========================
+   DRAWING SYSTEM
+========================= */
+
+function svgPoint(ev){
+
+const r=
+$('drawLayer')
+.getBoundingClientRect();
+
+
+const x=
+ev.clientX-r.left;
+
+
+const y=
+ev.clientY-r.top;
+
+
+const t=
+chart.timeScale()
+.coordinateToTime(x);
+
+
+const p=
+candle.coordinateToPrice(y);
+
+
+return{
+x,
+y,
+time:
+typeof t==='number'
+?
+t
+:
+null,
+price:p
+};
+
+}
+
+
+function drawLine(
+x1,
+y1,
+x2,
+y2,
+color='#59f5ff',
+dash=''
+){
+
+const l=
+document.createElementNS(
+'http://www.w3.org/2000/svg',
+'line'
+);
+
+
+l.setAttribute(
+'x1',
+x1
+);
+
+l.setAttribute(
+'y1',
+y1
+);
+
+l.setAttribute(
+'x2',
+x2
+);
+
+l.setAttribute(
+'y2',
+y2
+);
+
+l.setAttribute(
+'stroke',
+color
+);
+
+l.setAttribute(
+'stroke-width',
+'2'
+);
+
+l.setAttribute(
+'vector-effect',
+'non-scaling-stroke'
+);
+
+
+if(dash)
+l.setAttribute(
+'stroke-dasharray',
+dash
+);
+
+
+$('drawLayer')
+.appendChild(l);
+
+}
+
+
+function screenPos(t,p){
+
+const x=
+chart.timeScale()
+.timeToCoordinate(t);
+
+
+const y=
+candle.priceToCoordinate(p);
+
+
+return
+x==null||y==null
+?
+null
+:
+{x,y};
+
+}
+
+
+function renderDrawings(){
+
+const s=
+$('drawLayer');
+
+
+s.innerHTML='';
+
+
+for(
+const d of drawings
+){
+
+const color=
+d.id===selectedId
+?
+'#ffe56b'
+:
+d.color||'#59f5ff';
+
+
+if(
+d.type==='horizontal'
+){
+
+const y=
+candle.priceToCoordinate(
+d.price
+);
+
+
+if(y!=null)
+drawLine(
+0,
+y,
+s.clientWidth,
+y,
+color,
+'6 4'
+);
+
+}
+
+
+else if(
+d.type==='vertical'
+){
+
+const x=
+chart.timeScale()
+.timeToCoordinate(
+d.time
+);
+
+
+if(x!=null)
+drawLine(
+x,
+0,
+x,
+s.clientHeight,
+color,
+'6 4'
+);
+
+}
+
+
+else if(
+d.type==='text'
+){
+
+const q=
+screenPos(
+d.time,
+d.price
+);
+
+
+if(q){
+
+const t=
+document.createElementNS(
+'http://www.w3.org/2000/svg',
+'text'
+);
+
+
+t.setAttribute(
+'x',
+q.x
+);
+
+t.setAttribute(
+'y',
+q.y
+);
+
+t.setAttribute(
+'fill',
+color
+);
+
+t.setAttribute(
+'font-size',
+'11'
+);
+
+t.textContent=d.text;
+
+s.appendChild(t);
+
+}
+
+}
+
+
+else{
+
+const a=
+screenPos(
+d.t1,
+d.p1
+);
+
+
+const b=
+screenPos(
+d.t2,
+d.p2
+);
+
+
+if(!a||!b)
+continue;
+
+
+if(
+d.type==='trend'||
+d.type==='measure'
+){
+
+drawLine(
+a.x,
+a.y,
+b.x,
+b.y,
+color,
+d.type==='measure'
+?
+'5 4'
+:
+''
+);
+
+}
+
+
+if(
+d.type==='measure'
+){
+
+const t=
+document.createElementNS(
+'http://www.w3.org/2000/svg',
+'text'
+);
+
+
+t.setAttribute(
+'x',
+(a.x+b.x)/2
+);
+
+t.setAttribute(
+'y',
+(a.y+b.y)/2-7
+);
+
+t.setAttribute(
+'fill',
+color
+);
+
+t.setAttribute(
+'font-size',
+'10'
+);
+
+t.textContent=
+`${pct((d.p2/d.p1-1)*100)}
+•
+${Math.round(
+Math.abs(d.t2-d.t1)/60
+)}m`;
+
+
+s.appendChild(t);
+
+}
+
+
+if(
+d.type==='fib'
+){
+
+const hi=
+Math.max(
+d.p1,
+d.p2
+);
+
+
+const lo=
+Math.min(
+d.p1,
+d.p2
+);
+
+
+const x1=
+Math.min(
+a.x,
+b.x
+);
+
+
+const x2=
+Math.max(
+a.x,
+b.x
+);
+
+
+[
+0,
+.236,
+.382,
+.5,
+.618,
+.786,
+1
+]
+.forEach(
+lv=>{
+
+const y=
+candle.priceToCoordinate(
+hi-(hi-lo)*lv
+);
+
+
+if(y!=null){
+
+drawLine(
+x1,
+y,
+x2,
+y,
+color,
+'3 4'
+);
+
+
+const tx=
+document.createElementNS(
+'http://www.w3.org/2000/svg',
+'text'
+);
+
+
+tx.setAttribute(
+'x',
+x2+4
+);
+
+tx.setAttribute(
+'y',
+y-2
+);
+
+tx.setAttribute(
+'fill',
+color
+);
+
+tx.setAttribute(
+'font-size',
+'9'
+);
+
+tx.textContent=
+(lv*100).toFixed(1)+'%';
+
+
+s.appendChild(tx);
+
+}
+
+}
+);
+
+}
+
+}
+
+}
+
+}
+
+
+/* =========================
+   TOOLS
+========================= */
+
+function chooseTool(t){
+
+tool=t;
+
+draft=null;
+
+
+document
+.querySelectorAll(
+'.tool[data-tool]'
+)
+.forEach(
+b=>
+b.classList.toggle(
+'active',
+b.dataset.tool===t
+)
+);
+
+
+$('drawLayer')
+.classList.toggle(
+'active',
+t!=='move'
+);
+
+}
+
+
+$('tools').addEventListener(
+'click',
+e=>{
+
+const b=
+e.target.closest(
+'[data-tool]'
+);
+
+if(b)
+chooseTool(
+b.dataset.tool
+);
+
+}
+);
+
+
+$('drawLayer').addEventListener(
+'pointerdown',
+e=>{
+
+if(tool==='move')
+return;
+
+
+draft=
+svgPoint(e);
+
+
+$('drawLayer')
+.setPointerCapture(
+e.pointerId
+);
+
+}
+);
+
+
+$('drawLayer').addEventListener(
+'pointerup',
+e=>{
+
+if(!draft)
+return;
+
+
+const end=
+svgPoint(e);
+
+
+if(
+!end.time ||
+!end.price
+){
+
+draft=null;
+
+return;
+
+}
+
+
+let d={
+id:crypto.randomUUID(),
+type:tool
+};
+
+
+if(
+tool==='horizontal'
+)
+
+d.price=
+end.price;
+
+
+if(
+tool==='vertical'
+)
+
+d.time=
+end.time;
+
+
+if(
+tool==='trend'||
+tool==='measure'||
+tool==='fib'
+)
+
+Object.assign(
+d,
+{
+t1:draft.time,
+p1:draft.price,
+t2:end.time,
+p2:end.price
+}
+);
+
+
+if(
+tool==='text'
+){
+
+const text=
+prompt('Label');
+
+
+if(text){
+
+d={
+id:crypto.randomUUID(),
+type:'text',
+time:end.time,
+price:end.price,
+text
+};
+
+}
+
+else{
+
+draft=null;
+
+return;
+
+}
+
+}
+
+
+drawings.push(d);
+
+selectedId=d.id;
+
+save();
+
+renderDrawings();
+
+chooseTool('move');
+
+draft=null;
+
+}
+);
+
+
+/* UNDO */
+
+$('undo').onclick=()=>{
+
+drawings.pop();
+
+selectedId=null;
+
+save();
+
+renderDrawings();
+
+};
+
+
+/* DELETE */
+
+$('delete').onclick=()=>{
+
+if(!drawings.length)
+return;
+
+
+drawings=
+drawings.filter(
+d=>d.id!==selectedId
+);
+
+
+if(!selectedId)
+drawings.pop();
+
+
+selectedId=null;
+
+save();
+
+renderDrawings();
+
+};
+
+
+/* CLEAR */
+
+$('clear').onclick=()=>{
+
+if(
+confirm(
+'Clear all drawings?'
+)
+){
+
+drawings=[];
+
+selectedId=null;
+
+save();
+
+renderDrawings();
+
+}
+
+};
+
+
+/* SELECT HORIZONTAL */
+
+$('drawLayer').addEventListener(
+'pointerdown',
+e=>{
+
+if(tool!=='move')
+return;
+
+
+const p=
+svgPoint(e);
+
+
+let best=null;
+
+let dist=Infinity;
+
+
+for(
+const d of drawings
+){
+
+if(
+d.type==='horizontal'
+){
+
+const y=
+candle.priceToCoordinate(
+d.price
+);
+
+
+if(
+y!=null &&
+Math.abs(y-p.y)<12 &&
+Math.abs(y-p.y)<dist
+){
+
+best=d;
+
+dist=
+Math.abs(y-p.y);
+
+}
+
+}
+
+}
+
+
+if(best){
+
+selectedId=
+best.id;
+
+renderDrawings();
+
+}
+
+}
+);
+
+
+/* =========================
+   NAVIGATION
+========================= */
+
+function nav(name){
+
+document
+.querySelectorAll('.screen')
+.forEach(
+s=>
+s.classList.remove(
+'active'
+)
+);
+
+
+document
+.querySelector(
+'#screen-'+name
+)
+.classList.add(
+'active'
+);
+
+
+document
+.querySelectorAll('.nav button')
+.forEach(
+b=>
+b.classList.toggle(
+'active',
+b.dataset.screen===name
+)
+);
+
+
+if(name==='chart')
+
+setTimeout(
+()=>renderDrawings(),
+30
+);
+
+}
+
+
+document
+.querySelectorAll('.nav button')
+.forEach(
+b=>
+b.onclick=
+()=>nav(
+b.dataset.screen
+)
+);
+
+
+/* TIMEFRAME */
+
+document
+.querySelectorAll(
+'#tfbar .chip'
+)
+.forEach(
+b=>
+
+b.onclick=
+async()=>{
+
+tf=b.dataset.tf;
+
+
+document
+.querySelectorAll(
+'#tfbar .chip'
+)
+.forEach(
+x=>
+x.classList.toggle(
+'active',
+x===b
+)
+);
+
+
+await loadMarket();
+
+}
+);
+
+
+/* RANGE */
+
+document
+.querySelectorAll(
+'#rangebar button'
+)
+.forEach(
+b=>
+
+b.onclick=
+async()=>{
+
+range=b.dataset.range;
+
+
+document
+.querySelectorAll(
+'#rangebar button'
+)
+.forEach(
+x=>
+x.classList.toggle(
+'active',
+x===b
+)
+);
+
+
+await loadMarket();
+
+}
+);
+
+
+/* CUSTOM */
+
+$('customBtn').onclick=
+createCustom;
+
+
+/* VOLUME */
+
+$('volumeToggle').onclick=()=>{
+
+showVolume=!showVolume;
+
+volume.applyOptions({
+visible:showVolume
+});
+
+$('volumeToggle').textContent=
+showVolume
+?
+'ON'
+:
+'OFF';
+
+
+settings.volume=
+showVolume;
+
+save();
+
+};
+
+
+/* FORECAST PATHS */
+
+$('forecastToggle').onclick=()=>{
+
+showForecast=!showForecast;
+
+$('forecastToggle').textContent=
+showForecast
+?
+'ON'
+:
+'OFF';
+
+
+settings.forecast=
+showForecast;
+
+save();
+
+drawForecasts();
+
+};
+
+
+/* CLEAR DRAWINGS */
+
+$('clearDrawings').onclick=
+()=>$('clear').click();
+
+
+/* RESET */
+
+$('reset').onclick=()=>{
+
+if(
+confirm(
+'Reset predictions, history and drawings?'
+)
+){
+
+localStorage.removeItem(
+KEY.active
+);
+
+localStorage.removeItem(
+KEY.history
+);
+
+localStorage.removeItem(
+KEY.draw
+);
+
+location.reload();
+
+}
+
+};
+
+
+/* =========================
+   START
+========================= */
+
+showVolume=
+settings.volume!==false;
+
+showForecast=
+settings.forecast!==false;
+
+
+$('volumeToggle').textContent=
+showVolume
+?
+'ON'
+:
+'OFF';
+
+
+$('forecastToggle').textContent=
+showForecast
+?
+'ON'
+:
+'OFF';
+
+
+initChart();
+
+connectWS();
+
+loadMarket();
+
+renderActive();
+
+renderHistory();
+
+
+/* LIVE CLOCK */
+
+setInterval(
+()=>{
+renderActive();
+},
+1000
+);
+
+
+/* SETTLEMENT CHECK */
+
+setInterval(
+settle,
+15000
+);
+
+
+/* MARKET REFRESH */
+
+setInterval(
+()=>{
+loadMarket()
+},
+60000
+);
+
 </script>
 
 </body>
 </html>
-```
-
-**Notes & Limitations:**  All forecasting logic is **client-side** and heuristic-based.  We show calculations for transparency, but no machine learning training occurs.  The forecasts use only recent price/volume data; real markets may behave differently.  The app avoids any backend or API keys – it uses only Binance’s public endpoints.  Large history ranges use coarser intervals to limit data (assumed ≤ ~3 years).  Users’ drawings and predictions persist locally, but clearing site data or using a new browser will erase them.  Use charts and forecasts as *illustration only* of one possible strategy – **not** investment advice.
-
