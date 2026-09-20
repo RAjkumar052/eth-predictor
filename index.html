@@ -1,505 +1,373 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#07101c">
-<title>ETH Global Predictor V12</title>
+<title>ETH Predictor V15</title>
 
 <style>
 :root{
-  --bg:#07101c;
-  --card:#101a29;
-  --panel:#0b1422;
-  --line:#26364b;
-  --muted:#8795ab;
-  --text:#f4f7fb;
-  --green:#35c985;
-  --red:#ef5364;
-  --blue:#63a8ff;
-  --yellow:#f1c65b
+ --bg:#050b14;--card:#0d1624;--card2:#111d2e;
+ --line:#213149;--muted:#7f91aa;--text:#f5f8fc;
+ --green:#32d58a;--red:#ff5d70;--blue:#62a9ff;
+ --purple:#a784ff;--yellow:#f4c95d;--cyan:#45d7e8
 }
-
 *{box-sizing:border-box}
-
+html,body{
+ margin:0;background:var(--bg);color:var(--text);
+ font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif
+}
 body{
-  margin:0;
-  background:var(--bg);
-  color:var(--text);
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif
+ background:radial-gradient(circle at 50% -10%,#142742 0,#050b14 45%);
 }
-
-main{
-  max-width:700px;
-  margin:auto;
-  padding:18px 12px calc(30px + env(safe-area-inset-bottom))
-}
-
-header{
-  display:flex;
-  justify-content:space-between;
-  gap:10px;
-  align-items:flex-start
-}
-
-h1{
-  font-size:27px;
-  line-height:1.05;
-  margin:0 0 6px
-}
-
-.muted,.small{
-  color:var(--muted);
-  font-size:12px;
-  line-height:1.45
-}
-
+main{max-width:760px;margin:auto;padding:14px 12px 95px}
 button{
-  border:0;
-  border-radius:11px;
-  background:#294777;
-  color:#fff;
-  font-weight:750;
-  padding:11px 14px;
-  font-size:14px
+ border:1px solid var(--line);border-radius:12px;background:#15243a;
+ color:#fff;font-weight:750;padding:10px 13px;font-size:13px
 }
-
-button:disabled{opacity:.55}
-
-.card{
-  background:var(--card);
-  border:1px solid var(--line);
-  border-radius:19px;
-  padding:14px;
-  margin:12px 0;
-  box-shadow:0 8px 28px rgba(0,0,0,.12)
+button:active{transform:scale(.97)}
+button:disabled{opacity:.5}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.brand{display:flex;align-items:center;gap:10px}
+.logo{
+ width:42px;height:42px;border-radius:14px;
+ background:linear-gradient(135deg,#627dff,#a784ff);
+ display:grid;place-items:center;font-weight:900;font-size:20px
 }
-
+.eyebrow{font-size:10px;color:#9eb0c8;letter-spacing:.12em;font-weight:800}
+.title{font-size:22px;font-weight:900}
+.muted,.small{color:var(--muted);font-size:11px;line-height:1.45}
 .badge{
-  display:inline-block;
-  background:#172942;
-  color:#9fc8ff;
-  padding:5px 8px;
-  border-radius:999px;
-  font-size:10px;
-  font-weight:800;
-  margin-top:6px
+ display:inline-flex;margin-top:6px;padding:4px 8px;border-radius:999px;
+ background:#162743;color:#a9c9ff;font-size:9px;font-weight:850
 }
-
-.price{
-  font-size:36px;
-  font-weight:850;
-  margin-top:4px
+.card{
+ background:linear-gradient(180deg,#0e1928,#0b1421);
+ border:1px solid #1e3048;border-radius:20px;padding:14px;
+ margin:10px 0;box-shadow:0 12px 35px #0004
 }
-
-.label{
-  font-size:12px;
-  color:var(--muted)
+.priceRow{display:flex;justify-content:space-between;align-items:end}
+.price{font-size:34px;font-weight:900;letter-spacing:-.04em}
+.live{color:var(--green);font-size:10px;font-weight:850}
+.change{font-size:12px;color:var(--muted)}
+.selector-title,.label{
+ font-size:10px;color:#8ea1ba;text-transform:uppercase;
+ letter-spacing:.08em;font-weight:850
 }
-
-.selector-title{
-  margin-top:14px;
-  font-size:14px;
-  font-weight:700;
-  color:#aeb8c8
-}
-
 .tf{
-  display:flex;
-  gap:7px;
-  overflow-x:auto;
-  margin-top:8px;
-  padding-bottom:3px;
-  scrollbar-width:none
+ display:flex;gap:7px;overflow-x:auto;padding:9px 0 3px;
+ scrollbar-width:none
 }
-
 .tf::-webkit-scrollbar{display:none}
-
-.tf button{
-  background:#17263d;
-  min-width:57px;
-  padding:10px 8px;
-  font-size:13px;
-  white-space:nowrap
-}
-
+.tf button{white-space:nowrap;padding:8px 12px;border-radius:10px;background:#101c2d}
 .tf button.active{
-  background:#447bc1
+ background:#5f79ff;border-color:#6e86ff;
+ box-shadow:0 5px 18px #5f79ff44
 }
-
-.grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:9px
+.chartTop{
+ display:flex;justify-content:space-between;align-items:center;margin-top:8px
 }
-
-.box{
-  background:var(--panel);
-  padding:11px;
-  border-radius:13px
+.chartTabs{display:flex;gap:6px}
+.miniBtn{padding:6px 9px;font-size:11px}
+.miniBtn.active{background:#263e61}
+.chartWrap{position:relative;margin-top:9px}
+.chartWrap canvas{
+ display:block;width:100%;height:390px;
+ background:linear-gradient(180deg,#091423,#07101b);
+ border-radius:16px;border:1px solid #1b2b40;
+ touch-action:none
 }
-
-.value{
-  font-size:19px;
-  font-weight:800;
-  margin-top:4px
+.chartTools{
+ display:flex;gap:6px;overflow:auto;margin-top:8px;padding-bottom:2px
 }
-
+.chartTools button{
+ padding:7px 10px;font-size:10px;white-space:nowrap
+}
+.chartTools button.active{
+ background:#263e61;border-color:#46658f
+}
+.chartLegend{
+ display:flex;gap:10px;flex-wrap:wrap;margin-top:7px;
+ font-size:9px;color:#91a1b7
+}
+.dot{
+ display:inline-block;width:7px;height:7px;border-radius:50%;
+ margin-right:4px
+}
+.crosshair{
+ position:absolute;right:8px;top:8px;
+ background:#111d2eaa;border:1px solid #2a3c55;
+ border-radius:9px;padding:5px 7px;font-size:10px;
+ color:#b8c7da;pointer-events:none
+}
+.controls{
+ display:flex;gap:7px;align-items:center;margin-top:8px
+}
+.controls button{padding:8px 11px}
+.controls span{
+ font-size:11px;color:var(--muted);min-width:35px;text-align:center
+}
+.connection{font-size:10px;color:var(--muted);margin-top:8px}
+.target{
+ border-color:#5d4eaa;
+ background:linear-gradient(135deg,#12172b,#10182a)
+}
+.targetHead{display:flex;justify-content:space-between;gap:10px}
+.targetTime{font-size:16px;font-weight:900}
+.countdown{font-size:11px;color:#aebad0;margin-top:3px}
+.targetPrice{font-size:28px;font-weight:950;color:#fff}
+.probGrid{
+ display:grid;grid-template-columns:repeat(3,1fr);
+ gap:7px;margin-top:12px
+}
+.prob{
+ padding:10px;border-radius:13px;background:#0a1220;
+ border:1px solid #203047;text-align:center
+}
+.prob b{display:block;font-size:18px;margin-top:3px}
 .green{color:var(--green)}
 .red{color:var(--red)}
-.blue{color:var(--blue)}
+.purple{color:var(--purple)}
 .yellow{color:var(--yellow)}
-
-canvas{
-  display:block;
-  width:100%;
-  height:390px;
-  background:#09121e;
-  border-radius:13px;
-  margin-top:12px;
-  touch-action:none
+.cyan{color:var(--cyan)}
+.sectionTitle{
+ display:flex;justify-content:space-between;align-items:center;
+ margin-bottom:9px
 }
-
-.chartHead{
-  display:flex;
-  justify-content:space-between;
-  margin-top:12px;
-  color:#aeb8c8;
-  font-size:12px;
-  font-weight:700
+.sectionTitle b{font-size:14px}
+.grid{
+ display:grid;grid-template-columns:repeat(2,1fr);gap:8px
 }
-
-.chartHead .live{
-  color:var(--green)
+.box{
+ background:#0a1320;border:1px solid #1c2b40;
+ border-radius:14px;padding:10px
 }
-
-.controls{
-  display:flex;
-  justify-content:center;
-  gap:7px;
-  align-items:center;
-  margin-top:8px
-}
-
-.controls button{
-  background:#17263d;
-  padding:7px 12px
-}
-
-.controls span{
-  min-width:35px;
-  text-align:center;
-  color:#aeb8c8;
-  font-size:12px;
-  font-weight:800
-}
-
-.targetCard{
-  background:linear-gradient(135deg,#10253d,#0b1625);
-  border:1px solid #315b8e
-}
-
-.targetRow{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:10px
-}
-
-.targetPrice{
-  font-size:29px;
-  font-weight:900;
-  color:var(--blue);
-  margin-top:3px
-}
-
-.targetTime{
-  font-size:16px;
-  font-weight:800;
-  margin-top:3px
-}
-
-.countdown{
-  color:var(--green);
-  font-size:13px;
-  font-weight:800;
-  margin-top:5px
-}
-
-.signalGrid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:8px;
-  margin-top:10px
-}
-
-.signal{
-  background:var(--panel);
-  border-radius:12px;
-  padding:10px;
-  text-align:center
-}
-
-.signal b{
-  display:block;
-  font-size:18px;
-  margin-top:3px
-}
-
+.value{font-size:16px;font-weight:850;margin-top:5px}
 .diag{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:8px;
-  margin-top:9px
+ display:grid;grid-template-columns:repeat(2,1fr);gap:8px
 }
-
-.diag .box b{
-  display:block;
-  font-size:17px;
-  margin-top:3px
-}
-
-.log{
-  margin-top:9px
-}
-
-.logRow{
-  display:grid;
-  grid-template-columns:120px 1fr;
-  gap:8px;
-  padding:9px 0;
-  border-bottom:1px solid var(--line);
-  font-size:12px
-}
-
-.logRow:last-child{
-  border-bottom:0
-}
-
-.logKey{
-  color:var(--muted)
-}
-
+.diag .box b{display:block;font-size:16px;margin-top:5px}
 .status{
-  margin-top:10px;
-  line-height:1.5;
-  font-size:12px
+ margin-top:9px;padding:10px;border-radius:12px;
+ background:#171b18;border:1px solid #304132;
+ font-size:11px;color:#b7d8c0
 }
-
-.connection{
-  margin-top:8px;
-  background:var(--panel);
-  border-radius:10px;
-  padding:8px;
-  color:var(--muted);
-  font-size:11px;
-  word-break:break-word
+.logRow{
+ display:flex;justify-content:space-between;gap:10px;
+ padding:9px 0;border-bottom:1px solid #18283b;font-size:11px
 }
-
+.logRow:last-child{border-bottom:0}
 .historyItem{
-  background:var(--panel);
-  border-radius:12px;
-  padding:11px;
-  margin-top:8px;
-  font-size:12px;
-  line-height:1.55
+ background:#0a1320;border:1px solid #1b2b40;
+ border-radius:14px;padding:11px;margin-top:8px;
+ font-size:11px;line-height:1.55
 }
-
-.historyTitle{
-  font-weight:850;
-  font-size:13px
+.historyTitle{font-weight:850;color:#dbe6f5;margin-bottom:4px}
+.good{color:var(--green)}
+.bad{color:var(--red)}
+.note{font-size:10px;color:var(--muted);line-height:1.5;margin-top:9px}
+.modelCard{
+ padding:11px;background:#0a1320;border:1px solid #1d2d43;
+ border-radius:14px;margin:7px 0
 }
-
-.good{
-  color:var(--green);
-  font-weight:800
+.modelTop{display:flex;justify-content:space-between}
+.bar{
+ height:6px;background:#172438;border-radius:99px;
+ overflow:hidden;margin-top:7px
 }
-
-.bad{
-  color:var(--red);
-  font-weight:800
+.bar i{
+ display:block;height:100%;
+ background:linear-gradient(90deg,#5d7cff,#a784ff);
+ border-radius:99px
 }
-
-.note{
-  border-top:1px solid var(--line);
-  margin-top:11px;
-  padding-top:10px;
-  color:var(--muted);
-  font-size:11px;
-  line-height:1.5
+.bottomNav{
+ position:fixed;left:50%;bottom:10px;
+ transform:translateX(-50%);
+ width:min(720px,calc(100% - 22px));
+ background:#0b1421ee;backdrop-filter:blur(18px);
+ border:1px solid #253852;border-radius:18px;
+ padding:6px;display:grid;grid-template-columns:repeat(4,1fr);
+ gap:5px;z-index:20;box-shadow:0 15px 45px #0008
 }
-
-@media(max-width:390px){
-  h1{font-size:24px}
-  .price{font-size:32px}
-  canvas{height:360px}
-  .logRow{grid-template-columns:105px 1fr}
+.navBtn{
+ background:transparent;border:0;padding:8px 4px;
+ color:#8293aa;font-size:10px
+}
+.navBtn.active{background:#1b2d48;color:#fff}
+.view{display:none}
+.view.active{display:block}
+.toast{
+ position:fixed;top:12px;left:50%;
+ transform:translate(-50%,-120px);
+ background:#16253a;border:1px solid #314766;
+ padding:9px 13px;border-radius:12px;font-size:11px;
+ z-index:30;transition:.25s
+}
+.toast.show{transform:translate(-50%,0)}
+@media(max-width:420px){
+ main{padding-left:9px;padding-right:9px}
+ .price{font-size:31px}
+ .chartWrap canvas{height:350px}
+ .targetPrice{font-size:24px}
 }
 </style>
 </head>
 
 <body>
 
+<div id="toast" class="toast">Updated</div>
+
 <main>
 
-<header>
-
-<div>
-
-<h1>ETH Global Predictor</h1>
-
-<div class="muted">
-Live ETH research dashboard • V12 multi-market ML • no trading UI
-</div>
-
-<span class="badge">
-V12 • Candles + volume + locked target + model log
-</span>
-
-</div>
-
-<button id="refresh">↻ Refresh</button>
-
+<header class="top">
+ <div class="brand">
+  <div class="logo">Ξ</div>
+  <div>
+   <div class="eyebrow">LIVE MARKET INTELLIGENCE</div>
+   <div class="title">ETH Predictor</div>
+   <div class="muted">Adaptive multi-model research engine</div>
+  </div>
+ </div>
+ <button id="refresh">↻</button>
 </header>
+
+<div style="margin:8px 2px">
+ <span class="badge">
+  V15 • 6,000 chronological candles • walk-forward ensemble
+ </span>
+</div>
+
+<!-- DASHBOARD -->
+
+<div id="view-dashboard" class="view active">
 
 <section class="card">
 
-<div class="label">ETH / USDT</div>
-
-<div id="price" class="price">
-Connecting…
-</div>
-
-<div class="selector-title">
-Prediction horizon
-</div>
-
-<div class="tf" id="horizons">
-
-<button class="active" data-h="30m">30m</button>
-<button data-h="1h">1H</button>
-<button data-h="2h">2H</button>
-<button data-h="4h">4H</button>
-<button data-h="6h">6H</button>
-<button data-h="12h">12H</button>
-<button data-h="24h">24H</button>
-<button data-h="2d">2D</button>
-<button data-h="3d">3D</button>
-<button data-h="5d">5D</button>
-<button data-h="7d">7D</button>
-
-</div>
-
-<div class="chartHead">
-
-<span>
-ETH/USDT candlestick • 5m
-</span>
-
-<span class="live">
-● LIVE
-</span>
-
-</div>
-
-<canvas id="chart"></canvas>
-
-<div class="controls">
-
-<button id="minus">−</button>
-
-<span id="zoom">
-1×
-</span>
-
-<button id="plus">+</button>
-
-<button id="reset">
-Reset
-</button>
-
-</div>
-
-<div id="chartInfo" class="small">
-Loading chart…
-</div>
-
-<div id="connection" class="connection">
-Market connection: starting…
-</div>
-
-</section>
-
-<section class="card targetCard">
-
-<div class="label">
-LOCKED PREDICTION • ONE TIME + ONE PRICE
-</div>
-
-<div class="targetRow">
+<div class="priceRow">
 
 <div>
-
-<div id="targetTime" class="targetTime">
-—
-</div>
-
-<div id="countdown" class="countdown">
-—
-</div>
-
+ <div class="label">ETH / USDT</div>
+ <div id="price" class="price">Connecting…</div>
+ <div id="priceChange" class="change">Live market price</div>
 </div>
 
 <div style="text-align:right">
-
-<div class="label">
-Predicted ETH
-</div>
-
-<div id="targetPrice" class="targetPrice">
-—
+ <div class="live">● LIVE</div>
+ <div class="small">30 sec refresh</div>
 </div>
 
 </div>
 
+<div class="selector-title" style="margin-top:14px">
+ Forecast horizon
 </div>
 
-<div class="signalGrid">
+<div class="tf" id="horizons">
+ <button class="active" data-h="15m">15m</button>
+ <button data-h="30m">30m</button>
+ <button data-h="1h">1H</button>
+ <button data-h="2h">2H</button>
+ <button data-h="4h">4H</button>
+ <button data-h="6h">6H</button>
+ <button data-h="12h">12H</button>
+ <button data-h="24h">24H</button>
+ <button data-h="2d">2D</button>
+ <button data-h="3d">3D</button>
+ <button data-h="5d">5D</button>
+ <button data-h="7d">7D</button>
+</div>
 
-<div class="signal">
+<div class="chartTop">
 
-<span class="label">
-UP
-</span>
+<div>
+ <div class="label">Professional chart board</div>
+ <div class="small">
+  5m ETH candles • EMA • support/resistance • RSI • volume
+ </div>
+</div>
 
-<b id="up" class="green">
-—
-</b>
+<div class="chartTabs">
+ <button class="miniBtn active" data-chart="candles">Candles</button>
+ <button class="miniBtn" data-chart="line">Line</button>
+</div>
 
 </div>
 
-<div class="signal">
+<div class="chartTools">
+ <button class="tool active" data-tool="ema">EMA</button>
+ <button class="tool active" data-tool="sr">S/R</button>
+ <button class="tool active" data-tool="rsi">RSI</button>
+ <button class="tool active" data-tool="vol">Volume</button>
+ <button class="tool active" data-tool="forecast">Forecast zone</button>
+</div>
 
-<span class="label">
-NEUTRAL
-</span>
+<div class="chartWrap">
+ <canvas id="chart"></canvas>
+ <div id="crosshair" class="crosshair">Move over chart</div>
+</div>
 
-<b id="neutral">
-—
-</b>
+<div class="controls">
+ <button id="minus">−</button>
+ <span id="zoom">1×</span>
+ <button id="plus">+</button>
+ <button id="reset">Reset view</button>
+</div>
+
+<div class="chartLegend">
+ <span><i class="dot" style="background:#35c985"></i>Up candle</span>
+ <span><i class="dot" style="background:#ef5364"></i>Down candle</span>
+ <span><i class="dot" style="background:#63a8ff"></i>Live</span>
+ <span><i class="dot" style="background:#9b7cff"></i>Forecast</span>
+</div>
+
+<div id="chartInfo" class="small">Loading chart…</div>
+
+<div id="candleReadout" class="small">
+ Tap or move over a candle for OHLC, volume and RSI.
+</div>
+
+<div id="connection" class="connection">
+ Market connection: starting…
+</div>
+
+</section>
+
+<section class="card target">
+
+<div class="sectionTitle">
+ <b>Locked forecast</b>
+ <span class="badge">ONE TARGET</span>
+</div>
+
+<div class="targetHead">
+
+<div>
+ <div id="targetTime" class="targetTime">—</div>
+ <div id="countdown" class="countdown">—</div>
+</div>
+
+<div style="text-align:right">
+ <div class="label">Predicted ETH</div>
+ <div id="targetPrice" class="targetPrice">—</div>
+</div>
 
 </div>
 
-<div class="signal">
+<div class="probGrid">
 
-<span class="label">
-DOWN
-</span>
+<div class="prob">
+ <span class="label">UP</span>
+ <b id="up" class="green">—</b>
+</div>
 
-<b id="down" class="red">
-—
-</b>
+<div class="prob">
+ <span class="label">NEUTRAL</span>
+ <b id="neutral">—</b>
+</div>
 
+<div class="prob">
+ <span class="label">DOWN</span>
+ <b id="down" class="red">—</b>
 </div>
 
 </div>
@@ -508,156 +376,55 @@ DOWN
 
 <section class="card">
 
-<div class="label">
-Prediction details
-</div>
-
-<div class="log">
-
-<div class="logRow">
-<span class="logKey">Created</span>
-<b id="created">—</b>
-</div>
-
-<div class="logRow">
-<span class="logKey">Starting price</span>
-<b id="startPrice">—</b>
-</div>
-
-<div class="logRow">
-<span class="logKey">Prediction</span>
-<b id="predPrice">—</b>
-</div>
-
-<div class="logRow">
-<span class="logKey">Expected range</span>
-<b id="predRange">—</b>
-</div>
-
-<div class="logRow">
-<span class="logKey">Target time</span>
-<b id="logTarget">—</b>
-</div>
-
-<div class="logRow">
-<span class="logKey">Model interval</span>
-<b id="modelInterval">—</b>
-</div>
-
-<div class="logRow">
-<span class="logKey">Training samples</span>
-<b id="samples">—</b>
-</div>
-
-<div class="logRow">
-<span class="logKey">Validation samples</span>
-<b id="oos">—</b>
-</div>
-
-</div>
-
-</section>
-
-<section class="card">
-
-<div class="label">
-Model diagnostics
-</div>
-
-<div class="diag">
-
-<div class="box">
-<span class="label">Walk-forward accuracy</span>
-<b id="accuracy" class="yellow">—</b>
-</div>
-
-<div class="box">
-<span class="label">Balanced accuracy</span>
-<b id="balanced" class="yellow">—</b>
-</div>
-
-<div class="box">
-<span class="label">Log loss</span>
-<b id="loss">—</b>
-</div>
-
-<div class="box">
-<span class="label">Baseline</span>
-<b id="baseline">—</b>
-</div>
-
-<div class="box">
-<span class="label">Validation folds</span>
-<b id="folds">—</b>
-</div>
-
-<div class="box">
-<span class="label">Live completed</span>
-<b id="completed">0</b>
-</div>
-
-</div>
-
-<div id="reliability" class="status">
-Reliability: insufficient live sample.
-</div>
-
-</section>
-
-<section class="card">
-
-<div class="label">
-Market context
+<div class="sectionTitle">
+ <b>Prediction snapshot</b>
+ <span class="small">Point-in-time record</span>
 </div>
 
 <div class="grid">
 
 <div class="box">
-
-<span class="label">
-RSI
-</span>
-
-<div id="rsi" class="value">
-—
-</div>
-
+ <span class="label">Created</span>
+ <div id="created" class="value">—</div>
 </div>
 
 <div class="box">
-
-<span class="label">
-BTC 1H
-</span>
-
-<div id="btc" class="value">
-—
-</div>
-
+ <span class="label">Start</span>
+ <div id="startPrice" class="value">—</div>
 </div>
 
 <div class="box">
-
-<span class="label">
-Funding
-</span>
-
-<div id="funding" class="value">
-—
-</div>
-
+ <span class="label">Target</span>
+ <div id="logTarget" class="value">—</div>
 </div>
 
 <div class="box">
-
-<span class="label">
-ETH Open Interest
-</span>
-
-<div id="oi" class="value">
-—
+ <span class="label">Range</span>
+ <div id="predRange" class="value">—</div>
 </div>
 
+</div>
+
+<div class="log" style="margin-top:7px">
+
+<div class="logRow">
+ <span>Prediction</span>
+ <b id="predPrice">—</b>
+</div>
+
+<div class="logRow">
+ <span>Model interval</span>
+ <b id="modelInterval">—</b>
+</div>
+
+<div class="logRow">
+ <span>Training samples</span>
+ <b id="samples">—</b>
+</div>
+
+<div class="logRow">
+ <span>Validation samples</span>
+ <b id="oos">—</b>
 </div>
 
 </div>
@@ -666,65 +433,226 @@ ETH Open Interest
 
 <section class="card">
 
-<div class="label">
-Prediction history
+<div class="sectionTitle">
+ <b>Market pulse</b>
+ <span class="small">Live context</span>
 </div>
 
-<div id="historySummary" class="small">
-No completed predictions yet.
+<div class="grid">
+
+<div class="box">
+ <span class="label">RSI</span>
+ <div id="rsi" class="value">—</div>
+</div>
+
+<div class="box">
+ <span class="label">BTC 1H</span>
+ <div id="btc" class="value">—</div>
+</div>
+
+<div class="box">
+ <span class="label">Funding</span>
+ <div id="funding" class="value">—</div>
+</div>
+
+<div class="box">
+ <span class="label">ETH OI</span>
+ <div id="oi" class="value">—</div>
+</div>
+
+</div>
+
+</section>
+
+</div>
+
+<!-- MODELS -->
+
+<div id="view-models" class="view">
+
+<section class="card">
+
+<div class="sectionTitle">
+ <b>Intelligence engine</b>
+ <span class="badge">ADAPTIVE</span>
+</div>
+
+<div class="small">
+ Each model learns from chronological history. The ensemble adapts using
+ out-of-sample performance and the current market regime.
+</div>
+
+<div id="modelPanel" style="margin-top:8px">
+ Loading model ensemble…
+</div>
+
+</section>
+
+<section class="card">
+
+<div class="sectionTitle">
+ <b>Validation lab</b>
+ <span class="small">Unseen future blocks</span>
+</div>
+
+<div class="diag">
+
+<div class="box">
+ <span class="label">Accuracy</span>
+ <b id="accuracy" class="yellow">—</b>
+</div>
+
+<div class="box">
+ <span class="label">Balanced</span>
+ <b id="balanced" class="yellow">—</b>
+</div>
+
+<div class="box">
+ <span class="label">Log loss</span>
+ <b id="loss">—</b>
+</div>
+
+<div class="box">
+ <span class="label">Baseline</span>
+ <b id="baseline">—</b>
+</div>
+
+<div class="box">
+ <span class="label">Folds</span>
+ <b id="folds">—</b>
+</div>
+
+<div class="box">
+ <span class="label">OOS samples</span>
+ <b id="wfOos">—</b>
+</div>
+
+</div>
+
+<div class="box" style="margin-top:8px">
+ <span class="label">Current regime</span>
+ <b id="regime">—</b>
+ <div id="regimeDetail" class="small">—</div>
+</div>
+
+<div id="reliability" class="status">
+ Reliability: insufficient live sample.
+</div>
+
+</section>
+
+<section class="card">
+
+<div class="sectionTitle">
+ <b>How the engine works</b>
+</div>
+
+<div class="small">
+ Feature extraction → chronological training → multiple algorithms →
+ walk-forward validation → adaptive model weighting →
+ regime adjustment → locked forecast.
+</div>
+
+</section>
+
+</div>
+
+<!-- HISTORY -->
+
+<div id="view-history" class="view">
+
+<section class="card">
+
+<div class="sectionTitle">
+ <b>Prediction history</b>
+ <span id="historySummary" class="small">
+  No completed predictions yet.
+ </span>
 </div>
 
 <div id="history"></div>
 
 <div class="note">
+ Only predictions that have reached their target time are evaluated.
+ This prevents future information from entering the live record.
+</div>
 
-Each forecast has a fixed creation price and fixed target timestamp.
-Refreshing the page does not move the target.
-A live result is counted only after the target time has passed
-and an actual ETH price is available.
+</section>
 
+</div>
+
+<!-- MORE -->
+
+<div id="view-more" class="view">
+
+<section class="card">
+
+<div class="sectionTitle">
+ <b>Controls</b>
+</div>
+
+<div class="grid">
+ <button id="moreRefresh">Refresh market</button>
+ <button id="clearZoom">Reset chart</button>
+</div>
+
+<div class="note">
+ Data source: Binance public market data.
+ Browser-side research model; not a trading system.
 </div>
 
 </section>
 
 <section class="card">
 
-<div class="label">
-Methodology
+<div class="sectionTitle">
+ <b>Methodology</b>
 </div>
 
 <div class="small">
-
-ETH 1/3/12-bar returns • EMA trend • RSI • volume z-score •
-candle range • ATR volatility • BTC returns/trend/RSI •
-ETH/BTC relative movement • chronological walk-forward validation.
-
-<br><br>
-
-The forecast is a browser-side research model.
-It is not guaranteed to predict future prices and is not financial advice.
-
+ ETH 5m returns • EMA trend • RSI • volume anomaly • candle structure •
+ ATR volatility • BTC context • chronological walk-forward validation •
+ adaptive ensemble weighting.
 </div>
 
 </section>
 
+</div>
+
 </main>
+
+<nav class="bottomNav">
+
+<button class="navBtn active" data-view="dashboard">
+ ⌂<br>Dashboard
+</button>
+
+<button class="navBtn" data-view="models">
+ ◈<br>Models
+</button>
+
+<button class="navBtn" data-view="history">
+ ◷<br>History
+</button>
+
+<button class="navBtn" data-view="more">
+ ☷<br>More
+</button>
+
+</nav>
 
 <script>
 
-"use strict";
-
 const API="https://data-api.binance.vision";
-
 const API_FALLBACK="https://api.binance.com";
-
 const FUTURES="https://fapi.binance.com";
-
 const TIMEOUT=12000;
 
-const KEY="eth_predictor_v12_history";
+const KEY="eth_predictor_v15_history";
+const CACHE_KEY="eth_predictor_v15_market_cache";
 
 const H={
+ "15m":15,
  "30m":30,
  "1h":60,
  "2h":120,
@@ -738,1285 +666,1572 @@ const H={
  "7d":10080
 };
 
-let horizon="30m";
+const HISTORY_5M=6000;
+const HISTORY_1H=1500;
+const PAGE=1000;
 
+let horizon="15m";
 let candles=[];
-
 let btcCandles=[];
-
 let prediction=null;
-
 let busy=false;
-
 let zoom=1;
-
 let offset=0;
-
 let drag=false;
-
 let dragX=0;
-
 let dragOffset=0;
+let lastModel=null;
+let chartType="candles";
+let hoverIndex=null;
 
-let pinch=null;
+let tools={
+ ema:true,
+ sr:true,
+ rsi:true,
+ vol:true,
+ forecast:true
+};
 
 const $=id=>document.getElementById(id);
 
-const clamp=(x,a,b)=>
-  Math.max(a,Math.min(b,x));
+const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
 
 const mean=a=>
-  a.length
-    ? a.reduce((s,x)=>s+x,0)/a.length
-    : 0;
+ a.length?a.reduce((s,x)=>s+x,0)/a.length:0;
 
 const std=a=>
-  a.length>1
-    ? Math.sqrt(
-        mean(
-          a.map(x=>
-            (x-mean(a))**2
-          )
-        )
-      )
-    : 0;
+ a.length>1?
+ Math.sqrt(mean(a.map(x=>(x-mean(a))**2))):0;
 
 const price=x=>
-  Number.isFinite(x)
-    ? x.toLocaleString(
-        "en-US",
-        {
-          minimumFractionDigits:2,
-          maximumFractionDigits:2
-        }
-      )
-    : "—";
+ Number.isFinite(x)?
+ x.toLocaleString("en-US",{
+  minimumFractionDigits:2,
+  maximumFractionDigits:2
+ }):"—";
 
 const pct=x=>
-  Number.isFinite(x)
-    ? (x>=0?"+":"")+x.toFixed(2)+"%"
-    : "—";
+ Number.isFinite(x)?
+ (x>=0?"+":"")+x.toFixed(2)+"%":"—";
 
 const date=x=>
-  Number.isFinite(x)
-    ? new Date(x).toLocaleString(
-        "en-IN",
-        {
-          year:"numeric",
-          month:"short",
-          day:"2-digit",
-          hour:"2-digit",
-          minute:"2-digit",
-          second:"2-digit",
-          hour12:true
-        }
-      )
-    : "—";
+ Number.isFinite(x)?
+ new Date(x).toLocaleString("en-IN",{
+  year:"numeric",
+  month:"short",
+  day:"2-digit",
+  hour:"2-digit",
+  minute:"2-digit",
+  second:"2-digit",
+  hour12:true
+ }):"—";
 
 function countdown(t){
 
-  let d=t-Date.now();
+ let d=t-Date.now();
 
-  if(d<=0)
-    return "Target reached • evaluating result…";
+ if(d<=0)
+  return "Target reached • evaluating result…";
 
-  let s=Math.floor(d/1000);
+ let s=Math.floor(d/1000);
+ let h=Math.floor(s/3600);
 
-  let h=Math.floor(s/3600);
+ s%=3600;
 
-  s%=3600;
+ let m=Math.floor(s/60);
 
-  let m=Math.floor(s/60);
+ s%=60;
 
-  s%=60;
-
-  return "Target in "+
-    (h?String(h).padStart(2,"0")+":":"")+
-    String(m).padStart(2,"0")+":"+
-    String(s).padStart(2,"0");
+ return "Target in "+
+ (h?String(h).padStart(2,"0")+":":"")+
+ String(m).padStart(2,"0")+":"+
+ String(s).padStart(2,"0");
 }
 
 function softmax(z){
 
-  const m=Math.max(...z);
+ const m=Math.max(...z);
+ const e=z.map(x=>Math.exp(x-m));
+ const s=e.reduce((a,b)=>a+b,0)||1;
 
-  const e=z.map(x=>Math.exp(x-m));
-
-  const s=e.reduce((a,b)=>a+b,0);
-
-  return e.map(x=>x/s);
+ return e.map(x=>x/s);
 }
 
 function dot(a,b){
 
-  let s=0;
+ let s=0;
 
-  for(let i=0;i<a.length;i++)
-    s+=a[i]*b[i];
+ for(let i=0;i<a.length;i++)
+  s+=a[i]*b[i];
 
-  return s;
+ return s;
 }
 
 function argmax(a){
 
-  let k=0;
+ let k=0;
 
-  for(let i=1;i<a.length;i++)
+ for(let i=1;i<a.length;i++)
+  if(a[i]>a[k])k=i;
 
-    if(a[i]>a[k])
-      k=i;
-
-  return k;
+ return k;
 }
 
 async function getJSON(path,base=API){
 
-  const ctl=new AbortController();
+ const ctl=new AbortController();
 
-  const timer=setTimeout(
-    ()=>ctl.abort(),
-    TIMEOUT
+ const timer=setTimeout(
+  ()=>ctl.abort(),
+  TIMEOUT
+ );
+
+ try{
+
+  const r=await fetch(
+   base+path,
+   {
+    signal:ctl.signal,
+    cache:"no-store"
+   }
   );
 
-  try{
+  if(!r.ok)
+   throw Error("HTTP "+r.status);
 
-    const r=await fetch(
-      base+path,
-      {
-        signal:ctl.signal,
-        cache:"no-store"
-      }
-    );
+  return await r.json();
 
-    if(!r.ok)
-      throw Error("HTTP "+r.status);
+ }finally{
 
-    return await r.json();
+  clearTimeout(timer);
 
-  }finally{
-
-    clearTimeout(timer);
-
-  }
+ }
 }
 
 async function api(path){
 
-  try{
-
-    return await getJSON(path,API);
-
-  }catch(e){
-
-    return await getJSON(
-      path,
-      API_FALLBACK
-    );
-
-  }
+ try{
+  return await getJSON(path,API);
+ }catch(e){
+  return await getJSON(path,API_FALLBACK);
+ }
 
 }
 
 async function futures(path){
-
-  return await getJSON(
-    path,
-    FUTURES
-  );
-
+ return await getJSON(path,FUTURES);
 }
 
 function parseKline(x){
 
-  return {
-    t:+x[0],
-    o:+x[1],
-    h:+x[2],
-    l:+x[3],
-    c:+x[4],
-    v:+x[5],
-    close:+x[6]
-  };
+ return{
+  t:+x[0],
+  o:+x[1],
+  h:+x[2],
+  l:+x[3],
+  c:+x[4],
+  v:+x[5],
+  close:+x[6]
+ };
 
 }
 
 async function klines(
-  symbol,
-  interval,
-  limit=1000,
-  start=null,
-  end=null
+ symbol,
+ interval,
+ limit=1000,
+ start=null,
+ end=null
 ){
 
-  let q=
-    `/api/v3/klines?symbol=${symbol}`+
-    `&interval=${interval}`+
-    `&limit=${limit}`;
+ let q=
+ `/api/v3/klines?symbol=${symbol}`+
+ `&interval=${interval}`+
+ `&limit=${Math.min(limit,1000)}`;
 
-  if(start!==null)
-    q+=`&startTime=${Math.floor(start)}`;
+ if(start!==null)
+  q+=`&startTime=${Math.floor(start)}`;
 
-  if(end!==null)
-    q+=`&endTime=${Math.floor(end)}`;
+ if(end!==null)
+  q+=`&endTime=${Math.floor(end)}`;
 
-  return (
-    await api(q)
-  ).map(parseKline);
+ return(await api(q)).map(parseKline);
+
+}
+
+async function pagedKlines(
+ symbol,
+ interval,
+ total
+){
+
+ const out=[];
+ let end=Date.now();
+
+ while(out.length<total){
+
+  const batch=await klines(
+   symbol,
+   interval,
+   Math.min(PAGE,total-out.length),
+   null,
+   end
+  );
+
+  if(!batch.length)break;
+
+  const old=out.length;
+
+  for(const x of batch){
+
+   if(!out.length||x.t<out[0].t)
+    out.unshift(x);
+
+  }
+
+  if(out.length===old)break;
+
+  end=batch[0].t-1;
+
+  if(batch.length<PAGE)break;
+
+ }
+
+ return out.sort((a,b)=>a.t-b.t);
+
+}
+
+function mergeCandles(old,newData,max){
+
+ const map=new Map(
+  old.map(x=>[x.t,x])
+ );
+
+ for(const x of newData)
+  map.set(x.t,x);
+
+ return [...map.values()]
+  .sort((a,b)=>a.t-b.t)
+  .slice(-max);
 
 }
 
 function ema(a,n){
 
-  if(!a.length)
-    return[];
+ const out=new Array(a.length).fill(NaN);
 
-  const k=2/(n+1);
+ if(a.length<n)return out;
 
-  const out=[a[0]];
+ let s=0;
 
-  for(
-    let i=1;
-    i<a.length;
-    i++
-  ){
+ for(let i=0;i<n;i++)
+  s+=a[i];
 
-    out.push(
-      a[i]*k+
-      out[i-1]*(1-k)
-    );
+ let e=s/n;
 
-  }
+ out[n-1]=e;
 
-  return out;
+ const k=2/(n+1);
+
+ for(let i=n;i<a.length;i++){
+
+  e=a[i]*k+e*(1-k);
+  out[i]=e;
+
+ }
+
+ return out;
 
 }
 
 function rsi(a,n=14){
 
-  const out=
-    Array(a.length).fill(50);
+ const out=new Array(a.length).fill(50);
 
-  if(a.length<=n)
-    return out;
+ if(a.length<=n)return out;
 
-  let g=0,l=0;
+ let gain=0,loss=0;
 
-  for(let i=1;i<=n;i++){
+ for(let i=1;i<=n;i++){
 
-    const d=a[i]-a[i-1];
+  const d=a[i]-a[i-1];
 
-    if(d>=0)
-      g+=d;
-    else
-      l-=d;
+  if(d>=0)gain+=d;
+  else loss-=d;
 
-  }
+ }
 
-  let ag=g/n;
+ let ag=gain/n;
+ let al=loss/n;
 
-  let al=l/n;
+ out[n]=al===0?100:100-100/(1+ag/al);
 
-  out[n]=
-    al
-      ? 100-100/(1+ag/al)
-      : 100;
+ for(let i=n+1;i<a.length;i++){
 
-  for(
-    let i=n+1;
-    i<a.length;
-    i++
-  ){
+  const d=a[i]-a[i-1];
+  const g=Math.max(d,0);
+  const l=Math.max(-d,0);
 
-    const d=a[i]-a[i-1];
+  ag=(ag*(n-1)+g)/n;
+  al=(al*(n-1)+l)/n;
 
-    const up=Math.max(0,d);
+  out[i]=al===0?100:100-100/(1+ag/al);
 
-    const dn=Math.max(0,-d);
+ }
 
-    ag=(ag*(n-1)+up)/n;
-
-    al=(al*(n-1)+dn)/n;
-
-    out[i]=
-      al
-        ? 100-100/(1+ag/al)
-        : 100;
-
-  }
-
-  return out;
+ return out;
 
 }
 
-function featureAt(e,i){
+function atr(a,n=14){
 
-  const c=e[i];
+ const tr=[];
 
-  const closes=e.map(x=>x.c);
+ for(let i=0;i<a.length;i++){
 
-  const vols=e.map(x=>x.v);
-
-  if(i<30)
-    return null;
-
-  const ema9=ema(closes,9);
-
-  const ema21=ema(closes,21);
-
-  const rs=rsi(closes,14);
-
-  const ret=n=>
-    closes[i]/closes[i-n]-1;
-
-  const vr=
-    vols.slice(
-      Math.max(0,i-20),
-      i
-    );
-
-  const vz=
-    (vols[i]-mean(vr))/
-    (std(vr)||1);
-
-  const atrs=[];
-
-  for(
-    let j=Math.max(1,i-13);
-    j<=i;
-    j++
-  ){
-
-    atrs.push(
-      Math.max(
-        e[j].h-e[j].l,
-        Math.abs(
-          e[j].h-e[j-1].c
-        ),
-        Math.abs(
-          e[j].l-e[j-1].c
-        )
-      )
-    );
-
-  }
-
-  const atr=
-    mean(atrs)/
-    (closes[i]||1);
-
-  return[
-    ret(1),
-    ret(3),
-    ret(12),
-    ema9[i]/ema21[i]-1,
-    (rs[i]-50)/50,
-    vz,
-    (c.h-c.l)/c.c,
-    atr,
-    (c.c-c.o)/c.o
-  ];
-
-}
-
-function btcFeatureAt(i){
-
-  if(!btcCandles.length)
-    return[0,0,0];
-
-  const closes=
-    btcCandles.map(x=>x.c);
-
-  const r=n=>
-    i>=n
-      ? closes[i]/closes[i-n]-1
-      : 0;
-
-  const rr=rsi(closes,14);
-
-  const e21=ema(closes,21);
-
-  return[
-    r(12),
-    i>21
-      ? closes[i]/e21[i]-1
-      : 0,
-    (rr[i]-50)/50
-  ];
-
-}
-
-function makeFeatures(i){
-
-  const f=
-    featureAt(
-      candles,
-      i
-    );
-
-  if(!f)
-    return null;
-
-  const bf=
-    btcFeatureAt(
-      Math.min(
-        i,
-        btcCandles.length-1
-      )
-    );
-
-  return f.concat(bf);
-
-}
-
-function labelFor(i,hBars){
-
-  const j=i+hBars;
-
-  if(j>=candles.length)
-    return null;
-
-  const r=
-    candles[j].c/
-    candles[i].c-1;
-
-  const vol=
+  if(i===0)
+   tr.push(a[i].h-a[i].l);
+  else
+   tr.push(
     Math.max(
-      .0008,
-      mean(
-        candles
-          .slice(
-            Math.max(1,i-20),
-            i+1
-          )
-          .map(
-            (x,k,a)=>{
-              const p=
-                candles[
-                  Math.max(
-                    0,
-                    i-20+k-1
-                  )
-                ]?.c||x.c;
+     a[i].h-a[i].l,
+     Math.abs(a[i].h-a[i-1].c),
+     Math.abs(a[i].l-a[i-1].c)
+    )
+   );
 
-              return Math.abs(
-                x.c/p-1
-              );
-            }
-          )
-      )
-    );
+ }
 
-  const th=
-    Math.max(
-      .0012,
-      vol*.9
-    );
+ const out=new Array(a.length).fill(NaN);
 
-  return r>th
-    ? 0
-    : r<-th
-      ? 2
-      : 1;
+ for(let i=n;i<a.length;i++)
+  out[i]=mean(tr.slice(i-n+1,i+1));
+
+ return out;
 
 }
 
-function trainSoftmax(
-  X,
-  y,
-  epochs=110,
-  lr=.035,
-  l2=.001
-){
+function featureAt(i){
 
-  const n=X.length;
+ const c=candles.map(x=>x.c);
 
-  const d=X[0].length;
+ if(i<110)return null;
 
-  const k=3;
+ const e21=ema(c,21)[i];
+ const e50=ema(c,50)[i];
+ const e100=ema(c,100)[i];
+ const rs=rsi(c,14)[i];
+ const at=atr(c,14)[i];
 
-  let W=
-    Array.from(
-      {length:k},
-      ()=>Array(d).fill(0)
-    );
+ const ret=n=>
+  c[i]/c[i-n]-1;
 
-  let b=Array(k).fill(0);
+ const range=
+  (candles[i].h-candles[i].l)/c[i];
 
-  for(
-    let ep=0;
-    ep<epochs;
-    ep++
-  ){
+ const body=
+  Math.abs(candles[i].c-candles[i].o)/c[i];
 
-    const order=
-      Array.from(
-        {length:n},
-        (_,i)=>i
-      );
+ const volAvg=
+  mean(candles.slice(i-30,i).map(x=>x.v));
 
-    for(
-      let q=n-1;
-      q>0;
-      q--
-    ){
+ const volRatio=
+  candles[i].v/(volAvg||1);
 
-      const j=
-        Math.floor(
-          Math.random()*(q+1)
-        );
+ return[
+  ret(1),
+  ret(3),
+  ret(6),
+  ret(12),
+  ret(24),
+  ret(48),
+  e21/c[i]-1,
+  e50/c[i]-1,
+  e100/c[i]-1,
+  rs/100,
+  at/c[i],
+  range,
+  body,
+  volRatio
+ ];
 
-      [
-        order[q],
-        order[j]
-      ]=[
-        order[j],
-        order[q]
-      ];
+}
 
-    }
+function labelFor(i,bars){
 
-    for(
-      const ii of order
-    ){
+ if(i+bars>=candles.length)return null;
 
-      const p=
-        softmax(
-          [0,1,2].map(
-            c=>
-              dot(W[c],X[ii])+
-              b[c]
-          )
-        );
+ const now=candles[i].c;
+ const future=candles[i+bars].c;
+ const r=future/now-1;
 
-      for(
-        let c=0;
-        c<k;
-        c++
-      ){
+ const threshold=
+  Math.max(
+   .0015,
+   std(
+    candles
+     .slice(Math.max(1,i-40),i+1)
+     .map((x,j,a)=>
+      j?
+      Math.abs(x.c/a[j-1].c-1):0
+     )
+  )*1.2
+ );
 
-        const g=
-          p[c]-
-          (y[ii]===c?1:0);
+ if(r>threshold)return 0;
+ if(r<-threshold)return 2;
 
-        for(
-          let j=0;
-          j<d;
-          j++
-        ){
+ return 1;
 
-          W[c][j]-=
-            lr*
-            (
-              g*X[ii][j]+
-              l2*W[c][j]
-            );
+}
 
-        }
+function makeDataset(bars){
 
-        b[c]-=lr*g;
+ const X=[];
+ const y=[];
 
-      }
+ for(let i=110;i<candles.length-bars;i++){
 
-    }
+  const f=featureAt(i);
+  const lab=labelFor(i,bars);
+
+  if(f&&lab!==null&&f.every(Number.isFinite)){
+
+   X.push(f);
+   y.push(lab);
 
   }
 
-  return{W,b};
+ }
+
+ return{X,y};
 
 }
 
 function standardize(X){
 
-  const d=X[0].length;
+ const mu=[];
+ const sd=[];
 
-  const mu=Array(d).fill(0);
+ for(let j=0;j<X[0].length;j++){
 
-  const sd=Array(d).fill(1);
+  const col=X.map(r=>r[j]);
 
-  for(
-    let j=0;
-    j<d;
-    j++
-  ){
+  mu.push(mean(col));
+  sd.push(std(col)||1);
 
-    mu[j]=
-      mean(
-        X.map(x=>x[j])
-      );
+ }
 
-    sd[j]=
-      std(
-        X.map(x=>x[j])
-      )||1;
-
-  }
-
-  return{
-    mu,
-    sd,
-    X:X.map(
-      x=>
-        x.map(
-          (v,j)=>
-            (v-mu[j])/sd[j]
-        )
-    )
-  };
+ return{
+  X:X.map(r=>r.map((v,j)=>(v-mu[j])/sd[j])),
+  mu,
+  sd
+ };
 
 }
 
-function predict(model,x){
+function transform(x,mu,sd){
 
+ return x.map((v,j)=>(v-mu[j])/(sd[j]||1));
+
+}
+
+/* LOGISTIC REGRESSION */
+
+function trainSoftmax(X,y){
+
+ const k=3;
+ const d=X[0].length;
+
+ const W=Array.from(
+  {length:k},
+  ()=>Array(d).fill(0)
+ );
+
+ const b=Array(k).fill(0);
+
+ for(let epoch=0;epoch<120;epoch++){
+
+  const lr=.035*(1-epoch/150);
+
+  for(let i=0;i<X.length;i++){
+
+   const p=softmax(
+    W.map((w,j)=>dot(w,X[i])+b[j])
+   );
+
+   for(let j=0;j<k;j++){
+
+    const err=(y[i]===j?1:0)-p[j];
+
+    for(let q=0;q<d;q++)
+     W[j][q]+=lr*err*X[i][q];
+
+    b[j]+=lr*err;
+
+   }
+
+  }
+
+ }
+
+ return{x=>{
   return softmax(
-    model.W.map(
-      (w,c)=>
-        dot(w,x)+model.b[c]
-    )
+   W.map((w,j)=>dot(w,x)+b[j])
+  )
+ }};
+
+}
+
+/* NAIVE BAYES */
+
+function trainNB(X,y){
+
+ const d=X[0].length;
+ const means=Array.from({length:3},()=>Array(d).fill(0));
+ const vars=Array.from({length:3},()=>Array(d).fill(1));
+ const count=Array(3).fill(0);
+
+ for(let c=0;c<3;c++){
+
+  const rows=X.filter((_,i)=>y[i]===c);
+
+  count[c]=rows.length;
+
+  for(let j=0;j<d;j++){
+
+   const v=rows.map(r=>r[j]);
+
+   means[c][j]=mean(v);
+   vars[c][j]=std(v)**2+.02;
+
+  }
+
+ }
+
+ return{
+  predict(x){
+
+   const scores=[];
+
+   for(let c=0;c<3;c++){
+
+    let s=Math.log(
+     (count[c]+1)/(X.length+3)
+    );
+
+    for(let j=0;j<d;j++){
+
+     const v=vars[c][j];
+     const diff=x[j]-means[c][j];
+
+     s+=-.5*Math.log(
+      2*Math.PI*v
+     )-.5*diff*diff/v;
+
+    }
+
+    scores.push(s);
+
+   }
+
+   return softmax(scores);
+
+  }
+ };
+
+}
+
+/* KNN */
+
+function knnPredict(X,y,x){
+
+ const dist=[];
+
+ for(let i=0;i<X.length;i++){
+
+  let d=0;
+
+  for(let j=0;j<x.length;j++)
+   d+=(X[i][j]-x[j])**2;
+
+  dist.push([d,y[i]]);
+
+ }
+
+ dist.sort((a,b)=>a[0]-b[0]);
+
+ const k=Math.min(31,dist.length);
+
+ const votes=[0,0,0];
+
+ for(let i=0;i<k;i++)
+  votes[dist[i][1]]+=1;
+
+ const s=votes.reduce((a,b)=>a+b,0)||1;
+
+ return votes.map(v=>v/s);
+
+}
+
+/* RANDOM FOREST */
+
+function trainRF(X,y){
+
+ const trees=[];
+
+ for(let t=0;t<31;t++){
+
+  const seed=t*9187+31;
+  const features=[];
+
+  for(let j=0;j<X[0].length;j++)
+   if(((j*13+seed)%5)!==0)
+    features.push(j);
+
+  let best=null;
+
+  for(const j of features){
+
+   const vals=X.map(r=>r[j]);
+   const sorted=[...vals].sort((a,b)=>a-b);
+
+   for(let q=10;q<90;q+=10){
+
+    const th=sorted[
+     Math.floor(sorted.length*q/100)
+    ];
+
+    const left=[0,0,0];
+    const right=[0,0,0];
+
+    for(let i=0;i<X.length;i++)
+     (X[i][j]<=th?left:right)[y[i]]++;
+
+    const l=left.reduce((a,b)=>a+b,0);
+    const r=right.reduce((a,b)=>a+b,0);
+
+    if(!l||!r)continue;
+
+    const impurity=arr=>{
+     const n=arr.reduce((a,b)=>a+b,0)||1;
+     return 1-arr.reduce(
+      (s,v)=>s+(v/n)**2,0
+     );
+    };
+
+    const score=
+     (l*impurity(left)+r*impurity(right))
+     /X.length;
+
+    if(!best||score<best.score)
+     best={j,th,score,left,right};
+
+   }
+
+  }
+
+  if(best)trees.push(best);
+
+ }
+
+ return trees;
+
+}
+
+function rfPredict(trees,x){
+
+ const votes=[0,0,0];
+
+ for(const t of trees){
+
+  let c;
+
+  if(x[t.j]<=t.th)
+   c=argmax(t.left);
+  else
+   c=argmax(t.right);
+
+  votes[c]++;
+
+ }
+
+ const s=votes.reduce((a,b)=>a+b,0)||1;
+
+ return votes.map(v=>v/s);
+
+}
+
+/* GRADIENT / BOOSTING STYLE STUMPS */
+
+function trainBoost(X,y){
+
+ const stumps=[];
+
+ for(let round=0;round<35;round++){
+
+  let best=null;
+
+  for(let j=0;j<X[0].length;j++){
+
+   const vals=X.map(r=>r[j]);
+   const sorted=[...vals].sort((a,b)=>a-b);
+
+   for(let q=15;q<90;q+=15){
+
+    const th=sorted[
+     Math.floor(sorted.length*q/100)
+    ];
+
+    const left=[0,0,0];
+    const right=[0,0,0];
+
+    for(let i=0;i<X.length;i++)
+     (X[i][j]<=th?left:right)[y[i]]++;
+
+    const l=left.reduce((a,b)=>a+b,0);
+    const r=right.reduce((a,b)=>a+b,0);
+
+    if(!l||!r)continue;
+
+    const impurity=a=>{
+     const n=a.reduce((x,z)=>x+z,0)||1;
+     return 1-a.reduce(
+      (s,v)=>s+(v/n)**2,0
+     );
+    };
+
+    const score=
+     (l*impurity(left)+r*impurity(right))
+     /X.length;
+
+    if(!best||score<best.score)
+     best={j,th,left,right,score};
+
+   }
+
+  }
+
+  if(best)
+   stumps.push(best);
+
+ }
+
+ return stumps;
+
+}
+
+function boostPredict(stumps,x){
+
+ const votes=[.15,.15,.15];
+
+ for(const s of stumps){
+
+  const v=
+   x[s.j]<=s.th?
+   s.left:
+   s.right;
+
+  const n=v.reduce((a,b)=>a+b,0)||1;
+
+  for(let c=0;c<3;c++)
+   votes[c]+=v[c]/n;
+
+ }
+
+ const total=votes.reduce((a,b)=>a+b,0);
+
+ return votes.map(v=>v/total);
+
+}
+
+function logisticPredict(model,x){
+ return model.x(x);
+}
+
+function modelPredictors(Xtr,ytr,models,x){
+
+ return[
+  logisticPredict(models.log,x),
+  knnPredict(Xtr,ytr,x),
+  rfPredict(models.rf,x),
+  boostPredict(models.boost,x),
+  models.nb.predict(x)
+ ];
+
+}
+
+function trainAll(X,y){
+
+ return{
+  log:trainSoftmax(X,y),
+  nb:trainNB(X,y),
+  rf:trainRF(X,y),
+  boost:trainBoost(X,y)
+ };
+
+}
+
+function valStats(preds,y){
+
+ let correct=0;
+ let loss=0;
+
+ const cnt=[0,0,0];
+ const cc=[0,0,0];
+
+ preds.forEach((p,i)=>{
+
+  const a=argmax(p);
+  const t=y[i];
+
+  if(a===t)correct++;
+
+  cnt[t]++;
+
+  if(a===t)cc[t]++;
+
+  loss-=Math.log(
+   Math.max(1e-9,p[t])
   );
+
+ });
+
+ return{
+  acc:correct/y.length,
+  balanced:mean(
+   cc.map(
+    (v,i)=>cnt[i]?v/cnt[i]:0
+   )
+  ),
+  loss:loss/y.length,
+  baseline:Math.max(...cnt)/y.length
+ };
+
+}
+
+function rollingFolds(n,folds=8){
+
+ const out=[];
+
+ const minTrain=Math.floor(n*.45);
+ const remain=n-minTrain;
+ const block=Math.max(
+  80,
+  Math.floor(remain/folds)
+ );
+
+ for(let k=0;k<folds;k++){
+
+  const vs=minTrain+k*block;
+
+  const ve=
+   k===folds-1?
+   n:
+   Math.min(n,vs+block);
+
+  if(ve-vs>=50)
+   out.push([0,vs,ve]);
+
+ }
+
+ return out;
+
+}
+
+function evaluateFold(X,y,a,b){
+
+ const tr=standardize(
+  X.slice(0,a)
+ );
+
+ const Xtr=tr.X;
+ const ytr=y.slice(0,a);
+
+ const Xv=X
+  .slice(a,b)
+  .map(x=>transform(x,tr.mu,tr.sd));
+
+ const yv=y.slice(a,b);
+
+ const m=trainAll(Xtr,ytr);
+
+ const ps=[
+  [],[],[],[],[]
+ ];
+
+ for(let i=0;i<Xv.length;i++){
+
+  const q=modelPredictors(
+   Xtr,
+   ytr,
+   m,
+   Xv[i]
+  );
+
+  q.forEach(
+   (p,j)=>ps[j].push(p)
+  );
+
+ }
+
+ return{
+  stats:ps.map(
+   p=>valStats(p,yv)
+  ),
+  oos:b-a
+ };
+
+}
+
+function aggregateStats(folds){
+
+ const n=5;
+
+ const acc=Array(n).fill(0);
+ const bal=Array(n).fill(0);
+ const loss=Array(n).fill(0);
+ const count=Array(n).fill(0);
+
+ for(const f of folds)
+  for(let j=0;j<n;j++){
+
+   const w=f.oos;
+
+   acc[j]+=f.stats[j].acc*w;
+   bal[j]+=f.stats[j].balanced*w;
+   loss[j]+=f.stats[j].loss*w;
+   count[j]+=w;
+
+  }
+
+ return Array.from(
+  {length:n},
+  (_,j)=>({
+   acc:acc[j]/count[j],
+   balanced:bal[j]/count[j],
+   loss:loss[j]/count[j]
+  })
+ );
+
+}
+
+function regimeInfo(){
+
+ const cl=candles.map(x=>x.c);
+
+ const e21=ema(cl,21);
+ const e100=ema(cl,100);
+
+ const rs=rsi(cl,14).at(-1);
+
+ const ret24=
+  cl.at(-1)/cl.at(-25)-1;
+
+ const vol=mean(
+  cl.slice(-60).map(
+   (v,i,a)=>
+    i?
+    Math.abs(v/a[i-1]-1):
+    0
+  )
+ );
+
+ const trend=
+  cl.at(-1)/e100.at(-1)-1;
+
+ const name=
+  Math.abs(trend)>.012?
+  (trend>0?"Strong uptrend":"Strong downtrend"):
+  Math.abs(trend)>.004?
+  (trend>0?"Uptrend":"Downtrend"):
+  vol>.0035?
+  "High volatility":
+  "Range / low trend";
+
+ return{
+  name,
+  trend,
+  vol,
+  rs
+ };
+
+}
+
+function adaptiveWeights(stats,reg){
+
+ const raw=stats.map((s,i)=>{
+
+  let w=
+   1/Math.max(.38,s.loss);
+
+  if(
+   reg.name.includes("trend")&&
+   i===0
+  )w*=1.08;
+
+  if(
+   reg.name.includes("volatility")&&
+   i===1
+  )w*=1.05;
+
+  if(reg.rs>65&&i===0)w*=.95;
+
+  if(reg.rs<35&&i===0)w*=.95;
+
+  return w;
+
+ });
+
+ const z=
+  raw.reduce((a,b)=>a+b,0)||1;
+
+ return raw.map(x=>x/z);
 
 }
 
 async function buildModel(){
 
-  const n=candles.length;
+ const maxH=
+  Math.ceil(H[horizon]/5);
 
-  const maxH=
-    Math.ceil(
-      H[horizon]/5
-    );
+ const rawX=[];
+ const y=[];
 
-  const rawX=[];
+ for(
+  let i=110;
+  i<candles.length-maxH;
+  i++
+ ){
 
-  const y=[];
+  const f=featureAt(i);
+  const lab=labelFor(i,maxH);
 
-  for(
-    let i=35;
-    i<n-maxH;
-    i++
+  if(
+   f&&
+   lab!==null&&
+   f.every(Number.isFinite)
   ){
 
-    const f=makeFeatures(i);
-
-    const lab=
-      labelFor(
-        i,
-        maxH
-      );
-
-    if(
-      f&&
-      lab!==null&&
-      f.every(Number.isFinite)
-    ){
-
-      rawX.push(f);
-
-      y.push(lab);
-
-    }
+   rawX.push(f);
+   y.push(lab);
 
   }
 
-  if(rawX.length<120)
-    throw Error(
-      "Not enough training data"
-    );
+ }
 
-  const split=
-    Math.max(
-      60,
-      Math.floor(
-        rawX.length*.72
-      )
-    );
+ if(rawX.length<600)
+  throw Error(
+   "Need more historical samples; loaded "+
+   rawX.length
+  );
 
-  const tr=
-    standardize(
-      rawX.slice(0,split)
-    );
+ const folds=
+  rollingFolds(rawX.length,8);
 
-  const model=
-    trainSoftmax(
-      tr.X,
-      y.slice(0,split),
-      90,
-      .028,
-      .001
-    );
+ const foldResults=[];
 
-  let correct=0;
+ for(const [a,b] of folds)
+  foldResults.push(
+   evaluateFold(rawX,y,a,b)
+  );
 
-  let loss=0;
+ const stats=
+  aggregateStats(foldResults);
 
-  let counts=[0,0,0];
+ const split=
+  Math.floor(rawX.length*.78);
 
-  let correctC=[0,0,0];
+ const tr=
+  standardize(
+   rawX.slice(0,split)
+  );
 
-  for(
-    let i=split;
-    i<rawX.length;
-    i++
-  ){
+ const Xtr=tr.X;
+ const ytr=y.slice(0,split);
 
-    const x=
-      rawX[i].map(
-        (v,j)=>
-          (v-tr.mu[j])/tr.sd[j]
-      );
+ const models=
+  trainAll(Xtr,ytr);
 
-    const p=
-      predict(
-        model,
-        x
-      );
+ const last=
+  transform(
+   makeFeatures(candles.length-1),
+   tr.mu,
+   tr.sd
+  );
 
-    const a=argmax(p);
+ const individual=
+  modelPredictors(
+   Xtr,
+   ytr,
+   models,
+   last
+  );
 
-    if(a===y[i])
-      correct++;
+ const reg=regimeInfo();
 
-    counts[y[i]]++;
+ const weights=
+  adaptiveWeights(
+   stats,
+   reg
+  );
 
-    if(a===y[i])
-      correctC[y[i]]++;
+ const p=[0,0,0];
 
-    loss-=
-      Math.log(
-        Math.max(
-          1e-9,
-          p[y[i]]
-        )
-      );
+ individual.forEach(
+  (q,i)=>
+   q.forEach(
+    (v,c)=>
+     p[c]+=v*weights[i]
+   )
+ );
 
-  }
+ const expected=
+  p[0]-p[2];
 
-  const acc=
-    correct/
-    (rawX.length-split);
+ const vol=reg.vol;
 
-  const balanced=
-    mean(
-      counts.map(
-        (c,i)=>
-          c
-            ? correctC[i]/c
-            : 0
-      )
-    );
-
-  const baseline=
-    Math.max(...counts)/
-    (rawX.length-split);
-
-  const last=
-    makeFeatures(
-      n-1
-    );
-
-  const sx=
-    last.map(
-      (v,j)=>
-        (v-tr.mu[j])/tr.sd[j]
-    );
-
-  const p=
-    predict(
-      model,
-      sx
-    );
-
-  const expected=
-    p[0]*1+
-    p[1]*0+
-    p[2]*-1;
-
-  const vol=
-    mean(
-      candles
-        .slice(-30)
-        .map(
-          (x,i,a)=>
-            i
-              ? Math.abs(
-                  x.c/
-                  a[i-1].c-
-                  1
-                )
-              : 0
-        )
-    );
-
-  return{
-    p,
-    expected,
-    acc,
-    balanced,
-    loss:
-      loss/
-      (rawX.length-split),
-    baseline,
-    folds:6,
-    samples:rawX.length,
-    oos:rawX.length-split,
-    model,
-    mu:tr.mu,
-    sd:tr.sd,
-    vol
-  };
+ return{
+  p,
+  individual,
+  names:[
+   "Logistic regression",
+   "KNN",
+   "Randomized forest",
+   "Gradient boosting",
+   "Gaussian Naive Bayes"
+  ],
+  stats,
+  weights,
+  expected,
+  acc:stats.reduce(
+   (s,v,i)=>
+    s+v.acc*weights[i],
+   0
+  ),
+  balanced:stats.reduce(
+   (s,v,i)=>
+    s+v.balanced*weights[i],
+   0
+  ),
+  loss:stats.reduce(
+   (s,v,i)=>
+    s+v.loss*weights[i],
+   0
+  ),
+  baseline:
+   Math.max(
+    ...y.slice(0,split).reduce(
+     (a,v)=>{
+      a[v]++;
+      return a;
+     },
+     [0,0,0]
+    )
+   )/y.slice(0,split).length,
+  folds:foldResults.length,
+  samples:rawX.length,
+  oos:foldResults.reduce(
+   (s,f)=>s+f.oos,
+   0
+  ),
+  vol,
+  regime:reg
+ };
 
 }
 
 function loadHistory(){
 
-  try{
-
-    return JSON.parse(
-      localStorage.getItem(KEY)||"[]"
-    );
-
-  }catch{
-
-    return[];
-
-  }
+ try{
+  return JSON.parse(
+   localStorage.getItem(KEY)||"[]"
+  );
+ }catch{
+  return[];
+ }
 
 }
 
 function saveHistory(h){
 
-  localStorage.setItem(
-    KEY,
-    JSON.stringify(
-      h.slice(-100)
-    )
-  );
+ localStorage.setItem(
+  KEY,
+  JSON.stringify(h.slice(-300))
+ );
 
 }
 
 async function priceAtTarget(t){
 
-  const a=
-    await klines(
-      "ETHUSDT",
-      "5m",
-      12,
-      t-20*60*1000,
-      t+20*60*1000
-    );
+ const a=await klines(
+  "ETHUSDT",
+  "5m",
+  12,
+  t-20*60*1000,
+  t+20*60*1000
+ );
 
-  if(!a.length)
-    return null;
+ if(!a.length)return null;
 
-  let best=a[0];
+ let best=a[0];
+ let bd=Math.abs(a[0].t-t);
 
-  let bd=
-    Math.abs(
-      a[0].t-t
-    );
+ for(const x of a){
 
-  for(
-    const x of a
-  ){
+  const d=Math.abs(x.t-t);
 
-    const d=
-      Math.abs(
-        x.t-t
-      );
-
-    if(d<bd){
-
-      bd=d;
-
-      best=x;
-
-    }
-
+  if(d<bd){
+   bd=d;
+   best=x;
   }
 
-  return best.c;
+ }
+
+ return best.c;
 
 }
 
 async function evaluateHistory(){
 
-  const h=loadHistory();
+ const h=loadHistory();
+ const now=Date.now();
+ let changed=false;
 
-  const now=Date.now();
+ for(const p of h){
 
-  let changed=false;
+  if(!p.actual&&p.target<=now){
 
-  for(
-    const p of h
-  ){
+   try{
 
-    if(
-      !p.actual&&
-      p.target<=now
-    ){
+    const actual=
+     await priceAtTarget(p.target);
 
-      try{
+    if(actual){
 
-        const actual=
-          await priceAtTarget(
-            p.target
-          );
+     p.actual=actual;
 
-        if(actual){
+     p.errorPct=
+      (actual/p.predicted-1)*100;
 
-          p.actual=actual;
+     p.actualDirection=
+      actual>p.start?
+      1:
+      actual<p.start?
+      -1:
+      0;
 
-          p.errorPct=
-            (actual/
-             p.predicted-
-             1)*100;
+     p.predDirection=
+      p.predicted>p.start?
+      1:
+      p.predicted<p.start?
+      -1:
+      0;
 
-          p.actualDirection=
-            actual>p.start
-              ?1
-              :actual<p.start
-                ?-1
-                :0;
+     p.directionCorrect=
+      p.actualDirection===
+      p.predDirection;
 
-          p.predDirection=
-            p.predicted>p.start
-              ?1
-              :p.predicted<p.start
-                ?-1
-                :0;
+     p.evaluatedAt=Date.now();
 
-          p.directionCorrect=
-            p.actualDirection===
-            p.predDirection;
-
-          p.evaluatedAt=
-            Date.now();
-
-          changed=true;
-
-        }
-
-      }catch(e){}
+     changed=true;
 
     }
 
+   }catch(e){}
+
   }
 
-  if(changed)
-    saveHistory(h);
+ }
 
-  return h;
+ if(changed)
+  saveHistory(h);
+
+ return h;
 
 }
 
 function createPrediction(model){
 
-  const now=Date.now();
+ const now=Date.now();
 
-  const step=5*60*1000;
+ const step=5*60*1000;
 
-  const target=
-    Math.ceil(
-      (
-        now+
-        H[horizon]*60000
-      )/step
-    )*step;
+ const target=
+  Math.ceil(
+   (now+H[horizon]*60000)/step
+  )*step;
 
-  const start=
-    candles[
-      candles.length-1
-    ].c;
+ const start=
+  candles.at(-1).c;
 
-  const drift=
-    model.expected*
-    model.vol*
-    Math.sqrt(
-      Math.max(
-        1,
-        H[horizon]/5
-      )
-    )*
-    1.7;
-
-  const predicted=
-    start*
-    (1+drift);
-
-  const range=
-    Math.max(
-      model.vol*
-      Math.sqrt(
-        Math.max(
-          1,
-          H[horizon]/5
-        )
-      )*
-      2.0,
-      .004
-    );
-
-  prediction={
-    id:
-      crypto.randomUUID
-        ?crypto.randomUUID()
-        :String(now),
-
-    horizon,
-
-    created:now,
-
-    start,
-
-    target,
-
-    predicted,
-
-    low:
-      start*(1-range),
-
-    high:
-      start*(1+range),
-
-    p:model.p,
-
-    samples:model.samples,
-
-    oos:model.oos,
-
-    acc:model.acc,
-
-    balanced:model.balanced,
-
-    loss:model.loss,
-
-    baseline:model.baseline,
-
-    folds:model.folds
-
-  };
-
-  const hist=
-    loadHistory();
-
-  hist.push(
-    prediction
+ const scale=
+  Math.sqrt(
+   Math.max(1,H[horizon]/5)
   );
 
-  saveHistory(hist);
+ const drift=
+  model.expected*
+  model.vol*
+  scale*
+  1.35;
+
+ const predicted=
+  start*(1+drift);
+
+ const range=
+  Math.max(
+   model.vol*scale*2,
+   .004
+  );
+
+ prediction={
+  id:
+   crypto.randomUUID?
+   crypto.randomUUID():
+   String(now),
+
+  horizon,
+  created:now,
+  start,
+  target,
+  predicted,
+
+  low:start*(1-range),
+  high:start*(1+range),
+
+  p:model.p,
+  individual:model.individual,
+  names:model.names,
+  weights:model.weights,
+
+  samples:model.samples,
+  oos:model.oos,
+
+  regime:model.regime.name
+ };
+
+ const h=loadHistory();
+
+ h.push(prediction);
+
+ saveHistory(h);
 
 }
 
 function activePrediction(){
 
-  const h=
-    loadHistory()
-      .filter(
-        x=>
-          x.horizon===horizon&&
-          !x.actual
-      );
-
-  return h.sort(
-    (a,b)=>
-      a.created-b.created
+ return loadHistory()
+  .filter(
+   x=>
+    x.horizon===horizon&&
+    !x.actual
+  )
+  .sort(
+   (a,b)=>a.created-b.created
   )[0]||null;
 
 }
 
 function renderPrediction(){
 
-  prediction=
-    activePrediction();
+ prediction=activePrediction();
 
-  if(!prediction)
-    return;
+ if(!prediction)return;
 
-  $("targetTime").textContent=
-    date(prediction.target);
+ $("targetTime").textContent=
+  date(prediction.target);
 
-  $("countdown").textContent=
-    countdown(prediction.target);
+ $("countdown").textContent=
+  countdown(prediction.target);
 
-  $("targetPrice").textContent=
-    "$"+price(
-      prediction.predicted
-    );
+ $("targetPrice").textContent=
+  "$"+price(prediction.predicted);
 
-  $("created").textContent=
-    date(prediction.created);
+ $("created").textContent=
+  date(prediction.created);
 
-  $("startPrice").textContent=
-    "$"+price(
-      prediction.start
-    );
+ $("startPrice").textContent=
+  "$"+price(prediction.start);
 
-  $("predPrice").textContent=
-    "$"+price(
-      prediction.predicted
-    );
+ $("predPrice").textContent=
+  "$"+price(prediction.predicted);
 
-  $("predRange").textContent=
-    "$"+price(
-      prediction.low
-    )+
-    " – $"+
-    price(
-      prediction.high
-    );
+ $("predRange").textContent=
+  "$"+price(prediction.low)+
+  " – $"+
+  price(prediction.high);
 
-  $("logTarget").textContent=
-    date(prediction.target);
+ $("logTarget").textContent=
+  date(prediction.target);
 
-  $("modelInterval").textContent=
-    "5m candles • "+
-    prediction.horizon;
+ $("modelInterval").textContent=
+  "5m candles • "+
+  prediction.horizon;
 
-  $("samples").textContent=
-    prediction.samples;
+ $("samples").textContent=
+  prediction.samples.toLocaleString();
 
-  $("oos").textContent=
-    prediction.oos;
+ $("oos").textContent=
+  prediction.oos.toLocaleString();
 
-  $("up").textContent=
-    (
-      prediction.p[0]*100
-    ).toFixed(1)+"%";
+ $("up").textContent=
+  (prediction.p[0]*100).toFixed(1)+"%";
 
-  $("neutral").textContent=
-    (
-      prediction.p[1]*100
-    ).toFixed(1)+"%";
+ $("neutral").textContent=
+  (prediction.p[1]*100).toFixed(1)+"%";
 
-  $("down").textContent=
-    (
-      prediction.p[2]*100
-    ).toFixed(1)+"%";
+ $("down").textContent=
+  (prediction.p[2]*100).toFixed(1)+"%";
+
+ if(prediction.individual){
+
+  $("modelPanel").innerHTML=
+   prediction.names.map(
+    (n,i)=>`
+
+<div class="modelCard">
+
+<div class="modelTop">
+ <b>${n}</b>
+ <b>${(prediction.weights[i]*100).toFixed(1)}%</b>
+</div>
+
+<div class="small">
+ UP ${(prediction.individual[i][0]*100).toFixed(1)}%
+ • NEUTRAL ${(prediction.individual[i][1]*100).toFixed(1)}%
+ • DOWN ${(prediction.individual[i][2]*100).toFixed(1)}%
+</div>
+
+<div class="bar">
+ <i style="width:${prediction.weights[i]*100}%"></i>
+</div>
+
+</div>
+
+`
+   ).join("")+
+   `
+<div class="note">
+ Model weights are based on chronological out-of-sample
+ log-loss plus a small current-regime adjustment.
+ </div>
+`;
+
+ }
 
 }
 
-function renderDiagnostics(
-  model,
-  hist
-){
+function renderDiagnostics(model,hist){
 
-  $("accuracy").textContent=
-    (model.acc*100)
-      .toFixed(1)+"%";
+ $("accuracy").textContent=
+  (model.acc*100).toFixed(1)+"%";
 
-  $("balanced").textContent=
-    (model.balanced*100)
-      .toFixed(1)+"%";
+ $("balanced").textContent=
+  (model.balanced*100).toFixed(1)+"%";
 
-  $("loss").textContent=
-    model.loss.toFixed(3);
+ $("loss").textContent=
+  model.loss.toFixed(3);
 
-  $("baseline").textContent=
-    (model.baseline*100)
-      .toFixed(1)+"%";
+ $("baseline").textContent=
+  (model.baseline*100).toFixed(1)+"%";
 
-  $("folds").textContent=
-    model.folds;
+ $("folds").textContent=
+  model.folds;
 
-  const done=
-    hist.filter(
-      x=>x.actual
-    );
+ $("wfOos").textContent=
+  model.oos.toLocaleString();
 
-  $("completed").textContent=
-    done.length;
+ $("regime").textContent=
+  model.regime.name;
 
-  if(done.length<20){
+ $("regimeDetail").textContent=
+  `Trend ${(model.regime.trend*100).toFixed(2)}%
+   • RSI ${model.regime.rs.toFixed(1)}
+   • Avg 5m move ${(model.regime.vol*100).toFixed(3)}%`;
 
-    $("reliability").textContent=
-      "Reliability: insufficient live sample ("+
-      done.length+
-      "/20 completed).";
+ const done=
+  hist.filter(x=>x.actual);
 
-  }else{
+ if(done.length<20){
 
-    const da=
-      done.filter(
-        x=>x.directionCorrect
-      ).length/
-      done.length;
+  $("reliability").textContent=
+   "Reliability: insufficient live sample ("+
+   done.length+
+   "/20 completed).";
 
-    const mae=
-      mean(
-        done.map(
-          x=>
-            Math.abs(
-              x.errorPct
-            )
-        )
-      );
+ }else{
 
-    $("reliability").textContent=
-      "Live sample: "+
-      done.length+
-      " completed • directional accuracy "+
-      (da*100).toFixed(1)+
-      "% • mean absolute price error "+
-      mae.toFixed(2)+
-      "%.";
+  const da=
+   done.filter(
+    x=>x.directionCorrect
+   ).length/done.length;
 
-  }
+  const mae=
+   mean(
+    done.map(
+     x=>Math.abs(x.errorPct)
+    )
+   );
+
+  $("reliability").textContent=
+   "Live sample: "+
+   done.length+
+   " completed • directional accuracy "+
+   (da*100).toFixed(1)+
+   "% • mean absolute price error "+
+   mae.toFixed(2)+"%.";
+
+ }
 
 }
 
 function renderHistory(hist){
 
-  const done=
-    hist
-      .filter(
-        x=>x.actual
-      )
-      .slice()
-      .reverse();
+ const done=
+  hist
+   .filter(x=>x.actual)
+   .slice()
+   .reverse();
 
-  $("historySummary").textContent=
-    done.length
-      ?done.length+
-       " completed prediction"+
-       (done.length===1?"":"s")+
-       " recorded."
-      :"No completed predictions yet.";
+ $("historySummary").textContent=
+  done.length?
+  done.length+
+  " completed prediction"+
+  (done.length===1?"":"s")+
+  " recorded.":
+  "No completed predictions yet.";
 
-  $("history").innerHTML=
-    done
-      .slice(0,8)
-      .map(
-        p=>`
+ $("history").innerHTML=
+  done.slice(0,10).map(
+   p=>`
 
 <div class="historyItem">
 
 <div class="historyTitle">
-
-${p.horizon} • ${date(p.created)}
-
+ ${p.horizon} • ${date(p.created)}
+ • ${p.regime||"—"}
 </div>
 
 Start:
 <b>$${price(p.start)}</b>
-
 → Predicted:
 <b>$${price(p.predicted)}</b>
-
 → Actual:
 <b>$${price(p.actual)}</b>
 
 <br>
 
 Error:
-<b class="${Math.abs(p.errorPct)<=1?'good':'bad'}">
-${pct(p.errorPct)}
+<b class="${Math.abs(p.errorPct)<=1?"good":"bad"}">
+ ${pct(p.errorPct)}
 </b>
 
 •
 
 Direction:
-
-<b class="${p.directionCorrect?'good':'bad'}">
-${p.directionCorrect?'CORRECT':'WRONG'}
+<b class="${p.directionCorrect?"good":"bad"}">
+ ${p.directionCorrect?"CORRECT":"WRONG"}
 </b>
 
 <br>
@@ -2027,861 +2242,1324 @@ ${date(p.target)}
 </div>
 
 `
-      )
-      .join("");
+  ).join("");
+
+}
+
+function chartSupportResistance(arr){
+
+ const lows=[];
+ const highs=[];
+
+ for(let i=2;i<arr.length-2;i++){
+
+  if(
+   arr[i].l<=arr[i-1].l&&
+   arr[i].l<=arr[i+1].l&&
+   arr[i].l<=arr[i-2].l&&
+   arr[i].l<=arr[i+2].l
+  )
+   lows.push(arr[i].l);
+
+  if(
+   arr[i].h>=arr[i-1].h&&
+   arr[i].h>=arr[i+1].h&&
+   arr[i].h>=arr[i-2].h&&
+   arr[i].h>=arr[i+2].h
+  )
+   highs.push(arr[i].h);
+
+ }
+
+ const cluster=a=>{
+
+  const out=[];
+
+  a.slice()
+   .sort((x,y)=>x-y)
+   .forEach(v=>{
+
+    const last=out.at(-1);
+
+    if(
+     last&&
+     Math.abs(v-last.v)/v<.0025
+    ){
+
+     last.v=
+      (last.v*last.n+v)/
+      (last.n+1);
+
+     last.n++;
+
+    }else{
+
+     out.push({
+      v,
+      n:1
+     });
+
+    }
+
+   });
+
+  return out
+   .sort((a,b)=>b.n-a.n)
+   .slice(0,3)
+   .map(x=>x.v);
+
+ };
+
+ return{
+  support:cluster(lows),
+  resistance:cluster(highs)
+ };
 
 }
 
 function draw(){
 
-  const c=$("chart");
+ const c=$("chart");
 
-  const r=
-    c.getBoundingClientRect();
+ const r=c.getBoundingClientRect();
 
-  const dpr=
-    devicePixelRatio||1;
+ const dpr=devicePixelRatio||1;
 
-  const w=
-    Math.floor(
-      r.width*dpr
-    );
+ const w=Math.floor(r.width*dpr);
+ const h=Math.floor(r.height*dpr);
 
-  const h=
-    Math.floor(
-      r.height*dpr
-    );
+ if(c.width!==w||c.height!==h){
 
-  if(
-    c.width!==w||
-    c.height!==h
-  ){
+  c.width=w;
+  c.height=h;
 
-    c.width=w;
+ }
 
-    c.height=h;
+ const ctx=c.getContext("2d");
+
+ ctx.setTransform(
+  dpr,0,0,dpr,0,0
+ );
+
+ const W=r.width;
+ const Hh=r.height;
+
+ ctx.clearRect(0,0,W,Hh);
+
+ if(!candles.length)return;
+
+ const left=10;
+ const right=68;
+ const top=16;
+ const bottom=48;
+
+ const volH=
+  tools.vol?58:0;
+
+ const rsiH=
+  tools.rsi?54:0;
+
+ const gap=
+  tools.rsi||tools.vol?8:0;
+
+ const plotH=
+  Math.max(
+   100,
+   Hh-top-bottom-volH-rsiH-gap
+  );
+
+ const visible=
+  Math.max(
+   35,
+   Math.floor(115/zoom)
+  );
+
+ const end=
+  candles.length-1-
+  Math.round(offset);
+
+ const start=
+  Math.max(
+   0,
+   end-visible+1
+  );
+
+ const arr=
+  candles.slice(
+   start,
+   end+1
+  );
+
+ const hi=
+  Math.max(
+   ...arr.map(x=>x.h)
+  );
+
+ const lo=
+  Math.min(
+   ...arr.map(x=>x.l)
+  );
+
+ const pad=
+  (hi-lo)*.09||10;
+
+ const MAX=hi+pad;
+ const MIN=lo-pad;
+
+ const py=
+  v=>
+   top+
+   (MAX-v)/(MAX-MIN)*
+   plotH;
+
+ const step=
+  (W-left-right)/
+  Math.max(
+   1,
+   arr.length
+  );
+
+ const px=
+  i=>
+   left+
+   (i+.5)*step;
+
+ ctx.font=
+  "10px -apple-system,BlinkMacSystemFont,sans-serif";
+
+ ctx.lineWidth=1;
+ ctx.strokeStyle="#172536";
+
+ for(let j=0;j<5;j++){
+
+  const y=
+   top+
+   j*plotH/4;
+
+  ctx.beginPath();
+  ctx.moveTo(left,y);
+  ctx.lineTo(W-right,y);
+  ctx.stroke();
+
+  ctx.fillStyle="#8795ab";
+
+  ctx.fillText(
+   "$"+
+   price(
+    MAX-
+    j*(MAX-MIN)/4
+   ),
+   W-right+5,
+   y+3
+  );
+
+ }
+
+ /* CANDLES */
+
+ for(let i=0;i<arr.length;i++){
+
+  const x=px(i);
+  const q=arr[i];
+
+  const up=q.c>=q.o;
+
+  const bodyY=
+   Math.min(
+    py(q.o),
+    py(q.c)
+   );
+
+  const bodyH=
+   Math.max(
+    1,
+    Math.abs(
+     py(q.c)-py(q.o)
+    )
+   );
+
+  ctx.strokeStyle=
+   up?"#35c985":"#ef5364";
+
+  ctx.beginPath();
+
+  ctx.moveTo(x,py(q.h));
+  ctx.lineTo(x,py(q.l));
+
+  ctx.stroke();
+
+  ctx.fillStyle=
+   up?"#35c985":"#ef5364";
+
+  if(chartType==="candles"){
+
+   ctx.fillRect(
+    x-Math.max(1,step*.31),
+    bodyY,
+    Math.max(2,step*.62),
+    bodyH
+   );
 
   }
 
-  const ctx=
-    c.getContext("2d");
+ }
 
-  ctx.setTransform(
-    dpr,
-    0,
-    0,
-    dpr,
-    0,
-    0
+ /* LINE */
+
+ if(chartType==="line"){
+
+  ctx.strokeStyle="#62a9ff";
+  ctx.lineWidth=2;
+  ctx.beginPath();
+
+  arr.forEach((q,i)=>{
+
+   const x=px(i);
+   const y=py(q.c);
+
+   if(i===0)
+    ctx.moveTo(x,y);
+   else
+    ctx.lineTo(x,y);
+
+  });
+
+  ctx.stroke();
+  ctx.lineWidth=1;
+
+ }
+
+ /* EMA */
+
+ const allCl=
+  candles.map(x=>x.c);
+
+ const e21=
+  ema(allCl,21);
+
+ const e50=
+  ema(allCl,50);
+
+ if(tools.ema){
+
+  [
+   ["#f4c95d",e21],
+   ["#a784ff",e50]
+  ].forEach(
+   ([col,series])=>{
+
+    ctx.strokeStyle=col;
+    ctx.lineWidth=1.5;
+    ctx.beginPath();
+
+    arr.forEach((q,i)=>{
+
+     const gi=start+i;
+     const y=py(series[gi]);
+
+     if(i===0)
+      ctx.moveTo(px(i),y);
+     else
+      ctx.lineTo(px(i),y);
+
+    });
+
+    ctx.stroke();
+
+   }
   );
-
-  const W=r.width;
-
-  const Hh=r.height;
-
-  ctx.clearRect(
-    0,
-    0,
-    W,
-    Hh
-  );
-
-  if(!candles.length)
-    return;
-
-  const left=8;
-
-  const right=58;
-
-  const top=15;
-
-  const bottom=31;
-
-  const volH=62;
-
-  const plotH=
-    Hh-
-    top-
-    bottom-
-    volH;
-
-  const visible=
-    Math.max(
-      35,
-      Math.floor(
-        105/zoom
-      )
-    );
-
-  const end=
-    candles.length-
-    1-
-    Math.round(offset);
-
-  const start=
-    Math.max(
-      0,
-      end-visible+1
-    );
-
-  const arr=
-    candles.slice(
-      start,
-      end+1
-    );
-
-  const hi=
-    Math.max(
-      ...arr.map(
-        x=>x.h
-      )
-    );
-
-  const lo=
-    Math.min(
-      ...arr.map(
-        x=>x.l
-      )
-    );
-
-  const pad=
-    (hi-lo)*.08||10;
-
-  const MAX=hi+pad;
-
-  const MIN=lo-pad;
-
-  const py=v=>
-    top+
-    (MAX-v)/
-    (MAX-MIN)*
-    plotH;
-
-  const step=
-    (W-left-right)/
-    Math.max(
-      1,
-      arr.length
-    );
-
-  const px=i=>
-    left+
-    (i+.5)*step;
-
-  ctx.font=
-    "10px -apple-system,BlinkMacSystemFont,sans-serif";
-
-  ctx.strokeStyle=
-    "#172536";
 
   ctx.lineWidth=1;
 
-  for(
-    let j=0;
-    j<5;
-    j++
-  ){
+ }
 
-    const y=
-      top+
-      j*plotH/4;
+ /* SUPPORT RESISTANCE */
 
-    ctx.beginPath();
+ if(tools.sr){
 
-    ctx.moveTo(
-      left,
-      y
-    );
+  const sr=
+   chartSupportResistance(arr);
 
-    ctx.lineTo(
-      W-right,
-      y
-    );
+  ctx.setLineDash([5,4]);
 
-    ctx.stroke();
+  [
+   ...sr.support.map(
+    v=>[v,"#35c985"]
+   ),
+   ...sr.resistance.map(
+    v=>[v,"#ef5364"]
+   )
+  ].forEach(([v,col])=>{
 
-    ctx.fillStyle=
-      "#8795ab";
+   if(v<MIN||v>MAX)return;
 
-    ctx.fillText(
-      "$"+
-      price(
-        MAX-
-        j*(MAX-MIN)/4
-      ),
-      W-right+5,
-      y+3
-    );
+   const y=py(v);
 
-  }
+   ctx.strokeStyle=col;
 
-  for(
-    let i=0;
-    i<arr.length;
-    i++
-  ){
+   ctx.beginPath();
+   ctx.moveTo(left,y);
+   ctx.lineTo(W-right,y);
+   ctx.stroke();
 
-    const x=px(i);
+   ctx.fillStyle=col;
 
-    const q=arr[i];
+   ctx.fillText(
+    "$"+price(v),
+    left+3,
+    y-3
+   );
 
-    const up=
-      q.c>=q.o;
+  });
 
-    const bodyY=
-      Math.min(
-        py(q.o),
-        py(q.c)
-      );
+  ctx.setLineDash([]);
 
-    const bodyH=
-      Math.max(
-        1,
-        Math.abs(
-          py(q.c)-
-          py(q.o)
-        )
-      );
+ }
 
-    ctx.strokeStyle=
-      up
-        ?" #35c985"
-        :"#ef5364";
+ /* VOLUME */
 
-    ctx.strokeStyle=
-      up
-        ?"#35c985"
-        :"#ef5364";
-
-    ctx.beginPath();
-
-    ctx.moveTo(
-      x,
-      py(q.h)
-    );
-
-    ctx.lineTo(
-      x,
-      py(q.l)
-    );
-
-    ctx.stroke();
-
-    ctx.fillStyle=
-      up
-        ?"#35c985"
-        :"#ef5364";
-
-    ctx.fillRect(
-      x-
-      Math.max(
-        1,
-        step*.31
-      ),
-      bodyY,
-      Math.max(
-        2,
-        step*.62
-      ),
-      bodyH
-    );
-
-  }
+ if(tools.vol){
 
   const vmax=
-    Math.max(
-      ...arr.map(
-        x=>x.v
-      )
-    )||1;
+   Math.max(
+    ...arr.map(x=>x.v)
+   )||1;
 
-  for(
-    let i=0;
-    i<arr.length;
-    i++
-  ){
+  for(let i=0;i<arr.length;i++){
 
-    const q=arr[i];
+   const q=arr[i];
+   const x=px(i);
 
-    const x=px(i);
+   const vh=
+    q.v/vmax*volH;
 
-    const vh=
-      q.v/vmax*
-      volH;
+   ctx.fillStyle=
+    q.c>=q.o?
+    "rgba(53,201,133,.42)":
+    "rgba(239,83,100,.42)";
 
-    ctx.fillStyle=
-      q.c>=q.o
-        ?"rgba(53,201,133,.45)"
-        :"rgba(239,83,100,.45)";
-
-    ctx.fillRect(
-      x-
-      Math.max(
-        1,
-        step*.3
-      ),
-      top+
-      plotH+
-      volH-
-      vh,
-      Math.max(
-        2,
-        step*.6
-      ),
-      vh
-    );
+   ctx.fillRect(
+    x-Math.max(1,step*.3),
+    top+plotH+volH-vh,
+    Math.max(2,step*.6),
+    vh
+   );
 
   }
 
-  const current=
-    candles[
-      candles.length-1
-    ].c;
-
-  const cy=py(current);
-
-  ctx.setLineDash(
-    [4,4]
+  ctx.fillStyle="#73859c";
+  ctx.fillText(
+   "VOLUME",
+   left,
+   top+plotH+12
   );
 
+ }
+
+ /* RSI */
+
+ if(tools.rsi){
+
+  const ry=
+   top+
+   plotH+
+   volH+
+   gap;
+
+  const rh=rsiH;
+
+  const rs=
+   rsi(allCl,14);
+
+  ctx.strokeStyle="#172536";
+
+  [30,50,70].forEach(v=>{
+
+   const y=
+    ry+rh-(v/100)*rh;
+
+   ctx.beginPath();
+   ctx.moveTo(left,y);
+   ctx.lineTo(W-right,y);
+   ctx.stroke();
+
+   ctx.fillStyle="#73859c";
+
+   ctx.fillText(
+    String(v),
+    W-right+5,
+    y+3
+   );
+
+  });
+
+  ctx.strokeStyle="#45d7e8";
+  ctx.beginPath();
+
+  arr.forEach((q,i)=>{
+
+   const y=
+    ry+rh-
+    (rs[start+i]/100)*rh;
+
+   if(i===0)
+    ctx.moveTo(px(i),y);
+   else
+    ctx.lineTo(px(i),y);
+
+  });
+
+  ctx.stroke();
+
+  ctx.fillStyle="#73859c";
+
+  ctx.fillText(
+   "RSI 14",
+   left,
+   ry+10
+  );
+
+ }
+
+ /* CURRENT PRICE */
+
+ const current=
+  candles.at(-1).c;
+
+ const cy=py(current);
+
+ ctx.setLineDash([4,4]);
+
+ ctx.strokeStyle="#63a8ff";
+
+ ctx.beginPath();
+ ctx.moveTo(left,cy);
+ ctx.lineTo(W-right,cy);
+ ctx.stroke();
+
+ ctx.setLineDash([]);
+
+ ctx.fillStyle="#63a8ff";
+
+ ctx.fillRect(
+  W-right+2,
+  cy-9,
+  64,
+  18
+ );
+
+ ctx.fillStyle="#06101c";
+
+ ctx.fillText(
+  "$"+price(current),
+  W-right+6,
+  cy+3
+ );
+
+ /* TIME */
+
+ for(
+  let i=0;
+  i<arr.length;
+  i+=Math.max(
+   1,
+   Math.floor(arr.length/5)
+  )
+ ){
+
+  ctx.fillStyle="#8795ab";
+
+  ctx.fillText(
+   new Date(arr[i].t)
+    .toLocaleTimeString(
+     [],
+     {
+      hour:"2-digit",
+      minute:"2-digit"
+     }
+    ),
+   px(i)-17,
+   Hh-10
+  );
+
+ }
+
+ /* FORECAST */
+
+ if(
+  prediction&&
+  tools.forecast
+ ){
+
+  const futureBars=
+   Math.max(
+    1,
+    (prediction.target-
+     candles.at(-1).t)/
+    300000
+   );
+
+  const targetX=
+   px(arr.length-1)+
+   futureBars*step;
+
+  const tx=
+   clamp(
+    targetX,
+    left+10,
+    W-right-5
+   );
+
+  const yPred=
+   py(
+    clamp(
+     prediction.predicted,
+     MIN,
+     MAX
+    )
+   );
+
+  const yLow=
+   py(
+    clamp(
+     prediction.low,
+     MIN,
+     MAX
+    )
+   );
+
+  const yHigh=
+   py(
+    clamp(
+     prediction.high,
+     MIN,
+     MAX
+    )
+   );
+
+  ctx.fillStyle=
+   "rgba(155,124,255,.08)";
+
+  ctx.fillRect(
+   px(arr.length-1),
+   top,
+   Math.max(
+    0,
+    tx-px(arr.length-1)
+   ),
+   plotH
+  );
+
+  ctx.strokeStyle="#9b7cff";
+
+  ctx.setLineDash([6,5]);
+
+  ctx.beginPath();
+  ctx.moveTo(tx,top);
+  ctx.lineTo(tx,top+plotH);
+  ctx.stroke();
+
+  ctx.setLineDash([]);
+
   ctx.strokeStyle=
-    "#63a8ff";
+   "rgba(155,124,255,.45)";
 
   ctx.beginPath();
 
   ctx.moveTo(
-    left,
-    cy
+   px(arr.length-1),
+   yLow
   );
 
-  ctx.lineTo(
-    W-right,
-    cy
+  ctx.lineTo(tx,yLow);
+
+  ctx.moveTo(
+   px(arr.length-1),
+   yHigh
   );
+
+  ctx.lineTo(tx,yHigh);
+
+  ctx.stroke();
+
+  ctx.fillStyle="#9b7cff";
+
+  ctx.beginPath();
+  ctx.arc(
+   tx,
+   yPred,
+   6,
+   0,
+   Math.PI*2
+  );
+
+  ctx.fill();
+
+  const text=
+   new Date(
+    prediction.target
+   ).toLocaleTimeString(
+    [],
+    {
+     hour:"2-digit",
+     minute:"2-digit"
+    }
+   )+
+   "  $"+
+   price(prediction.predicted);
+
+  const bx=
+   clamp(
+    tx-78,
+    left,
+    W-right-155
+   );
+
+  const by=
+   clamp(
+    yPred-30,
+    top,
+    Hh-bottom-28
+   );
+
+  ctx.fillStyle=
+   "rgba(20,30,48,.97)";
+
+  ctx.fillRect(
+   bx,
+   by,
+   155,
+   23
+  );
+
+  ctx.fillStyle="#fff";
+
+  ctx.fillText(
+   text,
+   bx+7,
+   by+15
+  );
+
+ }
+
+ /* CROSSHAIR */
+
+ if(
+  hoverIndex!==null&&
+  hoverIndex>=0&&
+  hoverIndex<arr.length
+ ){
+
+  const i=hoverIndex;
+  const q=arr[i];
+  const x=px(i);
+  const y=py(q.c);
+
+  ctx.setLineDash([3,3]);
+  ctx.strokeStyle="#7890ad";
+
+  ctx.beginPath();
+
+  ctx.moveTo(x,top);
+  ctx.lineTo(x,top+plotH);
+
+  ctx.moveTo(left,y);
+  ctx.lineTo(W-right,y);
 
   ctx.stroke();
 
   ctx.setLineDash([]);
 
-  ctx.fillStyle=
-    "#63a8ff";
+  const rs=
+   rsi(allCl,14)[start+i];
 
-  ctx.fillText(
-    "$"+
-    price(current),
-    W-right+5,
-    cy+3
-  );
+  $("candleReadout").textContent=
+   `${new Date(q.t).toLocaleString()} • `+
+   `O $${price(q.o)} • `+
+   `H $${price(q.h)} • `+
+   `L $${price(q.l)} • `+
+   `C $${price(q.c)} • `+
+   `Volume ${Math.round(q.v).toLocaleString()} • `+
+   `RSI ${rs.toFixed(1)}`;
 
-  for(
-    let i=0;
-    i<arr.length;
-    i+=Math.max(
-      1,
-      Math.floor(
-        arr.length/5
-      )
-    )
-  ){
+ }
 
-    ctx.fillStyle=
-      "#8795ab";
+ $("chartInfo").textContent=
+  `${arr.length} visible candles • `+
+  `${candles.length.toLocaleString()} loaded • `+
+  `Zoom ${zoom.toFixed(1)}× • `+
+  `EMA21/50 ${tools.ema?"on":"off"} • `+
+  `S/R ${tools.sr?"on":"off"} • `+
+  `RSI ${tools.rsi?"on":"off"}`;
 
-    ctx.fillText(
-      new Date(
-        arr[i].t
-      ).toLocaleTimeString(
-        [],
-        {
-          hour:"2-digit",
-          minute:"2-digit"
-        }
-      ),
-      px(i)-17,
-      Hh-8
-    );
+}
 
-  }
+async function loadMarket(){
 
-  if(prediction){
+ let cached=null;
 
-    const targetX=
-      px(
-        arr.length-1
-      )+
-      (
-        prediction.target-
-        candles[
-          candles.length-1
-        ].t
-      )/
-      300000*
-      step;
+ try{
+  cached=
+   JSON.parse(
+    localStorage.getItem(
+     CACHE_KEY
+    )||"null"
+   );
+ }catch{}
 
-    const tx=
-      clamp(
-        targetX,
-        left+10,
-        W-right-5
-      );
+ if(
+  cached?.eth?.length>=
+  HISTORY_5M
+ ){
 
-    const yy=
-      py(
-        clamp(
-          prediction.predicted,
-          MIN,
-          MAX
-        )
-      );
+  candles=cached.eth;
 
-    ctx.strokeStyle=
-      "#9b7cff";
+ }else{
 
-    ctx.setLineDash(
-      [6,5]
-    );
+  candles=
+   await pagedKlines(
+    "ETHUSDT",
+    "5m",
+    HISTORY_5M
+   );
 
-    ctx.beginPath();
+ }
 
-    ctx.moveTo(
-      tx,
-      top
-    );
+ if(candles.length<HISTORY_5M){
 
-    ctx.lineTo(
-      tx,
-      Hh-bottom
-    );
+  $("connection").textContent=
+   "Historical load: "+
+   candles.length+
+   " ETH candles available.";
 
-    ctx.stroke();
+ }
 
-    ctx.setLineDash([]);
+ try{
 
-    ctx.fillStyle=
-      "#9b7cff";
+  btcCandles=
+   cached?.btc?.length>=HISTORY_1H?
+   cached.btc:
+   await pagedKlines(
+    "BTCUSDT",
+    "1h",
+    HISTORY_1H
+   );
 
-    ctx.beginPath();
+ }catch{
 
-    ctx.arc(
-      tx,
-      yy,
-      5,
-      0,
-      Math.PI*2
-    );
+  btcCandles=[];
 
-    ctx.fill();
+ }
 
-    ctx.fillStyle=
-      "#d8ccff";
-
-    ctx.font=
-      "bold 10px -apple-system,BlinkMacSystemFont,sans-serif";
-
-    const text=
-      new Date(
-        prediction.target
-      ).toLocaleTimeString(
-        [],
-        {
-          hour:"2-digit",
-          minute:"2-digit"
-        }
-      )+
-      "  $"+
-      price(
-        prediction.predicted
-      );
-
-    const bx=
-      clamp(
-        tx-72,
-        left,
-        W-right-145
-      );
-
-    const by=
-      clamp(
-        yy-28,
-        top,
-        Hh-bottom-26
-      );
-
-    ctx.fillStyle=
-      "rgba(20,30,48,.95)";
-
-    ctx.fillRect(
-      bx,
-      by,
-      145,
-      22
-    );
-
-    ctx.fillStyle=
-      "#fff";
-
-    ctx.fillText(
-      text,
-      bx+6,
-      by+15
-    );
-
-  }
-
-  $("chartInfo").textContent=
-    `Visible candles: ${arr.length} • Zoom ${zoom.toFixed(1)}× • Drag or pinch to inspect history`;
+ localStorage.setItem(
+  CACHE_KEY,
+  JSON.stringify({
+   eth:candles,
+   btc:btcCandles,
+   at:Date.now()
+  })
+ );
 
 }
 
 async function refresh(){
 
-  if(busy)
-    return;
+ if(busy)return;
 
-  busy=true;
+ busy=true;
 
-  $("refresh").disabled=true;
+ $("refresh").disabled=true;
 
-  $("connection").textContent=
-    "Market connection: loading…";
+ $("connection").textContent=
+  "Market connection: loading extended chronological history…";
+
+ try{
+
+  if(!candles.length){
+
+   await loadMarket();
+
+  }else{
+
+   candles=
+    mergeCandles(
+     candles,
+     await klines(
+      "ETHUSDT",
+      "5m",
+      1000
+     ),
+     HISTORY_5M
+    );
+
+   if(!btcCandles.length){
+
+    btcCandles=
+     await pagedKlines(
+      "BTCUSDT",
+      "1h",
+      HISTORY_1H
+     );
+
+   }else{
+
+    btcCandles=
+     mergeCandles(
+      btcCandles,
+      await klines(
+       "BTCUSDT",
+       "1h",
+       1000
+      ),
+      HISTORY_1H
+     );
+
+   }
+
+   localStorage.setItem(
+    CACHE_KEY,
+    JSON.stringify({
+     eth:candles,
+     btc:btcCandles,
+     at:Date.now()
+    })
+   );
+
+  }
+
+  $("price").textContent=
+   "$"+price(candles.at(-1).c);
+
+  const model=
+   await buildModel();
+
+  lastModel=model;
+
+  const hist=
+   await evaluateHistory();
+
+  prediction=
+   activePrediction();
+
+  if(!prediction){
+
+   createPrediction(model);
+
+   prediction=
+    activePrediction();
+
+  }
+
+  renderPrediction();
+
+  renderDiagnostics(
+   model,
+   hist
+  );
+
+  renderHistory(hist);
+
+  const rs=
+   rsi(
+    candles.map(x=>x.c),
+    14
+   ).at(-1);
+
+  $("rsi").textContent=
+   rs.toFixed(1);
+
+  const b0=
+   btcCandles.at(-13)?.c;
+
+  const b1=
+   btcCandles.at(-1)?.c;
+
+  $("btc").textContent=
+   b0?
+   pct((b1/b0-1)*100):
+   "—";
 
   try{
 
-    candles=
-      await klines(
-        "ETHUSDT",
-        "5m",
-        1000
-      );
-
-    btcCandles=
-      await klines(
-        "BTCUSDT",
-        "1h",
-        1000
-      );
-
-    const current=
-      candles[
-        candles.length-1
-      ].c;
-
-    $("price").textContent=
-      "$"+
-      price(current);
-
-    const model=
-      await buildModel();
-
-    let hist=
-      await evaluateHistory();
-
-    prediction=
-      activePrediction();
-
-    if(!prediction){
-
-      createPrediction(
-        model
-      );
-
-      prediction=
-        activePrediction();
-
-    }
-
-    renderPrediction();
-
-    renderDiagnostics(
-      model,
-      hist
+   const f=
+    await futures(
+     "/fapi/v1/premiumIndex?symbol=ETHUSDT"
     );
 
-    renderHistory(
-      hist
-    );
+   $("funding").textContent=
+    f.lastFundingRate?
+    (+f.lastFundingRate*100)
+     .toFixed(4)+"%":
+    "—";
 
-    const closes=
-      candles.map(
-        x=>x.c
-      );
+  }catch{
 
-    const rs=
-      rsi(
-        closes,
-        14
-      ).at(-1);
-
-    $("rsi").textContent=
-      rs.toFixed(1);
-
-    const b0=
-      btcCandles.at(-13)?.c;
-
-    const b1=
-      btcCandles.at(-1)?.c;
-
-    $("btc").textContent=
-      b0
-        ?pct(
-          (b1/b0-1)*100
-        )
-        :"—";
-
-    try{
-
-      const funding=
-        await futures(
-          "/fapi/v1/premiumIndex?symbol=ETHUSDT"
-        );
-
-      $("funding").textContent=
-        funding.lastFundingRate
-          ?(
-            +funding.lastFundingRate*
-            100
-           ).toFixed(4)+"%"
-          :"—";
-
-    }catch{
-
-      $("funding").textContent=
-        "—";
-
-    }
-
-    try{
-
-      const oi=
-        await futures(
-          "/fapi/v1/openInterest?symbol=ETHUSDT"
-        );
-
-      $("oi").textContent=
-        price(
-          +oi.openInterest
-        )+
-        " ETH";
-
-    }catch{
-
-      $("oi").textContent=
-        "—";
-
-    }
-
-    $("connection").textContent=
-      "Market connection: Binance public market data • updated "+
-      date(Date.now());
-
-    draw();
-
-  }catch(e){
-
-    $("connection").textContent=
-      "Market connection error: "+
-      (e?.message||e);
-
-  }finally{
-
-    busy=false;
-
-    $("refresh").disabled=false;
+   $("funding").textContent="—";
 
   }
+
+  try{
+
+   $("oi").textContent=
+    price(
+     +(
+      await futures(
+       "/fapi/v1/openInterest?symbol=ETHUSDT"
+      )
+     ).openInterest
+    )+
+    " ETH";
+
+  }catch{
+
+   $("oi").textContent="—";
+
+  }
+
+  $("connection").textContent=
+   `Market data ready • `+
+   `${candles.length.toLocaleString()} ETH 5m candles • `+
+   `${model.oos.toLocaleString()} walk-forward OOS observations • `+
+   `price refresh 30s • updated ${date(Date.now())}`;
+
+  draw();
+
+ }catch(e){
+
+  $("connection").textContent=
+   "Market connection error: "+
+   (e?.message||e);
+
+ }finally{
+
+  busy=false;
+  $("refresh").disabled=false;
+
+ }
 
 }
 
+/* NAVIGATION */
+
 document
-  .querySelectorAll(
-    "#horizons button"
-  )
-  .forEach(
-    b=>
-      b.onclick=
-      async()=>{
+ .querySelectorAll(".navBtn")
+ .forEach(b=>{
 
-        document
-          .querySelectorAll(
-            "#horizons button"
-          )
-          .forEach(
-            x=>
-              x.classList.remove(
-                "active"
-              )
-          );
+  b.onclick=()=>{
 
-        b.classList.add(
-          "active"
-        );
+   const v=b.dataset.view;
 
-        horizon=
-          b.dataset.h;
+   document
+    .querySelectorAll(".navBtn")
+    .forEach(x=>
+     x.classList.toggle(
+      "active",
+      x===b
+     )
+    );
 
-        zoom=1;
+   document
+    .querySelectorAll(".view")
+    .forEach(x=>
+     x.classList.toggle(
+      "active",
+      x.id==="view-"+v
+     )
+    );
 
-        offset=0;
-
-        await refresh();
-
-      }
-  );
-
-$("refresh").onclick=
-  refresh;
-
-$("plus").onclick=
-  ()=>{
-
-    zoom=
-      clamp(
-        zoom+.25,
-        1,
-        5
-      );
-
-    draw();
+   window.scrollTo({
+    top:0,
+    behavior:"smooth"
+   });
 
   };
 
-$("minus").onclick=
-  ()=>{
+ });
 
-    zoom=
-      clamp(
-        zoom-.25,
-        1,
-        5
-      );
+$("moreRefresh").onclick=
+ ()=>$("refresh").click();
 
-    draw();
+$("clearZoom").onclick=
+ ()=>$("reset").click();
+
+/* HORIZONS */
+
+document
+ .querySelectorAll("#horizons button")
+ .forEach(b=>{
+
+  b.onclick=async()=>{
+
+   document
+    .querySelectorAll("#horizons button")
+    .forEach(x=>
+     x.classList.remove("active")
+    );
+
+   b.classList.add("active");
+
+   horizon=b.dataset.h;
+
+   zoom=1;
+   offset=0;
+
+   await refresh();
 
   };
 
-$("reset").onclick=
-  ()=>{
+ });
 
-    zoom=1;
+/* CHART MODE */
 
-    offset=0;
+document
+ .querySelectorAll("[data-chart]")
+ .forEach(b=>{
 
-    draw();
+  b.onclick=()=>{
+
+   chartType=b.dataset.chart;
+
+   document
+    .querySelectorAll("[data-chart]")
+    .forEach(x=>
+     x.classList.toggle(
+      "active",
+      x===b
+     )
+    );
+
+   draw();
 
   };
 
-const canvas=
-  $("chart");
+ });
+
+/* CHART TOOLS */
+
+document
+ .querySelectorAll(".tool")
+ .forEach(b=>{
+
+  b.onclick=()=>{
+
+   const k=b.dataset.tool;
+
+   tools[k]=!tools[k];
+
+   b.classList.toggle(
+    "active",
+    tools[k]
+   );
+
+   draw();
+
+  };
+
+ });
+
+/* ZOOM */
+
+$("plus").onclick=()=>{
+
+ zoom=clamp(
+  zoom+.25,
+  1,
+  5
+ );
+
+ $("zoom").textContent=
+  zoom.toFixed(1)+"×";
+
+ draw();
+
+};
+
+$("minus").onclick=()=>{
+
+ zoom=clamp(
+  zoom-.25,
+  1,
+  5
+ );
+
+ $("zoom").textContent=
+  zoom.toFixed(1)+"×";
+
+ draw();
+
+};
+
+$("reset").onclick=()=>{
+
+ zoom=1;
+ offset=0;
+
+ $("zoom").textContent="1×";
+
+ draw();
+
+};
+
+/* TOUCH / POINTER */
+
+const canvas=$("chart");
 
 canvas.addEventListener(
-  "pointerdown",
-  e=>{
+ "pointerdown",
+ e=>{
 
-    drag=true;
+  drag=true;
+  dragX=e.clientX;
+  dragOffset=offset;
 
-    dragX=
-      e.clientX;
+  canvas.setPointerCapture(
+   e.pointerId
+  );
 
-    dragOffset=
-      offset;
+ }
+);
 
-    canvas.setPointerCapture(
-      e.pointerId
+canvas.addEventListener(
+ "pointermove",
+ e=>{
+
+  const rr=
+   canvas.getBoundingClientRect();
+
+  const left=10;
+  const right=68;
+
+  const visible=
+   Math.max(
+    35,
+    Math.floor(115/zoom)
+   );
+
+  const end=
+   candles.length-
+   1-
+   Math.round(offset);
+
+  const start=
+   Math.max(
+    0,
+    end-visible+1
+   );
+
+  const arrLen=
+   Math.max(
+    1,
+    end-start+1
+   );
+
+  const step=
+   (rr.width-left-right)/
+   arrLen;
+
+  hoverIndex=
+   clamp(
+    Math.floor(
+     (e.clientX-
+      rr.left-
+      left)/
+     step
+    ),
+    0,
+    arrLen-1
+   );
+
+  if(drag){
+
+   offset=
+    clamp(
+     dragOffset-
+     Math.round(
+      (e.clientX-dragX)/6
+     ),
+     0,
+     Math.max(
+      0,
+      candles.length-35
+     )
     );
 
   }
+
+  draw();
+
+ }
 );
 
 canvas.addEventListener(
-  "pointermove",
-  e=>{
-
-    if(!drag)
-      return;
-
-    const dx=
-      e.clientX-dragX;
-
-    offset=
-      clamp(
-        dragOffset-
-        Math.round(dx/6),
-        0,
-        Math.max(
-          0,
-          candles.length-35
-        )
-      );
-
-    draw();
-
-  }
+ "pointerup",
+ ()=>drag=false
 );
 
 canvas.addEventListener(
-  "pointerup",
-  ()=>{
-    drag=false;
-  }
+ "pointercancel",
+ ()=>drag=false
 );
 
 canvas.addEventListener(
-  "pointercancel",
-  ()=>{
-    drag=false;
-  }
+ "pointerleave",
+ ()=>{
+
+  hoverIndex=null;
+  draw();
+
+ }
 );
 
 canvas.addEventListener(
-  "wheel",
-  e=>{
+ "wheel",
+ e=>{
 
-    e.preventDefault();
+  e.preventDefault();
 
-    zoom=
-      clamp(
-        zoom+
-        (
-          e.deltaY<0
-            ?.25
-            :-.25
-        ),
-        1,
-        5
-      );
+  zoom=
+   clamp(
+    zoom+
+    (e.deltaY<0?.25:-.25),
+    1,
+    5
+   );
 
-    draw();
+  $("zoom").textContent=
+   zoom.toFixed(1)+"×";
 
-  },
-  {
-    passive:false
-  }
+  draw();
+
+ },
+ {passive:false}
 );
+
+/* COUNTDOWN */
+
+setInterval(()=>{
+
+ if(prediction){
+
+  $("countdown").textContent=
+   countdown(
+    prediction.target
+   );
+
+  draw();
+
+ }
+
+},1000);
+
+/* LIVE UPDATE */
 
 setInterval(
-  ()=>{
-    if(prediction){
-
-      $("countdown").textContent=
-        countdown(
-          prediction.target
-        );
-
-      draw();
-
-    }
-  },
-  1000
-);
-
-setInterval(
-  ()=>refresh(),
-  60000
+ refresh,
+ 30000
 );
 
 window.addEventListener(
-  "resize",
-  draw
+ "resize",
+ draw
 );
 
 refresh();
