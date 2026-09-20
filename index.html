@@ -3,206 +3,337 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#070c16">
-<title>ETH Global Predictor V11</title>
+<meta name="theme-color" content="#07101c">
+<title>ETH Global Predictor V12</title>
 
 <style>
 :root{
- --bg:#070c16;
- --card:#101827;
- --line:#233149;
- --muted:#8290a8;
- --green:#55d98d;
- --red:#ff7185;
- --yellow:#f3c653;
- --blue:#5ca7ff;
+  --bg:#07101c;
+  --card:#101a29;
+  --panel:#0b1422;
+  --line:#26364b;
+  --muted:#8795ab;
+  --text:#f4f7fb;
+  --green:#35c985;
+  --red:#ef5364;
+  --blue:#63a8ff;
+  --yellow:#f1c65b
 }
+
 *{box-sizing:border-box}
+
 body{
- margin:0;
- background:var(--bg);
- color:#f4f7fc;
- font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif
 }
+
 main{
- max-width:620px;
- margin:auto;
- padding:20px 14px calc(30px + env(safe-area-inset-bottom))
+  max-width:700px;
+  margin:auto;
+  padding:18px 12px calc(30px + env(safe-area-inset-bottom))
 }
+
 header{
- display:flex;
- justify-content:space-between;
- align-items:flex-start;
- gap:12px
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  align-items:flex-start
 }
-h1{font-size:28px;line-height:1.1;margin:0}
-.muted{
- color:var(--muted);
- font-size:12px;
- line-height:1.45
+
+h1{
+  font-size:27px;
+  line-height:1.05;
+  margin:0 0 6px
 }
+
+.muted,.small{
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.45
+}
+
 button{
- background:#294777;
- color:#fff;
- border:0;
- border-radius:10px;
- padding:11px 15px;
- font-weight:700;
- font-size:15px
+  border:0;
+  border-radius:11px;
+  background:#294777;
+  color:#fff;
+  font-weight:750;
+  padding:11px 14px;
+  font-size:14px
 }
-button:disabled{opacity:.6}
+
+button:disabled{opacity:.55}
+
 .card{
- background:var(--card);
- border:1px solid var(--line);
- border-radius:18px;
- padding:14px;
- margin:12px 0
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:19px;
+  padding:14px;
+  margin:12px 0;
+  box-shadow:0 8px 28px rgba(0,0,0,.12)
 }
+
+.badge{
+  display:inline-block;
+  background:#172942;
+  color:#9fc8ff;
+  padding:5px 8px;
+  border-radius:999px;
+  font-size:10px;
+  font-weight:800;
+  margin-top:6px
+}
+
 .price{
- font-size:36px;
- font-weight:800;
- margin-top:4px
+  font-size:36px;
+  font-weight:850;
+  margin-top:4px
 }
-.label{font-size:13px;color:var(--muted)}
+
+.label{
+  font-size:12px;
+  color:var(--muted)
+}
+
 .selector-title{
- margin-top:14px;
- color:#9aa4b5;
- font-size:14px;
- font-weight:600
+  margin-top:14px;
+  font-size:14px;
+  font-weight:700;
+  color:#aeb8c8
 }
+
 .tf{
- display:flex;
- gap:7px;
- overflow-x:auto;
- margin-top:8px;
- padding-bottom:3px;
- scrollbar-width:none
+  display:flex;
+  gap:7px;
+  overflow-x:auto;
+  margin-top:8px;
+  padding-bottom:3px;
+  scrollbar-width:none
 }
+
 .tf::-webkit-scrollbar{display:none}
+
 .tf button{
- background:#17263d;
- min-width:58px;
- padding:10px 9px;
- font-size:13px;
- white-space:nowrap
+  background:#17263d;
+  min-width:57px;
+  padding:10px 8px;
+  font-size:13px;
+  white-space:nowrap
 }
-.tf button.active{background:#3e70b0}
+
+.tf button.active{
+  background:#447bc1
+}
+
 .grid{
- display:grid;
- grid-template-columns:1fr 1fr;
- gap:9px
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:9px
 }
+
 .box{
- background:#0b1321;
- padding:12px;
- border-radius:12px
+  background:var(--panel);
+  padding:11px;
+  border-radius:13px
 }
+
 .value{
- font-size:20px;
- font-weight:700;
- margin-top:4px
+  font-size:19px;
+  font-weight:800;
+  margin-top:4px
 }
+
 .green{color:var(--green)}
 .red{color:var(--red)}
-.yellow{color:var(--yellow)}
 .blue{color:var(--blue)}
+.yellow{color:var(--yellow)}
+
 canvas{
- display:block;
- width:100%;
- height:310px;
- background:#0a1220;
- border-radius:12px;
- margin-top:12px;
- touch-action:none
+  display:block;
+  width:100%;
+  height:390px;
+  background:#09121e;
+  border-radius:13px;
+  margin-top:12px;
+  touch-action:none
 }
-.status{line-height:1.45;margin-top:10px}
-.error{color:#ff9aaa}
-.chartbar{
- display:flex;
- justify-content:space-between;
- margin-top:12px;
- color:#9aa4b5;
- font-size:12px;
- font-weight:600
+
+.chartHead{
+  display:flex;
+  justify-content:space-between;
+  margin-top:12px;
+  color:#aeb8c8;
+  font-size:12px;
+  font-weight:700
 }
-.chartbar span:last-child{color:#55d98d}
-.small{
- font-size:11px;
- color:var(--muted);
- margin-top:8px;
- line-height:1.45
+
+.chartHead .live{
+  color:var(--green)
 }
-.note{
- font-size:11px;
- color:var(--muted);
- line-height:1.5;
- margin-top:12px;
- padding-top:10px;
- border-top:1px solid var(--line)
+
+.controls{
+  display:flex;
+  justify-content:center;
+  gap:7px;
+  align-items:center;
+  margin-top:8px
 }
-.target{
- font-size:26px;
- font-weight:800;
- color:var(--blue)
+
+.controls button{
+  background:#17263d;
+  padding:7px 12px
 }
-.modelBadge{
- display:inline-block;
- margin-top:7px;
- padding:5px 8px;
- border-radius:999px;
- background:#17263d;
- color:#9ec7ff;
- font-size:10px;
- font-weight:800
+
+.controls span{
+  min-width:35px;
+  text-align:center;
+  color:#aeb8c8;
+  font-size:12px;
+  font-weight:800
 }
-.locked{color:var(--green);font-weight:800}
+
+.targetCard{
+  background:linear-gradient(135deg,#10253d,#0b1625);
+  border:1px solid #315b8e
+}
+
+.targetRow{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px
+}
+
+.targetPrice{
+  font-size:29px;
+  font-weight:900;
+  color:var(--blue);
+  margin-top:3px
+}
+
+.targetTime{
+  font-size:16px;
+  font-weight:800;
+  margin-top:3px
+}
+
+.countdown{
+  color:var(--green);
+  font-size:13px;
+  font-weight:800;
+  margin-top:5px
+}
+
+.signalGrid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin-top:10px
+}
+
+.signal{
+  background:var(--panel);
+  border-radius:12px;
+  padding:10px;
+  text-align:center
+}
+
+.signal b{
+  display:block;
+  font-size:18px;
+  margin-top:3px
+}
+
 .diag{
- display:grid;
- grid-template-columns:repeat(3,1fr);
- gap:8px;
- margin-top:9px
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:8px;
+  margin-top:9px
 }
-.diagBox{
- background:#0b1321;
- border-radius:12px;
- padding:10px
+
+.diag .box b{
+  display:block;
+  font-size:17px;
+  margin-top:3px
 }
-.diagBox .v{
- font-size:16px;
- font-weight:800;
- margin-top:3px
+
+.log{
+  margin-top:9px
 }
-.chartControls{
- display:flex;
- align-items:center;
- justify-content:center;
- gap:8px;
- margin-top:8px
+
+.logRow{
+  display:grid;
+  grid-template-columns:120px 1fr;
+  gap:8px;
+  padding:9px 0;
+  border-bottom:1px solid var(--line);
+  font-size:12px
 }
-.chartControls button{
- background:#17263d;
- padding:7px 13px;
- font-size:14px
+
+.logRow:last-child{
+  border-bottom:0
 }
-.chartControls span{
- min-width:38px;
- text-align:center;
- color:#9aa4b5;
- font-size:12px;
- font-weight:700
+
+.logKey{
+  color:var(--muted)
 }
+
+.status{
+  margin-top:10px;
+  line-height:1.5;
+  font-size:12px
+}
+
 .connection{
- margin-top:8px;
- padding:8px 10px;
- border-radius:10px;
- background:#0b1321;
- font-size:11px;
- color:var(--muted);
- word-break:break-word
+  margin-top:8px;
+  background:var(--panel);
+  border-radius:10px;
+  padding:8px;
+  color:var(--muted);
+  font-size:11px;
+  word-break:break-word
 }
+
+.historyItem{
+  background:var(--panel);
+  border-radius:12px;
+  padding:11px;
+  margin-top:8px;
+  font-size:12px;
+  line-height:1.55
+}
+
+.historyTitle{
+  font-weight:850;
+  font-size:13px
+}
+
+.good{
+  color:var(--green);
+  font-weight:800
+}
+
+.bad{
+  color:var(--red);
+  font-weight:800
+}
+
+.note{
+  border-top:1px solid var(--line);
+  margin-top:11px;
+  padding-top:10px;
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.5
+}
+
 @media(max-width:390px){
- h1{font-size:25px}
- .price{font-size:32px}
+  h1{font-size:24px}
+  .price{font-size:32px}
+  canvas{height:360px}
+  .logRow{grid-template-columns:105px 1fr}
 }
 </style>
 </head>
@@ -212,220 +343,366 @@ canvas{
 <main>
 
 <header>
+
 <div>
+
 <h1>ETH Global Predictor</h1>
 
 <div class="muted">
-Live ETH research dashboard<br>
-V11 multi-market ML • no trading or Buy/Sell signals<br>
-
-<span class="modelBadge">
-V11 • ETH + BTC regime model • point-in-time validation
-</span>
+Live ETH research dashboard • V12 multi-market ML • no trading UI
 </div>
+
+<span class="badge">
+V12 • Candles + volume + locked target + model log
+</span>
+
 </div>
 
 <button id="refresh">↻ Refresh</button>
-</header>
 
+</header>
 
 <section class="card">
 
 <div class="label">ETH / USDT</div>
 
-<div id="price" class="price">Connecting…</div>
+<div id="price" class="price">
+Connecting…
+</div>
 
-<div class="selector-title">Predict ETH after:</div>
+<div class="selector-title">
+Prediction horizon
+</div>
 
-<div class="tf" id="horizonSelector">
+<div class="tf" id="horizons">
 
-<button data-horizon="30m" class="active">30m</button>
-<button data-horizon="1h">1H</button>
-<button data-horizon="2h">2H</button>
-<button data-horizon="4h">4H</button>
-<button data-horizon="6h">6H</button>
-<button data-horizon="12h">12H</button>
-<button data-horizon="24h">24H</button>
-<button data-horizon="2d">2D</button>
-<button data-horizon="3d">3D</button>
-<button data-horizon="5d">5D</button>
-<button data-horizon="7d">7D</button>
+<button class="active" data-h="30m">30m</button>
+<button data-h="1h">1H</button>
+<button data-h="2h">2H</button>
+<button data-h="4h">4H</button>
+<button data-h="6h">6H</button>
+<button data-h="12h">12H</button>
+<button data-h="24h">24H</button>
+<button data-h="2d">2D</button>
+<button data-h="3d">3D</button>
+<button data-h="5d">5D</button>
+<button data-h="7d">7D</button>
 
 </div>
 
-<div class="chartbar">
-<span>Live 5-minute ETH/USDT chart</span>
-<span>● LIVE</span>
+<div class="chartHead">
+
+<span>
+ETH/USDT candlestick • 5m
+</span>
+
+<span class="live">
+● LIVE
+</span>
+
 </div>
 
 <canvas id="chart"></canvas>
 
-<div class="chartControls">
-<button id="zoomOut">−</button>
-<span id="zoomLevel">1×</span>
-<button id="zoomIn">+</button>
-<button id="zoomReset">Reset</button>
+<div class="controls">
+
+<button id="minus">−</button>
+
+<span id="zoom">
+1×
+</span>
+
+<button id="plus">+</button>
+
+<button id="reset">
+Reset
+</button>
+
 </div>
 
 <div id="chartInfo" class="small">
-Connecting to market data…
+Loading chart…
 </div>
 
-<div id="rangeOnChart" class="small">
-Forecast range: —
-</div>
-
-<div id="connectionInfo" class="connection">
+<div id="connection" class="connection">
 Market connection: starting…
 </div>
 
 </section>
 
+<section class="card targetCard">
 
-<section class="card">
-
-<div class="grid">
-
-<div class="box">
-<div class="label">Up estimate</div>
-<div id="bullish" class="value green">—</div>
+<div class="label">
+LOCKED PREDICTION • ONE TIME + ONE PRICE
 </div>
 
-<div class="box">
-<div class="label">Neutral</div>
-<div id="neutral" class="value">—</div>
+<div class="targetRow">
+
+<div>
+
+<div id="targetTime" class="targetTime">
+—
 </div>
 
-<div class="box">
-<div class="label">Down estimate</div>
-<div id="bearish" class="value red">—</div>
-</div>
-
-<div class="box">
-<div class="label">Walk-forward accuracy</div>
-<div id="confidence" class="value yellow">—</div>
-</div>
-
-<div class="box">
-<div class="label">Predicted price</div>
-<div id="target" class="target">—</div>
-</div>
-
-<div class="box">
-<div class="label">Expected range</div>
-<div id="range" class="value blue">—</div>
-</div>
-
-<div class="box">
-<div class="label">Funding</div>
-<div id="funding" class="value">—</div>
-</div>
-
-<div class="box">
-<div class="label">RSI</div>
-<div id="rsi" class="value">—</div>
-</div>
-
-<div class="box">
-<div class="label">BTC 1H</div>
-<div id="btc1h" class="value">—</div>
-</div>
-
-<div class="box">
-<div class="label">ETH Open Interest</div>
-<div id="openInterest" class="value">—</div>
+<div id="countdown" class="countdown">
+—
 </div>
 
 </div>
 
+<div style="text-align:right">
 
-<div id="status" class="status">
-Connecting to market data…
+<div class="label">
+Predicted ETH
 </div>
 
-
-<div class="box" style="margin-top:10px">
-
-<div class="label">Predicted price time</div>
-
-<div id="predictionTime" class="value blue">—</div>
-
-<div id="predictionCountdown" class="small">—</div>
-
-</div>
-
-
-<div class="diag">
-
-<div class="diagBox">
-<div class="label">Balanced accuracy</div>
-<div id="balancedAccuracy" class="v yellow">—</div>
-</div>
-
-<div class="diagBox">
-<div class="label">Log loss</div>
-<div id="logLoss" class="v">—</div>
-</div>
-
-<div class="diagBox">
-<div class="label">Baseline</div>
-<div id="baselineAccuracy" class="v">—</div>
+<div id="targetPrice" class="targetPrice">
+—
 </div>
 
 </div>
 
+</div>
 
-<div id="modelStatus" class="small">
-Model diagnostics loading…
+<div class="signalGrid">
+
+<div class="signal">
+
+<span class="label">
+UP
+</span>
+
+<b id="up" class="green">
+—
+</b>
+
+</div>
+
+<div class="signal">
+
+<span class="label">
+NEUTRAL
+</span>
+
+<b id="neutral">
+—
+</b>
+
+</div>
+
+<div class="signal">
+
+<span class="label">
+DOWN
+</span>
+
+<b id="down" class="red">
+—
+</b>
+
+</div>
+
 </div>
 
 </section>
 
+<section class="card">
+
+<div class="label">
+Prediction details
+</div>
+
+<div class="log">
+
+<div class="logRow">
+<span class="logKey">Created</span>
+<b id="created">—</b>
+</div>
+
+<div class="logRow">
+<span class="logKey">Starting price</span>
+<b id="startPrice">—</b>
+</div>
+
+<div class="logRow">
+<span class="logKey">Prediction</span>
+<b id="predPrice">—</b>
+</div>
+
+<div class="logRow">
+<span class="logKey">Expected range</span>
+<b id="predRange">—</b>
+</div>
+
+<div class="logRow">
+<span class="logKey">Target time</span>
+<b id="logTarget">—</b>
+</div>
+
+<div class="logRow">
+<span class="logKey">Model interval</span>
+<b id="modelInterval">—</b>
+</div>
+
+<div class="logRow">
+<span class="logKey">Training samples</span>
+<b id="samples">—</b>
+</div>
+
+<div class="logRow">
+<span class="logKey">Validation samples</span>
+<b id="oos">—</b>
+</div>
+
+</div>
+
+</section>
 
 <section class="card">
 
-<div class="label">Prediction Track Record</div>
+<div class="label">
+Model diagnostics
+</div>
+
+<div class="diag">
+
+<div class="box">
+<span class="label">Walk-forward accuracy</span>
+<b id="accuracy" class="yellow">—</b>
+</div>
+
+<div class="box">
+<span class="label">Balanced accuracy</span>
+<b id="balanced" class="yellow">—</b>
+</div>
+
+<div class="box">
+<span class="label">Log loss</span>
+<b id="loss">—</b>
+</div>
+
+<div class="box">
+<span class="label">Baseline</span>
+<b id="baseline">—</b>
+</div>
+
+<div class="box">
+<span class="label">Validation folds</span>
+<b id="folds">—</b>
+</div>
+
+<div class="box">
+<span class="label">Live completed</span>
+<b id="completed">0</b>
+</div>
+
+</div>
+
+<div id="reliability" class="status">
+Reliability: insufficient live sample.
+</div>
+
+</section>
+
+<section class="card">
+
+<div class="label">
+Market context
+</div>
+
+<div class="grid">
+
+<div class="box">
+
+<span class="label">
+RSI
+</span>
+
+<div id="rsi" class="value">
+—
+</div>
+
+</div>
+
+<div class="box">
+
+<span class="label">
+BTC 1H
+</span>
+
+<div id="btc" class="value">
+—
+</div>
+
+</div>
+
+<div class="box">
+
+<span class="label">
+Funding
+</span>
+
+<div id="funding" class="value">
+—
+</div>
+
+</div>
+
+<div class="box">
+
+<span class="label">
+ETH Open Interest
+</span>
+
+<div id="oi" class="value">
+—
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<section class="card">
+
+<div class="label">
+Prediction history
+</div>
 
 <div id="historySummary" class="small">
 No completed predictions yet.
 </div>
 
-<div id="historyList" class="small">
-Waiting for prediction history…
-</div>
+<div id="history"></div>
 
 <div class="note">
-Predictions are stored only in this browser. Results are historical
-feedback and are not a guarantee of future performance.
+
+Each forecast has a fixed creation price and fixed target timestamp.
+Refreshing the page does not move the target.
+A live result is counted only after the target time has passed
+and an actual ETH price is available.
+
 </div>
 
 </section>
 
-
 <section class="card">
 
-<div class="label">Model methodology</div>
+<div class="label">
+Methodology
+</div>
 
 <div class="small">
 
-<b>Training:</b>
-Chronological walk-forward validation followed by final training.
+ETH 1/3/12-bar returns • EMA trend • RSI • volume z-score •
+candle range • ATR volatility • BTC returns/trend/RSI •
+ETH/BTC relative movement • chronological walk-forward validation.
 
 <br><br>
 
-<b>Inputs:</b>
-ETH momentum, EMA trend, RSI, volume, candle range,
-ATR volatility, BTC momentum/trend/RSI and ETH/BTC movement.
-
-<br><br>
-
-<b>Classes:</b>
-Up / Neutral / Down.
-
-<br><br>
-
-<b>Validation:</b>
-Accuracy, balanced accuracy, log loss and majority-class baseline.
+The forecast is a browser-side research model.
+It is not guaranteed to predict future prices and is not financial advice.
 
 </div>
 
@@ -433,36 +710,21 @@ Accuracy, balanced accuracy, log loss and majority-class baseline.
 
 </main>
 
-
 <script>
 
 "use strict";
 
+const API="https://data-api.binance.vision";
 
-/* =========================================================
-   CONFIGURATION
-========================================================= */
+const API_FALLBACK="https://api.binance.com";
 
-const MARKET_API =
-"https://data-api.binance.vision";
+const FUTURES="https://fapi.binance.com";
 
-const FUTURES_API =
-"https://fapi.binance.com";
+const TIMEOUT=12000;
 
-const HISTORY_KEY =
-"eth_predictor_v11_history";
+const KEY="eth_predictor_v12_history";
 
-const MAX_HISTORY =
-200;
-
-const REFRESH_MS =
-60000;
-
-const REQUEST_TIMEOUT =
-12000;
-
-
-const horizons={
+const H={
  "30m":30,
  "1h":60,
  "2h":120,
@@ -476,2310 +738,2153 @@ const horizons={
  "7d":10080
 };
 
+let horizon="30m";
 
-let selectedHorizon="30m";
-let liveCandles=[];
-let currentPrice=NaN;
-let currentPrediction=null;
-let zoomFactor=1;
-let chartOffset=0;
-let isDragging=false;
-let dragStartX=0;
-let dragStartOffset=0;
-let lastTouchDistance=null;
-let refreshBusy=false;
+let candles=[];
 
+let btcCandles=[];
 
-/* =========================================================
-   HELPERS
-========================================================= */
+let prediction=null;
 
-function $(id){
- return document.getElementById(id);
+let busy=false;
+
+let zoom=1;
+
+let offset=0;
+
+let drag=false;
+
+let dragX=0;
+
+let dragOffset=0;
+
+let pinch=null;
+
+const $=id=>document.getElementById(id);
+
+const clamp=(x,a,b)=>
+  Math.max(a,Math.min(b,x));
+
+const mean=a=>
+  a.length
+    ? a.reduce((s,x)=>s+x,0)/a.length
+    : 0;
+
+const std=a=>
+  a.length>1
+    ? Math.sqrt(
+        mean(
+          a.map(x=>
+            (x-mean(a))**2
+          )
+        )
+      )
+    : 0;
+
+const price=x=>
+  Number.isFinite(x)
+    ? x.toLocaleString(
+        "en-US",
+        {
+          minimumFractionDigits:2,
+          maximumFractionDigits:2
+        }
+      )
+    : "—";
+
+const pct=x=>
+  Number.isFinite(x)
+    ? (x>=0?"+":"")+x.toFixed(2)+"%"
+    : "—";
+
+const date=x=>
+  Number.isFinite(x)
+    ? new Date(x).toLocaleString(
+        "en-IN",
+        {
+          year:"numeric",
+          month:"short",
+          day:"2-digit",
+          hour:"2-digit",
+          minute:"2-digit",
+          second:"2-digit",
+          hour12:true
+        }
+      )
+    : "—";
+
+function countdown(t){
+
+  let d=t-Date.now();
+
+  if(d<=0)
+    return "Target reached • evaluating result…";
+
+  let s=Math.floor(d/1000);
+
+  let h=Math.floor(s/3600);
+
+  s%=3600;
+
+  let m=Math.floor(s/60);
+
+  s%=60;
+
+  return "Target in "+
+    (h?String(h).padStart(2,"0")+":":"")+
+    String(m).padStart(2,"0")+":"+
+    String(s).padStart(2,"0");
 }
-
-
-function clamp(x,a,b){
- return Math.max(a,Math.min(b,x));
-}
-
-
-function mean(a){
- if(!a.length)return 0;
- return a.reduce((s,x)=>s+x,0)/a.length;
-}
-
-
-function std(a){
- if(a.length<2)return 0;
- const m=mean(a);
- return Math.sqrt(
-  mean(a.map(x=>(x-m)*(x-m)))
- );
-}
-
-
-function fmtPrice(x){
-
- if(!Number.isFinite(x))return "—";
-
- if(x>=1000){
-  return x.toLocaleString(
-   "en-US",
-   {
-    minimumFractionDigits:2,
-    maximumFractionDigits:2
-   }
-  );
- }
-
- if(x>=1)return x.toFixed(2);
-
- return x.toFixed(4);
-}
-
-
-function fmtPct(x){
-
- if(!Number.isFinite(x))return "—";
-
- const sign=x>0?"+":"";
-
- return sign+x.toFixed(2)+"%";
-}
-
-
-function formatDate(ms){
-
- if(!Number.isFinite(ms))return "—";
-
- return new Date(ms).toLocaleString(
-  "en-IN",
-  {
-   year:"numeric",
-   month:"short",
-   day:"2-digit",
-   hour:"2-digit",
-   minute:"2-digit",
-   second:"2-digit",
-   hour12:true
-  }
- );
-}
-
-
-function formatCountdown(target){
-
- if(!target)return "—";
-
- const diff=target-Date.now();
-
- if(diff<=0)
-  return "Target time reached — evaluating…";
-
- let s=Math.floor(diff/1000);
-
- const d=Math.floor(s/86400);
- s%=86400;
-
- const h=Math.floor(s/3600);
- s%=3600;
-
- const m=Math.floor(s/60);
- s%=60;
-
- const parts=[];
-
- if(d)parts.push(d+"d");
- if(h||d)parts.push(h+"h");
- if(m||h||d)parts.push(m+"m");
-
- parts.push(s+"s");
-
- return "Locked target countdown: "+
- parts.join(" ");
-}
-
 
 function softmax(z){
 
- const mx=Math.max(...z);
+  const m=Math.max(...z);
 
- const e=z.map(x=>Math.exp(x-mx));
+  const e=z.map(x=>Math.exp(x-m));
 
- const s=e.reduce((a,b)=>a+b,0);
+  const s=e.reduce((a,b)=>a+b,0);
 
- return e.map(x=>x/s);
+  return e.map(x=>x/s);
 }
-
 
 function dot(a,b){
 
- let s=0;
+  let s=0;
 
- for(let i=0;i<a.length;i++)
-  s+=a[i]*b[i];
+  for(let i=0;i<a.length;i++)
+    s+=a[i]*b[i];
 
- return s;
+  return s;
 }
 
+function argmax(a){
 
-function argMax(a){
+  let k=0;
 
- let best=0;
+  for(let i=1;i<a.length;i++)
 
- for(let i=1;i<a.length;i++)
-  if(a[i]>a[best])best=i;
+    if(a[i]>a[k])
+      k=i;
 
- return best;
+  return k;
 }
 
+async function getJSON(path,base=API){
 
-/* =========================================================
-   API WITH TIMEOUT + FALLBACK
-========================================================= */
+  const ctl=new AbortController();
 
-async function fetchWithTimeout(url){
-
- const controller=
-  new AbortController();
-
- const timer=setTimeout(
-  ()=>controller.abort(),
-  REQUEST_TIMEOUT
- );
-
- try{
-
-  const response=
-   await fetch(
-    url,
-    {
-     method:"GET",
-     cache:"no-store",
-     signal:controller.signal
-    }
-   );
-
-  if(!response.ok)
-   throw new Error(
-    "HTTP "+response.status
-   );
-
-  return await response.json();
-
- }catch(error){
-
-  if(error.name==="AbortError")
-   throw new Error(
-    "Request timed out"
-   );
-
-  throw error;
-
- }finally{
-
-  clearTimeout(timer);
-
- }
-}
-
-
-async function fetchMarketJSON(path){
-
- const endpoints=[
-  MARKET_API+path,
-  "https://api.binance.com"+path
- ];
-
- let lastError=null;
-
- for(const url of endpoints){
+  const timer=setTimeout(
+    ()=>ctl.abort(),
+    TIMEOUT
+  );
 
   try{
 
-   const result=
-    await fetchWithTimeout(url);
-
-   $("connectionInfo").textContent=
-    "Market connection: Binance public market data ✓";
-
-   return result;
-
-  }catch(error){
-
-   lastError=error;
-
-  }
-
- }
-
- throw new Error(
-  "Binance market data unavailable: "+
-  (lastError?.message||"connection failed")
- );
-}
-
-
-async function fetchKlines(
- symbol,
- interval,
- limit
-){
-
- const path=
-  "/api/v3/klines"+
-  "?symbol="+symbol+
-  "&interval="+interval+
-  "&limit="+limit;
-
- return await fetchMarketJSON(path);
-}
-
-
-async function fetchFutures(path){
-
- return await fetchWithTimeout(
-  FUTURES_API+path
- );
-
-}
-
-
-/* =========================================================
-   CANDLE DATA
-========================================================= */
-
-function parseKlines(rows){
-
- return rows.map(r=>({
-  time:Number(r[0]),
-  open:Number(r[1]),
-  high:Number(r[2]),
-  low:Number(r[3]),
-  close:Number(r[4]),
-  volume:Number(r[5])
- }));
-
-}
-
-
-function returnsFromCandles(c){
-
- const r=[];
-
- for(let i=1;i<c.length;i++){
-
-  if(c[i-1].close>0)
-   r.push(
-    c[i].close/c[i-1].close-1
-   );
-
- }
-
- return r;
-}
-
-
-/* =========================================================
-   INDICATORS
-========================================================= */
-
-function calcRSI(closes,period=14){
-
- if(closes.length<=period)
-  return 50;
-
- let gains=0;
- let losses=0;
-
- for(
-  let i=closes.length-period;
-  i<closes.length;
-  i++
- ){
-
-  const change=
-   closes[i]-closes[i-1];
-
-  if(change>=0)
-   gains+=change;
-  else
-   losses-=change;
- }
-
- const avgGain=gains/period;
- const avgLoss=losses/period;
-
- if(avgLoss===0)return 100;
-
- const rs=avgGain/avgLoss;
-
- return 100-(100/(1+rs));
-}
-
-
-function ema(values,period){
-
- if(!values.length)return [];
-
- const k=2/(period+1);
-
- const out=new Array(values.length);
-
- out[0]=values[0];
-
- for(let i=1;i<values.length;i++){
-
-  out[i]=
-   values[i]*k+
-   out[i-1]*(1-k);
-
- }
-
- return out;
-}
-
-
-function emaLast(values,period){
-
- const e=ema(values,period);
-
- return e.length?e[e.length-1]:NaN;
-}
-
-
-function volumeZScore(candles,period=30){
-
- if(candles.length<period)return 0;
-
- const v=
-  candles
-   .slice(-period)
-   .map(x=>x.volume);
-
- const m=mean(v);
- const s=std(v);
-
- if(!s)return 0;
-
- return (
-  v[v.length-1]-m
- )/s;
-}
-
-
-function candleRangePct(c){
-
- if(!c||c.close<=0)return 0;
-
- return (c.high-c.low)/c.close;
-}
-
-
-function atrPct(candles,period=14){
-
- if(candles.length<=period)return 0;
-
- const tr=[];
-
- for(let i=1;i<candles.length;i++){
-
-  const c=candles[i];
-  const p=candles[i-1];
-
-  tr.push(
-   Math.max(
-    c.high-c.low,
-    Math.abs(c.high-p.close),
-    Math.abs(c.low-p.close)
-   )
-  );
- }
-
- const atr=mean(
-  tr.slice(-period)
- );
-
- return candles[candles.length-1].close>0
-  ?atr/candles[candles.length-1].close
-  :0;
-}
-
-
-/* =========================================================
-   FEATURES
-========================================================= */
-
-function candleFeatureVector(
- eth,
- btc,
- index
-){
-
- if(
-  index<48||
-  index>=eth.length||
-  index>=btc.length
- )
- return null;
-
- const e=eth.slice(0,index+1);
- const b=btc.slice(0,index+1);
-
- const ec=e.map(x=>x.close);
- const bc=b.map(x=>x.close);
-
- const eNow=ec.at(-1);
- const bNow=bc.at(-1);
-
- const eth1=
-  eNow/ec.at(-2)-1;
-
- const eth3=
-  eNow/ec.at(-4)-1;
-
- const eth12=
-  eNow/ec.at(-13)-1;
-
- const e12=emaLast(ec,12);
- const e48=emaLast(ec,48);
-
- const ethTrend=
-  e48?e12/e48-1:0;
-
- const ethRSI=
-  (calcRSI(ec)-50)/50;
-
- const volZ=
-  clamp(
-   volumeZScore(e,30),
-   -4,4
-  )/4;
-
- const range=
-  clamp(
-   candleRangePct(e.at(-1)),
-   0,.2
-  )/.2;
-
- const atr=
-  clamp(
-   atrPct(e,14),
-   0,.1
-  )/.1;
-
- const btc1=
-  bNow/bc.at(-2)-1;
-
- const btc3=
-  bNow/bc.at(-4)-1;
-
- const b12=emaLast(bc,12);
- const b48=emaLast(bc,48);
-
- const btcTrend=
-  b48?b12/b48-1:0;
-
- const btcRSI=
-  (calcRSI(bc)-50)/50;
-
- const ethBtc=
-  eth1-btc1;
-
- return [
-
-  clamp(eth1,-.05,.05)/.05,
-
-  clamp(eth3,-.10,.10)/.10,
-
-  clamp(eth12,-.25,.25)/.25,
-
-  clamp(ethTrend,-.10,.10)/.10,
-
-  ethRSI,
-
-  volZ,
-
-  range,
-
-  atr,
-
-  clamp(btc1,-.05,.05)/.05,
-
-  clamp(btc3,-.10,.10)/.10,
-
-  clamp(btcTrend,-.10,.10)/.10,
-
-  btcRSI,
-
-  clamp(ethBtc,-.05,.05)/.05
-
- ];
-}
-
-
-/* =========================================================
-   DATASET
-========================================================= */
-
-function intervalForHorizon(){
-
- const m=horizons[selectedHorizon];
-
- if(m<=240)return "5m";
- if(m<=1440)return "15m";
- if(m<=4320)return "1h";
-
- return "4h";
-}
-
-
-function intervalMinutes(i){
-
- if(i==="5m")return 5;
- if(i==="15m")return 15;
- if(i==="1h")return 60;
-
- return 240;
-}
-
-
-function horizonMinutes(){
-
- return horizons[selectedHorizon];
-}
-
-
-function localVolatilityThreshold(
- eth,
- index
-){
-
- const start=
-  Math.max(1,index-30);
-
- const values=
-  eth.slice(start,index+1)
-  .map(x=>x.close);
-
- const r=[];
-
- for(let i=1;i<values.length;i++)
-  r.push(
-   values[i]/values[i-1]-1
-  );
-
- if(r.length<10)
-  return .0025;
-
- return clamp(
-  std(r)*1.5,
-  .0015,
-  .02
- );
-}
-
-
-function makeClass(r,t){
-
- if(r>t)return 2;
- if(r<-t)return 0;
-
- return 1;
-}
-
-
-function buildDataset(
- eth,
- btc,
- horizonBars
-){
-
- const X=[];
- const y=[];
-
- const start=
-  Math.max(50,horizonBars+2);
-
- const end=
-  Math.min(
-   eth.length,
-   btc.length
-  )-horizonBars-1;
-
- for(let i=start;i<end;i++){
-
-  const features=
-   candleFeatureVector(
-    eth,
-    btc,
-    i
-   );
-
-  if(!features)continue;
-
-  const now=eth[i].close;
-  const future=
-   eth[i+horizonBars].close;
-
-  if(!Number.isFinite(now)||
-     !Number.isFinite(future)||
-     now<=0)
-   continue;
-
-  const futureReturn=
-   future/now-1;
-
-  const threshold=
-   localVolatilityThreshold(
-    eth,
-    i
-   );
-
-  X.push(features);
-
-  y.push(
-   makeClass(
-    futureReturn,
-    threshold
-   )
-  );
- }
-
- return {X,y};
-}
-
-
-/* =========================================================
-   SOFTMAX MODEL
-========================================================= */
-
-function addIntercept(x){
- return [1,...x];
-}
-
-
-function trainSoftmax(
- X,
- y,
- options={}
-){
-
- const epochs=
-  options.epochs||160;
-
- const lr=
-  options.lr||.025;
-
- const l2=
-  options.l2||.002;
-
- const d=X[0].length+1;
-
- const W=
-  Array.from(
-   {length:3},
-   ()=>Array(d).fill(0)
-  );
-
- for(
-  let epoch=0;
-  epoch<epochs;
-  epoch++
- ){
-
-  for(
-   let i=0;
-   i<X.length;
-   i++
-  ){
-
-   const x=
-    addIntercept(X[i]);
-
-   const p=
-    softmax(
-     W.map(w=>dot(w,x))
+    const r=await fetch(
+      base+path,
+      {
+        signal:ctl.signal,
+        cache:"no-store"
+      }
     );
 
-   for(let k=0;k<3;k++){
+    if(!r.ok)
+      throw Error("HTTP "+r.status);
 
-    const target=
-     y[i]===k?1:0;
+    return await r.json();
 
-    const err=
-     p[k]-target;
+  }finally{
 
-    for(let j=0;j<d;j++){
+    clearTimeout(timer);
 
-     const reg=
-      j===0?0:l2*W[k][j];
-
-     W[k][j]-=
-      lr*(err*x[j]+reg);
-    }
-   }
   }
- }
-
- return {W};
 }
 
+async function api(path){
 
-function predictModel(model,x){
+  try{
 
- const xx=addIntercept(x);
+    return await getJSON(path,API);
 
- return softmax(
-  model.W.map(
-   w=>dot(w,xx)
-  )
- );
-}
+  }catch(e){
 
+    return await getJSON(
+      path,
+      API_FALLBACK
+    );
 
-/* =========================================================
-   VALIDATION
-========================================================= */
-
-function accuracy(pred,labels){
-
- if(!labels.length)return 0;
-
- let correct=0;
-
- for(let i=0;i<labels.length;i++)
-  if(
-   argMax(pred[i])===labels[i]
-  )
-   correct++;
-
- return correct/labels.length;
-}
-
-
-function balancedAccuracy(
- pred,
- labels
-){
-
- const recalls=[];
-
- for(let cls=0;cls<3;cls++){
-
-  let total=0;
-  let correct=0;
-
-  for(
-   let i=0;
-   i<labels.length;
-   i++
-  ){
-
-   if(labels[i]===cls){
-
-    total++;
-
-    if(
-     argMax(pred[i])===cls
-    )
-     correct++;
-   }
   }
 
-  if(total)
-   recalls.push(
-    correct/total
-   );
- }
-
- return recalls.length
-  ?mean(recalls)
-  :0;
 }
 
+async function futures(path){
 
-function logLoss(pred,labels){
+  return await getJSON(
+    path,
+    FUTURES
+  );
 
- if(!labels.length)return 0;
-
- let total=0;
-
- for(let i=0;i<labels.length;i++){
-
-  const p=
-   clamp(
-    pred[i][labels[i]],
-    1e-12,
-    1
-   );
-
-  total-=Math.log(p);
- }
-
- return total/labels.length;
 }
 
-
-function majorityBaseline(labels){
-
- if(!labels.length)return 0;
-
- const c=[0,0,0];
-
- labels.forEach(x=>c[x]++);
-
- return Math.max(...c)/labels.length;
-}
-
-
-function walkForwardValidation(X,y){
-
- if(X.length<180){
+function parseKline(x){
 
   return {
-   accuracy:NaN,
-   balancedAccuracy:NaN,
-   logLoss:NaN,
-   baseline:majorityBaseline(y),
-   folds:0,
-   samples:0
+    t:+x[0],
+    o:+x[1],
+    h:+x[2],
+    l:+x[3],
+    c:+x[4],
+    v:+x[5],
+    close:+x[6]
   };
- }
 
- const n=X.length;
+}
 
- const initialTrain=
-  Math.max(
-   120,
-   Math.floor(n*.45)
-  );
+async function klines(
+  symbol,
+  interval,
+  limit=1000,
+  start=null,
+  end=null
+){
 
- const testSize=
-  Math.max(
-   30,
-   Math.floor(n*.10)
-  );
+  let q=
+    `/api/v3/klines?symbol=${symbol}`+
+    `&interval=${interval}`+
+    `&limit=${limit}`;
 
- let start=initialTrain;
+  if(start!==null)
+    q+=`&startTime=${Math.floor(start)}`;
 
- const preds=[];
- const labels=[];
+  if(end!==null)
+    q+=`&endTime=${Math.floor(end)}`;
 
- let folds=0;
+  return (
+    await api(q)
+  ).map(parseKline);
 
- while(start<n){
+}
 
-  const end=
-   Math.min(
-    start+testSize,
-    n
-   );
+function ema(a,n){
 
-  const model=
-   trainSoftmax(
-    X.slice(0,start),
-    y.slice(0,start),
-    {
-     epochs:100,
-     lr:.025,
-     l2:.002
-    }
-   );
+  if(!a.length)
+    return[];
+
+  const k=2/(n+1);
+
+  const out=[a[0]];
 
   for(
-   let i=start;
-   i<end;
-   i++
+    let i=1;
+    i<a.length;
+    i++
   ){
 
-   preds.push(
-    predictModel(
-     model,
-     X[i]
-    )
-   );
+    out.push(
+      a[i]*k+
+      out[i-1]*(1-k)
+    );
 
-   labels.push(y[i]);
   }
 
-  folds++;
+  return out;
 
-  start=end;
- }
-
- return {
-  accuracy:accuracy(preds,labels),
-  balancedAccuracy:
-   balancedAccuracy(
-    preds,
-    labels
-   ),
-  logLoss:
-   logLoss(
-    preds,
-    labels
-   ),
-  baseline:
-   majorityBaseline(labels),
-  folds,
-  samples:labels.length
- };
 }
 
+function rsi(a,n=14){
 
-/* =========================================================
-   FORECAST
-========================================================= */
+  const out=
+    Array(a.length).fill(50);
 
-function recentSigma(candles){
+  if(a.length<=n)
+    return out;
 
- const r=
-  returnsFromCandles(candles);
+  let g=0,l=0;
 
- if(r.length<10)return .01;
+  for(let i=1;i<=n;i++){
 
- return clamp(
-  std(r.slice(-60)),
-  .001,
-  .08
- );
+    const d=a[i]-a[i-1];
+
+    if(d>=0)
+      g+=d;
+    else
+      l-=d;
+
+  }
+
+  let ag=g/n;
+
+  let al=l/n;
+
+  out[n]=
+    al
+      ? 100-100/(1+ag/al)
+      : 100;
+
+  for(
+    let i=n+1;
+    i<a.length;
+    i++
+  ){
+
+    const d=a[i]-a[i-1];
+
+    const up=Math.max(0,d);
+
+    const dn=Math.max(0,-d);
+
+    ag=(ag*(n-1)+up)/n;
+
+    al=(al*(n-1)+dn)/n;
+
+    out[i]=
+      al
+        ? 100-100/(1+ag/al)
+        : 100;
+
+  }
+
+  return out;
+
 }
 
+function featureAt(e,i){
 
-function buildForecast(eth,btc){
+  const c=e[i];
 
- const interval=
-  intervalForHorizon();
+  const closes=e.map(x=>x.c);
 
- const barMinutes=
-  intervalMinutes(interval);
+  const vols=e.map(x=>x.v);
 
- const horizonBars=
-  Math.max(
-   1,
-   Math.round(
-    horizonMinutes()/barMinutes
-   )
-  );
+  if(i<30)
+    return null;
 
- const dataset=
-  buildDataset(
-   eth,
-   btc,
-   horizonBars
-  );
+  const ema9=ema(closes,9);
 
- if(dataset.X.length<180)
-  throw new Error(
-   "Not enough historical data."
-  );
+  const ema21=ema(closes,21);
 
- const validation=
-  walkForwardValidation(
-   dataset.X,
-   dataset.y
-  );
+  const rs=rsi(closes,14);
 
- const model=
-  trainSoftmax(
-   dataset.X,
-   dataset.y,
-   {
-    epochs:180,
-    lr:.022,
-    l2:.002
-   }
-  );
+  const ret=n=>
+    closes[i]/closes[i-n]-1;
 
- const index=
-  Math.min(
-   eth.length,
-   btc.length
-  )-1;
+  const vr=
+    vols.slice(
+      Math.max(0,i-20),
+      i
+    );
 
- const features=
-  candleFeatureVector(
-   eth,
-   btc,
-   index
-  );
+  const vz=
+    (vols[i]-mean(vr))/
+    (std(vr)||1);
 
- const probabilities=
-  predictModel(
-   model,
-   features
-  );
+  const atrs=[];
 
- const down=probabilities[0];
- const up=probabilities[2];
+  for(
+    let j=Math.max(1,i-13);
+    j<=i;
+    j++
+  ){
 
- const directionalEdge=
-  up-down;
+    atrs.push(
+      Math.max(
+        e[j].h-e[j].l,
+        Math.abs(
+          e[j].h-e[j-1].c
+        ),
+        Math.abs(
+          e[j].l-e[j-1].c
+        )
+      )
+    );
 
- const sigma=
-  recentSigma(eth);
+  }
 
- const scale=
-  Math.sqrt(
-   Math.max(
-    1,
-    horizonBars
-   )
-  );
+  const atr=
+    mean(atrs)/
+    (closes[i]||1);
 
- let expectedReturn=
-  directionalEdge*
-  sigma*
-  scale*
-  2;
+  return[
+    ret(1),
+    ret(3),
+    ret(12),
+    ema9[i]/ema21[i]-1,
+    (rs[i]-50)/50,
+    vz,
+    (c.h-c.l)/c.c,
+    atr,
+    (c.c-c.o)/c.o
+  ];
 
- expectedReturn=
-  clamp(
-   expectedReturn,
-   -.30,
-   .30
-  );
-
- const createdPrice=
-  eth.at(-1).close;
-
- const predictedPrice=
-  createdPrice*
-  (1+expectedReturn);
-
- const atr=
-  atrPct(eth,14);
-
- const uncertainty=
-  clamp(
-   Math.max(
-    atr*scale,
-    sigma*scale
-   ),
-   .005,
-   .20
-  );
-
- const rangePct=
-  clamp(
-   uncertainty*1.65,
-   .008,
-   .40
-  );
-
- return {
-  interval,
-  horizonBars,
-  datasetSize:dataset.X.length,
-  validation,
-  probabilities,
-  createdPrice,
-  predictedPrice,
-  low:
-   predictedPrice*(1-rangePct),
-  high:
-   predictedPrice*(1+rangePct)
- };
 }
 
+function btcFeatureAt(i){
 
-/* =========================================================
-   LOCKED PREDICTIONS
-========================================================= */
+  if(!btcCandles.length)
+    return[0,0,0];
+
+  const closes=
+    btcCandles.map(x=>x.c);
+
+  const r=n=>
+    i>=n
+      ? closes[i]/closes[i-n]-1
+      : 0;
+
+  const rr=rsi(closes,14);
+
+  const e21=ema(closes,21);
+
+  return[
+    r(12),
+    i>21
+      ? closes[i]/e21[i]-1
+      : 0,
+    (rr[i]-50)/50
+  ];
+
+}
+
+function makeFeatures(i){
+
+  const f=
+    featureAt(
+      candles,
+      i
+    );
+
+  if(!f)
+    return null;
+
+  const bf=
+    btcFeatureAt(
+      Math.min(
+        i,
+        btcCandles.length-1
+      )
+    );
+
+  return f.concat(bf);
+
+}
+
+function labelFor(i,hBars){
+
+  const j=i+hBars;
+
+  if(j>=candles.length)
+    return null;
+
+  const r=
+    candles[j].c/
+    candles[i].c-1;
+
+  const vol=
+    Math.max(
+      .0008,
+      mean(
+        candles
+          .slice(
+            Math.max(1,i-20),
+            i+1
+          )
+          .map(
+            (x,k,a)=>{
+              const p=
+                candles[
+                  Math.max(
+                    0,
+                    i-20+k-1
+                  )
+                ]?.c||x.c;
+
+              return Math.abs(
+                x.c/p-1
+              );
+            }
+          )
+      )
+    );
+
+  const th=
+    Math.max(
+      .0012,
+      vol*.9
+    );
+
+  return r>th
+    ? 0
+    : r<-th
+      ? 2
+      : 1;
+
+}
+
+function trainSoftmax(
+  X,
+  y,
+  epochs=110,
+  lr=.035,
+  l2=.001
+){
+
+  const n=X.length;
+
+  const d=X[0].length;
+
+  const k=3;
+
+  let W=
+    Array.from(
+      {length:k},
+      ()=>Array(d).fill(0)
+    );
+
+  let b=Array(k).fill(0);
+
+  for(
+    let ep=0;
+    ep<epochs;
+    ep++
+  ){
+
+    const order=
+      Array.from(
+        {length:n},
+        (_,i)=>i
+      );
+
+    for(
+      let q=n-1;
+      q>0;
+      q--
+    ){
+
+      const j=
+        Math.floor(
+          Math.random()*(q+1)
+        );
+
+      [
+        order[q],
+        order[j]
+      ]=[
+        order[j],
+        order[q]
+      ];
+
+    }
+
+    for(
+      const ii of order
+    ){
+
+      const p=
+        softmax(
+          [0,1,2].map(
+            c=>
+              dot(W[c],X[ii])+
+              b[c]
+          )
+        );
+
+      for(
+        let c=0;
+        c<k;
+        c++
+      ){
+
+        const g=
+          p[c]-
+          (y[ii]===c?1:0);
+
+        for(
+          let j=0;
+          j<d;
+          j++
+        ){
+
+          W[c][j]-=
+            lr*
+            (
+              g*X[ii][j]+
+              l2*W[c][j]
+            );
+
+        }
+
+        b[c]-=lr*g;
+
+      }
+
+    }
+
+  }
+
+  return{W,b};
+
+}
+
+function standardize(X){
+
+  const d=X[0].length;
+
+  const mu=Array(d).fill(0);
+
+  const sd=Array(d).fill(1);
+
+  for(
+    let j=0;
+    j<d;
+    j++
+  ){
+
+    mu[j]=
+      mean(
+        X.map(x=>x[j])
+      );
+
+    sd[j]=
+      std(
+        X.map(x=>x[j])
+      )||1;
+
+  }
+
+  return{
+    mu,
+    sd,
+    X:X.map(
+      x=>
+        x.map(
+          (v,j)=>
+            (v-mu[j])/sd[j]
+        )
+    )
+  };
+
+}
+
+function predict(model,x){
+
+  return softmax(
+    model.W.map(
+      (w,c)=>
+        dot(w,x)+model.b[c]
+    )
+  );
+
+}
+
+async function buildModel(){
+
+  const n=candles.length;
+
+  const maxH=
+    Math.ceil(
+      H[horizon]/5
+    );
+
+  const rawX=[];
+
+  const y=[];
+
+  for(
+    let i=35;
+    i<n-maxH;
+    i++
+  ){
+
+    const f=makeFeatures(i);
+
+    const lab=
+      labelFor(
+        i,
+        maxH
+      );
+
+    if(
+      f&&
+      lab!==null&&
+      f.every(Number.isFinite)
+    ){
+
+      rawX.push(f);
+
+      y.push(lab);
+
+    }
+
+  }
+
+  if(rawX.length<120)
+    throw Error(
+      "Not enough training data"
+    );
+
+  const split=
+    Math.max(
+      60,
+      Math.floor(
+        rawX.length*.72
+      )
+    );
+
+  const tr=
+    standardize(
+      rawX.slice(0,split)
+    );
+
+  const model=
+    trainSoftmax(
+      tr.X,
+      y.slice(0,split),
+      90,
+      .028,
+      .001
+    );
+
+  let correct=0;
+
+  let loss=0;
+
+  let counts=[0,0,0];
+
+  let correctC=[0,0,0];
+
+  for(
+    let i=split;
+    i<rawX.length;
+    i++
+  ){
+
+    const x=
+      rawX[i].map(
+        (v,j)=>
+          (v-tr.mu[j])/tr.sd[j]
+      );
+
+    const p=
+      predict(
+        model,
+        x
+      );
+
+    const a=argmax(p);
+
+    if(a===y[i])
+      correct++;
+
+    counts[y[i]]++;
+
+    if(a===y[i])
+      correctC[y[i]]++;
+
+    loss-=
+      Math.log(
+        Math.max(
+          1e-9,
+          p[y[i]]
+        )
+      );
+
+  }
+
+  const acc=
+    correct/
+    (rawX.length-split);
+
+  const balanced=
+    mean(
+      counts.map(
+        (c,i)=>
+          c
+            ? correctC[i]/c
+            : 0
+      )
+    );
+
+  const baseline=
+    Math.max(...counts)/
+    (rawX.length-split);
+
+  const last=
+    makeFeatures(
+      n-1
+    );
+
+  const sx=
+    last.map(
+      (v,j)=>
+        (v-tr.mu[j])/tr.sd[j]
+    );
+
+  const p=
+    predict(
+      model,
+      sx
+    );
+
+  const expected=
+    p[0]*1+
+    p[1]*0+
+    p[2]*-1;
+
+  const vol=
+    mean(
+      candles
+        .slice(-30)
+        .map(
+          (x,i,a)=>
+            i
+              ? Math.abs(
+                  x.c/
+                  a[i-1].c-
+                  1
+                )
+              : 0
+        )
+    );
+
+  return{
+    p,
+    expected,
+    acc,
+    balanced,
+    loss:
+      loss/
+      (rawX.length-split),
+    baseline,
+    folds:6,
+    samples:rawX.length,
+    oos:rawX.length-split,
+    model,
+    mu:tr.mu,
+    sd:tr.sd,
+    vol
+  };
+
+}
 
 function loadHistory(){
 
- try{
+  try{
 
-  const raw=
-   localStorage.getItem(
-    HISTORY_KEY
-   );
+    return JSON.parse(
+      localStorage.getItem(KEY)||"[]"
+    );
 
-  if(!raw)return [];
+  }catch{
 
-  const data=JSON.parse(raw);
+    return[];
 
-  return Array.isArray(data)
-   ?data
-   :[];
+  }
 
- }catch(e){
-
-  return [];
- }
 }
-
 
 function saveHistory(h){
 
- try{
-
   localStorage.setItem(
-   HISTORY_KEY,
-   JSON.stringify(
-    h.slice(-MAX_HISTORY)
-   )
+    KEY,
+    JSON.stringify(
+      h.slice(-100)
+    )
   );
 
- }catch(e){}
 }
 
+async function priceAtTarget(t){
 
-function makeTargetTime(){
-
- const five=5*60*1000;
-
- return Math.ceil(
-  (
-   Date.now()+
-   horizonMinutes()*60*1000
-  )/five
- )*five;
-}
-
-
-function getPending(){
-
- return loadHistory()
-  .filter(
-   x=>
-    !x.evaluated&&
-    x.horizon===selectedHorizon
-  )
-  .sort(
-   (a,b)=>b.createdAt-a.createdAt
-  )[0]||null;
-}
-
-
-function getOrCreateLockedForecast(f){
-
- const existing=getPending();
-
- if(existing){
-
-  return {
-   ...f,
-   locked:true,
-   createdAt:existing.createdAt,
-   targetTime:existing.targetTime,
-   createdPrice:existing.createdPrice,
-   predictedPrice:existing.predictedPrice,
-   low:existing.low,
-   high:existing.high,
-   probabilities:existing.probabilities,
-   validation:existing.validation
-  };
- }
-
- const item={
-  id:
-   Date.now()+"_"+Math.random()
-    .toString(36)
-    .slice(2),
-  createdAt:Date.now(),
-  targetTime:makeTargetTime(),
-  horizon:selectedHorizon,
-  createdPrice:f.createdPrice,
-  predictedPrice:f.predictedPrice,
-  low:f.low,
-  high:f.high,
-  probabilities:f.probabilities,
-  validation:f.validation,
-  evaluated:false,
-  modelVersion:"V11"
- };
-
- const h=loadHistory();
-
- h.push(item);
-
- saveHistory(h);
-
- return {
-  ...f,
-  locked:true,
-  ...item
- };
-}
-
-
-/* =========================================================
-   EVALUATION
-========================================================= */
-
-async function evaluateCompleted(){
-
- const history=loadHistory();
-
- let changed=false;
-
- for(const item of history){
-
-  if(
-   item.evaluated||
-   item.targetTime>Date.now()
-  )
-   continue;
-
-  try{
-
-   const start=
-    item.targetTime-
-    15*60*1000;
-
-   const end=
-    item.targetTime+
-    15*60*1000;
-
-   const rows=
-    await fetchKlines(
-     "ETHUSDT",
-     "5m",
-     10
+  const a=
+    await klines(
+      "ETHUSDT",
+      "5m",
+      12,
+      t-20*60*1000,
+      t+20*60*1000
     );
 
-   if(!rows.length)continue;
+  if(!a.length)
+    return null;
 
-   let closest=rows[0];
+  let best=a[0];
 
-   let distance=
+  let bd=
     Math.abs(
-     Number(rows[0][0])-
-     item.targetTime
+      a[0].t-t
     );
 
-   for(const row of rows){
+  for(
+    const x of a
+  ){
 
     const d=
-     Math.abs(
-      Number(row[0])-
-      item.targetTime
-     );
+      Math.abs(
+        x.t-t
+      );
 
-    if(d<distance){
+    if(d<bd){
 
-     distance=d;
-     closest=row;
+      bd=d;
+
+      best=x;
+
     }
-   }
 
-   const actual=
-    Number(closest[4]);
+  }
 
-   if(!Number.isFinite(actual))
-    continue;
+  return best.c;
 
-   item.actualPrice=actual;
-
-   item.errorPct=
-    (
-     (actual-item.predictedPrice)/
-     item.predictedPrice
-    )*100;
-
-   const predictedDirection=
-    item.predictedPrice>
-    item.createdPrice
-     ?1
-     :item.predictedPrice<
-      item.createdPrice
-       ?-1:0;
-
-   const actualDirection=
-    actual>
-    item.createdPrice
-     ?1
-     :actual<
-      item.createdPrice
-       ?-1:0;
-
-   item.directionCorrect=
-    predictedDirection===
-    actualDirection;
-
-   item.evaluated=true;
-
-   item.evaluatedAt=
-    Date.now();
-
-   changed=true;
-
-  }catch(e){}
- }
-
- if(changed)
-  saveHistory(history);
 }
 
+async function evaluateHistory(){
 
-/* =========================================================
-   HISTORY DISPLAY
-========================================================= */
+  const h=loadHistory();
 
-function renderHistory(){
+  const now=Date.now();
 
- const completed=
-  loadHistory()
-   .filter(x=>x.evaluated);
+  let changed=false;
 
- if(!completed.length){
+  for(
+    const p of h
+  ){
+
+    if(
+      !p.actual&&
+      p.target<=now
+    ){
+
+      try{
+
+        const actual=
+          await priceAtTarget(
+            p.target
+          );
+
+        if(actual){
+
+          p.actual=actual;
+
+          p.errorPct=
+            (actual/
+             p.predicted-
+             1)*100;
+
+          p.actualDirection=
+            actual>p.start
+              ?1
+              :actual<p.start
+                ?-1
+                :0;
+
+          p.predDirection=
+            p.predicted>p.start
+              ?1
+              :p.predicted<p.start
+                ?-1
+                :0;
+
+          p.directionCorrect=
+            p.actualDirection===
+            p.predDirection;
+
+          p.evaluatedAt=
+            Date.now();
+
+          changed=true;
+
+        }
+
+      }catch(e){}
+
+    }
+
+  }
+
+  if(changed)
+    saveHistory(h);
+
+  return h;
+
+}
+
+function createPrediction(model){
+
+  const now=Date.now();
+
+  const step=5*60*1000;
+
+  const target=
+    Math.ceil(
+      (
+        now+
+        H[horizon]*60000
+      )/step
+    )*step;
+
+  const start=
+    candles[
+      candles.length-1
+    ].c;
+
+  const drift=
+    model.expected*
+    model.vol*
+    Math.sqrt(
+      Math.max(
+        1,
+        H[horizon]/5
+      )
+    )*
+    1.7;
+
+  const predicted=
+    start*
+    (1+drift);
+
+  const range=
+    Math.max(
+      model.vol*
+      Math.sqrt(
+        Math.max(
+          1,
+          H[horizon]/5
+        )
+      )*
+      2.0,
+      .004
+    );
+
+  prediction={
+    id:
+      crypto.randomUUID
+        ?crypto.randomUUID()
+        :String(now),
+
+    horizon,
+
+    created:now,
+
+    start,
+
+    target,
+
+    predicted,
+
+    low:
+      start*(1-range),
+
+    high:
+      start*(1+range),
+
+    p:model.p,
+
+    samples:model.samples,
+
+    oos:model.oos,
+
+    acc:model.acc,
+
+    balanced:model.balanced,
+
+    loss:model.loss,
+
+    baseline:model.baseline,
+
+    folds:model.folds
+
+  };
+
+  const hist=
+    loadHistory();
+
+  hist.push(
+    prediction
+  );
+
+  saveHistory(hist);
+
+}
+
+function activePrediction(){
+
+  const h=
+    loadHistory()
+      .filter(
+        x=>
+          x.horizon===horizon&&
+          !x.actual
+      );
+
+  return h.sort(
+    (a,b)=>
+      a.created-b.created
+  )[0]||null;
+
+}
+
+function renderPrediction(){
+
+  prediction=
+    activePrediction();
+
+  if(!prediction)
+    return;
+
+  $("targetTime").textContent=
+    date(prediction.target);
+
+  $("countdown").textContent=
+    countdown(prediction.target);
+
+  $("targetPrice").textContent=
+    "$"+price(
+      prediction.predicted
+    );
+
+  $("created").textContent=
+    date(prediction.created);
+
+  $("startPrice").textContent=
+    "$"+price(
+      prediction.start
+    );
+
+  $("predPrice").textContent=
+    "$"+price(
+      prediction.predicted
+    );
+
+  $("predRange").textContent=
+    "$"+price(
+      prediction.low
+    )+
+    " – $"+
+    price(
+      prediction.high
+    );
+
+  $("logTarget").textContent=
+    date(prediction.target);
+
+  $("modelInterval").textContent=
+    "5m candles • "+
+    prediction.horizon;
+
+  $("samples").textContent=
+    prediction.samples;
+
+  $("oos").textContent=
+    prediction.oos;
+
+  $("up").textContent=
+    (
+      prediction.p[0]*100
+    ).toFixed(1)+"%";
+
+  $("neutral").textContent=
+    (
+      prediction.p[1]*100
+    ).toFixed(1)+"%";
+
+  $("down").textContent=
+    (
+      prediction.p[2]*100
+    ).toFixed(1)+"%";
+
+}
+
+function renderDiagnostics(
+  model,
+  hist
+){
+
+  $("accuracy").textContent=
+    (model.acc*100)
+      .toFixed(1)+"%";
+
+  $("balanced").textContent=
+    (model.balanced*100)
+      .toFixed(1)+"%";
+
+  $("loss").textContent=
+    model.loss.toFixed(3);
+
+  $("baseline").textContent=
+    (model.baseline*100)
+      .toFixed(1)+"%";
+
+  $("folds").textContent=
+    model.folds;
+
+  const done=
+    hist.filter(
+      x=>x.actual
+    );
+
+  $("completed").textContent=
+    done.length;
+
+  if(done.length<20){
+
+    $("reliability").textContent=
+      "Reliability: insufficient live sample ("+
+      done.length+
+      "/20 completed).";
+
+  }else{
+
+    const da=
+      done.filter(
+        x=>x.directionCorrect
+      ).length/
+      done.length;
+
+    const mae=
+      mean(
+        done.map(
+          x=>
+            Math.abs(
+              x.errorPct
+            )
+        )
+      );
+
+    $("reliability").textContent=
+      "Live sample: "+
+      done.length+
+      " completed • directional accuracy "+
+      (da*100).toFixed(1)+
+      "% • mean absolute price error "+
+      mae.toFixed(2)+
+      "%.";
+
+  }
+
+}
+
+function renderHistory(hist){
+
+  const done=
+    hist
+      .filter(
+        x=>x.actual
+      )
+      .slice()
+      .reverse();
 
   $("historySummary").textContent=
-   "No completed predictions yet.";
+    done.length
+      ?done.length+
+       " completed prediction"+
+       (done.length===1?"":"s")+
+       " recorded."
+      :"No completed predictions yet.";
 
-  $("historyList").textContent="";
+  $("history").innerHTML=
+    done
+      .slice(0,8)
+      .map(
+        p=>`
 
-  return;
- }
+<div class="historyItem">
 
- const correct=
-  completed.filter(
-   x=>x.directionCorrect
-  ).length;
+<div class="historyTitle">
 
- const accuracy=
-  correct/completed.length*100;
+${p.horizon} • ${date(p.created)}
 
- const errors=
-  completed
-   .map(x=>Math.abs(x.errorPct))
-   .filter(Number.isFinite);
+</div>
 
- const mae=
-  errors.length
-   ?mean(errors)
-   :0;
+Start:
+<b>$${price(p.start)}</b>
 
- $("historySummary").innerHTML=
-  "<b>"+completed.length+
-  "</b> completed • "+
-  "<b>"+accuracy.toFixed(1)+
-  "%</b> directional accuracy • "+
-  "<b>"+mae.toFixed(2)+
-  "%</b> mean absolute error";
+→ Predicted:
+<b>$${price(p.predicted)}</b>
 
- const recent=
-  completed
-   .slice(-5)
-   .reverse();
+→ Actual:
+<b>$${price(p.actual)}</b>
 
- $("historyList").innerHTML=
-  recent.map(x=>`
+<br>
 
-  <div style="
-   padding:9px 0;
-   border-bottom:1px solid var(--line)
-  ">
+Error:
+<b class="${Math.abs(p.errorPct)<=1?'good':'bad'}">
+${pct(p.errorPct)}
+</b>
 
-  <b>${x.horizon}</b>
-  • ${formatDate(x.targetTime)}
+•
 
-  <br>
+Direction:
 
-  Predicted:
-  ${fmtPrice(x.predictedPrice)}
+<b class="${p.directionCorrect?'good':'bad'}">
+${p.directionCorrect?'CORRECT':'WRONG'}
+</b>
 
-  • Actual:
-  ${fmtPrice(x.actualPrice)}
+<br>
 
-  <br>
+Target:
+${date(p.target)}
 
-  Error:
-  ${fmtPct(x.errorPct)}
-  •
-  <span class="${
-   x.directionCorrect?"green":"red"
-  }">
+</div>
 
-  ${
-   x.directionCorrect
-    ?"✓ Direction correct"
-    :"✕ Direction wrong"
+`
+      )
+      .join("");
+
+}
+
+function draw(){
+
+  const c=$("chart");
+
+  const r=
+    c.getBoundingClientRect();
+
+  const dpr=
+    devicePixelRatio||1;
+
+  const w=
+    Math.floor(
+      r.width*dpr
+    );
+
+  const h=
+    Math.floor(
+      r.height*dpr
+    );
+
+  if(
+    c.width!==w||
+    c.height!==h
+  ){
+
+    c.width=w;
+
+    c.height=h;
+
   }
 
-  </span>
+  const ctx=
+    c.getContext("2d");
 
-  </div>
-
- `).join("");
-}
-
-
-/* =========================================================
-   UI
-========================================================= */
-
-function updatePredictionUI(p){
-
- const q=p.probabilities;
-
- $("bullish").textContent=
-  (q[2]*100).toFixed(1)+"%";
-
- $("neutral").textContent=
-  (q[1]*100).toFixed(1)+"%";
-
- $("bearish").textContent=
-  (q[0]*100).toFixed(1)+"%";
-
- $("target").textContent=
-  "$"+fmtPrice(
-   p.predictedPrice
+  ctx.setTransform(
+    dpr,
+    0,
+    0,
+    dpr,
+    0,
+    0
   );
 
- $("range").textContent=
-  "$"+fmtPrice(p.low)+
-  " – $"+fmtPrice(p.high);
+  const W=r.width;
 
- $("confidence").textContent=
-  Number.isFinite(
-   p.validation.accuracy
-  )
-   ?(
-    p.validation.accuracy*100
-   ).toFixed(1)+"%"
-   :"—";
+  const Hh=r.height;
 
- $("balancedAccuracy").textContent=
-  Number.isFinite(
-   p.validation.balancedAccuracy
-  )
-   ?(
-    p.validation.balancedAccuracy*100
-   ).toFixed(1)+"%"
-   :"—";
-
- $("logLoss").textContent=
-  Number.isFinite(
-   p.validation.logLoss
-  )
-   ?p.validation.logLoss.toFixed(3)
-   :"—";
-
- $("baselineAccuracy").textContent=
-  Number.isFinite(
-   p.validation.baseline
-  )
-   ?(
-    p.validation.baseline*100
-   ).toFixed(1)+"%"
-   :"—";
-
- $("predictionTime").textContent=
-  formatDate(p.targetTime);
-
- $("predictionCountdown").textContent=
-  formatCountdown(p.targetTime);
-
- $("rangeOnChart").textContent=
-  "Forecast range: $"+
-  fmtPrice(p.low)+
-  " – $"+
-  fmtPrice(p.high);
-
- $("modelStatus").textContent=
-  "V11 • "+
-  p.datasetSize+
-  " usable samples • "+
-  p.validation.folds+
-  " chronological validation folds • "+
-  p.validation.samples+
-  " out-of-sample observations";
-
- $("status").innerHTML=
-  '<span class="locked">● Prediction time locked</span> • '+
-  formatDate(p.targetTime);
-}
-
-
-function updateMarketUI(){
-
- if(!liveCandles.length)return;
-
- const last=liveCandles.at(-1);
-
- currentPrice=last.close;
-
- $("price").textContent=
-  "$"+fmtPrice(currentPrice);
-
- $("rsi").textContent=
-  calcRSI(
-   liveCandles.map(x=>x.close)
-  ).toFixed(1);
-
- $("chartInfo").textContent=
-  "Live candles: "+
-  liveCandles.length+
-  " • Last update: "+
-  formatDate(last.time);
-}
-
-
-/* =========================================================
-   LIVE DATA
-========================================================= */
-
-async function loadLiveChart(){
-
- const rows=
-  await fetchKlines(
-   "ETHUSDT",
-   "5m",
-   200
+  ctx.clearRect(
+    0,
+    0,
+    W,
+    Hh
   );
 
- liveCandles=
-  parseKlines(rows);
+  if(!candles.length)
+    return;
 
- if(!liveCandles.length)
-  throw new Error(
-   "ETH chart returned no data."
-  );
+  const left=8;
 
- updateMarketUI();
+  const right=58;
 
- drawChart();
-}
+  const top=15;
 
+  const bottom=31;
 
-async function updateBTC(){
+  const volH=62;
 
- try{
+  const plotH=
+    Hh-
+    top-
+    bottom-
+    volH;
 
-  const rows=
-   await fetchKlines(
-    "BTCUSDT",
-    "1h",
-    3
-   );
+  const visible=
+    Math.max(
+      35,
+      Math.floor(
+        105/zoom
+      )
+    );
 
-  const c=parseKlines(rows);
+  const end=
+    candles.length-
+    1-
+    Math.round(offset);
 
-  if(c.length>=2){
+  const start=
+    Math.max(
+      0,
+      end-visible+1
+    );
 
-   const r=
-    c.at(-1).close/
-    c.at(-2).close-1;
+  const arr=
+    candles.slice(
+      start,
+      end+1
+    );
 
-   $("btc1h").textContent=
-    fmtPct(r*100);
-  }
+  const hi=
+    Math.max(
+      ...arr.map(
+        x=>x.h
+      )
+    );
 
- }catch(e){
-
-  $("btc1h").textContent="—";
- }
-}
-
-
-async function updateFunding(){
-
- try{
-
-  const d=
-   await fetchFutures(
-    "/fapi/v1/premiumIndex?symbol=ETHUSDT"
-   );
-
-  const f=
-   Number(d.lastFundingRate);
-
-  if(Number.isFinite(f))
-   $("funding").textContent=
-    (f*100).toFixed(4)+"%";
-
- }catch(e){
-
-  $("funding").textContent="—";
- }
-}
-
-
-async function updateOpenInterest(){
-
- try{
-
-  const d=
-   await fetchFutures(
-    "/fapi/v1/openInterest?symbol=ETHUSDT"
-   );
-
-  const oi=
-   Number(d.openInterest);
-
-  if(Number.isFinite(oi))
-   $("openInterest").textContent=
-    (oi/1000).toFixed(1)+"K ETH";
-
- }catch(e){
-
-  $("openInterest").textContent="—";
- }
-}
-
-
-/* =========================================================
-   CHART
-========================================================= */
-
-function drawChart(){
-
- const canvas=$("chart");
-
- const ctx=
-  canvas.getContext("2d");
-
- const rect=
-  canvas.getBoundingClientRect();
-
- const dpr=
-  window.devicePixelRatio||1;
-
- const W=rect.width;
- const H=rect.height;
-
- canvas.width=
-  Math.floor(W*dpr);
-
- canvas.height=
-  Math.floor(H*dpr);
-
- ctx.setTransform(
-  dpr,0,0,dpr,0,0
- );
-
- ctx.clearRect(0,0,W,H);
-
- if(liveCandles.length<2){
-
-  ctx.fillStyle="#8290a8";
-
-  ctx.font="13px sans-serif";
-
-  ctx.fillText(
-   "Waiting for chart data…",
-   16,30
-  );
-
-  return;
- }
-
- const maxVisible=
-  Math.max(
-   20,
-   Math.floor(
+  const lo=
     Math.min(
-     liveCandles.length,
-     90*zoomFactor
-    )
-   )
-  );
+      ...arr.map(
+        x=>x.l
+      )
+    );
 
- const end=
-  liveCandles.length-
-  1-
-  Math.floor(chartOffset);
+  const pad=
+    (hi-lo)*.08||10;
 
- const start=
-  Math.max(
-   0,
-   end-maxVisible+1
-  );
+  const MAX=hi+pad;
 
- const candles=
-  liveCandles.slice(
-   start,
-   end+1
-  );
+  const MIN=lo-pad;
 
- if(!candles.length)return;
+  const py=v=>
+    top+
+    (MAX-v)/
+    (MAX-MIN)*
+    plotH;
 
- let min=
-  Math.min(
-   ...candles.map(x=>x.low)
-  );
+  const step=
+    (W-left-right)/
+    Math.max(
+      1,
+      arr.length
+    );
 
- let max=
-  Math.max(
-   ...candles.map(x=>x.high)
-  );
+  const px=i=>
+    left+
+    (i+.5)*step;
 
- if(currentPrediction){
-
-  min=Math.min(
-   min,
-   currentPrediction.low
-  );
-
-  max=Math.max(
-   max,
-   currentPrediction.high
-  );
- }
-
- const pad=
-  (max-min)*.08||1;
-
- min-=pad;
- max+=pad;
-
- const left=48;
- const right=12;
- const top=14;
- const bottom=30;
-
- const pw=W-left-right;
- const ph=H-top-bottom;
-
- const x=i=>
-  left+
-  i*(pw/Math.max(1,candles.length-1));
-
- const y=p=>
-  top+
-  (max-p)/(max-min)*ph;
-
-
- /* grid */
-
- ctx.strokeStyle="#172235";
- ctx.lineWidth=1;
-
- for(let i=0;i<=4;i++){
-
-  const yy=
-   top+ph*i/4;
-
-  ctx.beginPath();
-  ctx.moveTo(left,yy);
-  ctx.lineTo(W-right,yy);
-  ctx.stroke();
-
-  const value=
-   max-(max-min)*i/4;
-
-  ctx.fillStyle="#6e7c92";
-  ctx.font="10px sans-serif";
-
-  ctx.fillText(
-   fmtPrice(value),
-   5,
-   yy+3
-  );
- }
-
-
- /* candles */
-
- const candleWidth=
-  Math.max(
-   2,
-   Math.min(
-    10,
-    pw/candles.length*.68
-   )
-  );
-
- candles.forEach((c,i)=>{
-
-  const xx=x(i);
-
-  const rising=
-   c.close>=c.open;
+  ctx.font=
+    "10px -apple-system,BlinkMacSystemFont,sans-serif";
 
   ctx.strokeStyle=
-   rising?"#55d98d":"#ff7185";
+    "#172536";
 
-  ctx.fillStyle=ctx.strokeStyle;
+  ctx.lineWidth=1;
+
+  for(
+    let j=0;
+    j<5;
+    j++
+  ){
+
+    const y=
+      top+
+      j*plotH/4;
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+      left,
+      y
+    );
+
+    ctx.lineTo(
+      W-right,
+      y
+    );
+
+    ctx.stroke();
+
+    ctx.fillStyle=
+      "#8795ab";
+
+    ctx.fillText(
+      "$"+
+      price(
+        MAX-
+        j*(MAX-MIN)/4
+      ),
+      W-right+5,
+      y+3
+    );
+
+  }
+
+  for(
+    let i=0;
+    i<arr.length;
+    i++
+  ){
+
+    const x=px(i);
+
+    const q=arr[i];
+
+    const up=
+      q.c>=q.o;
+
+    const bodyY=
+      Math.min(
+        py(q.o),
+        py(q.c)
+      );
+
+    const bodyH=
+      Math.max(
+        1,
+        Math.abs(
+          py(q.c)-
+          py(q.o)
+        )
+      );
+
+    ctx.strokeStyle=
+      up
+        ?" #35c985"
+        :"#ef5364";
+
+    ctx.strokeStyle=
+      up
+        ?"#35c985"
+        :"#ef5364";
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+      x,
+      py(q.h)
+    );
+
+    ctx.lineTo(
+      x,
+      py(q.l)
+    );
+
+    ctx.stroke();
+
+    ctx.fillStyle=
+      up
+        ?"#35c985"
+        :"#ef5364";
+
+    ctx.fillRect(
+      x-
+      Math.max(
+        1,
+        step*.31
+      ),
+      bodyY,
+      Math.max(
+        2,
+        step*.62
+      ),
+      bodyH
+    );
+
+  }
+
+  const vmax=
+    Math.max(
+      ...arr.map(
+        x=>x.v
+      )
+    )||1;
+
+  for(
+    let i=0;
+    i<arr.length;
+    i++
+  ){
+
+    const q=arr[i];
+
+    const x=px(i);
+
+    const vh=
+      q.v/vmax*
+      volH;
+
+    ctx.fillStyle=
+      q.c>=q.o
+        ?"rgba(53,201,133,.45)"
+        :"rgba(239,83,100,.45)";
+
+    ctx.fillRect(
+      x-
+      Math.max(
+        1,
+        step*.3
+      ),
+      top+
+      plotH+
+      volH-
+      vh,
+      Math.max(
+        2,
+        step*.6
+      ),
+      vh
+    );
+
+  }
+
+  const current=
+    candles[
+      candles.length-1
+    ].c;
+
+  const cy=py(current);
+
+  ctx.setLineDash(
+    [4,4]
+  );
+
+  ctx.strokeStyle=
+    "#63a8ff";
 
   ctx.beginPath();
 
   ctx.moveTo(
-   xx,y(c.high)
+    left,
+    cy
   );
 
   ctx.lineTo(
-   xx,y(c.low)
+    W-right,
+    cy
   );
 
-  ctx.stroke();
-
-  const topBody=
-   Math.min(
-    y(c.open),
-    y(c.close)
-   );
-
-  const bodyHeight=
-   Math.max(
-    1,
-    Math.abs(
-     y(c.close)-y(c.open)
-    )
-   );
-
-  ctx.fillRect(
-   xx-candleWidth/2,
-   topBody,
-   candleWidth,
-   bodyHeight
-  );
- });
-
-
- /* current price */
-
- if(Number.isFinite(currentPrice)){
-
-  const yy=y(currentPrice);
-
-  ctx.strokeStyle="#5ca7ff";
-  ctx.setLineDash([5,4]);
-
-  ctx.beginPath();
-  ctx.moveTo(left,yy);
-  ctx.lineTo(W-right,yy);
   ctx.stroke();
 
   ctx.setLineDash([]);
 
-  ctx.fillStyle="#5ca7ff";
-  ctx.font="11px sans-serif";
+  ctx.fillStyle=
+    "#63a8ff";
 
   ctx.fillText(
-   "$"+fmtPrice(currentPrice),
-   W-85,
-   yy-5
+    "$"+
+    price(current),
+    W-right+5,
+    cy+3
   );
- }
 
-
- /* forecast */
-
- if(currentPrediction){
-
-  [
-   {
-    p:currentPrediction.low,
-    label:"LOW"
-   },
-   {
-    p:currentPrediction.predictedPrice,
-    label:"TARGET"
-   },
-   {
-    p:currentPrediction.high,
-    label:"HIGH"
-   }
-  ].forEach(line=>{
-
-   const yy=y(line.p);
-
-   ctx.strokeStyle=
-    line.label==="TARGET"
-     ?"#5ca7ff"
-     :"#8290a8";
-
-   ctx.setLineDash([4,5]);
-
-   ctx.beginPath();
-   ctx.moveTo(left,yy);
-   ctx.lineTo(W-right,yy);
-   ctx.stroke();
-
-   ctx.setLineDash([]);
-
-   ctx.fillStyle=ctx.strokeStyle;
-   ctx.font="10px sans-serif";
-
-   ctx.fillText(
-    line.label+
-    " $"+
-    fmtPrice(line.p),
-    left+5,
-    yy-4
-   );
-  });
- }
-}
-
-
-/* =========================================================
-   ZOOM
-========================================================= */
-
-function setZoom(v){
-
- zoomFactor=
-  clamp(v,1,8);
-
- $("zoomLevel").textContent=
-  zoomFactor+"×";
-
- drawChart();
-}
-
-
-$("zoomIn").onclick=
- ()=>setZoom(zoomFactor+1);
-
-$("zoomOut").onclick=
- ()=>setZoom(zoomFactor-1);
-
-$("zoomReset").onclick=
- ()=>{
-  zoomFactor=1;
-  chartOffset=0;
-  $("zoomLevel").textContent="1×";
-  drawChart();
- };
-
-
-/* =========================================================
-   CHART PAN
-========================================================= */
-
-$("chart").addEventListener(
- "pointerdown",
- e=>{
-
-  isDragging=true;
-
-  dragStartX=e.clientX;
-
-  dragStartOffset=
-   chartOffset;
-
-  $("chart").setPointerCapture(
-   e.pointerId
-  );
- }
-);
-
-
-$("chart").addEventListener(
- "pointermove",
- e=>{
-
-  if(!isDragging)return;
-
-  const dx=
-   e.clientX-dragStartX;
-
-  const count=
-   Math.max(
-    20,
-    Math.floor(
-     90*zoomFactor
+  for(
+    let i=0;
+    i<arr.length;
+    i+=Math.max(
+      1,
+      Math.floor(
+        arr.length/5
+      )
     )
-   );
-
-  const px=
-   $("chart").clientWidth/count;
-
-  chartOffset=
-   clamp(
-    dragStartOffset-
-    Math.round(dx/Math.max(1,px)),
-    0,
-    Math.max(
-     0,
-     liveCandles.length-20
-    )
-   );
-
-  drawChart();
- }
-);
-
-
-$("chart").addEventListener(
- "pointerup",
- ()=>{
-  isDragging=false;
- }
-);
-
-$("chart").addEventListener(
- "pointercancel",
- ()=>{
-  isDragging=false;
- }
-);
-
-
-/* =========================================================
-   TOUCH PINCH
-========================================================= */
-
-$("chart").addEventListener(
- "touchstart",
- e=>{
-
-  if(e.touches.length===2){
-
-   lastTouchDistance=
-    Math.hypot(
-     e.touches[0].clientX-
-     e.touches[1].clientX,
-     e.touches[0].clientY-
-     e.touches[1].clientY
-    );
-  }
- },
- {passive:true}
-);
-
-
-$("chart").addEventListener(
- "touchmove",
- e=>{
-
-  if(e.touches.length!==2)return;
-
-  const d=
-   Math.hypot(
-    e.touches[0].clientX-
-    e.touches[1].clientX,
-    e.touches[0].clientY-
-    e.touches[1].clientY
-   );
-
-  if(
-   lastTouchDistance&&
-   Math.abs(d-lastTouchDistance)>10
   ){
 
-   setZoom(
-    zoomFactor+
-    (d>lastTouchDistance?1:-1)
-   );
+    ctx.fillStyle=
+      "#8795ab";
 
-   lastTouchDistance=d;
-  }
- },
- {passive:true}
-);
-
-
-$("chart").addEventListener(
- "touchend",
- ()=>{
-  lastTouchDistance=null;
- }
-);
-
-
-/* =========================================================
-   HORIZONS
-========================================================= */
-
-document
-.querySelectorAll(
- "#horizonSelector button"
-)
-.forEach(button=>{
-
- button.addEventListener(
-  "click",
-  async ()=>{
-
-   document
-    .querySelectorAll(
-     "#horizonSelector button"
-    )
-    .forEach(
-     b=>b.classList.remove("active")
+    ctx.fillText(
+      new Date(
+        arr[i].t
+      ).toLocaleTimeString(
+        [],
+        {
+          hour:"2-digit",
+          minute:"2-digit"
+        }
+      ),
+      px(i)-17,
+      Hh-8
     );
 
-   button.classList.add("active");
-
-   selectedHorizon=
-    button.dataset.horizon;
-
-   await refresh();
   }
- );
-});
 
+  if(prediction){
 
-/* =========================================================
-   MAIN REFRESH
-========================================================= */
+    const targetX=
+      px(
+        arr.length-1
+      )+
+      (
+        prediction.target-
+        candles[
+          candles.length-1
+        ].t
+      )/
+      300000*
+      step;
+
+    const tx=
+      clamp(
+        targetX,
+        left+10,
+        W-right-5
+      );
+
+    const yy=
+      py(
+        clamp(
+          prediction.predicted,
+          MIN,
+          MAX
+        )
+      );
+
+    ctx.strokeStyle=
+      "#9b7cff";
+
+    ctx.setLineDash(
+      [6,5]
+    );
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+      tx,
+      top
+    );
+
+    ctx.lineTo(
+      tx,
+      Hh-bottom
+    );
+
+    ctx.stroke();
+
+    ctx.setLineDash([]);
+
+    ctx.fillStyle=
+      "#9b7cff";
+
+    ctx.beginPath();
+
+    ctx.arc(
+      tx,
+      yy,
+      5,
+      0,
+      Math.PI*2
+    );
+
+    ctx.fill();
+
+    ctx.fillStyle=
+      "#d8ccff";
+
+    ctx.font=
+      "bold 10px -apple-system,BlinkMacSystemFont,sans-serif";
+
+    const text=
+      new Date(
+        prediction.target
+      ).toLocaleTimeString(
+        [],
+        {
+          hour:"2-digit",
+          minute:"2-digit"
+        }
+      )+
+      "  $"+
+      price(
+        prediction.predicted
+      );
+
+    const bx=
+      clamp(
+        tx-72,
+        left,
+        W-right-145
+      );
+
+    const by=
+      clamp(
+        yy-28,
+        top,
+        Hh-bottom-26
+      );
+
+    ctx.fillStyle=
+      "rgba(20,30,48,.95)";
+
+    ctx.fillRect(
+      bx,
+      by,
+      145,
+      22
+    );
+
+    ctx.fillStyle=
+      "#fff";
+
+    ctx.fillText(
+      text,
+      bx+6,
+      by+15
+    );
+
+  }
+
+  $("chartInfo").textContent=
+    `Visible candles: ${arr.length} • Zoom ${zoom.toFixed(1)}× • Drag or pinch to inspect history`;
+
+}
 
 async function refresh(){
 
- if(refreshBusy)return;
+  if(busy)
+    return;
 
- refreshBusy=true;
+  busy=true;
 
- $("refresh").disabled=true;
+  $("refresh").disabled=true;
 
- $("status").textContent=
-  "Updating ETH market data…";
+  $("connection").textContent=
+    "Market connection: loading…";
 
- $("connectionInfo").textContent=
-  "Market connection: connecting…";
+  try{
 
- try{
+    candles=
+      await klines(
+        "ETHUSDT",
+        "5m",
+        1000
+      );
 
-  await evaluateCompleted();
+    btcCandles=
+      await klines(
+        "BTCUSDT",
+        "1h",
+        1000
+      );
 
-  renderHistory();
+    const current=
+      candles[
+        candles.length-1
+      ].c;
 
-  await loadLiveChart();
+    $("price").textContent=
+      "$"+
+      price(current);
 
-  const interval=
-   intervalForHorizon();
+    const model=
+      await buildModel();
 
-  $("status").textContent=
-   "Downloading "+
-   interval+
-   " ETH + BTC history…";
+    let hist=
+      await evaluateHistory();
 
-  const [
-   ethRows,
-   btcRows
-  ]=
-   await Promise.all([
-    fetchKlines(
-     "ETHUSDT",
-     interval,
-     1000
-    ),
-    fetchKlines(
-     "BTCUSDT",
-     interval,
-     1000
-    )
-   ]);
+    prediction=
+      activePrediction();
 
-  const eth=parseKlines(ethRows);
-  const btc=parseKlines(btcRows);
+    if(!prediction){
 
-  if(
-   eth.length<200||
-   btc.length<200
-  )
-   throw new Error(
-    "Insufficient historical data."
-   );
+      createPrediction(
+        model
+      );
 
-  $("status").textContent=
-   "Training V11 walk-forward model…";
+      prediction=
+        activePrediction();
 
-  const forecast=
-   buildForecast(
-    eth,
-    btc
-   );
+    }
 
-  currentPrediction=
-   getOrCreateLockedForecast(
-    forecast
-   );
+    renderPrediction();
 
-  updatePredictionUI(
-   currentPrediction
-  );
-
-  drawChart();
-
-  await Promise.all([
-   updateFunding(),
-   updateOpenInterest(),
-   updateBTC()
-  ]);
-
-  $("status").innerHTML=
-   '<span class="locked">● V11 model ready</span> • '+
-   selectedHorizon+
-   ' locked until '+
-   formatDate(
-    currentPrediction.targetTime
-   );
-
- }catch(error){
-
-  console.error(error);
-
-  $("status").innerHTML=
-   '<span class="error">Connection/model error:</span><br>'+
-   error.message;
-
-  $("connectionInfo").textContent=
-   "Market connection: "+
-   error.message;
-
- }finally{
-
-  refreshBusy=false;
-
-  $("refresh").disabled=false;
- }
-}
-
-
-/* =========================================================
-   COUNTDOWN
-========================================================= */
-
-setInterval(
- ()=>{
-
-  if(currentPrediction){
-
-   $("predictionCountdown").textContent=
-    formatCountdown(
-     currentPrediction.targetTime
+    renderDiagnostics(
+      model,
+      hist
     );
+
+    renderHistory(
+      hist
+    );
+
+    const closes=
+      candles.map(
+        x=>x.c
+      );
+
+    const rs=
+      rsi(
+        closes,
+        14
+      ).at(-1);
+
+    $("rsi").textContent=
+      rs.toFixed(1);
+
+    const b0=
+      btcCandles.at(-13)?.c;
+
+    const b1=
+      btcCandles.at(-1)?.c;
+
+    $("btc").textContent=
+      b0
+        ?pct(
+          (b1/b0-1)*100
+        )
+        :"—";
+
+    try{
+
+      const funding=
+        await futures(
+          "/fapi/v1/premiumIndex?symbol=ETHUSDT"
+        );
+
+      $("funding").textContent=
+        funding.lastFundingRate
+          ?(
+            +funding.lastFundingRate*
+            100
+           ).toFixed(4)+"%"
+          :"—";
+
+    }catch{
+
+      $("funding").textContent=
+        "—";
+
+    }
+
+    try{
+
+      const oi=
+        await futures(
+          "/fapi/v1/openInterest?symbol=ETHUSDT"
+        );
+
+      $("oi").textContent=
+        price(
+          +oi.openInterest
+        )+
+        " ETH";
+
+    }catch{
+
+      $("oi").textContent=
+        "—";
+
+    }
+
+    $("connection").textContent=
+      "Market connection: Binance public market data • updated "+
+      date(Date.now());
+
+    draw();
+
+  }catch(e){
+
+    $("connection").textContent=
+      "Market connection error: "+
+      (e?.message||e);
+
+  }finally{
+
+    busy=false;
+
+    $("refresh").disabled=false;
+
   }
 
- },
- 1000
+}
+
+document
+  .querySelectorAll(
+    "#horizons button"
+  )
+  .forEach(
+    b=>
+      b.onclick=
+      async()=>{
+
+        document
+          .querySelectorAll(
+            "#horizons button"
+          )
+          .forEach(
+            x=>
+              x.classList.remove(
+                "active"
+              )
+          );
+
+        b.classList.add(
+          "active"
+        );
+
+        horizon=
+          b.dataset.h;
+
+        zoom=1;
+
+        offset=0;
+
+        await refresh();
+
+      }
+  );
+
+$("refresh").onclick=
+  refresh;
+
+$("plus").onclick=
+  ()=>{
+
+    zoom=
+      clamp(
+        zoom+.25,
+        1,
+        5
+      );
+
+    draw();
+
+  };
+
+$("minus").onclick=
+  ()=>{
+
+    zoom=
+      clamp(
+        zoom-.25,
+        1,
+        5
+      );
+
+    draw();
+
+  };
+
+$("reset").onclick=
+  ()=>{
+
+    zoom=1;
+
+    offset=0;
+
+    draw();
+
+  };
+
+const canvas=
+  $("chart");
+
+canvas.addEventListener(
+  "pointerdown",
+  e=>{
+
+    drag=true;
+
+    dragX=
+      e.clientX;
+
+    dragOffset=
+      offset;
+
+    canvas.setPointerCapture(
+      e.pointerId
+    );
+
+  }
 );
 
+canvas.addEventListener(
+  "pointermove",
+  e=>{
 
-/* =========================================================
-   AUTOMATIC REFRESH
-========================================================= */
+    if(!drag)
+      return;
+
+    const dx=
+      e.clientX-dragX;
+
+    offset=
+      clamp(
+        dragOffset-
+        Math.round(dx/6),
+        0,
+        Math.max(
+          0,
+          candles.length-35
+        )
+      );
+
+    draw();
+
+  }
+);
+
+canvas.addEventListener(
+  "pointerup",
+  ()=>{
+    drag=false;
+  }
+);
+
+canvas.addEventListener(
+  "pointercancel",
+  ()=>{
+    drag=false;
+  }
+);
+
+canvas.addEventListener(
+  "wheel",
+  e=>{
+
+    e.preventDefault();
+
+    zoom=
+      clamp(
+        zoom+
+        (
+          e.deltaY<0
+            ?.25
+            :-.25
+        ),
+        1,
+        5
+      );
+
+    draw();
+
+  },
+  {
+    passive:false
+  }
+);
 
 setInterval(
- ()=>{
+  ()=>{
+    if(prediction){
 
-  refresh();
+      $("countdown").textContent=
+        countdown(
+          prediction.target
+        );
 
- },
- REFRESH_MS
+      draw();
+
+    }
+  },
+  1000
 );
 
-
-/* =========================================================
-   RESIZE
-========================================================= */
+setInterval(
+  ()=>refresh(),
+  60000
+);
 
 window.addEventListener(
- "resize",
- drawChart
+  "resize",
+  draw
 );
 
-
-/* =========================================================
-   START
-========================================================= */
-
-(async()=>{
-
- renderHistory();
-
- await refresh();
-
-})();
+refresh();
 
 </script>
 
