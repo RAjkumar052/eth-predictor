@@ -83,6 +83,25 @@ button:disabled{
   opacity:.6
 }
 
+.tf{
+  display:flex;
+  gap:7px;
+  overflow-x:auto;
+  margin-top:12px;
+  padding-bottom:3px
+}
+
+.tf button{
+  background:#17263d;
+  min-width:55px;
+  padding:9px 10px;
+  font-size:13px
+}
+
+.tf button.active{
+  background:#3e70b0
+}
+
 .grid{
   display:grid;
   grid-template-columns:1fr 1fr;
@@ -123,6 +142,12 @@ canvas{
 .error{
   color:#ff9aaa
 }
+
+.small{
+  font-size:11px;
+  color:var(--muted);
+  margin-top:8px
+}
 </style>
 </head>
 
@@ -133,7 +158,7 @@ canvas{
 <header>
   <div>
     <h1>ETH Global Predictor</h1>
-    <div class="muted">Live ETH data • iPhone research dashboard</div>
+    <div class="muted">Live ETH research dashboard</div>
   </div>
 
   <button id="refresh">↻ Refresh</button>
@@ -146,7 +171,33 @@ canvas{
 
   <div id="price" class="price">Loading…</div>
 
-  <canvas id="chart" aria-label="ETH price chart"></canvas>
+
+  <div class="tf" id="timeframes">
+
+    <button data-interval="1m">1m</button>
+
+    <button data-interval="5m">5m</button>
+
+    <button data-interval="15m">15m</button>
+
+    <button data-interval="30m">30m</button>
+
+    <button data-interval="1h" class="active">1H</button>
+
+    <button data-interval="4h">4H</button>
+
+    <button data-interval="12h">12H</button>
+
+    <button data-interval="1d">1D</button>
+
+  </div>
+
+
+  <canvas id="chart"></canvas>
+
+  <div id="chartInfo" class="small">
+    Loading market data…
+  </div>
 
 </section>
 
@@ -187,6 +238,7 @@ canvas{
 
   </div>
 
+
   <div id="status" class="muted status">
     Connecting directly to Binance…
   </div>
@@ -195,7 +247,8 @@ canvas{
 
 
 <section class="card muted">
-  Research signal only. It is not a guaranteed forecast and does not place trades.
+  Research signal only. Percentages are model scores, not guaranteed probabilities.
+  This page does not place trades.
 </section>
 
 </main>
@@ -212,27 +265,23 @@ const $ = id => document.getElementById(id);
 const els = {
 
   price: $("price"),
-
   bullish: $("bullish"),
-
   neutral: $("neutral"),
-
   bearish: $("bearish"),
-
   confidence: $("confidence"),
-
   range: $("range"),
-
   funding: $("funding"),
-
   status: $("status"),
-
   refresh: $("refresh"),
-
-  chart: $("chart")
+  chart: $("chart"),
+  chartInfo: $("chartInfo")
 
 };
 
+
+let selectedInterval = "1h";
+
+let loading = false;
 
 
 async function getJSON(url){
@@ -244,7 +293,9 @@ async function getJSON(url){
 
   if(!response.ok){
 
-    throw new Error("HTTP " + response.status);
+    throw new Error(
+      "HTTP " + response.status
+    );
 
   }
 
@@ -253,30 +304,38 @@ async function getJSON(url){
 }
 
 
-
 function average(a){
 
-  return a.reduce(
-    (s,v)=>s+v,
-    0
-  ) / a.length;
+  return a.length
+    ? a.reduce((s,v)=>s+v,0)/a.length
+    : 0;
 
 }
 
 
-
 function stdev(a){
+
+  if(!a.length) return 0;
 
   const m = average(a);
 
   return Math.sqrt(
     average(
-      a.map(v => (v-m)**2)
+      a.map(v=>(v-m)**2)
     )
   );
 
 }
 
+
+function clamp(v,min,max){
+
+  return Math.max(
+    min,
+    Math.min(max,v)
+  );
+
+}
 
 
 function calcRSI(closes){
@@ -334,33 +393,59 @@ function calcRSI(closes){
 }
 
 
+function horizonText(interval){
 
-function clamp(v,min,max){
+  return {
 
-  return Math.max(
-    min,
-    Math.min(max,v)
-  );
+    "1m":"next 15–30 minutes",
+
+    "5m":"next 30–60 minutes",
+
+    "15m":"next 1–3 hours",
+
+    "30m":"next 2–6 hours",
+
+    "1h":"next 4–8 hours",
+
+    "4h":"next 12–24 hours",
+
+    "12h":"next 1–3 days",
+
+    "1d":"next 2–5 days"
+
+  }[interval] || "selected horizon";
 
 }
 
 
-
 async function load(){
+
+  if(loading) return;
+
+  loading = true;
 
   els.refresh.disabled = true;
 
   els.status.classList.remove("error");
 
   els.status.textContent =
-    "Fetching live ETH market data…";
+    "Fetching live ETH " +
+    selectedInterval +
+    " data…";
 
 
   try{
 
-    const klines = await getJSON(
-      "https://api.binance.com/api/v3/klines?symbol=ETHUSDT&interval=1h&limit=200"
-    );
+    const url =
+      "https://api.binance.com/api/v3/klines" +
+      "?symbol=ETHUSDT" +
+      "&interval=" +
+      selectedInterval +
+      "&limit=200";
+
+
+    const klines =
+      await getJSON(url);
 
 
     if(
@@ -378,6 +463,10 @@ async function load(){
     const candles =
       klines.map(k => ({
 
+        time:Number(k[0]),
+
+        open:Number(k[1]),
+
         high:Number(k[2]),
 
         low:Number(k[3]),
@@ -390,54 +479,72 @@ async function load(){
 
 
     const closes =
-      candles.map(x => x.close);
+      candles.map(x=>x.close);
 
 
     const volumes =
-      candles.map(x => x.volume);
+      candles.map(x=>x.volume);
 
 
     const price =
       closes[closes.length-1];
 
 
-    const ma12 =
+    const fastN = 12;
+
+    const slowN =
+      Math.min(48,closes.length);
+
+
+    const maFast =
       average(
-        closes.slice(-12)
+        closes.slice(-fastN)
       );
 
 
-    const ma48 =
+    const maSlow =
       average(
-        closes.slice(-48)
+        closes.slice(-slowN)
       );
 
 
     const trend =
-      ma12 / ma48 - 1;
+      maFast / maSlow - 1;
 
 
-    const ret6 =
+    const look6 =
+      Math.min(
+        6,
+        closes.length-1
+      );
+
+
+    const look24 =
+      Math.min(
+        24,
+        closes.length-1
+      );
+
+
+    const retFast =
       price /
-      closes[closes.length-7] - 1;
+      closes[closes.length-1-look6]
+      - 1;
 
 
-    const ret24 =
+    const retSlow =
       price /
-      closes[closes.length-25] - 1;
-
-
-    const recentVol =
-      volumes[volumes.length-1];
+      closes[closes.length-1-look24]
+      - 1;
 
 
     const volBase =
       volumes.slice(-48);
 
 
-    const z =
+    const volumeZ =
       (
-        recentVol -
+        volumes[volumes.length-1] -
         average(volBase)
       ) /
       (stdev(volBase) || 1);
@@ -449,10 +556,14 @@ async function load(){
 
     let score =
       0.5 +
-      ret6 * 18 +
-      ret24 * 7 +
+      retFast * 18 +
+      retSlow * 7 +
       trend * 35 +
-      clamp(z,-15,15) * 0.008;
+      clamp(
+        volumeZ,
+        -15,
+        15
+      ) * 0.008;
 
 
     if(rsi > 70){
@@ -505,6 +616,11 @@ async function load(){
     }
 
 
+    if(bullish < 0) bullish = 0;
+
+    if(bearish < 0) bearish = 0;
+
+
     const atr =
       average(
         candles
@@ -516,23 +632,33 @@ async function load(){
 
 
     const low =
-      price - 2 * atr;
+      Math.max(
+        0,
+        price - 2 * atr
+      );
 
 
     const high =
       price + 2 * atr;
 
 
-    const fundingData =
-      await getJSON(
-        "https://fapi.binance.com/fapi/v1/premiumIndex?symbol=ETHUSDT"
-      );
+    let fundingRate = null;
 
 
-    const fundingRate =
-      Number(
-        fundingData.lastFundingRate
-      );
+    try{
+
+      const fd =
+        await getJSON(
+          "https://fapi.binance.com/fapi/v1/premiumIndex?symbol=ETHUSDT"
+        );
+
+
+      fundingRate =
+        Number(
+          fd.lastFundingRate
+        );
+
+    }catch(e){}
 
 
     els.price.textContent =
@@ -567,21 +693,37 @@ async function load(){
 
     els.range.textContent =
       "$" +
-      Math.round(low).toLocaleString() +
+      Math.round(
+        low
+      ).toLocaleString() +
       " – $" +
-      Math.round(high).toLocaleString();
+      Math.round(
+        high
+      ).toLocaleString();
 
 
     els.funding.textContent =
-      (fundingRate * 100).toFixed(4) +
-      "%";
+      fundingRate === null
+        ? "Unavailable"
+        : (fundingRate * 100)
+          .toFixed(4) + "%";
 
 
     els.status.textContent =
       "Live Binance data • RSI " +
       rsi.toFixed(1) +
+      " • " +
+      horizonText(selectedInterval) +
       " • Updated " +
-      new Date().toLocaleTimeString();
+      new Date()
+        .toLocaleTimeString();
+
+
+    els.chartInfo.textContent =
+      "Candles: " +
+      selectedInterval +
+      " • 200 candles • Forecast horizon: " +
+      horizonText(selectedInterval);
 
 
     drawChart(
@@ -603,12 +745,13 @@ async function load(){
 
   }finally{
 
+    loading = false;
+
     els.refresh.disabled = false;
 
   }
 
 }
-
 
 
 function drawChart(
@@ -802,10 +945,56 @@ function drawChart(
 }
 
 
+document
+  .querySelectorAll(
+    "#timeframes button"
+  )
+  .forEach(button=>{
+
+    button.addEventListener(
+      "click",
+      ()=>{
+
+        document
+          .querySelectorAll(
+            "#timeframes button"
+          )
+          .forEach(
+            b=>b.classList.remove("active")
+          );
+
+
+        button.classList.add("active");
+
+
+        selectedInterval =
+          button.dataset.interval;
+
+
+        load();
+
+      }
+    );
+
+  });
+
 
 els.refresh.addEventListener(
   "click",
   load
+);
+
+
+window.addEventListener(
+  "resize",
+  ()=>{
+    if(
+      els.price.textContent !==
+      "Loading…"
+    ){
+      load();
+    }
+  }
 );
 
 
