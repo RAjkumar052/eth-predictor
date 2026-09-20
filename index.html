@@ -5,499 +5,467 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="theme-color" content="#020609">
 
-<title>ETH/USDT</title>
+<title>ETH/USDT Live</title>
 
-<script src="https://unpkg.com/lightweight-charts@5.2.1/dist/lightweight-charts.standalone.production.js"></script>
+<script
+src="https://cdn.jsdelivr.net/npm/lightweight-charts@5.2.1/dist/lightweight-charts.standalone.production.js"
+onerror="this.onerror=null;this.src='https://unpkg.com/lightweight-charts@5.2.1/dist/lightweight-charts.standalone.production.js'">
+</script>
 
 <style>
 :root{
-  --bg:#020609;
-  --panel:#071116;
-  --cyan:#59f5ff;
-  --green:#4dffa5;
-  --red:#ff5475;
-  --violet:#d66cff;
-  --yellow:#ffe56b;
-  --text:#dffcff;
-  --muted:#6e8991;
-  --line:#15343d;
+--bg:#020609;
+--panel:#071116;
+--cyan:#59f5ff;
+--green:#4dffa5;
+--red:#ff5475;
+--text:#dffcff;
+--muted:#718990;
+--line:#17353d;
 }
 
 *{
-  box-sizing:border-box;
-  -webkit-tap-highlight-color:transparent;
+box-sizing:border-box;
+-webkit-tap-highlight-color:transparent;
 }
 
 html,body{
-  margin:0;
-  background:var(--bg);
-  color:var(--text);
-  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+margin:0;
+background:var(--bg);
+color:var(--text);
+font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
 }
 
 body{
-  min-height:100vh;
-  padding-top:env(safe-area-inset-top);
-  padding-bottom:env(safe-area-inset-bottom);
-}
-
-button,input{
-  font:inherit;
-}
-
-button{
-  cursor:pointer;
+padding-top:env(safe-area-inset-top);
+padding-bottom:env(safe-area-inset-bottom);
 }
 
 .app{
-  width:min(100%,620px);
-  margin:auto;
-  padding:8px 10px 95px;
+width:min(100%,620px);
+margin:auto;
+padding:8px 10px 90px;
 }
 
-/* HEADER */
-
 .top{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:8px 2px 12px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:8px 2px 12px;
 }
 
 .brand{
-  display:flex;
-  align-items:center;
-  gap:9px;
+display:flex;
+align-items:center;
+gap:9px;
 }
 
 .logo{
-  width:40px;
-  height:40px;
-  border:1px solid var(--cyan);
-  border-radius:11px;
-  display:grid;
-  place-items:center;
-  color:var(--cyan);
-  box-shadow:0 0 15px #59f5ff22;
+width:40px;
+height:40px;
+display:grid;
+place-items:center;
+border:1px solid var(--cyan);
+border-radius:11px;
+color:var(--cyan);
+font-size:19px;
 }
 
 .title{
-  font-size:19px;
-  font-weight:900;
+font-size:19px;
+font-weight:900;
 }
 
 .sub{
-  font-size:7px;
-  color:var(--muted);
-  letter-spacing:2px;
-  margin-top:3px;
+font-size:7px;
+letter-spacing:2px;
+color:var(--muted);
+margin-top:3px;
 }
 
 .status{
-  font-size:8px;
-  color:var(--green);
-  border:1px solid #164d3d;
-  padding:7px 9px;
-  border-radius:20px;
+font-size:8px;
+color:var(--green);
+border:1px solid #1b5142;
+border-radius:20px;
+padding:7px 9px;
 }
 
 .dot{
-  display:inline-block;
-  width:6px;
-  height:6px;
-  background:var(--green);
-  border-radius:50%;
-  margin-right:5px;
-  box-shadow:0 0 8px var(--green);
+display:inline-block;
+width:7px;
+height:7px;
+border-radius:50%;
+background:var(--green);
+box-shadow:0 0 9px var(--green);
+margin-right:5px;
 }
-
-/* SCREENS */
-
-.screen{
-  display:none;
-}
-
-.screen.active{
-  display:block;
-}
-
-/* PANELS */
 
 .panel{
-  background:linear-gradient(140deg,#08151b,#050c10);
-  border:1px solid var(--line);
-  border-radius:15px;
-  padding:11px;
-  margin-bottom:9px;
+background:linear-gradient(140deg,#08151b,#050c10);
+border:1px solid var(--line);
+border-radius:15px;
+padding:11px;
+margin-bottom:9px;
 }
 
-.price-row{
-  display:flex;
-  justify-content:space-between;
+.priceRow{
+display:flex;
+justify-content:space-between;
 }
 
 .price{
-  font-size:29px;
-  font-weight:900;
-  color:var(--green);
+font-size:29px;
+font-weight:900;
+color:var(--green);
 }
 
 .change{
-  font-size:9px;
-  margin-top:3px;
+font-size:9px;
+margin-top:3px;
 }
 
-.green{
-  color:var(--green);
-}
-
-.red{
-  color:var(--red);
-}
+.green{color:var(--green)}
+.red{color:var(--red)}
 
 .ticker{
-  text-align:right;
-  color:var(--muted);
-  font-size:8px;
+text-align:right;
+font-size:8px;
+color:var(--muted);
 }
 
 .stats{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:8px;
-  margin-top:11px;
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:8px;
+margin-top:11px;
 }
 
 .stat{
-  border-top:1px solid var(--line);
-  padding-top:6px;
+border-top:1px solid var(--line);
+padding-top:6px;
 }
 
 .lab{
-  color:var(--muted);
-  font-size:7px;
+font-size:7px;
+color:var(--muted);
 }
 
 .val{
-  font-size:9px;
-  margin-top:3px;
+font-size:9px;
+margin-top:3px;
 }
 
-/* TIMEFRAME */
-
 .scroll{
-  display:flex;
-  gap:5px;
-  overflow-x:auto;
-  scrollbar-width:none;
-  margin:7px 0;
+display:flex;
+gap:5px;
+overflow-x:auto;
+scrollbar-width:none;
+margin:7px 0;
 }
 
 .scroll::-webkit-scrollbar{
-  display:none;
+display:none;
 }
 
 .chip{
-  flex:0 0 auto;
-  background:#061116;
-  border:1px solid var(--line);
-  color:var(--muted);
-  border-radius:8px;
-  padding:8px 12px;
-  font-size:9px;
+flex:0 0 auto;
+background:#061116;
+border:1px solid var(--line);
+color:var(--muted);
+border-radius:8px;
+padding:8px 12px;
+font-size:9px;
 }
 
 .chip.active{
-  background:var(--cyan);
-  color:#001114;
-  border-color:var(--cyan);
+background:var(--cyan);
+color:#001114;
+border-color:var(--cyan);
 }
 
-/* CHART */
-
 .chartbox{
-  border:1px solid var(--line);
-  border-radius:15px;
-  overflow:hidden;
-  background:#03090d;
+border:1px solid var(--line);
+border-radius:15px;
+overflow:hidden;
+background:#03090d;
 }
 
 .charthead{
-  height:31px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:0 9px;
-  color:var(--muted);
-  font-size:8px;
-  border-bottom:1px solid #102a31;
+height:31px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:0 9px;
+font-size:8px;
+color:var(--muted);
+border-bottom:1px solid #102a31;
 }
 
 .chartwrap{
-  position:relative;
-  width:100%;
+position:relative;
 }
 
 #chart{
-  width:100%;
-  height:455px;
+height:470px;
+width:100%;
 }
 
-.chart-controls{
-  position:absolute;
-  top:8px;
-  right:8px;
-  display:flex;
-  gap:5px;
-  z-index:10;
+.chartMessage{
+position:absolute;
+left:15px;
+right:15px;
+top:50%;
+transform:translateY(-50%);
+text-align:center;
+font-size:10px;
+color:var(--muted);
+line-height:1.7;
+pointer-events:none;
 }
 
-.zoom-button{
-  width:35px;
-  height:32px;
-  border:1px solid #21434b;
-  border-radius:9px;
-  background:#071116dd;
-  color:#c5f7fa;
-  font-size:17px;
-  backdrop-filter:blur(8px);
+.controls{
+position:absolute;
+top:8px;
+right:8px;
+display:flex;
+gap:5px;
+z-index:5;
 }
 
-.fit-button{
-  width:43px;
-  font-size:8px;
-  color:var(--cyan);
+.control{
+height:34px;
+min-width:35px;
+border:1px solid #24454d;
+border-radius:9px;
+background:#071116ee;
+color:#dffcff;
+font-size:17px;
 }
 
-/* RANGE */
+.fit{
+font-size:8px;
+color:var(--cyan);
+min-width:45px;
+}
 
 .range{
-  display:flex;
-  gap:2px;
-  overflow-x:auto;
-  scrollbar-width:none;
-  border-top:1px solid #102a31;
-  padding:5px;
+display:flex;
+gap:2px;
+overflow-x:auto;
+scrollbar-width:none;
+border-top:1px solid #102a31;
+padding:5px;
 }
 
 .range::-webkit-scrollbar{
-  display:none;
+display:none;
 }
 
 .range button{
-  border:0;
-  background:none;
-  color:var(--muted);
-  padding:7px 10px;
-  border-radius:7px;
-  font-size:8px;
+border:0;
+background:none;
+color:var(--muted);
+padding:7px 10px;
+border-radius:7px;
+font-size:8px;
 }
 
 .range button.active{
-  background:#0b2c34;
-  color:var(--cyan);
+background:#0b2c34;
+color:var(--cyan);
 }
 
-/* FORECAST */
-
-.forecast-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:7px;
-  margin-top:9px;
+.forecastGrid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:7px;
+margin-top:9px;
 }
 
 .forecast{
-  background:#061116;
-  border:1px solid #16414a;
-  border-radius:13px;
-  padding:10px;
+background:#061116;
+border:1px solid #16414a;
+border-radius:13px;
+padding:10px;
 }
 
 .forecast.violet{
-  border-color:#4c2357;
+border-color:#4c2357;
 }
 
 .ftitle{
-  font-size:8px;
-  color:var(--muted);
+font-size:8px;
+color:var(--muted);
 }
 
 .fprice{
-  font-size:20px;
-  font-weight:900;
-  margin-top:5px;
+font-size:20px;
+font-weight:900;
+margin-top:5px;
 }
 
 .fmeta{
-  color:var(--muted);
-  font-size:7px;
-  margin-top:4px;
-  min-height:16px;
+font-size:7px;
+color:var(--muted);
+margin-top:4px;
+min-height:17px;
 }
 
 .bar{
-  height:4px;
-  background:#10242b;
-  border-radius:4px;
-  margin-top:6px;
-  overflow:hidden;
+height:4px;
+background:#10242b;
+border-radius:4px;
+margin-top:6px;
+overflow:hidden;
 }
 
 .bar i{
-  display:block;
-  height:100%;
-  background:var(--cyan);
+display:block;
+height:100%;
+background:var(--cyan);
 }
 
 .violet .bar i{
-  background:var(--violet);
+background:#d66cff;
 }
 
-/* OTHER */
-
-.section-title{
-  font-size:8px;
-  color:#88a6ad;
-  letter-spacing:1.3px;
-  margin-bottom:8px;
+.sectionTitle{
+font-size:8px;
+color:#88a6ad;
+letter-spacing:1.3px;
+margin-bottom:8px;
 }
 
 .notice{
-  color:var(--muted);
-  font-size:8px;
-  line-height:1.5;
+font-size:8px;
+color:var(--muted);
+line-height:1.5;
 }
 
 .engines{
-  display:grid;
-  grid-template-columns:repeat(5,1fr);
-  gap:4px;
+display:grid;
+grid-template-columns:repeat(5,1fr);
+gap:4px;
 }
 
 .engine{
-  text-align:center;
-  background:#061015;
-  border:1px solid var(--line);
-  border-radius:8px;
-  padding:6px 2px;
+background:#061015;
+border:1px solid var(--line);
+border-radius:8px;
+padding:6px 2px;
+text-align:center;
 }
 
 .en{
-  color:#4f6d75;
-  font-size:6px;
+font-size:6px;
+color:#4f6d75;
 }
 
 .ename{
-  color:#88a4aa;
-  font-size:6px;
-  min-height:22px;
-  margin-top:3px;
+font-size:6px;
+color:#88a4aa;
+min-height:22px;
+margin-top:3px;
 }
 
 .ev{
-  color:var(--green);
-  font-size:7px;
-  margin-top:3px;
+font-size:7px;
+color:var(--green);
+margin-top:3px;
 }
 
 .row{
-  display:flex;
-  justify-content:space-between;
-  gap:8px;
-  padding:8px 0;
-  border-bottom:1px solid #10282f;
-  font-size:8px;
-}
-
-.row:last-child{
-  border-bottom:0;
-}
-
-.inputrow{
-  display:flex;
-  gap:6px;
-}
-
-.inputrow input{
-  min-width:0;
-  flex:1;
-  background:#03090d;
-  border:1px solid var(--line);
-  color:var(--text);
-  border-radius:8px;
-  padding:9px;
-  font-size:9px;
-}
-
-.primary{
-  background:#0a3038;
-  border:1px solid var(--cyan);
-  color:var(--cyan);
-  border-radius:8px;
-  padding:9px 11px;
-  font-size:8px;
-}
-
-.historyrow{
-  display:grid;
-  grid-template-columns:.7fr 1fr 1fr 1fr;
-  gap:4px;
-  padding:7px 0;
-  border-bottom:1px solid #10282f;
-  font-size:7px;
+display:flex;
+justify-content:space-between;
+padding:8px 0;
+border-bottom:1px solid #10282f;
+font-size:8px;
 }
 
 .empty{
-  color:var(--muted);
-  font-size:8px;
-  padding:8px 0;
+font-size:8px;
+color:var(--muted);
+padding:8px 0;
 }
 
-/* NAV */
+.inputrow{
+display:flex;
+gap:6px;
+}
+
+.inputrow input{
+min-width:0;
+flex:1;
+background:#03090d;
+border:1px solid var(--line);
+color:var(--text);
+border-radius:8px;
+padding:9px;
+font-size:9px;
+}
+
+.primary{
+background:#0a3038;
+border:1px solid var(--cyan);
+color:var(--cyan);
+border-radius:8px;
+padding:9px 11px;
+font-size:8px;
+}
+
+.historyrow{
+display:grid;
+grid-template-columns:.7fr 1fr 1fr 1fr;
+gap:4px;
+padding:7px 0;
+border-bottom:1px solid #10282f;
+font-size:7px;
+}
+
+.screen{
+display:none;
+}
+
+.screen.active{
+display:block;
+}
 
 .nav{
-  position:fixed;
-  z-index:30;
-  bottom:calc(7px + env(safe-area-inset-bottom));
-  left:50%;
-  transform:translateX(-50%);
-  width:min(calc(100% - 20px),596px);
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:4px;
-  padding:5px;
-  border:1px solid #1a3d45;
-  border-radius:17px;
-  background:#050c10ee;
-  backdrop-filter:blur(18px);
+position:fixed;
+z-index:20;
+bottom:calc(7px + env(safe-area-inset-bottom));
+left:50%;
+transform:translateX(-50%);
+width:min(calc(100% - 20px),596px);
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:4px;
+padding:5px;
+border:1px solid #1a3d45;
+border-radius:17px;
+background:#050c10ee;
+backdrop-filter:blur(18px);
 }
 
 .nav button{
-  border:0;
-  background:none;
-  color:var(--muted);
-  padding:8px 2px;
-  border-radius:10px;
-  font-size:7px;
+border:0;
+background:none;
+color:var(--muted);
+padding:8px 2px;
+border-radius:10px;
+font-size:7px;
 }
 
 .nav button.active{
-  background:#0a252c;
-  color:var(--cyan);
+background:#0a252c;
+color:var(--cyan);
 }
 
 .navicon{
-  display:block;
-  font-size:12px;
-  margin-bottom:2px;
-}
-
-.footer{
-  text-align:center;
-  color:#3e5960;
-  font-size:6px;
-  margin-top:10px;
+display:block;
+font-size:12px;
+margin-bottom:2px;
 }
 </style>
 </head>
@@ -508,502 +476,536 @@ button{
 
 <header class="top">
 
-  <div class="brand">
+<div class="brand">
 
-    <div class="logo">◆</div>
+<div class="logo">◆</div>
 
-    <div>
-      <div class="title">ETH/USDT</div>
-      <div class="sub">LIVE MARKET CHART</div>
-    </div>
+<div>
+<div class="title">ETH/USDT</div>
+<div class="sub">LIVE MARKET CHART</div>
+</div>
 
-  </div>
+</div>
 
-  <div class="status">
-    <span class="dot"></span>
-    <span id="status">STARTING</span>
-  </div>
+<div class="status">
+<span class="dot"></span>
+<span id="status">STARTING</span>
+</div>
 
 </header>
 
-
-<!-- ================= CHART ================= -->
 
 <section id="screen-chart" class="screen active">
 
 <div class="panel">
 
-  <div class="price-row">
+<div class="priceRow">
 
-    <div>
-      <div id="price" class="price">--</div>
-      <div id="change" class="change">--</div>
-    </div>
+<div>
 
-    <div class="ticker">
-      BINANCE SPOT<br>
-      ETHUSDT
-    </div>
+<div id="price" class="price">--</div>
 
-  </div>
+<div id="change" class="change">
+--
+</div>
 
-  <div class="stats">
+</div>
 
-    <div class="stat">
-      <div class="lab">24H HIGH</div>
-      <div id="high" class="val">--</div>
-    </div>
-
-    <div class="stat">
-      <div class="lab">24H LOW</div>
-      <div id="low" class="val">--</div>
-    </div>
-
-    <div class="stat">
-      <div class="lab">24H VOLUME</div>
-      <div id="vol" class="val">--</div>
-    </div>
-
-  </div>
+<div class="ticker">
+BINANCE SPOT<br>
+ETHUSDT
+</div>
 
 </div>
 
 
-<!-- TIMEFRAME -->
+<div class="stats">
+
+<div class="stat">
+<div class="lab">24H HIGH</div>
+<div id="high" class="val">--</div>
+</div>
+
+<div class="stat">
+<div class="lab">24H LOW</div>
+<div id="low" class="val">--</div>
+</div>
+
+<div class="stat">
+<div class="lab">24H VOLUME</div>
+<div id="vol" class="val">--</div>
+</div>
+
+</div>
+
+</div>
+
 
 <div class="scroll" id="tfbar">
 
-  <button class="chip" data-tf="1m">1m</button>
-  <button class="chip" data-tf="5m">5m</button>
-  <button class="chip active" data-tf="15m">15m</button>
-  <button class="chip" data-tf="30m">30m</button>
-  <button class="chip" data-tf="1h">1h</button>
-  <button class="chip" data-tf="4h">4h</button>
+<button class="chip" data-tf="1m">1m</button>
+<button class="chip" data-tf="5m">5m</button>
+<button class="chip active" data-tf="15m">15m</button>
+<button class="chip" data-tf="30m">30m</button>
+<button class="chip" data-tf="1h">1h</button>
+<button class="chip" data-tf="4h">4h</button>
 
 </div>
 
-
-<!-- CHART -->
 
 <div class="chartbox">
 
-  <div class="charthead">
-    <span>ETH/USDT • CANDLES</span>
-    <span id="chartStatus">LOADING</span>
-  </div>
+<div class="charthead">
 
-  <div class="chartwrap">
+<span>ETH/USDT • CANDLES</span>
 
-    <div id="chart"></div>
-
-    <div class="chart-controls">
-
-      <button
-        id="zoomOut"
-        class="zoom-button"
-      >−</button>
-
-      <button
-        id="zoomFit"
-        class="zoom-button fit-button"
-      >FIT</button>
-
-      <button
-        id="zoomIn"
-        class="zoom-button"
-      >+</button>
-
-    </div>
-
-  </div>
-
-
-  <div class="range" id="rangebar">
-
-    <button class="active" data-range="1D">1D</button>
-    <button data-range="1W">1W</button>
-    <button data-range="1M">1M</button>
-    <button data-range="3M">3M</button>
-    <button data-range="6M">6M</button>
-    <button data-range="1Y">1Y</button>
-    <button data-range="ALL">ALL</button>
-
-  </div>
+<span id="chartStatus">
+CONNECTING
+</span>
 
 </div>
 
 
-<!-- PREDICTIONS -->
+<div class="chartwrap">
 
-<div class="forecast-grid">
+<div id="chart"></div>
 
-  <div class="forecast">
-
-    <div class="ftitle">15 MIN</div>
-
-    <div id="p15" class="fprice">--</div>
-
-    <div id="m15" class="fmeta">
-      waiting
-    </div>
-
-    <div class="bar">
-      <i id="b15" style="width:0"></i>
-    </div>
-
-  </div>
+<div
+id="chartMessage"
+class="chartMessage"
+>
+Connecting to market data...
+</div>
 
 
-  <div class="forecast violet">
+<div class="controls">
 
-    <div class="ftitle">30 MIN</div>
+<button
+id="zoomOut"
+class="control"
+>
+−
+</button>
 
-    <div id="p30" class="fprice">--</div>
+<button
+id="zoomFit"
+class="control fit"
+>
+FIT
+</button>
 
-    <div id="m30" class="fmeta">
-      waiting
-    </div>
+<button
+id="zoomIn"
+class="control"
+>
++
+</button>
 
-    <div class="bar">
-      <i id="b30" style="width:0"></i>
-    </div>
-
-  </div>
+</div>
 
 </div>
 
 
-<!-- CUSTOM -->
+<div class="range" id="rangebar">
+
+<button class="active" data-range="1D">1D</button>
+<button data-range="1W">1W</button>
+<button data-range="1M">1M</button>
+<button data-range="3M">3M</button>
+<button data-range="6M">6M</button>
+<button data-range="1Y">1Y</button>
+<button data-range="ALL">ALL</button>
+
+</div>
+
+</div>
+
+
+<div class="forecastGrid">
+
+<div class="forecast">
+
+<div class="ftitle">
+15 MIN
+</div>
+
+<div id="p15" class="fprice">
+--
+</div>
+
+<div id="m15" class="fmeta">
+waiting
+</div>
+
+<div class="bar">
+<i id="b15" style="width:0"></i>
+</div>
+
+</div>
+
+
+<div class="forecast violet">
+
+<div class="ftitle">
+30 MIN
+</div>
+
+<div id="p30" class="fprice">
+--
+</div>
+
+<div id="m30" class="fmeta">
+waiting
+</div>
+
+<div class="bar">
+<i id="b30" style="width:0"></i>
+</div>
+
+</div>
+
+</div>
+
 
 <div class="panel" style="margin-top:9px">
 
-  <div class="section-title">
-    CUSTOM FORECAST
-  </div>
+<div class="sectionTitle">
+CUSTOM FORECAST
+</div>
 
-  <div class="inputrow">
+<div class="inputrow">
 
-    <input
-      id="customTime"
-      type="datetime-local"
-    >
+<input
+id="customTime"
+type="datetime-local"
+>
 
-    <button
-      id="customBtn"
-      class="primary"
-    >
-      FORECAST
-    </button>
+<button
+id="customBtn"
+class="primary"
+>
+FORECAST
+</button>
 
-  </div>
+</div>
 
-  <div
-    id="customMsg"
-    class="notice"
-    style="margin-top:7px"
-  >
-    Choose a target at least 5 minutes ahead.
-  </div>
+<div
+id="customMsg"
+class="notice"
+style="margin-top:7px"
+>
+Choose a target at least 5 minutes ahead.
+</div>
 
 </div>
 
 
-<!-- ENGINES -->
-
 <div class="panel">
 
-  <div class="section-title">
-    ENGINE STATUS
-  </div>
+<div class="sectionTitle">
+ENGINE STATUS
+</div>
 
-  <div class="engines">
+<div class="engines">
 
-    <div class="engine">
-      <div class="en">01</div>
-      <div class="ename">Chronological</div>
-      <div id="e1" class="ev">--</div>
-    </div>
+<div class="engine">
+<div class="en">01</div>
+<div class="ename">Chronological</div>
+<div id="e1" class="ev">--</div>
+</div>
 
-    <div class="engine">
-      <div class="en">02</div>
-      <div class="ename">Mathematical</div>
-      <div id="e2" class="ev">--</div>
-    </div>
+<div class="engine">
+<div class="en">02</div>
+<div class="ename">Mathematical</div>
+<div id="e2" class="ev">--</div>
+</div>
 
-    <div class="engine">
-      <div class="en">03</div>
-      <div class="ename">Information</div>
-      <div id="e3" class="ev">--</div>
-    </div>
+<div class="engine">
+<div class="en">03</div>
+<div class="ename">Information</div>
+<div id="e3" class="ev">--</div>
+</div>
 
-    <div class="engine">
-      <div class="en">04</div>
-      <div class="ename">Adaptive</div>
-      <div id="e4" class="ev">--</div>
-    </div>
+<div class="engine">
+<div class="en">04</div>
+<div class="ename">Adaptive</div>
+<div id="e4" class="ev">--</div>
+</div>
 
-    <div class="engine">
-      <div class="en">05</div>
-      <div class="ename">Consultation</div>
-      <div id="e5" class="ev">--</div>
-    </div>
+<div class="engine">
+<div class="en">05</div>
+<div class="ename">Consultation</div>
+<div id="e5" class="ev">--</div>
+</div>
 
-  </div>
-
-  <div
-    class="notice"
-    style="margin-top:8px"
-  >
-    Statistical model only. No neural network is claimed.
-  </div>
+</div>
 
 </div>
 
 
-<!-- ACTIVE -->
-
 <div class="panel">
 
-  <div class="section-title">
-    ACTIVE PREDICTIONS
-  </div>
+<div class="sectionTitle">
+ACTIVE PREDICTIONS
+</div>
 
-  <div id="active">
-    No active prediction.
-  </div>
+<div id="active">
+No active prediction.
+</div>
 
 </div>
 
 </section>
 
-
-<!-- ================= PREDICT ================= -->
 
 <section id="screen-predict" class="screen">
 
 <div class="panel">
 
-  <div class="section-title">
-    PREDICTION CENTER
-  </div>
+<div class="sectionTitle">
+PREDICTION CENTER
+</div>
 
-  <div class="notice">
-    Existing predictions are locked when created.
-    They do not move with the live market.
-  </div>
+<div class="notice">
+Predictions are locked when created.
+The live price does not change an existing prediction.
+</div>
 
 </div>
 
 <div class="panel">
 
-  <div class="row">
-    <span>15m</span>
-    <span id="pred15">--</span>
-  </div>
-
-  <div class="row">
-    <span>30m</span>
-    <span id="pred30">--</span>
-  </div>
-
+<div class="row">
+<span>15m</span>
+<span id="pred15">--</span>
 </div>
 
-<div class="panel">
-
-  <div class="section-title">
-    ACTIVE TARGETS
-  </div>
-
-  <div id="active2">
-    No active prediction.
-  </div>
+<div class="row">
+<span>30m</span>
+<span id="pred30">--</span>
+</div>
 
 </div>
 
 </section>
 
-
-<!-- ================= HISTORY ================= -->
 
 <section id="screen-history" class="screen">
 
 <div class="panel">
 
-  <div class="section-title">
-    COMPLETED PREDICTIONS
-  </div>
+<div class="sectionTitle">
+COMPLETED PREDICTIONS
+</div>
 
-  <div id="history">
-    No completed predictions yet.
-  </div>
+<div id="history">
+No completed predictions yet.
+</div>
 
 </div>
 
 <div class="panel">
 
-  <div class="section-title">
-    MODEL MEASUREMENT
-  </div>
+<div class="sectionTitle">
+MODEL MEASUREMENT
+</div>
 
-  <div id="metrics" class="notice">
-    Not enough completed observations yet.
-  </div>
+<div id="metrics" class="notice">
+Not enough completed observations yet.
+</div>
 
 </div>
 
 </section>
 
-
-<!-- ================= SETTINGS ================= -->
 
 <section id="screen-settings" class="screen">
 
 <div class="panel">
 
-  <div class="section-title">
-    SETTINGS
-  </div>
-
-  <div class="row">
-    <span>Chart</span>
-    <span>Candles + Volume</span>
-  </div>
-
-  <div class="row">
-    <span>Data</span>
-    <span>Binance public</span>
-  </div>
-
-  <div class="row">
-    <span>Chart mode</span>
-    <span>Touch zoom / pan</span>
-  </div>
-
-  <button
-    id="reset"
-    class="primary"
-    style="margin-top:8px"
-  >
-    RESET PREDICTION DATA
-  </button>
-
+<div class="sectionTitle">
+SETTINGS
 </div>
 
-<div class="panel">
+<div class="row">
+<span>Chart</span>
+<span>Candles + Volume</span>
+</div>
 
-  <div class="notice">
-    Live market data comes from public Binance market-data
-    endpoints. No private API key is stored in this website.
-  </div>
+<div class="row">
+<span>Market</span>
+<span>ETH/USDT</span>
+</div>
+
+<div class="row">
+<span>Connection</span>
+<span id="connectionInfo">Checking...</span>
+</div>
+
+<button
+id="reset"
+class="primary"
+style="margin-top:8px"
+>
+RESET PREDICTION DATA
+</button>
 
 </div>
 
 </section>
 
-
-<div class="footer">
-PUBLIC MARKET DATA • ESTIMATES ONLY • NO TRADE EXECUTION
 </div>
 
-</div>
-
-
-<!-- ================= NAV ================= -->
 
 <nav class="nav">
 
-  <button
-    class="active"
-    data-screen="chart"
-  >
-    <span class="navicon">◆</span>
-    CHART
-  </button>
+<button class="active" data-screen="chart">
+<span class="navicon">◆</span>
+CHART
+</button>
 
-  <button data-screen="predict">
-    <span class="navicon">◉</span>
-    PREDICT
-  </button>
+<button data-screen="predict">
+<span class="navicon">◉</span>
+PREDICT
+</button>
 
-  <button data-screen="history">
-    <span class="navicon">◷</span>
-    HISTORY
-  </button>
+<button data-screen="history">
+<span class="navicon">◷</span>
+HISTORY
+</button>
 
-  <button data-screen="settings">
-    <span class="navicon">⚙</span>
-    SETTINGS
-  </button>
+<button data-screen="settings">
+<span class="navicon">⚙</span>
+SETTINGS
+</button>
 
 </nav>
 
 
 <script>
+
 "use strict";
 
+
 /* =====================================================
-   CONFIG
+   API CONNECTIONS
 ===================================================== */
 
-const REST_ENDPOINTS = [
-  "https://data-api.binance.vision/api/v3",
-  "https://api.binance.com/api/v3"
+const API_LIST = [
+
+"https://api.binance.com/api/v3",
+
+"https://api1.binance.com/api/v3",
+
+"https://api2.binance.com/api/v3",
+
+"https://api3.binance.com/api/v3",
+
+"https://api4.binance.com/api/v3",
+
+"https://data-api.binance.vision/api/v3"
+
 ];
 
-const WS_ENDPOINTS = [
-  "wss://stream.binance.com:9443/ws/ethusdt@kline_1m",
-  "wss://stream.binance.com:443/ws/ethusdt@kline_1m"
+
+const WS_LIST = [
+
+"wss://stream.binance.com:9443/ws/ethusdt@kline_1m",
+
+"wss://stream.binance.com:443/ws/ethusdt@kline_1m"
+
 ];
+
 
 const TF = {
-  "1m":  {api:"1m",  min:1},
-  "5m":  {api:"5m",  min:5},
-  "15m": {api:"15m", min:15},
-  "30m": {api:"30m", min:30},
-  "1h":  {api:"1h",  min:60},
-  "4h":  {api:"4h",  min:240}
+
+"1m":{
+api:"1m",
+min:1
+},
+
+"5m":{
+api:"5m",
+min:5
+},
+
+"15m":{
+api:"15m",
+min:15
+},
+
+"30m":{
+api:"30m",
+min:30
+},
+
+"1h":{
+api:"1h",
+min:60
+},
+
+"4h":{
+api:"4h",
+min:240
+}
+
 };
 
-const RANGE_DAYS = {
-  "1D":1,
-  "1W":7,
-  "1M":30,
-  "3M":90,
-  "6M":180,
-  "1Y":365,
-  "ALL":1095
+
+const RANGE = {
+
+"1D":1,
+"1W":7,
+"1M":30,
+"3M":90,
+"6M":180,
+"1Y":365,
+"ALL":1095
+
 };
 
-const STORAGE_ACTIVE = "eth_active_v3";
-const STORAGE_HISTORY = "eth_history_v3";
-const STORAGE_SETTINGS = "eth_settings_v3";
+
+const ACTIVE_KEY =
+"eth_active_reliable_v4";
+
+const HISTORY_KEY =
+"eth_history_reliable_v4";
 
 
 /* =====================================================
    STATE
 ===================================================== */
 
-let tf = "15m";
-let range = "1D";
+let tf="15m";
 
-let candles = [];
-let lastPrice = null;
+let range="1D";
 
-let chart = null;
-let candleSeries = null;
-let volumeSeries = null;
-let priceLine = null;
+let candles=[];
 
-let ws = null;
-let wsIndex = 0;
-let reconnectTimer = null;
+let chart=null;
 
-let active = load(STORAGE_ACTIVE, []);
-let history = load(STORAGE_HISTORY, []);
+let candleSeries=null;
 
-let settings = load(
-  STORAGE_SETTINGS,
-  {}
+let volumeSeries=null;
+
+let priceLine=null;
+
+let lastPrice=null;
+
+let ws=null;
+
+let wsIndex=0;
+
+let reconnectTimer=null;
+
+let active=load(
+ACTIVE_KEY,
+[]
+);
+
+let history=load(
+HISTORY_KEY,
+[]
 );
 
 
@@ -1012,362 +1014,420 @@ let settings = load(
 ===================================================== */
 
 function $(id){
-  return document.getElementById(id);
+return document.getElementById(id);
 }
 
 
 function load(key,fallback){
 
-  try{
-    return JSON.parse(
-      localStorage.getItem(key)
-      || JSON.stringify(fallback)
-    );
-  }catch{
-    return fallback;
-  }
+try{
+
+return JSON.parse(
+localStorage.getItem(key)
+||
+JSON.stringify(fallback)
+);
+
+}catch{
+
+return fallback;
+
+}
 
 }
 
 
 function save(){
 
-  localStorage.setItem(
-    STORAGE_ACTIVE,
-    JSON.stringify(active)
-  );
+localStorage.setItem(
+ACTIVE_KEY,
+JSON.stringify(active)
+);
 
-  localStorage.setItem(
-    STORAGE_HISTORY,
-    JSON.stringify(history.slice(-300))
-  );
-
-  localStorage.setItem(
-    STORAGE_SETTINGS,
-    JSON.stringify(settings)
-  );
+localStorage.setItem(
+HISTORY_KEY,
+JSON.stringify(
+history.slice(-300)
+)
+);
 
 }
 
 
-function numberPrice(value){
+function price(v){
 
-  if(!Number.isFinite(value))
-    return "--";
+if(!Number.isFinite(v))
+return "--";
 
-  return Number(value).toLocaleString(
-    "en-US",
-    {
-      minimumFractionDigits:2,
-      maximumFractionDigits:2
-    }
-  );
+return Number(v).toLocaleString(
+"en-US",
+{
+minimumFractionDigits:2,
+maximumFractionDigits:2
+}
+);
 
 }
 
 
-function percent(value){
+function pct(v){
 
-  if(!Number.isFinite(value))
-    return "--";
+if(!Number.isFinite(v))
+return "--";
 
-  return (
-    value >= 0 ? "+" : ""
-  ) + value.toFixed(2) + "%";
-
-}
-
-
-function clamp(value,min,max){
-
-  return Math.max(
-    min,
-    Math.min(max,value)
-  );
+return (
+v>=0?"+":""
+)+v.toFixed(2)+"%";
 
 }
 
 
-function mean(values){
+function mean(a){
 
-  if(!values.length)
-    return 0;
+if(!a.length)
+return 0;
 
-  return values.reduce(
-    (a,b)=>a+b,
-    0
-  ) / values.length;
+return a.reduce(
+(x,y)=>x+y,
+0
+)/a.length;
 
 }
 
 
-function standardDeviation(values){
+function std(a){
 
-  if(!values.length)
-    return 0;
+if(!a.length)
+return 0;
 
-  const m = mean(values);
+const m=mean(a);
 
-  return Math.sqrt(
-    mean(
-      values.map(
-        x => (x-m)*(x-m)
-      )
-    )
-  );
+return Math.sqrt(
+mean(
+a.map(
+x=>(x-m)**2
+)
+)
+);
+
+}
+
+
+function clamp(x,a,b){
+
+return Math.max(
+a,
+Math.min(b,x)
+);
 
 }
 
 
 function ema(values,n){
 
-  if(values.length < n)
-    return values.at(-1) || 0;
+if(values.length<n)
+return values.at(-1)||0;
 
-  let e = mean(
-    values.slice(0,n)
-  );
+let e=mean(
+values.slice(0,n)
+);
 
-  const k = 2/(n+1);
+const k=2/(n+1);
 
-  for(
-    let i=n;
-    i<values.length;
-    i++
-  ){
+for(
+let i=n;
+i<values.length;
+i++
+){
 
-    e =
-      values[i]*k +
-      e*(1-k);
-
-  }
-
-  return e;
+e=
+values[i]*k+
+e*(1-k);
 
 }
 
-
-function setStatus(text){
-
-  $("status").textContent = text;
+return e;
 
 }
 
 
 /* =====================================================
-   CHART INITIALIZATION
+   CHART
 ===================================================== */
 
 function initChart(){
 
-  const element = $("chart");
+if(
+typeof LightweightCharts==="undefined"
+){
 
-  chart =
-    LightweightCharts.createChart(
-      element,
-      {
-        layout:{
-          background:{
-            type:"solid",
-            color:"#03090d"
-          },
-          textColor:"#6e8991"
-        },
+$("chartMessage").innerHTML =
+"<span class='red'>Chart library failed to load.</span><br>Refresh the page.";
 
-        grid:{
-          vertLines:{
-            color:"#0b1b21"
-          },
-          horzLines:{
-            color:"#0b1b21"
-          }
-        },
+$("chartStatus").textContent =
+"LIBRARY ERROR";
 
-        rightPriceScale:{
-          borderColor:"#15343d",
-          scaleMargins:{
-            top:0.08,
-            bottom:0.22
-          }
-        },
+return false;
 
-        timeScale:{
-          borderColor:"#15343d",
-          timeVisible:true,
-          secondsVisible:false,
-          rightOffset:6,
-          barSpacing:8,
-          minBarSpacing:2
-        },
-
-        crosshair:{
-          mode:
-            LightweightCharts
-            .CrosshairMode
-            .Normal
-        },
-
-        handleScroll:{
-          mouseWheel:true,
-          pressedMouseMove:true,
-          horzTouchDrag:true,
-          vertTouchDrag:false
-        },
-
-        handleScale:{
-          mouseWheel:true,
-          pinch:true,
-          axisPressedMouseMove:true
-        },
-
-        kineticScroll:{
-          mouse:{
-            kineticScroll:true
-          },
-          touch:{
-            kineticScroll:true
-          }
-        }
-      }
-    );
+}
 
 
-  candleSeries =
-    chart.addSeries(
-      LightweightCharts.CandlestickSeries,
-      {
-        upColor:"#4dffa5",
-        downColor:"#ff5475",
+chart =
+LightweightCharts.createChart(
+$("chart"),
+{
 
-        borderUpColor:"#4dffa5",
-        borderDownColor:"#ff5475",
+layout:{
+background:{
+type:"solid",
+color:"#03090d"
+},
+textColor:"#718990"
+},
 
-        wickUpColor:"#4dffa5",
-        wickDownColor:"#ff5475",
+grid:{
+vertLines:{
+color:"#0b1b21"
+},
+horzLines:{
+color:"#0b1b21"
+}
+},
 
-        priceLineVisible:false
-      }
-    );
+rightPriceScale:{
+borderColor:"#15343d",
+scaleMargins:{
+top:.08,
+bottom:.22
+}
+},
+
+timeScale:{
+borderColor:"#15343d",
+timeVisible:true,
+secondsVisible:false,
+rightOffset:6,
+barSpacing:8,
+minBarSpacing:2
+},
+
+crosshair:{
+mode:
+LightweightCharts
+.CrosshairMode
+.Normal
+},
+
+handleScroll:{
+mouseWheel:true,
+pressedMouseMove:true,
+horzTouchDrag:true,
+vertTouchDrag:false
+},
+
+handleScale:{
+mouseWheel:true,
+pinch:true,
+axisPressedMouseMove:true
+}
+
+}
+);
 
 
-  volumeSeries =
-    chart.addSeries(
-      LightweightCharts.HistogramSeries,
-      {
-        priceFormat:{
-          type:"volume"
-        },
+candleSeries =
+chart.addSeries(
+LightweightCharts.CandlestickSeries,
+{
 
-        priceScaleId:"",
+upColor:"#4dffa5",
+downColor:"#ff5475",
 
-        lastValueVisible:false,
-        priceLineVisible:false
-      }
-    );
+borderUpColor:"#4dffa5",
+borderDownColor:"#ff5475",
 
+wickUpColor:"#4dffa5",
+wickDownColor:"#ff5475",
 
-  volumeSeries
-    .priceScale()
-    .applyOptions({
-      scaleMargins:{
-        top:0.78,
-        bottom:0
-      }
-    });
+priceLineVisible:false
+
+}
+);
 
 
-  priceLine =
-    candleSeries.createPriceLine(
-      {
-        price:0,
-        color:"#59f5ff",
-        lineWidth:1,
-        lineStyle:
-          LightweightCharts
-          .LineStyle
-          .Dotted,
+volumeSeries =
+chart.addSeries(
+LightweightCharts.HistogramSeries,
+{
 
-        axisLabelVisible:true,
-        title:"LIVE"
-      }
-    );
+priceFormat:{
+type:"volume"
+},
+
+priceScaleId:"",
+
+lastValueVisible:false,
+priceLineVisible:false
+
+}
+);
 
 
-  const resize =
-    new ResizeObserver(
-      ()=>{
-        chart.resize(
-          element.clientWidth,
-          element.clientHeight
-        );
-      }
-    );
+volumeSeries
+.priceScale()
+.applyOptions({
+scaleMargins:{
+top:.78,
+bottom:0
+}
+});
 
-  resize.observe(element);
+
+priceLine =
+candleSeries.createPriceLine(
+{
+
+price:0,
+
+color:"#59f5ff",
+
+lineWidth:1,
+
+lineStyle:
+LightweightCharts
+.LineStyle
+.Dotted,
+
+axisLabelVisible:true,
+
+title:"LIVE"
+
+}
+);
+
+
+const observer =
+new ResizeObserver(
+()=>{
+
+if(chart){
+
+chart.resize(
+$("chart").clientWidth,
+$("chart").clientHeight
+);
+
+}
+
+}
+);
+
+
+observer.observe(
+$("chart")
+);
+
+return true;
 
 }
 
 
 /* =====================================================
-   BINANCE REST
+   BINANCE FETCH WITH TIMEOUT + FALLBACKS
 ===================================================== */
 
-async function fetchBinance(path){
+async function fetchAPI(path){
 
-  let lastError = null;
+let lastError=null;
 
-  for(
-    const base of REST_ENDPOINTS
-  ){
 
-    try{
+for(
+const base of API_LIST
+){
 
-      const response =
-        await fetch(
-          base + path,
-          {
-            cache:"no-store"
-          }
-        );
+try{
 
-      if(!response.ok)
-        throw new Error(
-          "HTTP " + response.status
-        );
+const controller =
+new AbortController();
 
-      return await response.json();
+const timer =
+setTimeout(
+()=>{
+controller.abort();
+},
+8000
+);
 
-    }catch(error){
 
-      lastError = error;
+const response =
+await fetch(
+base+path,
+{
+cache:"no-store",
+signal:controller.signal
+}
+);
 
-    }
 
-  }
+clearTimeout(timer);
 
-  throw lastError ||
-    new Error("Binance unavailable");
+
+if(!response.ok)
+throw new Error(
+base+
+" HTTP "+
+response.status
+);
+
+
+const data =
+await response.json();
+
+
+$("connectionInfo").textContent =
+"BINANCE";
+
+
+return data;
+
+}catch(error){
+
+lastError=error;
+
+}
 
 }
 
 
-function barsLimit(){
+throw lastError ||
+new Error(
+"All Binance endpoints failed"
+);
 
-  const days =
-    RANGE_DAYS[range];
+}
 
-  const minutes =
-    TF[tf].min;
 
-  const estimated =
-    Math.ceil(
-      days*1440/minutes
-    );
+/* =====================================================
+   DATA LIMIT
+===================================================== */
 
-  return Math.min(
-    1000,
-    Math.max(100,estimated)
-  );
+function limit(){
+
+const days=
+RANGE[range];
+
+const minutes=
+TF[tf].min;
+
+return Math.min(
+1000,
+Math.max(
+100,
+Math.ceil(
+days*1440/minutes
+)
+)
+);
 
 }
 
@@ -1376,207 +1436,223 @@ function barsLimit(){
    LOAD MARKET
 ===================================================== */
 
-async function loadMarket(preserveZoom=true){
+async function loadMarket(
+preserve=true
+){
 
-  try{
+$("chartStatus").textContent =
+"LOADING";
 
-    $("chartStatus").textContent =
-      "LOADING";
-
-    const previousRange =
-      preserveZoom
-      ?
-      chart.timeScale()
-        .getVisibleLogicalRange()
-      :
-      null;
+$("chartMessage").textContent =
+"Loading ETH/USDT market data...";
 
 
-    const [klines,ticker] =
-      await Promise.all([
+try{
 
-        fetchBinance(
-          `/klines?symbol=ETHUSDT&interval=${TF[tf].api}&limit=${barsLimit()}`
-        ),
-
-        fetchBinance(
-          `/ticker/24hr?symbol=ETHUSDT`
-        )
-
-      ]);
+const oldRange =
+preserve &&
+chart
+?
+chart.timeScale()
+.getVisibleLogicalRange()
+:
+null;
 
 
-    candles =
-      klines.map(k=>({
+const result =
+await Promise.all([
 
-        time:Math.floor(+k[0]/1000),
+fetchAPI(
+`/klines?symbol=ETHUSDT&interval=${TF[tf].api}&limit=${limit()}`
+),
 
-        open:+k[1],
+fetchAPI(
+"/ticker/24hr?symbol=ETHUSDT"
+)
 
-        high:+k[2],
-
-        low:+k[3],
-
-        close:+k[4],
-
-        volume:+k[5],
-
-        quoteVolume:+k[7],
-
-        trades:+k[8],
-
-        buyVolume:+k[9]
-
-      }));
+]);
 
 
-    lastPrice =
-      +ticker.lastPrice;
+const k=result[0];
+
+const t=result[1];
 
 
-    updateTicker(ticker);
+candles =
+k.map(
+x=>({
 
-    updateChartData(
-      previousRange
-    );
+time:Math.floor(
++x[0]/1000
+),
 
-    ensureAutomaticPredictions();
+open:+x[1],
 
-    updatePredictionCards();
+high:+x[2],
 
-    setStatus("LIVE");
+low:+x[3],
 
-    $("chartStatus").textContent =
-      `${candles.length} candles • ${tf}`;
+close:+x[4],
 
-  }catch(error){
+volume:+x[5],
 
-    console.error(error);
+buyVolume:+x[9],
 
-    setStatus("DATA ERROR");
+trades:+x[8]
 
-    $("chartStatus").textContent =
-      "BINANCE ERROR";
+})
+);
 
-  }
+
+lastPrice=
++t.lastPrice;
+
+
+$("price").textContent =
+price(lastPrice);
+
+
+$("high").textContent =
+price(+t.highPrice);
+
+
+$("low").textContent =
+price(+t.lowPrice);
+
+
+$("vol").textContent =
+(+t.volume).toLocaleString(
+"en-US",
+{
+maximumFractionDigits:0
+}
+);
+
+
+const change=
++t.priceChangePercent;
+
+
+$("change").textContent =
+pct(change);
+
+$("change").className =
+"change "+
+(
+change>=0
+?
+"green"
+:
+"red"
+);
+
+
+candleSeries.setData(
+candles.map(
+c=>({
+time:c.time,
+open:c.open,
+high:c.high,
+low:c.low,
+close:c.close
+})
+)
+);
+
+
+volumeSeries.setData(
+candles.map(
+c=>({
+
+time:c.time,
+
+value:c.volume,
+
+color:
+c.close>=c.open
+?
+"rgba(77,255,165,.42)"
+:
+"rgba(255,84,117,.42)"
+
+})
+)
+);
+
+
+priceLine.applyOptions({
+price:lastPrice
+});
+
+
+if(oldRange){
+
+try{
+
+chart.timeScale()
+.setVisibleLogicalRange(
+oldRange
+);
+
+}catch{
+
+chart.timeScale()
+.fitContent();
+
+}
+
+}else{
+
+chart.timeScale()
+.fitContent();
 
 }
 
 
-/* =====================================================
-   TICKER
-===================================================== */
+$("chartMessage").style.display =
+"none";
 
-function updateTicker(ticker){
+$("chartStatus").textContent =
+candles.length+
+" candles • "+
+tf;
 
-  const p =
-    +ticker.lastPrice;
+$("status").textContent =
+"LIVE";
 
-  lastPrice = p;
 
-  $("price").textContent =
-    numberPrice(p);
+ensurePredictions();
 
-  const change =
-    +ticker.priceChangePercent;
+updatePredictions();
 
-  $("change").textContent =
-    percent(change);
+}catch(error){
 
-  $("change").className =
-    "change " +
-    (
-      change >= 0
-      ? "green"
-      : "red"
-    );
+console.error(
+"MARKET ERROR:",
+error
+);
 
-  $("high").textContent =
-    numberPrice(
-      +ticker.highPrice
-    );
 
-  $("low").textContent =
-    numberPrice(
-      +ticker.lowPrice
-    );
+$("status").textContent =
+"OFFLINE";
 
-  $("vol").textContent =
-    (+ticker.volume).toLocaleString(
-      "en-US",
-      {
-        maximumFractionDigits:0
-      }
-    );
+$("chartStatus").textContent =
+"DATA ERROR";
 
-  if(priceLine){
 
-    priceLine.applyOptions({
-      price:p
-    });
+$("chartMessage").style.display =
+"block";
 
-  }
+
+$("chartMessage").innerHTML =
+"<span class='red'>Unable to load Binance market data.</span><br>"+
+"Trying again automatically...";
+
+
+$("connectionInfo").textContent =
+"BINANCE CONNECTION FAILED";
 
 }
-
-
-/* =====================================================
-   CHART DATA
-===================================================== */
-
-function updateChartData(previousRange){
-
-  candleSeries.setData(
-    candles.map(c=>({
-      time:c.time,
-      open:c.open,
-      high:c.high,
-      low:c.low,
-      close:c.close
-    }))
-  );
-
-
-  volumeSeries.setData(
-    candles.map(c=>({
-
-      time:c.time,
-
-      value:c.volume,
-
-      color:
-        c.close >= c.open
-        ?
-        "rgba(77,255,165,.42)"
-        :
-        "rgba(255,84,117,.42)"
-
-    }))
-  );
-
-
-  if(previousRange){
-
-    try{
-
-      chart.timeScale()
-        .setVisibleLogicalRange(
-          previousRange
-        );
-
-    }catch{
-
-      chart.timeScale()
-        .fitContent();
-
-    }
-
-  }else{
-
-    chart.timeScale()
-      .fitContent();
-
-  }
 
 }
 
@@ -1585,386 +1661,394 @@ function updateChartData(previousRange){
    WEBSOCKET
 ===================================================== */
 
-function connectWebSocket(){
+function connectWS(){
 
-  clearTimeout(
-    reconnectTimer
-  );
-
-
-  const url =
-    WS_ENDPOINTS[
-      wsIndex % WS_ENDPOINTS.length
-    ];
-
-  try{
-
-    if(ws)
-      ws.close();
-
-  }catch{}
+clearTimeout(
+reconnectTimer
+);
 
 
-  try{
-
-    ws =
-      new WebSocket(url);
-
-  }catch{
-
-    wsIndex++;
-
-    reconnectTimer =
-      setTimeout(
-        connectWebSocket,
-        3000
-      );
-
-    return;
-
-  }
+const url =
+WS_LIST[
+wsIndex %
+WS_LIST.length
+];
 
 
-  ws.onopen = ()=>{
+try{
 
-    setStatus("LIVE");
+if(ws)
+ws.close();
 
-  };
-
-
-  ws.onmessage = event=>{
-
-    try{
-
-      const data =
-        JSON.parse(event.data);
-
-      if(data.k)
-        processLiveKline(data.k);
-
-    }catch(error){
-
-      console.warn(error);
-
-    }
-
-  };
+}catch{}
 
 
-  ws.onerror = ()=>{
+try{
 
-    setStatus("WS ERROR");
+ws=
+new WebSocket(url);
 
-  };
+}catch{
+
+wsIndex++;
+
+reconnectTimer=
+setTimeout(
+connectWS,
+3000
+);
+
+return;
+
+}
 
 
-  ws.onclose = ()=>{
+ws.onopen=()=>{
 
-    setStatus("RECONNECT");
+$("status").textContent =
+"LIVE";
 
-    wsIndex++;
+};
 
-    reconnectTimer =
-      setTimeout(
-        connectWebSocket,
-        3000
-      );
 
-  };
+ws.onmessage=
+event=>{
+
+try{
+
+const x=
+JSON.parse(
+event.data
+);
+
+if(x.k)
+updateLive(x.k);
+
+}catch(error){
+
+console.warn(error);
+
+}
+
+};
+
+
+ws.onerror=()=>{
+
+$("status").textContent =
+"RECONNECTING";
+
+};
+
+
+ws.onclose=()=>{
+
+$("status").textContent =
+"RECONNECTING";
+
+wsIndex++;
+
+reconnectTimer=
+setTimeout(
+connectWS,
+3000
+);
+
+};
 
 }
 
 
 /* =====================================================
-   LIVE 1 MINUTE -> SELECTED TIMEFRAME
+   LIVE CANDLE
 ===================================================== */
 
-function processLiveKline(k){
+function updateLive(k){
 
-  if(!candles.length)
-    return;
-
-
-  const minutes =
-    TF[tf].min;
-
-  const bucket =
-    Math.floor(
-      (+k.t/1000) /
-      (minutes*60)
-    ) *
-    minutes *
-    60;
+if(!candles.length)
+return;
 
 
-  let c =
-    candles.at(-1);
+const minutes=
+TF[tf].min;
 
 
-  if(c.time !== bucket){
-
-    c = {
-
-      time:bucket,
-
-      open:+k.o,
-
-      high:+k.h,
-
-      low:+k.l,
-
-      close:+k.c,
-
-      volume:+k.v,
-
-      quoteVolume:0,
-
-      trades:+k.n,
-
-      buyVolume:+k.V
-
-    };
-
-    candles.push(c);
+const bucket=
+Math.floor(
+(+k.t/1000)/
+(minutes*60)
+)*
+minutes*
+60;
 
 
-    if(
-      candles.length >
-      barsLimit()+10
-    ){
-
-      candles.shift();
-
-    }
-
-  }else{
-
-    c.high =
-      Math.max(
-        c.high,
-        +k.h
-      );
-
-    c.low =
-      Math.min(
-        c.low,
-        +k.l
-      );
-
-    c.close =
-      +k.c;
-
-    c.volume =
-      +k.v;
-
-    c.trades =
-      +k.n;
-
-    c.buyVolume =
-      +k.V;
-
-  }
+let c=
+candles.at(-1);
 
 
-  lastPrice =
-    +k.c;
+if(c.time!==bucket){
+
+c={
+
+time:bucket,
+
+open:+k.o,
+
+high:+k.h,
+
+low:+k.l,
+
+close:+k.c,
+
+volume:+k.v,
+
+buyVolume:+k.V,
+
+trades:+k.n
+
+};
 
 
-  candleSeries.update({
-
-    time:c.time,
-
-    open:c.open,
-
-    high:c.high,
-
-    low:c.low,
-
-    close:c.close
-
-  });
+candles.push(c);
 
 
-  volumeSeries.update({
+if(
+candles.length>
+limit()+5
+){
 
-    time:c.time,
+candles.shift();
 
-    value:c.volume,
+}
 
-    color:
-      c.close >= c.open
-      ?
-      "rgba(77,255,165,.42)"
-      :
-      "rgba(255,84,117,.42)"
+}else{
 
-  });
+c.high=
+Math.max(
+c.high,
++k.h
+);
+
+c.low=
+Math.min(
+c.low,
++k.l
+);
+
+c.close=
++k.c;
+
+c.volume=
++k.v;
+
+c.buyVolume=
++k.V;
+
+c.trades=
++k.n;
+
+}
 
 
-  priceLine.applyOptions({
-    price:lastPrice
-  });
+lastPrice=
++k.c;
 
 
-  $("price").textContent =
-    numberPrice(lastPrice);
+candleSeries.update({
+
+time:c.time,
+
+open:c.open,
+
+high:c.high,
+
+low:c.low,
+
+close:c.close
+
+});
 
 
-  /*
-    IMPORTANT:
-    We update the model information,
-    but DO NOT replace an already
-    locked prediction.
-  */
+volumeSeries.update({
 
-  updatePredictionCards();
+time:c.time,
+
+value:c.volume,
+
+color:
+c.close>=c.open
+?
+"rgba(77,255,165,.42)"
+:
+"rgba(255,84,117,.42)"
+
+});
+
+
+priceLine.applyOptions({
+price:lastPrice
+});
+
+
+$("price").textContent =
+price(lastPrice);
+
+
+/*
+IMPORTANT:
+Do not recreate existing predictions.
+*/
+
+updatePredictions();
 
 }
 
 
 /* =====================================================
-   MODEL FEATURES
+   MODEL
 ===================================================== */
 
-function getFeatures(){
+function features(){
 
-  if(candles.length < 80)
-    return null;
-
-
-  const closes =
-    candles.map(
-      c=>c.close
-    );
+if(candles.length<80)
+return null;
 
 
-  const returns = [];
+const closes=
+candles.map(
+c=>c.close
+);
 
 
-  for(
-    let i=1;
-    i<closes.length;
-    i++
-  ){
-
-    returns.push(
-      Math.log(
-        closes[i] /
-        closes[i-1]
-      )
-    );
-
-  }
+const returns=[];
 
 
-  const priceNow =
-    closes.at(-1);
+for(
+let i=1;
+i<closes.length;
+i++
+){
 
-  const ema21 =
-    ema(closes,21);
+returns.push(
+Math.log(
+closes[i]/closes[i-1]
+)
+);
 
-  const ema50 =
-    ema(closes,50);
-
-
-  const recentVolumes =
-    candles
-      .slice(-20)
-      .map(c=>c.volume);
-
-
-  const averageVolume =
-    mean(recentVolumes);
+}
 
 
-  const rvol =
-    (
-      candles.at(-1).volume ||
-      0
-    ) /
-    (averageVolume || 1);
+const p=
+closes.at(-1);
 
 
-  const buyRatio =
-    mean(
-      candles
-        .slice(-20)
-        .map(
-          c =>
-            c.volume
-            ?
-            c.buyVolume /
-            c.volume
-            :
-            .5
-        )
-    );
+const e21=
+ema(closes,21);
 
 
-  const shortReturn =
-    mean(
-      returns.slice(-10)
-    );
-
-  const mediumReturn =
-    mean(
-      returns.slice(-30)
-    );
-
-  const longReturn =
-    mean(
-      returns.slice(-60)
-    );
+const e50=
+ema(closes,50);
 
 
-  const volatility =
-    standardDeviation(
-      returns.slice(-60)
-    );
+const volumes=
+candles
+.slice(-20)
+.map(
+c=>c.volume
+);
 
 
-  let regime =
-    "NEUTRAL";
+const rvol=
+(
+candles.at(-1).volume
+)/
+(
+mean(volumes)||1
+);
 
 
-  if(
-    priceNow > ema21 &&
-    ema21 > ema50 &&
-    mediumReturn > 0
-  ){
-
-    regime="UP";
-
-  }
-  else if(
-    priceNow < ema21 &&
-    ema21 < ema50 &&
-    mediumReturn < 0
-  ){
-
-    regime="DOWN";
-
-  }
+const buy=
+mean(
+candles
+.slice(-20)
+.map(
+c=>
+c.volume
+?
+c.buyVolume/c.volume
+:
+.5
+)
+);
 
 
-  return {
+const short=
+mean(
+returns.slice(-10)
+);
 
-    priceNow,
-    ema21,
-    ema50,
 
-    shortReturn,
-    mediumReturn,
-    longReturn,
+const medium=
+mean(
+returns.slice(-30)
+);
 
-    volatility,
 
-    rvol,
-    buyRatio,
+const long=
+mean(
+returns.slice(-60)
+);
 
-    regime
 
-  };
+const volatility=
+std(
+returns.slice(-60)
+);
+
+
+let regime=
+"NEUTRAL";
+
+
+if(
+p>e21 &&
+e21>e50 &&
+medium>0
+){
+
+regime="UP";
+
+}
+
+
+if(
+p<e21 &&
+e21<e50 &&
+medium<0
+){
+
+regime="DOWN";
+
+}
+
+
+return{
+
+p,
+e21,
+e50,
+
+short,
+medium,
+long,
+
+volatility,
+rvol,
+buy,
+
+regime
+
+};
 
 }
 
@@ -1973,383 +2057,233 @@ function getFeatures(){
    FIVE ENGINES
 ===================================================== */
 
-function engineChronological(f,h){
+function forecast(minutes){
 
-  return clamp(
+const f=
+features();
 
-    (
-      f.shortReturn*.5 +
-      f.mediumReturn*.3 +
-      f.longReturn*.2
-    )
-    *
-    Math.sqrt(h/15),
-
-    -.06,
-    .06
-
-  );
-
-}
+if(!f)
+return null;
 
 
-function engineMathematical(f,h){
-
-  const trend21 =
-    (
-      f.priceNow-f.ema21
-    ) /
-    f.priceNow;
-
-  const trend50 =
-    (
-      f.priceNow-f.ema50
-    ) /
-    f.priceNow;
+const a=
+clamp(
+(
+f.short*.5+
+f.medium*.3+
+f.long*.2
+)*
+Math.sqrt(minutes/15),
+-.06,
+.06
+);
 
 
-  return clamp(
-
-    (
-      trend21*.55 +
-      trend50*.45
-    )
-    *
-    Math.sqrt(h/15),
-
-    -.06,
-    .06
-
-  );
-
-}
-
-
-function engineInformation(f,h){
-
-  let x=0;
+const b=
+clamp(
+(
+(
+(f.p-f.e21)/f.p
+)*.55+
+(
+(f.p-f.e50)/f.p
+)*.45
+)*
+Math.sqrt(minutes/15),
+-.06,
+.06
+);
 
 
-  if(f.regime==="UP")
-    x += .002;
+let c=0;
 
 
-  if(f.regime==="DOWN")
-    x -= .002;
+if(f.regime==="UP")
+c+=.002;
 
 
-  if(f.rvol > 1.5){
-
-    x +=
-      (f.buyRatio-.5)
-      *.025;
-
-  }
+if(f.regime==="DOWN")
+c-=.002;
 
 
-  return clamp(
-
-    x*Math.sqrt(h/15),
-
-    -.05,
-    .05
-
-  );
-
-}
+if(f.rvol>1.5)
+c+=(f.buy-.5)*.025;
 
 
-function engineAdaptive(a,b,c){
-
-  return (
-    a*.35 +
-    b*.30 +
-    c*.35
-  );
-
-}
+c=
+clamp(
+c*Math.sqrt(minutes/15),
+-.05,
+.05
+);
 
 
-function engineConsultation(
-  a,b,c,d,f
-){
-
-  const values=[
-    a,b,c,d
-  ];
+const d=
+a*.35+
+b*.30+
+c*.35;
 
 
-  const average =
-    mean(values);
+const disagreement=
+std([
+a,b,c,d
+]);
 
 
-  const disagreement =
-    standardDeviation(
-      values
-    );
+const agreement=
+clamp(
+1-disagreement/.012,
+0,
+1
+);
 
 
-  const agreement =
-    clamp(
-      1 -
-      disagreement/.012,
-      0,
-      1
-    );
+let e=
+(a+b+c+d)/4*
+(
+.35+
+.65*agreement
+);
 
 
-  let result =
-    average *
-    (
-      .35 +
-      .65*agreement
-    );
+if(
+f.regime==="UP" &&
+e<0
+)
+e*=.8;
 
 
-  if(
-    f.regime==="UP" &&
-    result<0
-  ){
-
-    result*=.8;
-
-  }
+if(
+f.regime==="DOWN" &&
+e>0
+)
+e*=.8;
 
 
-  if(
-    f.regime==="DOWN" &&
-    result>0
-  ){
-
-    result*=.8;
-
-  }
+const target=
+f.p*
+Math.exp(e);
 
 
-  return {
+const confidence=
+Math.round(
+clamp(
+48+
+35*agreement-
+180*
+Math.max(
+f.volatility*
+Math.sqrt(minutes),
+.0008
+),
+20,
+88
+)
+);
 
-    result,
-    agreement
 
-  };
+return{
+
+entry:f.p,
+
+target,
+
+confidence,
+
+regime:f.regime,
+
+a,b,c,d,e
+
+};
 
 }
 
 
 /* =====================================================
-   FORECAST CALCULATION
-===================================================== */
-
-function calculateForecast(minutes){
-
-  const f =
-    getFeatures();
-
-  if(!f)
-    return null;
-
-
-  const a =
-    engineChronological(
-      f,
-      minutes
-    );
-
-  const b =
-    engineMathematical(
-      f,
-      minutes
-    );
-
-  const c =
-    engineInformation(
-      f,
-      minutes
-    );
-
-  const d =
-    engineAdaptive(
-      a,b,c
-    );
-
-  const consultation =
-    engineConsultation(
-      a,b,c,d,f
-    );
-
-
-  const expectedReturn =
-    consultation.result;
-
-
-  const target =
-    f.priceNow *
-    Math.exp(
-      expectedReturn
-    );
-
-
-  const uncertainty =
-    Math.max(
-      f.volatility *
-      Math.sqrt(minutes),
-      .0008
-    );
-
-
-  const confidence =
-    Math.round(
-      clamp(
-        48 +
-        35*consultation.agreement -
-        180*uncertainty,
-
-        20,
-        88
-      )
-    );
-
-
-  return {
-
-    entry:f.priceNow,
-
-    target,
-
-    confidence,
-
-    regime:f.regime,
-
-    a,
-    b,
-    c,
-    d,
-
-    e:expectedReturn,
-
-    agreement:
-      consultation.agreement
-
-  };
-
-}
-
-
-/* =====================================================
-   LOCKED PREDICTION CREATION
+   LOCKED PREDICTIONS
 ===================================================== */
 
 function createPrediction(type){
 
-  const minutes =
-    type==="15m"
-    ?
-    15
-    :
-    30;
+const minutes=
+type==="15m"
+?
+15
+:
+30;
 
 
-  const forecast =
-    calculateForecast(
-      minutes
-    );
+const f=
+forecast(minutes);
 
 
-  if(!forecast)
-    return null;
+if(!f)
+return null;
 
 
-  const now =
-    Date.now();
+const now=
+Date.now();
 
 
-  return {
+return{
 
-    id:
-      crypto.randomUUID(),
+id:
+crypto.randomUUID(),
 
-    type,
+type,
 
-    createdAt:now,
+createdAt:now,
 
-    targetAt:
-      now +
-      minutes*60000,
+targetAt:
+now+
+minutes*60000,
 
-    entry:
-      forecast.entry,
+entry:f.entry,
 
-    forecast:
-      forecast.target,
+forecast:f.target,
 
-    confidence:
-      forecast.confidence,
+confidence:f.confidence,
 
-    regime:
-      forecast.regime,
+regime:f.regime
 
-    engines:{
-      a:forecast.a,
-      b:forecast.b,
-      c:forecast.c,
-      d:forecast.d,
-      e:forecast.e
-    }
-
-  };
+};
 
 }
 
 
-/* =====================================================
-   AUTOMATIC PREDICTIONS
-===================================================== */
+function ensurePredictions(){
 
-function ensureAutomaticPredictions(){
-
-  if(!getFeatures())
-    return;
+if(!features())
+return;
 
 
-  /*
-    Only create a prediction if there is
-    NO active prediction of that type.
+for(
+const type of ["15m","30m"]
+){
 
-    This is what prevents the prediction
-    from moving every live tick.
-  */
-
-  for(
-    const type of ["15m","30m"]
-  ){
-
-    const exists =
-      active.some(
-        p =>
-          p.type===type &&
-          !p.settled
-      );
+const exists=
+active.some(
+p=>
+p.type===type &&
+!p.settled
+);
 
 
-    if(!exists){
+if(!exists){
 
-      const prediction =
-        createPrediction(type);
-
-
-      if(prediction)
-        active.push(
-          prediction
-        );
-
-    }
-
-  }
+const p=
+createPrediction(type);
 
 
-  save();
+if(p)
+active.push(p);
 
-  renderActive();
+}
+
+}
+
+
+save();
 
 }
 
@@ -2358,329 +2292,241 @@ function ensureAutomaticPredictions(){
    PREDICTION DISPLAY
 ===================================================== */
 
-function updatePredictionCards(){
+function updatePredictions(){
 
-  const f =
-    calculateForecast(15);
-
-
-  if(f){
-
-    $("e1").textContent =
-      percent(f.a*100);
-
-    $("e2").textContent =
-      percent(f.b*100);
-
-    $("e3").textContent =
-      percent(f.c*100);
-
-    $("e4").textContent =
-      percent(f.d*100);
-
-    $("e5").textContent =
-      percent(f.e*100);
-
-  }
+const p15=
+active.find(
+p=>
+p.type==="15m" &&
+!p.settled
+);
 
 
-  const p15 =
-    active.find(
-      p =>
-        p.type==="15m" &&
-        !p.settled
-    );
+const p30=
+active.find(
+p=>
+p.type==="30m" &&
+!p.settled
+);
 
 
-  const p30 =
-    active.find(
-      p =>
-        p.type==="30m" &&
-        !p.settled
-    );
+if(p15){
+
+$("p15").textContent =
+price(p15.forecast);
 
 
-  if(p15){
-
-    $("p15").textContent =
-      numberPrice(
-        p15.forecast
-      );
-
-    $("m15").textContent =
-      "LOCKED • " +
-      new Date(
-        p15.targetAt
-      ).toLocaleTimeString(
-        [],
-        {
-          hour:"2-digit",
-          minute:"2-digit"
-        }
-      ) +
-      " • " +
-      p15.confidence +
-      "%";
-
-    $("b15").style.width =
-      p15.confidence+"%";
-
-    $("pred15").textContent =
-      numberPrice(
-        p15.forecast
-      );
-
-  }
+$("m15").textContent =
+"LOCKED • "+
+new Date(
+p15.targetAt
+).toLocaleTimeString(
+[],
+{
+hour:"2-digit",
+minute:"2-digit"
+}
+)+
+" • "+
+p15.confidence+
+"%";
 
 
-  if(p30){
+$("b15").style.width =
+p15.confidence+"%";
 
-    $("p30").textContent =
-      numberPrice(
-        p30.forecast
-      );
 
-    $("m30").textContent =
-      "LOCKED • " +
-      new Date(
-        p30.targetAt
-      ).toLocaleTimeString(
-        [],
-        {
-          hour:"2-digit",
-          minute:"2-digit"
-        }
-      ) +
-      " • " +
-      p30.confidence +
-      "%";
+$("pred15").textContent =
+price(p15.forecast);
 
-    $("b30").style.width =
-      p30.confidence+"%";
+}
 
-    $("pred30").textContent =
-      numberPrice(
-        p30.forecast
-      );
 
-  }
+if(p30){
+
+$("p30").textContent =
+price(p30.forecast);
+
+
+$("m30").textContent =
+"LOCKED • "+
+new Date(
+p30.targetAt
+).toLocaleTimeString(
+[],
+{
+hour:"2-digit",
+minute:"2-digit"
+}
+)+
+" • "+
+p30.confidence+
+"%";
+
+
+$("b30").style.width =
+p30.confidence+"%";
+
+
+$("pred30").textContent =
+price(p30.forecast);
+
+}
+
+
+const f=
+forecast(15);
+
+
+if(f){
+
+$("e1").textContent =
+pct(f.a*100);
+
+$("e2").textContent =
+pct(f.b*100);
+
+$("e3").textContent =
+pct(f.c*100);
+
+$("e4").textContent =
+pct(f.d*100);
+
+$("e5").textContent =
+pct(f.e*100);
+
+}
+
+
+renderActive();
 
 }
 
 
 /* =====================================================
-   ACTIVE PREDICTIONS
+   ACTIVE DISPLAY
 ===================================================== */
 
 function renderActive(){
 
-  const list =
-    active
-      .filter(
-        p=>!p.settled
-      )
-      .sort(
-        (a,b)=>
-          a.targetAt-b.targetAt
-      );
+const list=
+active.filter(
+p=>!p.settled
+);
 
 
-  if(!list.length){
+if(!list.length){
 
-    $("active").innerHTML =
-      '<div class="empty">No active prediction.</div>';
+$("active").innerHTML =
+'<div class="empty">No active prediction.</div>';
 
-    $("active2").innerHTML =
-      '<div class="empty">No active prediction.</div>';
+return;
 
-    return;
-
-  }
+}
 
 
-  const html =
-    list.map(p=>{
+$("active").innerHTML =
+list.map(
+p=>{
 
-      const minutesLeft =
-        Math.max(
-          0,
-          Math.ceil(
-            (
-              p.targetAt -
-              Date.now()
-            ) / 60000
-          )
-        );
-
-
-      return `
-        <div class="row">
-          <span>
-            ${p.type}
-            •
-            ${new Date(
-              p.targetAt
-            ).toLocaleTimeString(
-              [],
-              {
-                hour:"2-digit",
-                minute:"2-digit"
-              }
-            )}
-          </span>
-
-          <span>
-            ${numberPrice(
-              p.forecast
-            )}
-            •
-            ${minutesLeft}m
-          </span>
-        </div>
-      `;
-
-    }).join("");
+const left=
+Math.max(
+0,
+Math.ceil(
+(
+p.targetAt-
+Date.now()
+)/
+60000
+)
+);
 
 
-  $("active").innerHTML =
-    html;
+return `
 
-  $("active2").innerHTML =
-    html;
+<div class="row">
+
+<span>
+${p.type}
+•
+${new Date(
+p.targetAt
+).toLocaleTimeString(
+[],
+{
+hour:"2-digit",
+minute:"2-digit"
+}
+)}
+</span>
+
+<span>
+${price(p.forecast)}
+•
+${left}m
+</span>
+
+</div>
+
+`;
+
+}
+).join("");
 
 }
 
 
 /* =====================================================
-   TARGET PRICE
+   TARGET SETTLEMENT
 ===================================================== */
 
-async function getTargetPrice(targetTime){
+async function targetPrice(target){
 
-  const start =
-    targetTime -
-    120000;
+try{
 
-  const end =
-    targetTime +
-    120000;
+const start=
+target-120000;
 
-
-  /*
-    First choice:
-    historical trades around the exact
-    prediction target.
-  */
-
-  try{
-
-    const trades =
-      await fetchBinance(
-        `/aggTrades?symbol=ETHUSDT&startTime=${start}&endTime=${end}&limit=1000`
-      );
+const end=
+target+120000;
 
 
-    const valid =
-      trades
-        .map(
-          t=>({
-            time:+t.T,
-            price:+t.p
-          })
-        )
-        .filter(
-          t =>
-            t.time <=
-            targetTime
-        );
+const rows=
+await fetchAPI(
+`/aggTrades?symbol=ETHUSDT&startTime=${start}&endTime=${end}&limit=1000`
+);
 
 
-    if(valid.length){
-
-      const last =
-        valid.at(-1);
-
-
-      return {
-
-        price:last.price,
-
-        time:last.time,
-
-        method:
-          "trade at/before target"
-
-      };
-
-    }
-
-  }catch(error){
-
-    console.warn(
-      "Target trade lookup failed",
-      error
-    );
-
-  }
+const valid=
+rows
+.map(
+r=>({
+time:+r.T,
+price:+r.p
+})
+)
+.filter(
+r=>r.time<=target
+);
 
 
-  /*
-    Fallback:
-    completed 1-minute candle.
-  */
+if(valid.length){
 
-  try{
+return valid.at(-1);
 
-    const minute =
-      Math.floor(
-        targetTime/60000
-      )*60000;
+}
 
+}catch(error){
 
-    const data =
-      await fetchBinance(
-        `/klines?symbol=ETHUSDT&interval=1m&startTime=${minute}&limit=2`
-      );
+console.warn(
+"Target trade error",
+error
+);
+
+}
 
 
-    const k =
-      data.find(
-        row =>
-          +row[0]===minute
-      );
-
-
-    if(
-      k &&
-      Date.now() >=
-      minute+60000
-    ){
-
-      return {
-
-        price:+k[4],
-
-        time:
-          minute+60000,
-
-        method:
-          "completed 1m close"
-
-      };
-
-    }
-
-  }catch(error){
-
-    console.warn(
-      "1m fallback failed",
-      error
-    );
-
-  }
-
-
-  return null;
+return null;
 
 }
 
@@ -2689,90 +2535,75 @@ async function getTargetPrice(targetTime){
    SETTLEMENT
 ===================================================== */
 
-async function settlePredictions(){
+async function settle(){
 
-  const expired =
-    active.filter(
-      p =>
-        !p.settled &&
-        Date.now() >=
-        p.targetAt
-    );
-
-
-  for(
-    const prediction of expired
-  ){
-
-    const actual =
-      await getTargetPrice(
-        prediction.targetAt
-      );
+const expired=
+active.filter(
+p=>
+!p.settled &&
+Date.now()>=p.targetAt
+);
 
 
-    if(!actual)
-      continue;
+for(
+const p of expired
+){
+
+const actual=
+await targetPrice(
+p.targetAt
+);
 
 
-    prediction.actual =
-      actual.price;
-
-    prediction.actualTime =
-      actual.time;
-
-    prediction.settlementMethod =
-      actual.method;
-
-    prediction.errorPct =
-      (
-        (
-          actual.price -
-          prediction.forecast
-        ) /
-        prediction.forecast
-      )*100;
-
-    prediction.settled =
-      true;
+if(!actual)
+continue;
 
 
-    history.push({
-      ...prediction,
-      settledAt:Date.now()
-    });
+p.actual=
+actual.price;
+
+p.actualTime=
+actual.time;
+
+p.errorPct=
+(
+(actual.price-p.forecast)/
+p.forecast
+)*100;
+
+p.settled=true;
 
 
-    /*
-      Immediately create the next
-      prediction after settlement.
-    */
-
-    if(
-      prediction.type==="15m" ||
-      prediction.type==="30m"
-    ){
-
-      const next =
-        createPrediction(
-          prediction.type
-        );
+history.push({
+...p,
+settledAt:Date.now()
+});
 
 
-      if(next)
-        active.push(next);
+/*
+Immediately create the next
+prediction of the same type.
+*/
 
-    }
+const next=
+createPrediction(
+p.type
+);
 
-  }
+
+if(next)
+active.push(next);
+
+}
 
 
-  save();
+save();
 
-  renderActive();
+renderActive();
 
-  renderHistory();
+renderHistory();
 
-  updatePredictionCards();
+updatePredictions();
 
 }
 
@@ -2783,267 +2614,70 @@ async function settlePredictions(){
 
 function renderHistory(){
 
-  if(!history.length){
+if(!history.length){
 
-    $("history").innerHTML =
-      '<div class="empty">No completed predictions yet.</div>';
+$("history").innerHTML =
+'<div class="empty">No completed predictions yet.</div>';
 
-    $("metrics").textContent =
-      "Not enough completed observations yet.";
-
-    return;
-
-  }
-
-
-  const rows =
-    history
-      .slice(-50)
-      .reverse();
-
-
-  $("history").innerHTML =
-
-    `<div class="historyrow">
-      <b>TYPE</b>
-      <b>FORECAST</b>
-      <b>ACTUAL</b>
-      <b>ERROR</b>
-    </div>` +
-
-    rows.map(
-      h => `
-
-      <div class="historyrow">
-
-        <span>
-          ${h.type}
-        </span>
-
-        <span>
-          ${numberPrice(
-            h.forecast
-          )}
-        </span>
-
-        <span>
-          ${numberPrice(
-            h.actual
-          )}
-        </span>
-
-        <span class="${
-          h.errorPct >= 0
-          ? "green"
-          : "red"
-        }">
-
-          ${percent(
-            h.errorPct
-          )}
-
-        </span>
-
-      </div>
-
-      `
-    ).join("");
-
-
-  const mae =
-    mean(
-      rows.map(
-        h =>
-          Math.abs(
-            h.errorPct
-          )
-      )
-    );
-
-
-  const directional =
-    mean(
-      rows.map(
-        h =>
-
-          (
-            (
-              h.actual -
-              h.entry
-            ) *
-            (
-              h.forecast -
-              h.entry
-            )
-          ) >= 0
-
-          ? 1
-          : 0
-      )
-    )*100;
-
-
-  $("metrics").innerHTML =
-
-    `Completed:
-     <b>${rows.length}</b>
-     <br>
-     Mean absolute error:
-     <b>${mae.toFixed(3)}%</b>
-     <br>
-     Directional hit rate:
-     <b>${directional.toFixed(1)}%</b>
-     <br>
-     <span class="notice">
-       Historical measurement only.
-     </span>`;
+return;
 
 }
 
 
-/* =====================================================
-   CUSTOM FORECAST
-===================================================== */
-
-function createCustomForecast(){
-
-  const value =
-    $("customTime").value;
+const rows=
+history
+.slice(-30)
+.reverse();
 
 
-  if(!value){
+$("history").innerHTML =
 
-    $("customMsg").textContent =
-      "Choose a target time.";
+`
+<div class="historyrow">
+<b>TYPE</b>
+<b>FORECAST</b>
+<b>ACTUAL</b>
+<b>ERROR</b>
+</div>
+`+
 
-    return;
+rows.map(
+h=>`
 
-  }
+<div class="historyrow">
 
+<span>${h.type}</span>
 
-  const target =
-    new Date(value).getTime();
+<span>${price(h.forecast)}</span>
 
+<span>${price(h.actual)}</span>
 
-  const now =
-    Date.now();
+<span class="${
+h.errorPct>=0
+?"green"
+:"red"
+}">
+${pct(h.errorPct)}
+</span>
 
+</div>
 
-  if(
-    target <
-    now+5*60000
-  ){
-
-    $("customMsg").textContent =
-      "Target must be at least 5 minutes ahead.";
-
-    return;
-
-  }
-
-
-  if(
-    target >
-    now+7*86400000
-  ){
-
-    $("customMsg").textContent =
-      "Maximum target is 7 days.";
-
-    return;
-
-  }
+`
+).join("");
 
 
-  if(
-    active.some(
-      p =>
-        p.type==="CUSTOM" &&
-        !p.settled
-    )
-  ){
-
-    $("customMsg").textContent =
-      "A custom forecast is already active.";
-
-    return;
-
-  }
+const mae=
+mean(
+rows.map(
+h=>Math.abs(h.errorPct)
+)
+);
 
 
-  const minutes =
-    (target-now)/60000;
-
-
-  const forecast =
-    calculateForecast(
-      minutes
-    );
-
-
-  if(!forecast){
-
-    $("customMsg").textContent =
-      "Not enough market data.";
-
-    return;
-
-  }
-
-
-  active.push({
-
-    id:
-      crypto.randomUUID(),
-
-    type:"CUSTOM",
-
-    createdAt:now,
-
-    targetAt:target,
-
-    entry:
-      forecast.entry,
-
-    forecast:
-      forecast.target,
-
-    confidence:
-      forecast.confidence,
-
-    regime:
-      forecast.regime,
-
-    engines:{
-      a:forecast.a,
-      b:forecast.b,
-      c:forecast.c,
-      d:forecast.d,
-      e:forecast.e
-    }
-
-  });
-
-
-  save();
-
-  renderActive();
-
-
-  $("customMsg").innerHTML =
-    `<span class="green">
-      LOCKED
-    </span>
-    •
-    ${new Date(
-      target
-    ).toLocaleString()}
-    →
-    ${numberPrice(
-      forecast.target
-    )}
-    •
-    ${forecast.confidence}%`;
+$("metrics").innerHTML =
+`Completed: <b>${rows.length}</b><br>
+Mean absolute error:
+<b>${mae.toFixed(3)}%</b>`;
 
 }
 
@@ -3052,178 +2686,89 @@ function createCustomForecast(){
    ZOOM
 ===================================================== */
 
-function zoomBy(multiplier){
+function zoom(multiplier){
 
-  const timeScale =
-    chart.timeScale();
-
-
-  const current =
-    timeScale
-      .getVisibleLogicalRange();
+if(!chart)
+return;
 
 
-  if(!current)
-    return;
+const ts=
+chart.timeScale();
 
 
-  const center =
-    (
-      current.from +
-      current.to
-    ) / 2;
+const r=
+ts.getVisibleLogicalRange();
 
 
-  const half =
-    (
-      current.to -
-      current.from
-    ) *
-    multiplier /
-    2;
+if(!r)
+return;
 
 
-  timeScale.setVisibleLogicalRange({
+const center=
+(r.from+r.to)/2;
 
-    from:
-      center-half,
 
-    to:
-      center+half
+const half=
+(r.to-r.from)*
+multiplier/2;
 
-  });
+
+ts.setVisibleLogicalRange({
+
+from:center-half,
+
+to:center+half
+
+});
 
 }
 
 
-$("zoomIn").onclick =
-  ()=>{
-    zoomBy(.70);
-  };
+$("zoomIn").onclick=
+()=>{
+zoom(.70);
+};
 
 
-$("zoomOut").onclick =
-  ()=>{
-    zoomBy(1.40);
-  };
+$("zoomOut").onclick=
+()=>{
+zoom(1.40);
+};
 
 
-$("zoomFit").onclick =
-  ()=>{
-    chart.timeScale()
-      .fitContent();
-  };
+$("zoomFit").onclick=
+()=>{
+chart.timeScale().fitContent();
+};
 
 
-/*
-  Double tap on chart = fit.
-*/
+/* Double tap = FIT */
 
-let lastTap=0;
+let tapTime=0;
 
 
 $("chart").addEventListener(
-  "touchend",
-  event=>{
+"touchend",
+()=>{
 
-    const now =
-      Date.now();
+const now=Date.now();
 
+if(
+now-tapTime<300
+){
 
-    if(
-      now-lastTap <
-      300
-    ){
-
-      chart.timeScale()
-        .fitContent();
-
-    }
-
-
-    lastTap=now;
-
-  },
-  {
-    passive:true
-  }
-);
-
-
-/* =====================================================
-   NAVIGATION
-===================================================== */
-
-function showScreen(name){
-
-  document
-    .querySelectorAll(".screen")
-    .forEach(
-      s =>
-        s.classList.remove(
-          "active"
-        )
-    );
-
-
-  const screen =
-    document.getElementById(
-      "screen-"+name
-    );
-
-
-  if(screen)
-    screen.classList.add(
-      "active"
-    );
-
-
-  document
-    .querySelectorAll(
-      ".nav button"
-    )
-    .forEach(
-      b =>
-        b.classList.toggle(
-          "active",
-          b.dataset.screen===name
-        )
-    );
-
-
-  if(name==="chart"){
-
-    setTimeout(
-      ()=>{
-        chart.resize(
-          $("chart").clientWidth,
-          $("chart").clientHeight
-        );
-      },
-      30
-    );
-
-  }
+chart.timeScale()
+.fitContent();
 
 }
 
+tapTime=now;
 
-document
-  .querySelectorAll(
-    ".nav button"
-  )
-  .forEach(
-    button=>{
-
-      button.onclick =
-        ()=>{
-          showScreen(
-            button.dataset.screen
-          );
-        };
-
-    }
-  );
+},
+{
+passive:true
+}
+);
 
 
 /* =====================================================
@@ -3231,45 +2776,38 @@ document
 ===================================================== */
 
 document
-  .querySelectorAll(
-    "#tfbar .chip"
-  )
-  .forEach(
-    button=>{
+.querySelectorAll(
+"#tfbar .chip"
+)
+.forEach(
+button=>{
 
-      button.onclick =
-        async()=>{
+button.onclick=
+async()=>{
 
-          tf =
-            button.dataset.tf;
-
-
-          document
-            .querySelectorAll(
-              "#tfbar .chip"
-            )
-            .forEach(
-              b =>
-                b.classList.toggle(
-                  "active",
-                  b===button
-                )
-            );
+tf=
+button.dataset.tf;
 
 
-          /*
-            New timeframe:
-            fit the new dataset.
-          */
+document
+.querySelectorAll(
+"#tfbar .chip"
+)
+.forEach(
+b=>
+b.classList.toggle(
+"active",
+b===button
+)
+);
 
-          await loadMarket(
-            false
-          );
 
-        };
+await loadMarket(false);
 
-    }
-  );
+};
+
+}
+);
 
 
 /* =====================================================
@@ -3277,133 +2815,244 @@ document
 ===================================================== */
 
 document
-  .querySelectorAll(
-    "#rangebar button"
-  )
-  .forEach(
-    button=>{
+.querySelectorAll(
+"#rangebar button"
+)
+.forEach(
+button=>{
 
-      button.onclick =
-        async()=>{
+button.onclick=
+async()=>{
 
-          range =
-            button.dataset.range;
-
-
-          document
-            .querySelectorAll(
-              "#rangebar button"
-            )
-            .forEach(
-              b =>
-                b.classList.toggle(
-                  "active",
-                  b===button
-                )
-            );
+range=
+button.dataset.range;
 
 
-          /*
-            New range:
-            fit the new dataset.
-          */
+document
+.querySelectorAll(
+"#rangebar button"
+)
+.forEach(
+b=>
+b.classList.toggle(
+"active",
+b===button
+)
+);
 
-          await loadMarket(
-            false
-          );
 
-        };
+await loadMarket(false);
 
-    }
-  );
+};
+
+}
+);
 
 
 /* =====================================================
-   CUSTOM
+   NAV
 ===================================================== */
 
-$("customBtn").onclick =
-  createCustomForecast;
+document
+.querySelectorAll(
+".nav button"
+)
+.forEach(
+button=>{
+
+button.onclick=
+()=>{
+
+const name=
+button.dataset.screen;
+
+
+document
+.querySelectorAll(
+".screen"
+)
+.forEach(
+s=>
+s.classList.remove(
+"active"
+)
+);
+
+
+$("screen-"+name)
+.classList.add(
+"active"
+);
+
+
+document
+.querySelectorAll(
+".nav button"
+)
+.forEach(
+b=>
+b.classList.toggle(
+"active",
+b===button
+)
+);
+
+};
+
+}
+);
+
+
+/* =====================================================
+   CUSTOM FORECAST
+===================================================== */
+
+$("customBtn").onclick=
+()=>{
+
+const value=
+$("customTime").value;
+
+
+if(!value)
+return;
+
+
+const target=
+new Date(value).getTime();
+
+
+const minutes=
+(target-Date.now())/
+60000;
+
+
+if(minutes<5){
+
+$("customMsg").textContent=
+"Target must be at least 5 minutes ahead.";
+
+return;
+
+}
+
+
+const f=
+forecast(minutes);
+
+
+if(!f){
+
+$("customMsg").textContent=
+"Not enough market data.";
+
+return;
+
+}
+
+
+active.push({
+
+id:crypto.randomUUID(),
+
+type:"CUSTOM",
+
+createdAt:Date.now(),
+
+targetAt:target,
+
+entry:f.entry,
+
+forecast:f.target,
+
+confidence:f.confidence,
+
+regime:f.regime,
+
+settled:false
+
+});
+
+
+save();
+
+renderActive();
+
+
+$("customMsg").textContent=
+"LOCKED • "+
+new Date(target).toLocaleString()+
+" • "+
+price(f.target);
+
+};
 
 
 /* =====================================================
    RESET
 ===================================================== */
 
-$("reset").onclick =
-  ()=>{
+$("reset").onclick=
+()=>{
 
-    if(
-      confirm(
-        "Reset prediction history and active predictions?"
-      )
-    ){
+if(
+confirm(
+"Delete prediction history?"
+)
+){
 
-      localStorage.removeItem(
-        STORAGE_ACTIVE
-      );
+localStorage.removeItem(
+ACTIVE_KEY
+);
 
-      localStorage.removeItem(
-        STORAGE_HISTORY
-      );
+localStorage.removeItem(
+HISTORY_KEY
+);
 
-      location.reload();
+location.reload();
 
-    }
+}
 
-  };
+};
 
 
 /* =====================================================
    START
 ===================================================== */
 
-initChart();
+if(initChart()){
 
-connectWebSocket();
+connectWS();
 
 loadMarket(false);
 
+}else{
+
+$("status").textContent =
+"CHART ERROR";
+
+}
+
+
+setInterval(
+()=>{
+loadMarket(true);
+},
+60000
+);
+
+
+setInterval(
+()=>{
 renderActive();
-
-renderHistory();
-
-
-/*
-  Update countdown only.
-  This does NOT recalculate locked
-  prediction prices.
-*/
-
-setInterval(
-  ()=>{
-    renderActive();
-    updatePredictionCards();
-  },
-  1000
+},
+1000
 );
 
 
-/*
-  Check expired predictions.
-*/
-
 setInterval(
-  settlePredictions,
-  10000
-);
-
-
-/*
-  Refresh market data every minute.
-  Existing chart zoom is preserved.
-*/
-
-setInterval(
-  ()=>{
-    loadMarket(true);
-  },
-  60000
+settle,
+10000
 );
 
 </script>
