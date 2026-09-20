@@ -3,144 +3,147 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport"
-      content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+      content="width=device-width,initial-scale=1,maximum-scale=1">
 
 <title>ETH/USDT Prediction Engine</title>
 
 <script src="https://unpkg.com/lightweight-charts@5.2.1/dist/lightweight-charts.standalone.production.js"></script>
 
 <style>
-*{
-  box-sizing:border-box;
-}
+*{box-sizing:border-box}
 
 html,body{
   margin:0;
   padding:0;
-  background:#070b12;
+  background:#070c14;
   color:#e8edf5;
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif
 }
 
-body{
-  min-height:100vh;
+body{min-height:100vh}
+
+.header{
+  padding:22px 20px 18px;
+  border-bottom:1px solid #202b3b;
+  background:#080e17;
 }
 
-header{
-  position:sticky;
-  top:0;
-  z-index:20;
-  background:#0a0f18;
-  border-bottom:1px solid #202938;
-  padding:12px;
-}
-
-.headerTop{
+.headerRow{
   display:flex;
-  align-items:center;
   justify-content:space-between;
-  gap:10px;
+  align-items:center;
+  gap:12px;
 }
 
-.logo{
-  font-size:18px;
-  font-weight:800;
+.title{
+  font-size:25px;
+  font-weight:850;
+  letter-spacing:-.6px;
 }
 
-.sub{
-  color:#8793a7;
-  font-size:11px;
-  margin-top:3px;
+.subtitle{
+  margin-top:7px;
+  color:#8e9aad;
+  font-size:14px;
+  line-height:1.45;
 }
 
-.status{
+.connection{
+  white-space:nowrap;
+  font-size:13px;
   display:flex;
   align-items:center;
-  gap:6px;
-  font-size:11px;
+  gap:8px;
 }
 
 .dot{
-  width:8px;
-  height:8px;
+  width:10px;
+  height:10px;
   border-radius:50%;
-  background:#555;
+  background:#666;
 }
 
 .dot.live{
   background:#22c55e;
-  box-shadow:0 0 8px #22c55e;
+  box-shadow:0 0 10px #22c55e;
+}
+
+.dot.error{
+  background:#ef4444;
 }
 
 .container{
   width:min(1500px,100%);
   margin:auto;
-  padding:10px;
-}
-
-.grid{
-  display:grid;
-  grid-template-columns:minmax(0,1fr);
-  gap:10px;
+  padding:14px;
 }
 
 .card{
   background:#0d131d;
-  border:1px solid #202938;
-  border-radius:12px;
-  padding:11px;
-  margin-bottom:10px;
+  border:1px solid #202c3d;
+  border-radius:18px;
+  padding:15px;
+  margin-bottom:12px;
+  box-shadow:0 4px 20px rgba(0,0,0,.12);
 }
 
 .cardTitle{
-  font-size:12px;
-  font-weight:800;
-  letter-spacing:.7px;
-  color:#aeb8c9;
-  margin-bottom:9px;
+  color:#aeb9ca;
+  font-size:13px;
+  font-weight:850;
+  letter-spacing:1px;
+  margin-bottom:12px;
 }
 
 .price{
-  font-size:28px;
-  font-weight:800;
+  font-size:31px;
+  font-weight:850;
   letter-spacing:-1px;
 }
 
-.green{
-  color:#22c55e;
+.change{
+  margin-top:5px;
+  font-size:13px;
 }
 
-.red{
-  color:#ef4444;
+.green{color:#22c55e}
+.red{color:#ef4444}
+.blue{color:#60a5fa}
+.yellow{color:#facc15}
+.gray{color:#8793a6}
+
+.kpis{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:13px;
 }
 
-.yellow{
-  color:#facc15;
+.kpi{
+  min-height:92px;
+  padding:13px;
+  border:1px solid #203044;
+  border-radius:14px;
+  background:#090f18;
 }
 
-.blue{
-  color:#60a5fa;
-}
-
-.muted{
-  color:#7f8ba0;
-}
-
-.small{
+.kpiLabel{
+  color:#78869a;
   font-size:11px;
+  margin-bottom:9px;
 }
 
-.tiny{
-  font-size:10px;
+.kpiValue{
+  font-size:16px;
+  font-weight:750;
 }
 
-.chartWrap{
-  position:relative;
-  height:470px;
+.chartBox{
   width:100%;
-  background:#080d15;
-  border-radius:10px;
+  height:470px;
+  border-radius:13px;
   overflow:hidden;
+  background:#080d15;
 }
 
 #chart{
@@ -148,42 +151,41 @@ header{
   height:100%;
 }
 
-.chartTools{
+.ranges{
   display:flex;
-  gap:5px;
+  gap:7px;
   overflow-x:auto;
-  padding:7px 0 2px;
+  padding-top:10px;
 }
 
-button,
-select,
-input{
-  font:inherit;
+.ranges button{
+  flex:0 0 auto;
 }
 
 button{
-  border:1px solid #293447;
-  background:#121a26;
-  color:#e8edf5;
-  border-radius:8px;
-  padding:9px 11px;
-  cursor:pointer;
+  background:#111a27;
+  color:#dce4ef;
+  border:1px solid #2a394d;
+  border-radius:9px;
+  padding:10px 13px;
+  font-size:13px;
 }
 
-button:hover{
-  background:#182235;
+button:active{
+  transform:scale(.98);
+}
+
+button.active{
+  background:#26364d;
+  border-color:#50637e;
 }
 
 button.primary{
   width:100%;
+  margin-top:10px;
   background:#2563eb;
   border-color:#2563eb;
   font-weight:800;
-  margin-top:9px;
-}
-
-button.primary:hover{
-  background:#1d4ed8;
 }
 
 button.danger{
@@ -191,192 +193,139 @@ button.danger{
   color:#fca5a5;
 }
 
-button.active{
-  background:#263348;
-  border-color:#52627d;
-}
-
-select,
-input{
-  width:100%;
-  background:#0a1019;
-  color:#e8edf5;
-  border:1px solid #293447;
-  border-radius:8px;
-  padding:9px;
-  outline:none;
-}
-
-label{
-  display:block;
-  font-size:10px;
-  color:#8490a3;
-  margin-bottom:5px;
-}
-
-.inputGrid{
+.predictions{
   display:grid;
   grid-template-columns:1fr 1fr;
-  gap:8px;
-}
-
-.inputGroup{
-  min-width:0;
-}
-
-.kpiGrid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:7px;
-}
-
-.kpi{
-  background:#0a1019;
-  border:1px solid #1f2a3a;
-  border-radius:8px;
-  padding:9px;
-}
-
-.kpiLabel{
-  font-size:9px;
-  color:#77849a;
-  margin-bottom:4px;
-}
-
-.kpiValue{
-  font-size:14px;
-  font-weight:750;
-}
-
-.engineGrid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:7px;
-}
-
-.engine{
-  background:#0a1019;
-  border:1px solid #202c3e;
-  border-radius:8px;
-  padding:9px;
-}
-
-.engineName{
-  font-size:10px;
-  font-weight:800;
-  color:#9eabc0;
-}
-
-.engineValue{
-  margin-top:5px;
-  font-size:15px;
-  font-weight:800;
-}
-
-.notice{
-  background:#0a1019;
-  border:1px solid #202c3e;
-  border-radius:8px;
-  padding:9px;
-  color:#9ba7ba;
-  font-size:11px;
-  line-height:1.5;
-}
-
-.predGrid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:9px;
+  gap:10px;
 }
 
 .pred{
-  background:#0a1019;
-  border:1px solid #263246;
-  border-radius:10px;
-  padding:10px;
+  background:#090f18;
+  border:1px solid #253449;
+  border-radius:14px;
+  padding:13px;
 }
 
-.predTitle{
+.predHead{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  margin-bottom:8px;
+  margin-bottom:10px;
 }
 
-.horizon{
+.predName{
+  font-size:13px;
   font-weight:850;
 }
 
 .badge{
   font-size:9px;
+  padding:4px 7px;
   border-radius:20px;
-  padding:3px 6px;
-  background:#162235;
-  color:#a9b6c9;
+  background:#172335;
+  color:#aebbd0;
 }
 
-.forecastPrice{
-  font-size:22px;
+.predPrice{
+  font-size:24px;
   font-weight:850;
 }
 
-.forecastTarget{
+.predTarget{
+  margin-top:5px;
+  color:#7f8ca0;
   font-size:10px;
-  color:#7f8ba0;
-  margin-top:3px;
+  line-height:1.4;
 }
 
-.range{
-  margin-top:7px;
+.predRange{
+  margin-top:8px;
+  color:#9ba8ba;
   font-size:10px;
-  color:#8e9bb0;
 }
 
 .progress{
+  margin-top:10px;
   height:5px;
-  background:#172131;
-  border-radius:20px;
+  border-radius:10px;
+  background:#172231;
   overflow:hidden;
-  margin-top:8px;
 }
 
 .progressBar{
   height:100%;
+  width:0;
   background:#3b82f6;
 }
 
-table{
-  width:100%;
-  border-collapse:collapse;
+.engineGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:9px;
+}
+
+.engine{
+  background:#090f18;
+  border:1px solid #223044;
+  border-radius:12px;
+  padding:11px;
+}
+
+.engineTitle{
+  color:#7e8ca1;
   font-size:10px;
+  line-height:1.3;
 }
 
-th,
-td{
-  text-align:left;
-  padding:7px 5px;
-  border-bottom:1px solid #1c2635;
+.engineValue{
+  margin-top:7px;
+  font-size:15px;
+  font-weight:800;
 }
 
-th{
-  color:#7d8a9f;
-  font-weight:600;
+.notice{
+  background:#090f18;
+  border:1px solid #223044;
+  border-radius:12px;
+  padding:11px;
+  color:#9ba8ba;
+  font-size:11px;
+  line-height:1.55;
+}
+
+.inputGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:9px;
+  margin-top:10px;
+}
+
+label{
+  display:block;
+  color:#8794a7;
+  font-size:10px;
+  margin-bottom:5px;
+}
+
+input{
+  width:100%;
+  background:#080e17;
+  color:#e8edf5;
+  border:1px solid #29384d;
+  border-radius:9px;
+  padding:11px;
+  outline:none;
 }
 
 .tabs{
   display:flex;
-  gap:5px;
+  gap:7px;
   overflow-x:auto;
-  margin-bottom:10px;
+  margin:14px 0 10px;
 }
 
 .tab{
-  white-space:nowrap;
-}
-
-.tab.active{
-  background:#263348;
-  border-color:#506078;
+  flex:0 0 auto;
 }
 
 .section{
@@ -387,17 +336,57 @@ th{
   display:block;
 }
 
+.tableWrap{
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  min-width:680px;
+  border-collapse:collapse;
+  font-size:10px;
+}
+
+th,td{
+  padding:8px 6px;
+  border-bottom:1px solid #1c2737;
+  text-align:left;
+}
+
+th{
+  color:#7f8ca0;
+  font-weight:600;
+}
+
 .footer{
-  color:#66748a;
-  font-size:9px;
+  padding:10px 5px 30px;
   text-align:center;
-  padding:15px 5px 30px;
+  color:#657287;
+  font-size:9px;
+}
+
+.errorBox{
+  display:none;
+  background:#291116;
+  border:1px solid #7f1d1d;
+  color:#fca5a5;
+  border-radius:12px;
+  padding:12px;
+  margin-bottom:12px;
+  font-size:11px;
+  line-height:1.5;
 }
 
 @media(min-width:900px){
 
-  .grid{
-    grid-template-columns:minmax(0,2fr) minmax(340px,1fr);
+  .container{
+    padding:18px;
+  }
+
+  .mainGrid{
+    display:grid;
+    grid-template-columns:minmax(0,2fr) minmax(350px,1fr);
+    gap:12px;
     align-items:start;
   }
 
@@ -405,11 +394,34 @@ th{
     grid-row:span 2;
   }
 
-  .chartWrap{
+  .chartBox{
     height:650px;
   }
+}
 
-  .predGrid{
+@media(max-width:600px){
+
+  .header{
+    padding:20px 20px 17px;
+  }
+
+  .title{
+    font-size:24px;
+  }
+
+  .subtitle{
+    font-size:14px;
+  }
+
+  .connection{
+    font-size:12px;
+  }
+
+  .chartBox{
+    height:470px;
+  }
+
+  .predictions{
     grid-template-columns:1fr 1fr;
   }
 }
@@ -418,63 +430,72 @@ th{
 
 <body>
 
-<header>
-  <div class="headerTop">
+<header class="header">
+
+  <div class="headerRow">
 
     <div>
-      <div class="logo">ETH/USDT PREDICTION ENGINE</div>
-      <div class="sub">
+      <div class="title">
+        ETH/USDT PREDICTION ENGINE
+      </div>
+
+      <div class="subtitle">
         Chronological • Mathematical • Information • Adaptive Ensemble
       </div>
     </div>
 
-    <div class="status">
+    <div class="connection">
       <span id="statusDot" class="dot"></span>
-      <span id="statusText">CONNECTING</span>
+      <span id="statusText">STARTING</span>
     </div>
 
   </div>
+
 </header>
 
 
 <div class="container">
 
-  <!-- =====================================================
-       TOP PRICE
-       ===================================================== -->
+  <div id="errorBox" class="errorBox"></div>
+
+
+  <!-- MARKET -->
 
   <div class="card">
 
-    <div class="cardTitle">ETH/USDT LIVE MARKET</div>
-
-    <div class="price" id="currentPrice">--</div>
-
-    <div class="small" id="priceChange">
-      Waiting for market data...
+    <div class="cardTitle">
+      ETH/USDT LIVE MARKET
     </div>
 
-    <div style="height:8px"></div>
+    <div id="currentPrice" class="price">
+      --
+    </div>
 
-    <div class="kpiGrid">
+    <div id="priceChange"
+         class="change gray">
+      Connecting to market data...
+    </div>
+
+    <div class="kpis">
 
       <div class="kpi">
         <div class="kpiLabel">24H HIGH</div>
-        <div class="kpiValue" id="dayHigh">--</div>
+        <div id="high24" class="kpiValue">--</div>
       </div>
 
       <div class="kpi">
         <div class="kpiLabel">24H LOW</div>
-        <div class="kpiValue" id="dayLow">--</div>
+        <div id="low24" class="kpiValue">--</div>
       </div>
 
       <div class="kpi">
-        <div class="kpiLabel">VOLUME</div>
-        <div class="kpiValue" id="dayVolume">--</div>
+        <div class="kpiLabel">24H VOLUME</div>
+        <div id="volume24" class="kpiValue">--</div>
       </div>
 
       <div class="kpi">
         <div class="kpiLabel">LAST UPDATE</div>
-        <div class="kpiValue" id="lastUpdate">--</div>
+        <div id="lastUpdate" class="kpiValue">--</div>
       </div>
 
     </div>
@@ -482,21 +503,22 @@ th{
   </div>
 
 
-  <div class="grid">
+  <div class="mainGrid">
 
-    <!-- ===================================================
-         CHART
-         =================================================== -->
+
+    <!-- CHART -->
 
     <div class="card chartCard">
 
-      <div class="cardTitle">REALTIME PRICE / VOLUME</div>
+      <div class="cardTitle">
+        REALTIME PRICE / VOLUME
+      </div>
 
-      <div class="chartWrap">
+      <div class="chartBox">
         <div id="chart"></div>
       </div>
 
-      <div class="chartTools">
+      <div class="ranges">
 
         <button data-range="1D">1D</button>
         <button data-range="1W">1W</button>
@@ -508,56 +530,57 @@ th{
 
       </div>
 
-      <div class="notice" style="margin-top:8px">
-        Mouse/touch drag = pan • pinch = zoom •
-        double tap/click = reset view.
+      <div class="notice" style="margin-top:9px">
+
+        Touch/drag to move the chart.
+        Pinch to zoom.
+        Double tap to reset the view.
+
       </div>
 
     </div>
 
 
-    <!-- ===================================================
-         AUTOMATIC PREDICTIONS
-         =================================================== -->
+    <!-- AUTOMATIC PREDICTIONS -->
 
     <div class="card">
 
-      <div class="cardTitle">AUTOMATIC FORECASTS</div>
+      <div class="cardTitle">
+        AUTOMATIC FORECASTS
+      </div>
 
-      <div class="predGrid">
+      <div class="predictions">
 
         <div class="pred">
 
-          <div class="predTitle">
-            <span class="horizon">15 MIN</span>
-            <span class="badge" id="status15">--</span>
+          <div class="predHead">
+            <span class="predName">15 MIN</span>
+            <span id="badge15" class="badge">--</span>
           </div>
 
-          <div class="forecastPrice"
-               id="forecast15">
+          <div id="forecast15"
+               class="predPrice">
             --
           </div>
 
-          <div class="forecastTarget"
-               id="target15">
+          <div id="target15"
+               class="predTarget">
             --
           </div>
 
-          <div class="range"
-               id="range15">
+          <div id="range15"
+               class="predRange">
             --
           </div>
 
-          <div class="range"
-               id="confidence15">
+          <div id="conf15"
+               class="predRange">
             --
           </div>
 
           <div class="progress">
-            <div id="progress15"
-                 class="progressBar"
-                 style="width:0%">
-            </div>
+            <div id="bar15"
+                 class="progressBar"></div>
           </div>
 
         </div>
@@ -565,36 +588,34 @@ th{
 
         <div class="pred">
 
-          <div class="predTitle">
-            <span class="horizon">30 MIN</span>
-            <span class="badge" id="status30">--</span>
+          <div class="predHead">
+            <span class="predName">30 MIN</span>
+            <span id="badge30" class="badge">--</span>
           </div>
 
-          <div class="forecastPrice"
-               id="forecast30">
+          <div id="forecast30"
+               class="predPrice">
             --
           </div>
 
-          <div class="forecastTarget"
-               id="target30">
+          <div id="target30"
+               class="predTarget">
             --
           </div>
 
-          <div class="range"
-               id="range30">
+          <div id="range30"
+               class="predRange">
             --
           </div>
 
-          <div class="range"
-               id="confidence30">
+          <div id="conf30"
+               class="predRange">
             --
           </div>
 
           <div class="progress">
-            <div id="progress30"
-                 class="progressBar"
-                 style="width:0%">
-            </div>
+            <div id="bar30"
+                 class="progressBar"></div>
           </div>
 
         </div>
@@ -604,64 +625,50 @@ th{
     </div>
 
 
-    <!-- ===================================================
-         CUSTOM FORECAST
-         =================================================== -->
+    <!-- CUSTOM -->
 
     <div class="card">
 
-      <div class="cardTitle">CUSTOM FORECAST</div>
+      <div class="cardTitle">
+        CUSTOM FORECAST
+      </div>
 
       <div class="notice">
 
-        Choose only the future target date and time.
-        The forecasting engines calculate the prediction
-        automatically.
+        Select only the future target date and time.
+        The model calculates the forecast automatically.
 
         <br><br>
 
-        You do <b>not</b> enter price, direction,
-        confidence or notes.
+        You do not enter a price,
+        direction or confidence.
 
       </div>
 
-      <div class="inputGrid" style="margin-top:9px">
+      <div class="inputGrid">
 
-        <div class="inputGroup">
-
+        <div>
           <label>Target date</label>
-
-          <input
-            id="customTargetDate"
-            type="date">
-
+          <input id="customDate" type="date">
         </div>
 
-        <div class="inputGroup">
-
+        <div>
           <label>Target time</label>
-
-          <input
-            id="customTargetTime"
-            type="time"
-            step="60">
-
+          <input id="customTime" type="time" step="60">
         </div>
 
       </div>
 
-      <button
-        class="primary"
-        id="setCustomForecast">
+      <button id="customButton"
+              class="primary">
 
         SET CUSTOM FORECAST
 
       </button>
 
-      <div
-        id="customForecastState"
-        class="notice"
-        style="margin-top:8px">
+      <div id="customState"
+           class="notice"
+           style="margin-top:9px">
 
         No custom forecast active.
 
@@ -670,66 +677,54 @@ th{
     </div>
 
 
-    <!-- ===================================================
-         ENGINE STATUS
-         =================================================== -->
+    <!-- FOUR ENGINES -->
 
     <div class="card">
 
-      <div class="cardTitle">FOUR ENGINE ANALYSIS</div>
+      <div class="cardTitle">
+        FOUR ENGINE ANALYSIS
+      </div>
 
       <div class="engineGrid">
 
         <div class="engine">
-
-          <div class="engineName">
-            01 • CHRONOLOGICAL
+          <div class="engineTitle">
+            01 • CHRONOLOGICAL FORECAST
           </div>
-
-          <div class="engineValue"
-               id="engineChronological">
+          <div id="engine1"
+               class="engineValue">
             --
           </div>
-
         </div>
 
         <div class="engine">
-
-          <div class="engineName">
+          <div class="engineTitle">
             02 • MATHEMATICAL / GEOMETRY
           </div>
-
-          <div class="engineValue"
-               id="engineMath">
+          <div id="engine2"
+               class="engineValue">
             --
           </div>
-
         </div>
 
         <div class="engine">
-
-          <div class="engineName">
+          <div class="engineTitle">
             03 • INFORMATION / REGIME
           </div>
-
-          <div class="engineValue"
-               id="engineInformation">
+          <div id="engine3"
+               class="engineValue">
             --
           </div>
-
         </div>
 
         <div class="engine">
-
-          <div class="engineName">
+          <div class="engineTitle">
             04 • ADAPTIVE ENSEMBLE
           </div>
-
-          <div class="engineValue"
-               id="engineAdaptive">
+          <div id="engine4"
+               class="engineValue">
             --
           </div>
-
         </div>
 
       </div>
@@ -739,9 +734,7 @@ th{
   </div>
 
 
-  <!-- =====================================================
-       TABS
-       ===================================================== -->
+  <!-- TABS -->
 
   <div class="tabs">
 
@@ -773,12 +766,10 @@ th{
   </div>
 
 
-  <!-- =====================================================
-       QUALITY
-       ===================================================== -->
+  <!-- QUALITY -->
 
-  <div id="quality"
-       class="section active">
+  <section id="quality"
+           class="section active">
 
     <div class="card">
 
@@ -786,52 +777,36 @@ th{
         PREDICTION QUALITY
       </div>
 
-      <div class="kpiGrid">
+      <div class="kpis">
 
         <div class="kpi">
           <div class="kpiLabel">DATA QUALITY</div>
-          <div class="kpiValue"
-               id="dataQuality">
+          <div id="dataQuality"
+               class="kpiValue">
             --
           </div>
         </div>
 
         <div class="kpi">
           <div class="kpiLabel">REGIME</div>
-          <div class="kpiValue"
-               id="regime">
+          <div id="regime"
+               class="kpiValue">
             --
           </div>
         </div>
 
         <div class="kpi">
           <div class="kpiLabel">VOLATILITY</div>
-          <div class="kpiValue"
-               id="volatility">
+          <div id="volatility"
+               class="kpiValue">
             --
           </div>
         </div>
 
         <div class="kpi">
-          <div class="kpiLabel">RVOL</div>
-          <div class="kpiValue"
-               id="rvol">
-            --
-          </div>
-        </div>
-
-        <div class="kpi">
-          <div class="kpiLabel">VWAP DISTANCE</div>
-          <div class="kpiValue"
-               id="vwapDistance">
-            --
-          </div>
-        </div>
-
-        <div class="kpi">
-          <div class="kpiLabel">ENTROPY</div>
-          <div class="kpiValue"
-               id="entropy">
+          <div class="kpiLabel">RSI</div>
+          <div id="rsi"
+               class="kpiValue">
             --
           </div>
         </div>
@@ -847,10 +822,10 @@ th{
         MODEL DECISION
       </div>
 
-      <div id="modelDecision"
+      <div id="decision"
            class="notice">
 
-        Waiting for enough market data.
+        Waiting for market data.
 
       </div>
 
@@ -860,10 +835,10 @@ th{
     <div class="card">
 
       <div class="cardTitle">
-        WHY THIS PREDICTION?
+        WHY THIS FORECAST?
       </div>
 
-      <div id="whyPrediction"
+      <div id="why"
            class="notice">
 
         Waiting for model calculation.
@@ -872,15 +847,13 @@ th{
 
     </div>
 
-  </div>
+  </section>
 
 
-  <!-- =====================================================
-       HISTORY
-       ===================================================== -->
+  <!-- HISTORY -->
 
-  <div id="history"
-       class="section">
+  <section id="history"
+           class="section">
 
     <div class="card">
 
@@ -888,27 +861,22 @@ th{
         COMPLETED PREDICTIONS
       </div>
 
-      <div style="overflow-x:auto">
+      <div class="tableWrap">
 
         <table>
 
           <thead>
-
             <tr>
-              <th>HORIZON</th>
-              <th>CREATED</th>
+              <th>TYPE</th>
               <th>TARGET</th>
               <th>PREDICTED</th>
               <th>ACTUAL</th>
               <th>ERROR</th>
               <th>RESULT</th>
             </tr>
-
           </thead>
 
-          <tbody id="historyBody">
-
-          </tbody>
+          <tbody id="historyBody"></tbody>
 
         </table>
 
@@ -916,15 +884,13 @@ th{
 
     </div>
 
-  </div>
+  </section>
 
 
-  <!-- =====================================================
-       VALIDATION
-       ===================================================== -->
+  <!-- VALIDATION -->
 
-  <div id="validation"
-       class="section">
+  <section id="validation"
+           class="section">
 
     <div class="card">
 
@@ -932,149 +898,105 @@ th{
         WALK-FORWARD VALIDATION
       </div>
 
-      <div class="kpiGrid">
+      <div class="kpis">
 
         <div class="kpi">
-
-          <div class="kpiLabel">
-            15M SAMPLES
-          </div>
-
-          <div class="kpiValue"
-               id="val15Samples">
+          <div class="kpiLabel">15M SAMPLES</div>
+          <div id="samples15"
+               class="kpiValue">
             --
           </div>
-
         </div>
 
         <div class="kpi">
-
-          <div class="kpiLabel">
-            15M MAE
-          </div>
-
-          <div class="kpiValue"
-               id="val15Mae">
+          <div class="kpiLabel">15M MAE</div>
+          <div id="mae15"
+               class="kpiValue">
             --
           </div>
-
         </div>
 
         <div class="kpi">
-
-          <div class="kpiLabel">
-            30M SAMPLES
-          </div>
-
-          <div class="kpiValue"
-               id="val30Samples">
+          <div class="kpiLabel">30M SAMPLES</div>
+          <div id="samples30"
+               class="kpiValue">
             --
           </div>
-
         </div>
 
         <div class="kpi">
-
-          <div class="kpiLabel">
-            30M MAE
-          </div>
-
-          <div class="kpiValue"
-               id="val30Mae">
+          <div class="kpiLabel">30M MAE</div>
+          <div id="mae30"
+               class="kpiValue">
             --
           </div>
-
         </div>
 
       </div>
 
-      <button
-        id="runBacktest"
-        class="primary">
+      <button id="backtestButton"
+              class="primary">
 
         RUN WALK-FORWARD VALIDATION
 
       </button>
 
-      <div
-        id="backtestStatus"
-        class="notice"
-        style="margin-top:8px">
+      <div id="backtestStatus"
+           class="notice"
+           style="margin-top:9px">
 
-        Validation has not been run yet.
+        Not run yet.
 
       </div>
 
     </div>
 
-  </div>
+  </section>
 
 
-  <!-- =====================================================
-       MODEL
-       ===================================================== -->
+  <!-- MODEL -->
 
-  <div id="model"
-       class="section">
+  <section id="model"
+           class="section">
 
     <div class="card">
 
       <div class="cardTitle">
-        ADAPTIVE ENSEMBLE WEIGHTS
+        ADAPTIVE ENGINE WEIGHTS
       </div>
 
-      <div class="kpiGrid">
+      <div class="kpis">
 
         <div class="kpi">
-
-          <div class="kpiLabel">
-            CHRONOLOGICAL
-          </div>
-
-          <div class="kpiValue"
-               id="weightChronological">
+          <div class="kpiLabel">CHRONOLOGICAL</div>
+          <div id="w1"
+               class="kpiValue">
             --
           </div>
-
         </div>
 
         <div class="kpi">
-
-          <div class="kpiLabel">
-            MATHEMATICAL
-          </div>
-
-          <div class="kpiValue"
-               id="weightMath">
+          <div class="kpiLabel">MATHEMATICAL</div>
+          <div id="w2"
+               class="kpiValue">
             --
           </div>
-
         </div>
 
         <div class="kpi">
-
-          <div class="kpiLabel">
-            INFORMATION
-          </div>
-
-          <div class="kpiValue"
-               id="weightInformation">
+          <div class="kpiLabel">INFORMATION</div>
+          <div id="w3"
+               class="kpiValue">
             --
           </div>
-
         </div>
 
         <div class="kpi">
-
-          <div class="kpiLabel">
-            ADAPTIVE
-          </div>
-
-          <div class="kpiValue"
-               id="weightAdaptive">
+          <div class="kpiLabel">ENSEMBLE</div>
+          <div id="w4"
+               class="kpiValue">
             --
           </div>
-
         </div>
 
       </div>
@@ -1085,28 +1007,26 @@ th{
     <div class="card">
 
       <div class="cardTitle">
-        LEARNING STATUS
+        LEARNING
       </div>
 
-      <div
-        id="learningStatus"
-        class="notice">
+      <div id="learning"
+           class="notice">
 
-        Learning starts from completed predictions.
+        Completed prediction results are used
+        for residual correction.
 
       </div>
 
     </div>
 
-  </div>
+  </section>
 
 
-  <!-- =====================================================
-       MORE
-       ===================================================== -->
+  <!-- MORE -->
 
-  <div id="more"
-       class="section">
+  <section id="more"
+           class="section">
 
     <div class="card">
 
@@ -1114,64 +1034,52 @@ th{
         MARKET FEATURES
       </div>
 
-      <div class="kpiGrid">
+      <div class="kpis">
 
         <div class="kpi">
-          <div class="kpiLabel">
-            RSI
-          </div>
-          <div class="kpiValue"
-               id="rsiValue">
+          <div class="kpiLabel">EMA 21</div>
+          <div id="ema21"
+               class="kpiValue">
             --
           </div>
         </div>
 
         <div class="kpi">
-          <div class="kpiLabel">
-            EMA21
-          </div>
-          <div class="kpiValue"
-               id="ema21Value">
+          <div class="kpiLabel">EMA 50</div>
+          <div id="ema50"
+               class="kpiValue">
             --
           </div>
         </div>
 
         <div class="kpi">
-          <div class="kpiLabel">
-            EMA50
-          </div>
-          <div class="kpiValue"
-               id="ema50Value">
+          <div class="kpiLabel">VWAP</div>
+          <div id="vwap"
+               class="kpiValue">
             --
           </div>
         </div>
 
         <div class="kpi">
-          <div class="kpiLabel">
-            VWAP
-          </div>
-          <div class="kpiValue"
-               id="vwapValue">
+          <div class="kpiLabel">RVOL</div>
+          <div id="rvol"
+               class="kpiValue">
             --
           </div>
         </div>
 
         <div class="kpi">
-          <div class="kpiLabel">
-            BUY / SELL FLOW
-          </div>
-          <div class="kpiValue"
-               id="flowValue">
+          <div class="kpiLabel">TAKER BUY</div>
+          <div id="taker"
+               class="kpiValue">
             --
           </div>
         </div>
 
         <div class="kpi">
-          <div class="kpiLabel">
-            AUTOCORRELATION
-          </div>
-          <div class="kpiValue"
-               id="autocorrValue">
+          <div class="kpiLabel">ENTROPY</div>
+          <div id="entropy"
+               class="kpiValue">
             --
           </div>
         </div>
@@ -1184,26 +1092,13 @@ th{
     <div class="card">
 
       <div class="cardTitle">
-        DATA SOURCES
+        DATA CONNECTION
       </div>
 
-      <div class="notice">
+      <div id="connectionInfo"
+           class="notice">
 
-        Primary market data:
-        Binance public market-data endpoints.
-
-        <br><br>
-
-        ETH/USDT is the prediction instrument.
-
-        <br><br>
-
-        BTC/USDT is used only as a cross-market
-        feature.
-
-        <br><br>
-
-        The browser does not use private API keys.
+        Binance public market data
 
       </div>
 
@@ -1213,21 +1108,11 @@ th{
     <div class="card">
 
       <div class="cardTitle">
-        RESET LOCAL MODEL DATA
+        RESET SAVED MODEL DATA
       </div>
 
-      <div class="notice">
-
-        This removes saved completed predictions,
-        active custom forecast and learned residual data
-        from this browser only.
-
-      </div>
-
-      <button
-        id="resetData"
-        class="danger"
-        style="margin-top:8px">
+      <button id="resetButton"
+              class="danger">
 
         RESET LOCAL DATA
 
@@ -1235,14 +1120,15 @@ th{
 
     </div>
 
-  </div>
+  </section>
 
 
   <div class="footer">
 
-    ETH/USDT Prediction Engine • Browser-side research model
+    ETH/USDT Prediction Engine
     <br>
-    Forecasts are estimates, not guaranteed future prices.
+    Browser-side statistical forecasting research system.
+    Forecasts are estimates, not guaranteed prices.
 
   </div>
 
@@ -1252,23 +1138,20 @@ th{
 <script>
 
 /* =========================================================
-   CONFIGURATION
+   CONFIG
    ========================================================= */
 
-const BINANCE_REST =
+const REST =
   "https://data-api.binance.vision";
 
-const BINANCE_WS =
-  "wss://stream.binance.com:9443/stream";
+const WS =
+  "wss://stream.binance.com:9443/ws/ethusdt@kline_1m";
 
 const SYMBOL =
   "ETHUSDT";
 
-const BTC_SYMBOL =
-  "BTCUSDT";
-
-const STORAGE_KEY =
-  "eth_predictor_v20";
+const STORAGE =
+  "eth_predictor_v20_1";
 
 
 /* =========================================================
@@ -1277,77 +1160,65 @@ const STORAGE_KEY =
 
 const state = {
 
-  range: "1D",
+  range:"1D",
 
-  interval: "5m",
+  interval:"5m",
 
-  effectiveInterval: "5m",
+  candles:[],
 
-  candles: [],
+  oneMinute:[],
 
-  oneMinute: [],
+  price:null,
 
-  btc: [],
+  previousPrice:null,
 
-  price: null,
+  chart:null,
 
-  prevPrice: null,
+  candleSeries:null,
 
-  chart: null,
+  volumeSeries:null,
 
-  candleSeries: null,
+  ema21Series:null,
 
-  volumeSeries: null,
+  ema50Series:null,
 
-  ema21Series: null,
+  vwapSeries:null,
 
-  ema50Series: null,
+  forecast15Series:null,
 
-  vwapSeries: null,
+  forecast30Series:null,
 
-  forecast15Series: null,
+  customSeries:null,
 
-  forecast30Series: null,
+  ws:null,
 
-  customForecastSeries: null,
+  active:{
 
-  active: {
+    "15m":null,
 
-    "15m": null,
-
-    "30m": null
+    "30m":null
 
   },
 
-  customForecast: null,
+  custom:null,
 
-  history: [],
+  history:[],
 
-  validation: {
+  learning:{
 
-    "15m": null,
+    errors:[],
 
-    "30m": null
+    residuals:[],
+
+    samples:0
 
   },
 
-  websocket: null,
+  validation:{
 
-  websocketBTC: null,
+    "15m":null,
 
-  lastKlineTime: 0,
-
-  lastPredictionRun: 0,
-
-  lastValidationRun: 0,
-
-  learning: {
-
-    residuals: [],
-
-    errors: [],
-
-    sampleCount: 0
+    "30m":null
 
   }
 
@@ -1355,29 +1226,35 @@ const state = {
 
 
 /* =========================================================
-   HELPERS
+   BASIC HELPERS
    ========================================================= */
 
-function $(id){
-
-  return document.getElementById(id);
-
-}
+const el =
+  id => document.getElementById(id);
 
 
 function clamp(x,a,b){
-
   return Math.max(a,Math.min(b,x));
-
 }
 
 
-function safeNumber(x){
+function mean(a){
+  if(!a.length)return 0;
+  return a.reduce((x,y)=>x+y,0)/a.length;
+}
 
-  const n = Number(x);
 
-  return Number.isFinite(n) ? n : null;
+function std(a){
 
+  if(a.length<2)return 0;
+
+  const m=mean(a);
+
+  return Math.sqrt(
+    mean(
+      a.map(x=>(x-m)*(x-m))
+    )
+  );
 }
 
 
@@ -1386,17 +1263,13 @@ function fmtPrice(x){
   if(!Number.isFinite(x))
     return "--";
 
-  if(x >= 1000)
+  if(x>=1000)
     return x.toFixed(2);
 
-  if(x >= 100)
+  if(x>=100)
     return x.toFixed(3);
 
-  if(x >= 1)
-    return x.toFixed(4);
-
-  return x.toFixed(6);
-
+  return x.toFixed(4);
 }
 
 
@@ -1405,18 +1278,9 @@ function fmtPct(x,d=2){
   if(!Number.isFinite(x))
     return "--";
 
-  return x.toFixed(d) + "%";
-
-}
-
-
-function pct(x,d=2){
-
-  if(!Number.isFinite(x))
-    return "--";
-
-  return (x * 100).toFixed(d) + "%";
-
+  return (
+    x*100
+  ).toFixed(d)+"%";
 }
 
 
@@ -1425,7 +1289,8 @@ function timeText(ms){
   if(!Number.isFinite(ms))
     return "--";
 
-  return new Date(ms).toLocaleString();
+  return new Date(ms)
+    .toLocaleString();
 
 }
 
@@ -1435,24 +1300,43 @@ function shortTime(ms){
   if(!Number.isFinite(ms))
     return "--";
 
-  return new Date(ms).toLocaleTimeString(
-    [],
-    {
-      hour:"2-digit",
-      minute:"2-digit",
-      second:"2-digit"
-    }
-  );
+  return new Date(ms)
+    .toLocaleTimeString(
+      [],
+      {
+        hour:"2-digit",
+        minute:"2-digit",
+        second:"2-digit"
+      }
+    );
 
 }
 
 
-function clampArray(arr,max){
+function setStatus(
+  text,
+  type=""
+){
 
-  while(arr.length > max)
-    arr.shift();
+  el("statusText")
+    .textContent=text;
 
-  return arr;
+  el("statusDot")
+    .className="dot "+type;
+
+}
+
+
+function showError(message){
+
+  const box=
+    el("errorBox");
+
+  box.style.display="block";
+
+  box.innerHTML=
+    "<b>DATA ERROR</b><br>"+
+    message;
 
 }
 
@@ -1461,91 +1345,77 @@ function clampArray(arr,max){
    STORAGE
    ========================================================= */
 
-function saveStorage(){
+function save(){
 
   try{
 
     localStorage.setItem(
-
-      STORAGE_KEY,
-
+      STORAGE,
       JSON.stringify({
+
+        active:state.active,
+
+        custom:state.custom,
 
         history:
           state.history.slice(-500),
 
-        active:
-          state.active,
+        learning:state.learning,
 
-        customForecast:
-          state.customForecast || null,
-
-        validation:
-          state.validation,
-
-        learning:
-          state.learning
+        validation:state.validation
 
       })
-
     );
 
   }catch(e){
 
-    console.warn(
-      "Storage save failed",
-      e
-    );
+    console.warn(e);
 
   }
 
 }
 
 
-function loadStorage(){
+function load(){
 
   try{
 
-    const raw =
+    const raw=
       localStorage.getItem(
-        STORAGE_KEY
+        STORAGE
       );
 
-    if(!raw)
-      return;
+    if(!raw)return;
 
-    const x =
+    const x=
       JSON.parse(raw);
-
-    if(Array.isArray(x.history))
-      state.history = x.history;
 
     if(x.active){
 
-      state.active["15m"] =
-        x.active["15m"] || null;
+      state.active["15m"]=
+        x.active["15m"]||null;
 
-      state.active["30m"] =
-        x.active["30m"] || null;
+      state.active["30m"]=
+        x.active["30m"]||null;
 
     }
 
-    if(x.customForecast)
-      state.customForecast =
-        x.customForecast;
+    if(x.custom)
+      state.custom=x.custom;
 
-    if(x.validation)
-      state.validation =
-        x.validation;
+    if(Array.isArray(x.history))
+      state.history=x.history;
 
     if(x.learning)
-      state.learning =
-        x.learning;
+      state.learning=x.learning;
+
+    if(x.validation)
+      state.validation=x.validation;
 
   }catch(e){
 
     console.warn(
-      "Storage load failed",
+      "Storage error",
       e
     );
 
@@ -1555,29 +1425,58 @@ function loadStorage(){
 
 
 /* =========================================================
-   BINANCE REST
+   BINANCE DATA
    ========================================================= */
 
-async function fetchJSON(url){
+function rangeConfig(){
 
-  const response =
-    await fetch(url, {
-      cache:"no-store"
-    });
+  if(state.range==="1D")
+    return {
+      interval:"5m",
+      ms:86400000
+    };
 
-  if(!response.ok)
-    throw new Error(
-      "HTTP " + response.status
-    );
+  if(state.range==="1W")
+    return {
+      interval:"15m",
+      ms:604800000
+    };
 
-  return response.json();
+  if(state.range==="1M")
+    return {
+      interval:"1h",
+      ms:2592000000
+    };
+
+  if(state.range==="3M")
+    return {
+      interval:"4h",
+      ms:7776000000
+    };
+
+  if(state.range==="6M")
+    return {
+      interval:"4h",
+      ms:15552000000
+    };
+
+  if(state.range==="1Y")
+    return {
+      interval:"1d",
+      ms:31536000000
+    };
+
+  return {
+    interval:"1d",
+    ms:157680000000
+  };
 
 }
 
 
-function intervalMilliseconds(interval){
+function intervalMs(i){
 
-  const map = {
+  const x={
 
     "1m":60000,
 
@@ -1593,83 +1492,7 @@ function intervalMilliseconds(interval){
 
   };
 
-  return map[interval] || 300000;
-
-}
-
-
-function chooseInterval(){
-
-  if(state.range === "1D")
-    return "5m";
-
-  if(state.range === "1W")
-    return "15m";
-
-  if(state.range === "1M")
-    return "1h";
-
-  if(state.range === "3M")
-    return "4h";
-
-  if(state.range === "6M")
-    return "4h";
-
-  if(state.range === "1Y")
-    return "1d";
-
-  return "1d";
-
-}
-
-
-function rangeMilliseconds(){
-
-  const now =
-    Date.now();
-
-  const ranges = {
-
-    "1D":86400000,
-
-    "1W":604800000,
-
-    "1M":2592000000,
-
-    "3M":7776000000,
-
-    "6M":15552000000,
-
-    "1Y":31536000000,
-
-    "ALL":252460800000
-
-  };
-
-  return ranges[state.range] ||
-         ranges["1D"];
-
-}
-
-
-async function fetchKlines(
-  symbol,
-  interval,
-  startTime,
-  endTime,
-  limit=1000
-){
-
-  const url =
-    BINANCE_REST +
-    "/api/v3/klines" +
-    "?symbol=" + symbol +
-    "&interval=" + interval +
-    "&startTime=" + startTime +
-    "&endTime=" + endTime +
-    "&limit=" + limit;
-
-  return fetchJSON(url);
+  return x[i]||300000;
 
 }
 
@@ -1678,71 +1501,103 @@ function convertKline(k){
 
   return {
 
-    time:
-      Math.floor(k[0]/1000),
+    ms:Number(k[0]),
 
-    ms:
-      Number(k[0]),
+    time:Math.floor(
+      Number(k[0])/1000
+    ),
 
-    open:
-      Number(k[1]),
+    open:Number(k[1]),
 
-    high:
-      Number(k[2]),
+    high:Number(k[2]),
 
-    low:
-      Number(k[3]),
+    low:Number(k[3]),
 
-    close:
-      Number(k[4]),
+    close:Number(k[4]),
 
-    volume:
-      Number(k[5]),
+    volume:Number(k[5]),
 
-    quoteVolume:
-      Number(k[7]),
+    quoteVolume:Number(k[7]),
 
-    trades:
-      Number(k[8]),
+    trades:Number(k[8]),
 
-    takerBuyBase:
-      Number(k[9]),
-
-    takerBuyQuote:
-      Number(k[10])
+    takerBuy:Number(k[9])
 
   };
 
 }
 
 
-async function loadHistory(
+async function getJSON(url){
+
+  const r=
+    await fetch(
+      url,
+      {
+        cache:"no-store"
+      }
+    );
+
+  if(!r.ok)
+    throw new Error(
+      "HTTP "+r.status
+    );
+
+  return r.json();
+
+}
+
+
+async function fetchKlines(
   symbol,
   interval,
-  rangeMs
+  start,
+  end,
+  limit=1000
 ){
 
-  const end =
+  const url=
+    REST+
+    "/api/v3/klines"+
+    "?symbol="+symbol+
+    "&interval="+interval+
+    "&startTime="+start+
+    "&endTime="+end+
+    "&limit="+limit;
+
+  return getJSON(url);
+
+}
+
+
+async function loadKlines(
+  symbol,
+  interval,
+  totalMs
+){
+
+  const result=[];
+
+  const end=
     Date.now();
 
-  const start =
-    end - rangeMs;
+  let start=
+    end-totalMs;
 
-  const result = [];
+  const step=
+    intervalMs(interval);
 
-  let cursor =
-    start;
+  for(
+    let page=0;
+    page<20;
+    page++
+  ){
 
-  const step =
-    intervalMilliseconds(interval);
-
-  for(let page=0;page<30;page++){
-
-    const rows =
+    const rows=
       await fetchKlines(
         symbol,
         interval,
-        cursor,
+        start,
         end,
         1000
       );
@@ -1752,12 +1607,12 @@ async function loadHistory(
 
     for(const row of rows){
 
-      const c =
+      const c=
         convertKline(row);
 
       if(
         !result.length ||
-        result[result.length-1].ms !== c.ms
+        result[result.length-1].ms!==c.ms
       ){
 
         result.push(c);
@@ -1766,19 +1621,19 @@ async function loadHistory(
 
     }
 
-    const last =
+    const last=
       result[result.length-1];
 
     if(!last)
       break;
 
-    cursor =
-      last.ms + step;
+    start=
+      last.ms+step;
 
-    if(rows.length < 1000)
+    if(start>=end)
       break;
 
-    if(cursor >= end)
+    if(rows.length<1000)
       break;
 
   }
@@ -1789,116 +1644,44 @@ async function loadHistory(
 
 
 /* =========================================================
-   MARKET LOADING
+   24H TICKER
    ========================================================= */
 
-async function loadMarket(){
+async function loadTicker(){
 
   try{
 
-    setStatus(
-      "LOADING",
-      false
-    );
-
-    state.effectiveInterval =
-      chooseInterval();
-
-    const [
-      eth,
-      btc
-    ] =
-      await Promise.all([
-
-        loadHistory(
-          SYMBOL,
-          state.effectiveInterval,
-          rangeMilliseconds()
-        ),
-
-        loadHistory(
-          BTC_SYMBOL,
-          "5m",
-          Math.min(
-            rangeMilliseconds(),
-            7776000000
-          )
-        )
-
-      ]);
-
-    state.candles =
-      eth;
-
-    state.btc =
-      btc;
-
-    /*
-     * Always maintain a separate 1m buffer.
-     * This is used for target settlement.
-     */
-    const oneMinuteStart =
-      Date.now() -
-      86400000;
-
-    state.oneMinute =
-      await loadHistory(
-        SYMBOL,
-        "1m",
-        86400000
+    const x=
+      await getJSON(
+        REST+
+        "/api/v3/ticker/24hr?symbol="+
+        SYMBOL
       );
 
-    if(state.candles.length){
+    el("high24").textContent=
+      fmtPrice(
+        Number(x.highPrice)
+      );
 
-      state.price =
-        state.candles[
-          state.candles.length-1
-        ].close;
+    el("low24").textContent=
+      fmtPrice(
+        Number(x.lowPrice)
+      );
 
-      state.prevPrice =
-        state.candles[
-          Math.max(
-            0,
-            state.candles.length-2
-          )
-        ].close;
+    el("volume24").textContent=
+      Number(x.volume)
+        .toLocaleString(
+          undefined,
+          {
+            maximumFractionDigits:0
+          }
+        );
 
-    }
+  }catch(e){
 
-    drawChart();
-
-    updateMarketUI();
-
-    calculateCurrentFeatures();
-
-    /*
-     * Do not recreate active predictions
-     * merely because the page was refreshed.
-     */
-    ensureAutomaticPredictions();
-
-    updateCustomForecastUI();
-
-    updateForecastLines();
-
-    updateHistoryUI();
-
-    updateModelUI();
-
-    updateValidationUI();
-
-    setStatus(
-      "LIVE",
-      true
-    );
-
-  }catch(error){
-
-    console.error(error);
-
-    setStatus(
-      "DATA ERROR",
-      false
+    console.warn(
+      "Ticker error",
+      e
     );
 
   }
@@ -1910,74 +1693,37 @@ async function loadMarket(){
    CHART
    ========================================================= */
 
-function createSeriesCompat(
-  chart,
-  type,
-  options
-){
+function createChart(){
 
   if(
-    window.LightweightCharts &&
-    chart.addSeries
+    !window.LightweightCharts
   ){
 
-    if(
-      type === "candlestick"
-    ){
+    showError(
+      "The chart library did not load. Check your internet connection and refresh the page."
+    );
 
-      return chart.addSeries(
-        LightweightCharts.CandlestickSeries,
-        options
-      );
-
-    }
-
-    if(
-      type === "histogram"
-    ){
-
-      return chart.addSeries(
-        LightweightCharts.HistogramSeries,
-        options
-      );
-
-    }
-
-    if(
-      type === "line"
-    ){
-
-      return chart.addSeries(
-        LightweightCharts.LineSeries,
-        options
-      );
-
-    }
+    throw new Error(
+      "Lightweight Charts unavailable"
+    );
 
   }
 
-  return null;
+  const container=
+    el("chart");
 
-}
+  container.innerHTML="";
 
-
-function drawChart(){
-
-  const el =
-    $("chart");
-
-  el.innerHTML = "";
-
-  state.chart =
+  state.chart=
     LightweightCharts.createChart(
-      el,
+      container,
       {
 
         layout:{
           background:{
             color:"#080d15"
           },
-          textColor:"#9ba7ba"
+          textColor:"#8f9caf"
         },
 
         grid:{
@@ -1990,11 +1736,11 @@ function drawChart(){
         },
 
         rightPriceScale:{
-          borderColor:"#263244"
+          borderColor:"#273346"
         },
 
         timeScale:{
-          borderColor:"#263244",
+          borderColor:"#273346",
           timeVisible:true,
           secondsVisible:false
         },
@@ -2004,27 +1750,26 @@ function drawChart(){
             LightweightCharts.CrosshairMode.Normal
         },
 
-        handleScale:{
-          mouseWheel:true,
-          pinch:true,
-          axisPressedMouseMove:true
-        },
-
         handleScroll:{
           mouseWheel:true,
           pressedMouseMove:true,
           horzTouchDrag:true,
           vertTouchDrag:true
+        },
+
+        handleScale:{
+          mouseWheel:true,
+          pinch:true,
+          axisPressedMouseMove:true
         }
 
       }
     );
 
 
-  state.candleSeries =
-    createSeriesCompat(
-      state.chart,
-      "candlestick",
+  state.candleSeries=
+    state.chart.addSeries(
+      LightweightCharts.CandlestickSeries,
       {
 
         upColor:"#22c55e",
@@ -2043,226 +1788,153 @@ function drawChart(){
     );
 
 
-  state.volumeSeries =
-    createSeriesCompat(
-      state.chart,
-      "histogram",
+  state.volumeSeries=
+    state.chart.addSeries(
+      LightweightCharts.HistogramSeries,
       {
 
         priceFormat:{
           type:"volume"
         },
 
-        priceScaleId:"volume"
+        priceScaleId:"volume",
+
+        scaleMargins:{
+          top:.82,
+          bottom:0
+        }
 
       }
     );
 
 
-  state.ema21Series =
-    createSeriesCompat(
-      state.chart,
-      "line",
+  state.ema21Series=
+    state.chart.addSeries(
+      LightweightCharts.LineSeries,
       {
-
         color:"#60a5fa",
-
         lineWidth:1,
-
-        priceLineVisible:false,
-
-        lastValueVisible:false
-
+        lastValueVisible:false,
+        priceLineVisible:false
       }
     );
 
 
-  state.ema50Series =
-    createSeriesCompat(
-      state.chart,
-      "line",
+  state.ema50Series=
+    state.chart.addSeries(
+      LightweightCharts.LineSeries,
       {
-
         color:"#f59e0b",
-
         lineWidth:1,
-
-        priceLineVisible:false,
-
-        lastValueVisible:false
-
+        lastValueVisible:false,
+        priceLineVisible:false
       }
     );
 
 
-  state.vwapSeries =
-    createSeriesCompat(
-      state.chart,
-      "line",
+  state.vwapSeries=
+    state.chart.addSeries(
+      LightweightCharts.LineSeries,
       {
-
         color:"#c084fc",
-
         lineWidth:1,
-
-        priceLineVisible:false,
-
-        lastValueVisible:false
-
+        lastValueVisible:false,
+        priceLineVisible:false
       }
     );
 
 
-  state.forecast15Series =
-    createSeriesCompat(
-      state.chart,
-      "line",
+  state.forecast15Series=
+    state.chart.addSeries(
+      LightweightCharts.LineSeries,
       {
-
         color:"#22c55e",
-
         lineWidth:2,
-
         lineStyle:
           LightweightCharts.LineStyle.Dashed,
-
+        lastValueVisible:false,
         priceLineVisible:false
-
       }
     );
 
 
-  state.forecast30Series =
-    createSeriesCompat(
-      state.chart,
-      "line",
+  state.forecast30Series=
+    state.chart.addSeries(
+      LightweightCharts.LineSeries,
       {
-
         color:"#60a5fa",
-
         lineWidth:2,
-
         lineStyle:
           LightweightCharts.LineStyle.Dashed,
-
+        lastValueVisible:false,
         priceLineVisible:false
-
       }
     );
 
 
-  state.customForecastSeries =
-    createSeriesCompat(
-      state.chart,
-      "line",
+  state.customSeries=
+    state.chart.addSeries(
+      LightweightCharts.LineSeries,
       {
-
         color:"#facc15",
-
         lineWidth:3,
-
         lineStyle:
           LightweightCharts.LineStyle.Dotted,
-
+        lastValueVisible:false,
         priceLineVisible:false
-
       }
     );
-
-
-  const candles =
-    state.candles;
-
-
-  if(state.candleSeries){
-
-    state.candleSeries.setData(
-
-      candles.map(c => ({
-
-        time:c.time,
-
-        open:c.open,
-
-        high:c.high,
-
-        low:c.low,
-
-        close:c.close
-
-      }))
-
-    );
-
-  }
-
-
-  if(state.volumeSeries){
-
-    state.volumeSeries.setData(
-
-      candles.map(c => ({
-
-        time:c.time,
-
-        value:c.volume,
-
-        color:
-          c.close >= c.open
-            ? "#22c55e"
-            : "#ef4444"
-
-      }))
-
-    );
-
-  }
-
-
-  updateIndicators();
-
-
-  state.chart.timeScale().fitContent();
 
 }
 
 
-function updateChartRealtime(c){
+/* =========================================================
+   DRAW DATA
+   ========================================================= */
 
-  if(!state.candleSeries)
-    return;
+function drawChart(){
 
-  state.candleSeries.update({
+  if(!state.chart)
+    createChart();
 
-    time:c.time,
+  state.candleSeries.setData(
+    state.candles.map(c=>({
 
-    open:c.open,
+      time:c.time,
 
-    high:c.high,
+      open:c.open,
 
-    low:c.low,
+      high:c.high,
 
-    close:c.close
+      low:c.low,
 
-  });
+      close:c.close
+
+    }))
+  );
 
 
-  if(state.volumeSeries){
-
-    state.volumeSeries.update({
+  state.volumeSeries.setData(
+    state.candles.map(c=>({
 
       time:c.time,
 
       value:c.volume,
 
       color:
-        c.close >= c.open
-          ? "#22c55e"
-          : "#ef4444"
+        c.close>=c.open
+          ?"#22c55e"
+          :"#ef4444"
 
-    });
+    }))
+  );
 
-  }
+
+  updateIndicators();
+
+  state.chart
+    .timeScale()
+    .fitContent();
 
 }
 
@@ -2273,38 +1945,32 @@ function updateIndicators(){
     return;
 
 
-  const ema21 =
+  const e21=
     emaSeries(
       state.candles,
       21
     );
 
-  const ema50 =
+  const e50=
     emaSeries(
       state.candles,
       50
     );
 
-  const vwap =
+  const vw=
     vwapSeries(
       state.candles
     );
 
 
-  if(state.ema21Series)
-    state.ema21Series.setData(
-      ema21
-    );
+  state.ema21Series
+    .setData(e21);
 
-  if(state.ema50Series)
-    state.ema50Series.setData(
-      ema50
-    );
+  state.ema50Series
+    .setData(e50);
 
-  if(state.vwapSeries)
-    state.vwapSeries.setData(
-      vwap
-    );
+  state.vwapSeries
+    .setData(vw);
 
 }
 
@@ -2321,31 +1987,24 @@ function emaSeries(
   if(!candles.length)
     return [];
 
-  const alpha =
-    2 / (period + 1);
+  const alpha=
+    2/(period+1);
 
-  let ema =
+  let value=
     candles[0].close;
 
-  const result = [];
+  return candles.map(c=>{
 
-  for(const c of candles){
+    value=
+      alpha*c.close+
+      (1-alpha)*value;
 
-    ema =
-      alpha*c.close +
-      (1-alpha)*ema;
-
-    result.push({
-
+    return {
       time:c.time,
+      value
+    };
 
-      value:ema
-
-    });
-
-  }
-
-  return result;
+  });
 
 }
 
@@ -2355,81 +2014,89 @@ function emaValue(
   period
 ){
 
-  const result =
+  const x=
     emaSeries(
       candles,
       period
     );
 
-  return result.length
-    ? result[result.length-1].value
-    : null;
+  return x.length
+    ?x[x.length-1].value
+    :null;
 
 }
 
 
-function vwapSeries(candles){
+function vwapSeries(
+  candles
+){
 
-  let pv = 0;
-  let volume = 0;
+  let pv=0;
+  let vol=0;
 
-  const result = [];
+  return candles.map(c=>{
 
-  for(const c of candles){
-
-    const typical =
+    const typical=
       (c.high+c.low+c.close)/3;
 
-    pv +=
+    pv+=
       typical*c.volume;
 
-    volume +=
+    vol+=
       c.volume;
 
-    result.push({
+    return {
 
       time:c.time,
 
       value:
-        volume
-          ? pv/volume
-          : c.close
+        vol
+          ?pv/vol
+          :c.close
 
-    });
+    };
 
-  }
-
-  return result;
+  });
 
 }
 
 
-function vwapValue(candles){
+function vwapValue(
+  candles
+){
 
-  const s =
-    vwapSeries(candles);
+  const x=
+    vwapSeries(
+      candles
+    );
 
-  return s.length
-    ? s[s.length-1].value
-    : null;
+  return x.length
+    ?x[x.length-1].value
+    :null;
 
 }
 
 
-function returns(candles){
+function logReturns(
+  candles
+){
 
-  const r = [];
+  const r=[];
 
-  for(let i=1;i<candles.length;i++){
+  for(
+    let i=1;
+    i<candles.length;
+    i++
+  ){
 
     if(
-      candles[i-1].close > 0 &&
-      candles[i].close > 0
+      candles[i-1].close>0 &&
+      candles[i].close>0
     ){
 
       r.push(
         Math.log(
-          candles[i].close /
+          candles[i].close/
           candles[i-1].close
         )
       );
@@ -2443,191 +2110,124 @@ function returns(candles){
 }
 
 
-function mean(a){
+function momentum(
+  candles,
+  n
+){
 
-  if(!a.length)
+  if(candles.length<=n)
     return 0;
 
-  return a.reduce(
-    (x,y)=>x+y,
-    0
-  ) / a.length;
+  const a=
+    candles[
+      candles.length-1
+    ].close;
+
+  const b=
+    candles[
+      candles.length-1-n
+    ].close;
+
+  return b
+    ?Math.log(a/b)
+    :0;
 
 }
 
 
-function variance(a){
+function volatility(
+  candles,
+  n=50
+){
 
-  if(a.length < 2)
-    return 0;
-
-  const m =
-    mean(a);
-
-  return mean(
-    a.map(x =>
-      (x-m)*(x-m)
-    )
-  );
-
-}
-
-
-function std(a){
-
-  return Math.sqrt(
-    Math.max(
-      0,
-      variance(a)
-    )
-  );
-
-}
-
-
-function covariance(a,b){
-
-  const n =
-    Math.min(
-      a.length,
-      b.length
+  const x=
+    candles.slice(
+      -Math.min(
+        candles.length,
+        n+1
+      )
     );
 
-  if(n < 2)
-    return 0;
+  return std(
+    logReturns(x)
+  );
 
-  const aa =
-    a.slice(-n);
+}
 
-  const bb =
-    b.slice(-n);
 
-  const ma =
-    mean(aa);
+function rsi(
+  candles,
+  period=14
+){
 
-  const mb =
-    mean(bb);
+  if(candles.length<=period)
+    return 50;
 
-  let s = 0;
+  let gain=0;
+  let loss=0;
 
-  for(let i=0;i<n;i++){
+  for(
+    let i=candles.length-period;
+    i<candles.length;
+    i++
+  ){
 
-    s +=
-      (aa[i]-ma) *
-      (bb[i]-mb);
+    const d=
+      candles[i].close-
+      candles[i-1].close;
+
+    if(d>0)
+      gain+=d;
+    else
+      loss-=d;
 
   }
 
-  return s/n;
+  if(loss===0)
+    return 100;
+
+  const rs=
+    gain/loss;
+
+  return 100-
+    100/(1+rs);
 
 }
 
 
-function correlation(a,b){
+function regression(
+  candles,
+  n=50
+){
 
-  const n =
-    Math.min(
-      a.length,
-      b.length
-    );
-
-  if(n < 3)
-    return 0;
-
-  const aa =
-    a.slice(-n);
-
-  const bb =
-    b.slice(-n);
-
-  const sa =
-    std(aa);
-
-  const sb =
-    std(bb);
-
-  if(sa===0 || sb===0)
-    return 0;
-
-  return covariance(
-    aa,
-    bb
-  )/(sa*sb);
-
-}
-
-
-function momentum(candles,n){
-
-  if(candles.length <= n)
-    return 0;
-
-  const now =
-    candles[candles.length-1].close;
-
-  const old =
-    candles[candles.length-1-n].close;
-
-  if(!old)
-    return 0;
-
-  return Math.log(
-    now/old
-  );
-
-}
-
-
-function volatility(candles,n=50){
-
-  const r =
-    returns(
-      candles.slice(
-        Math.max(
-          0,
-          candles.length-n-1
-        )
-      )
-    );
-
-  return std(r);
-
-}
-
-
-function regression(candles,n=50){
-
-  const data =
+  const a=
     candles.slice(
-      Math.max(
-        0,
-        candles.length-n
+      -Math.min(
+        candles.length,
+        n
       )
     );
 
-  if(data.length < 5){
-
+  if(a.length<5)
     return {
       slope:0,
       r2:0
     };
 
-  }
-
-  const y =
-    data.map(
-      c => Math.log(c.close)
+  const y=
+    a.map(
+      c=>Math.log(c.close)
     );
 
-  const x =
+  const x=
     y.map(
       (_,i)=>i
     );
 
-  const mx =
+  const mx=
     mean(x);
 
-  const my =
+  const my=
     mean(y);
 
   let num=0;
@@ -2635,49 +2235,51 @@ function regression(candles,n=50){
 
   for(let i=0;i<x.length;i++){
 
-    num +=
-      (x[i]-mx) *
+    num+=
+      (x[i]-mx)*
       (y[i]-my);
 
-    den +=
-      (x[i]-mx) *
+    den+=
+      (x[i]-mx)*
       (x[i]-mx);
 
   }
 
-  const slope =
-    den ? num/den : 0;
+  const slope=
+    den
+      ?num/den
+      :0;
 
-  const intercept =
-    my - slope*mx;
+  const intercept=
+    my-slope*mx;
 
-  let ssTot=0;
-  let ssRes=0;
+  let total=0;
+  let residual=0;
 
   for(let i=0;i<x.length;i++){
 
-    const pred =
-      intercept +
+    const p=
+      intercept+
       slope*x[i];
 
-    ssTot +=
-      (y[i]-my) *
+    total+=
+      (y[i]-my)*
       (y[i]-my);
 
-    ssRes +=
-      (y[i]-pred) *
-      (y[i]-pred);
+    residual+=
+      (y[i]-p)*
+      (y[i]-p);
 
   }
 
-  const r2 =
-    ssTot
-      ? clamp(
-          1-ssRes/ssTot,
-          0,
-          1
-        )
-      : 0;
+  const r2=
+    total
+      ?clamp(
+        1-residual/total,
+        0,
+        1
+      )
+      :0;
 
   return {
     slope,
@@ -2687,102 +2289,47 @@ function regression(candles,n=50){
 }
 
 
-function rsi(candles,n=14){
+function volumeRatio(
+  candles,
+  n=30
+){
 
-  if(candles.length < n+1)
-    return 50;
-
-  let gains=0;
-  let losses=0;
-
-  for(
-    let i=candles.length-n;
-    i<candles.length;
-    i++
-  ){
-
-    const d =
-      candles[i].close -
-      candles[i-1].close;
-
-    if(d>=0)
-      gains += d;
-    else
-      losses -= d;
-
-  }
-
-  if(losses===0)
-    return 100;
-
-  const rs =
-    gains/losses;
-
-  return 100 -
-    100/(1+rs);
-
-}
-
-
-function zscore(candles,n=50){
-
-  if(candles.length < n)
-    return 0;
-
-  const closes =
-    candles
-      .slice(-n)
-      .map(c=>c.close);
-
-  const m =
-    mean(closes);
-
-  const s =
-    std(closes);
-
-  if(s===0)
-    return 0;
-
-  return (
-    closes[closes.length-1]-m
-  )/s;
-
-}
-
-
-function volumeRatio(candles,n=30){
-
-  if(candles.length < n+1)
+  if(candles.length<n+1)
     return 1;
 
-  const recent =
-    candles[candles.length-1].volume;
+  const current=
+    candles[
+      candles.length-1
+    ].volume;
 
-  const old =
+  const old=
     candles
       .slice(
-        candles.length-n-1,
-        candles.length-1
+        -(n+1),
+        -1
       )
       .map(c=>c.volume);
 
-  const avg =
+  const avg=
     mean(old);
 
   return avg
-    ? recent/avg
-    : 1;
+    ?current/avg
+    :1;
 
 }
 
 
-function takerBuyRatio(candles,n=30){
+function takerRatio(
+  candles,
+  n=30
+){
 
-  const a =
+  const a=
     candles.slice(
-      Math.max(
-        0,
-        candles.length-n
+      -Math.min(
+        candles.length,
+        n
       )
     );
 
@@ -2791,35 +2338,38 @@ function takerBuyRatio(candles,n=30){
 
   for(const c of a){
 
-    buy +=
-      c.takerBuyBase || 0;
+    buy+=
+      c.takerBuy;
 
-    total +=
-      c.volume || 0;
+    total+=
+      c.volume;
 
   }
 
   return total
-    ? buy/total
-    : 0.5;
+    ?buy/total
+    :.5;
 
 }
 
 
-function entropy(candles,n=80){
+function entropy(
+  candles,
+  n=80
+){
 
-  const r =
-    returns(
+  const r=
+    logReturns(
       candles.slice(
-        Math.max(
-          0,
-          candles.length-n-1
+        -Math.min(
+          candles.length,
+          n+1
         )
       )
     );
 
-  if(r.length < 10)
-    return 0;
+  if(r.length<10)
+    return 1;
 
   let up=0;
   let down=0;
@@ -2827,10 +2377,10 @@ function entropy(candles,n=80){
 
   for(const x of r){
 
-    if(x > 0.00015)
+    if(x>.00015)
       up++;
 
-    else if(x < -0.00015)
+    else if(x<-.00015)
       down++;
 
     else
@@ -2838,13 +2388,13 @@ function entropy(candles,n=80){
 
   }
 
-  const total =
+  const total=
     up+down+flat;
 
   if(!total)
-    return 0;
+    return 1;
 
-  const p = [
+  const p=[
     up/total,
     down/total,
     flat/total
@@ -2855,7 +2405,7 @@ function entropy(candles,n=80){
   for(const x of p){
 
     if(x>0)
-      h -= x*Math.log2(x);
+      h-=x*Math.log2(x);
 
   }
 
@@ -2864,50 +2414,60 @@ function entropy(candles,n=80){
 }
 
 
-function autocorrelation(candles,lag=1,n=80){
+function autocorrelation(
+  candles,
+  lag=1
+){
 
-  const r =
-    returns(
-      candles.slice(
-        Math.max(
-          0,
-          candles.length-n-1
-        )
-      )
+  const r=
+    logReturns(
+      candles.slice(-100)
     );
 
-  if(r.length <= lag+5)
+  if(r.length<=lag+5)
     return 0;
 
-  const a =
+  const a=
     r.slice(lag);
 
-  const b =
+  const b=
     r.slice(
       0,
       r.length-lag
     );
 
-  return correlation(
-    a,
-    b
-  );
+  const ma=
+    mean(a);
 
-}
+  const mb=
+    mean(b);
 
+  const sa=
+    std(a);
 
-function btcFeature(){
+  const sb=
+    std(b);
 
-  if(state.btc.length < 10)
+  if(sa===0||sb===0)
     return 0;
 
-  return momentum(
-    state.btc,
-    Math.min(
-      6,
-      state.btc.length-1
-    )
-  );
+  let cov=0;
+
+  for(
+    let i=0;
+    i<a.length;
+    i++
+  ){
+
+    cov+=
+      (a[i]-ma)*
+      (b[i]-mb);
+
+  }
+
+  cov/=a.length;
+
+  return cov/(sa*sb);
 
 }
 
@@ -2916,87 +2476,64 @@ function btcFeature(){
    REGIME
    ========================================================= */
 
-function detectRegime(candles){
+function regime(){
 
-  if(candles.length < 60)
+  if(state.candles.length<60)
     return "WARMING";
 
-  const short =
+  const r20=
     regression(
-      candles,
+      state.candles,
       20
     );
 
-  const long =
+  const r60=
     regression(
-      candles,
+      state.candles,
       60
     );
 
-  const vol =
-    volatility(
-      candles,
-      50
-    );
-
-  const mom =
+  const m=
     momentum(
-      candles,
+      state.candles,
       12
     );
 
-  const h =
+  const v=
+    volatility(
+      state.candles,
+      50
+    );
+
+  const h=
     entropy(
-      candles,
-      80
+      state.candles
     );
 
   if(
-    Math.abs(mom) < vol*2 &&
-    h > 0.86
-  ){
-
+    Math.abs(m)<v*2 &&
+    h>.86
+  )
     return "RANGE / NOISY";
 
-  }
-
   if(
-    short.slope > 0 &&
-    long.slope > 0 &&
-    short.r2 > 0.18
-  ){
-
+    r20.slope>0 &&
+    r60.slope>0 &&
+    r20.r2>.15
+  )
     return "UPTREND";
 
-  }
-
   if(
-    short.slope < 0 &&
-    long.slope < 0 &&
-    short.r2 > 0.18
-  ){
-
+    r20.slope<0 &&
+    r60.slope<0 &&
+    r20.r2>.15
+  )
     return "DOWNTREND";
 
-  }
-
   if(
-    vol >
-    mean(
-      returns(
-        candles.slice(
-          Math.max(
-            0,
-            candles.length-100
-          )
-        )
-      )
-    )*3
-  ){
-
+    v>0.012
+  )
     return "HIGH VOLATILITY";
-
-  }
 
   return "TRANSITION";
 
@@ -3004,701 +2541,449 @@ function detectRegime(candles){
 
 
 /* =========================================================
-   ENGINE 1
-   CHRONOLOGICAL FORECAST
+   FOUR ENGINES
    ========================================================= */
 
-function chronologicalEngine(
-  candles,
-  horizonMinutes
+function engineChronological(
+  horizon
 ){
 
-  if(candles.length < 30)
-    return 0;
-
-  const base =
-    candles[
-      candles.length-1
-    ].close;
-
-  const m5 =
+  const m5=
     momentum(
-      candles,
+      state.candles,
       Math.max(
         2,
         Math.round(
-          5 /
-          (intervalMilliseconds(
-            state.effectiveInterval
-          )/60000)
+          5/5
         )
       )
     );
 
-  const m15 =
+  const m15=
     momentum(
-      candles,
+      state.candles,
       Math.max(
         3,
         Math.round(
-          15 /
-          (intervalMilliseconds(
-            state.effectiveInterval
-          )/60000)
+          15/5
         )
       )
     );
 
-  const m60 =
+  const m60=
     momentum(
-      candles,
+      state.candles,
       Math.max(
         6,
         Math.round(
-          60 /
-          (intervalMilliseconds(
-            state.effectiveInterval
-          )/60000
+          60/5
         )
       )
     );
 
-  const m240 =
-    momentum(
-      candles,
-      Math.max(
-        10,
-        Math.round(
-          240 /
-          (intervalMilliseconds(
-            state.effectiveInterval
-          )/60000
-        )
-      )
-    );
-
-  const r20 =
+  const reg=
     regression(
-      candles,
-      Math.min(
-        20,
-        candles.length
-      )
+      state.candles,
+      60
     );
 
-  const r60 =
-    regression(
-      candles,
-      Math.min(
-        60,
-        candles.length
-      )
-    );
-
-  const horizonScale =
+  const scale=
     clamp(
-      horizonMinutes/30,
-      0.35,
-      8
-    );
-
-  let forecast =
-    0.25*m5 +
-    0.30*m15 +
-    0.25*m60 +
-    0.20*m240;
-
-  forecast +=
-    r20.slope *
-    horizonScale *
-    0.8;
-
-  forecast +=
-    r60.slope *
-    horizonScale *
-    0.4;
-
-  /*
-   * Damp extremely long forecasts.
-   */
-  forecast =
-    clamp(
-      forecast,
-      -0.12,
-      0.12
-    );
-
-  return forecast;
-
-}
-
-
-/* =========================================================
-   ENGINE 2
-   MATHEMATICAL / GEOMETRY
-   ========================================================= */
-
-function mathematicalEngine(
-  candles,
-  horizonMinutes
-){
-
-  if(candles.length < 30)
-    return 0;
-
-  const mom =
-    momentum(
-      candles,
-      Math.min(
-        20,
-        candles.length-1
-      )
-    );
-
-  const vol =
-    volatility(
-      candles,
-      Math.min(
-        60,
-        candles.length-1
-      )
-    );
-
-  const z =
-    zscore(
-      candles,
-      Math.min(
-        50,
-        candles.length
-      )
-    );
-
-  const vwap =
-    vwapValue(
-      candles
-    );
-
-  const price =
-    candles[
-      candles.length-1
-    ].close;
-
-  const vwapDist =
-    vwap
-      ? Math.log(price/vwap)
-      : 0;
-
-  const reg =
-    regression(
-      candles,
-      Math.min(
-        50,
-        candles.length
-      )
-    );
-
-  const vr =
-    volumeRatio(
-      candles,
-      Math.min(
-        30,
-        candles.length-1
-      )
-    );
-
-  const buyRatio =
-    takerBuyRatio(
-      candles,
-      Math.min(
-        30,
-        candles.length
-      )
-    );
-
-  const flow =
-    buyRatio-0.5;
-
-  let forecast=0;
-
-  forecast +=
-    mom*0.35;
-
-  forecast +=
-    reg.slope*
-    clamp(
-      horizonMinutes/30,
+      horizon/30,
       .4,
       8
-    )*
-    0.8;
-
-  /*
-   * Mean reversion component.
-   */
-  forecast -=
-    z*
-    vol*
-    0.12;
-
-  forecast -=
-    vwapDist*
-    0.15;
-
-  forecast +=
-    flow*
-    Math.max(
-      0,
-      Math.min(
-        2,
-        vr
-      )
-    )*
-    0.01;
+    );
 
   return clamp(
-    forecast,
-    -0.12,
-    0.12
+    .30*m5+
+    .30*m15+
+    .20*m60+
+    reg.slope*
+    scale*
+    .9,
+    -.15,
+    .15
   );
 
 }
 
 
-/* =========================================================
-   ENGINE 3
-   INFORMATION / REGIME
-   ========================================================= */
-
-function informationEngine(
-  candles,
-  horizonMinutes
+function engineMath(
+  horizon
 ){
 
-  if(candles.length < 40)
-    return 0;
-
-  const h =
-    entropy(
-      candles,
-      Math.min(
-        100,
-        candles.length-1
-      )
-    );
-
-  const ac =
-    autocorrelation(
-      candles,
-      1,
-      Math.min(
-        100,
-        candles.length-1
-      )
-    );
-
-  const ac5 =
-    autocorrelation(
-      candles,
-      5,
-      Math.min(
-        120,
-        candles.length-1
-      )
-    );
-
-  const reg =
-    regression(
-      candles,
-      Math.min(
-        60,
-        candles.length
-      )
-    );
-
-  const mom =
+  const m=
     momentum(
-      candles,
-      Math.min(
-        12,
-        candles.length-1
-      )
+      state.candles,
+      12
     );
 
-  const btc =
-    btcFeature();
-
-  const regime =
-    detectRegime(
-      candles
+  const v=
+    volatility(
+      state.candles,
+      60
     );
 
-  let signal=0;
+  const price=
+    state.price;
 
-  /*
-   * Lower entropy = more directional information.
-   */
-  const informationStrength =
+  const vw=
+    vwapValue(
+      state.candles
+    );
+
+  const vwDist=
+    vw
+      ?Math.log(price/vw)
+      :0;
+
+  const reg=
+    regression(
+      state.candles,
+      50
+    );
+
+  const r=
+    rsi(
+      state.candles
+    );
+
+  const flow=
+    takerRatio(
+      state.candles
+    )-.5;
+
+  let signal=
+    m*.35+
+    reg.slope*
+    clamp(
+      horizon/30,
+      .5,
+      8
+    )*.7;
+
+  signal-=
+    vwDist*.12;
+
+  signal-=
+    (r-50)/50*
+    v*.10;
+
+  signal+=
+    flow*.012;
+
+  return clamp(
+    signal,
+    -.15,
+    .15
+  );
+
+}
+
+
+function engineInformation(
+  horizon
+){
+
+  const h=
+    entropy(
+      state.candles
+    );
+
+  const ac=
+    autocorrelation(
+      state.candles,
+      1
+    );
+
+  const ac5=
+    autocorrelation(
+      state.candles,
+      5
+    );
+
+  const m=
+    momentum(
+      state.candles,
+      12
+    );
+
+  const reg=
+    regression(
+      state.candles,
+      60
+    );
+
+  const strength=
     clamp(
       1-h,
       0,
       1
     );
 
-  signal +=
-    mom*
-    0.30*
-    informationStrength;
+  let signal=
+    m*
+    strength*
+    .35;
 
-  signal +=
+  signal+=
     ac*
-    Math.abs(mom)*
-    0.80;
+    Math.abs(m)*
+    .9;
 
-  signal +=
+  signal+=
     ac5*
-    Math.abs(mom)*
-    0.30;
+    Math.abs(m)*
+    .25;
 
-  signal +=
+  signal+=
     reg.slope*
     clamp(
-      horizonMinutes/30,
+      horizon/30,
       .5,
       8
-    )*
-    0.50;
+    )*.45;
 
-  /*
-   * Cross-market information.
-   */
-  signal +=
-    btc*0.08;
-
-  if(regime === "RANGE / NOISY")
-    signal *= 0.35;
-
-  if(regime === "HIGH VOLATILITY")
-    signal *= 0.70;
+  if(
+    regime()==="RANGE / NOISY"
+  )
+    signal*=.4;
 
   return clamp(
     signal,
-    -0.12,
-    0.12
+    -.15,
+    .15
   );
 
 }
 
 
-/* =========================================================
-   ADAPTIVE ERROR CORRECTION
-   ========================================================= */
-
-function residualCorrection(){
-
-  const a =
-    state.learning.residuals || [];
-
-  if(a.length < 10)
-    return 0;
-
-  /*
-   * Residuals are stored as return errors.
-   * Use a robust trimmed mean.
-   */
-  const sorted =
-    a
-      .slice()
-      .sort(
-        (x,y)=>x-y
-      );
-
-  const trim =
-    Math.floor(
-      sorted.length*0.10
-    );
-
-  const trimmed =
-    sorted.slice(
-      trim,
-      sorted.length-trim
-    );
-
-  return clamp(
-    mean(trimmed),
-    -0.03,
-    0.03
-  );
-
-}
-
-
-function adaptiveWeights(){
-
-  /*
-   * Default equal weights.
-   *
-   * After enough completed observations,
-   * weights are adjusted using historical
-   * engine errors.
-   */
-  const defaults = {
-
-    chronological:0.25,
-
-    math:0.25,
-
-    information:0.25,
-
-    adaptive:0.25
-
-  };
+function weights(){
 
   if(
-    state.history.length < 20
+    state.history.length<20
   ){
 
-    return defaults;
+    return {
+      a:.25,
+      b:.25,
+      c:.25,
+      d:.25
+    };
 
   }
 
-  const h =
-    state.history.slice(-100);
-
-  const scores = {
-
-    chronological:0,
-
-    math:0,
-
-    information:0,
-
-    adaptive:0
-
+  const sums={
+    a:0,
+    b:0,
+    c:0,
+    d:0
   };
 
   let n=0;
 
-  for(const p of h){
+  for(
+    const p of
+    state.history.slice(-100)
+  ){
 
     if(
       !p.engines ||
-      !Number.isFinite(p.actualReturn)
+      !Number.isFinite(
+        p.actualReturn
+      )
     )
       continue;
 
-    const actual =
-      p.actualReturn;
+    sums.a+=
+      Math.abs(
+        p.actualReturn-
+        p.engines.a
+      );
 
-    const values = {
+    sums.b+=
+      Math.abs(
+        p.actualReturn-
+        p.engines.b
+      );
 
-      chronological:
-        p.engines.chronological,
+    sums.c+=
+      Math.abs(
+        p.actualReturn-
+        p.engines.c
+      );
 
-      math:
-        p.engines.math,
-
-      information:
-        p.engines.information,
-
-      adaptive:
-        p.engines.adaptive
-
-    };
-
-    for(const key of Object.keys(scores)){
-
-      if(Number.isFinite(values[key])){
-
-        scores[key] +=
-          Math.abs(
-            actual-values[key]
-          );
-
-      }
-
-    }
+    sums.d+=
+      Math.abs(
+        p.actualReturn-
+        p.engines.d
+      );
 
     n++;
 
   }
 
   if(!n)
-    return defaults;
+    return {
+      a:.25,
+      b:.25,
+      c:.25,
+      d:.25
+    };
 
-  const inverse = {};
+  const inv={};
 
   let total=0;
 
-  for(const key of Object.keys(scores)){
+  for(
+    const k of ["a","b","c","d"]
+  ){
 
-    const mae =
-      scores[key]/n;
+    inv[k]=
+      1/(
+        sums[k]/n+
+        .0005
+      );
 
-    inverse[key] =
-      1/(mae+0.0005);
-
-    total +=
-      inverse[key];
-
-  }
-
-  const weights = {};
-
-  for(const key of Object.keys(inverse)){
-
-    weights[key] =
-      inverse[key]/total;
+    total+=inv[k];
 
   }
 
-  return weights;
+  return {
+    a:inv.a/total,
+    b:inv.b/total,
+    c:inv.c/total,
+    d:inv.d/total
+  };
 
 }
 
 
-/* =========================================================
-   ENGINE 4
-   ADAPTIVE ENSEMBLE
-   ========================================================= */
+function correction(){
 
-function adaptiveEnsemble(
-  candles,
-  horizonMinutes,
-  mode="automatic"
+  const a=
+    state.learning.residuals;
+
+  if(a.length<10)
+    return 0;
+
+  const sorted=
+    a.slice()
+     .sort(
+       (x,y)=>x-y
+     );
+
+  const trim=
+    Math.floor(
+      sorted.length*.1
+    );
+
+  const x=
+    sorted.slice(
+      trim,
+      sorted.length-trim
+    );
+
+  return clamp(
+    mean(x),
+    -.03,
+    .03
+  );
+
+}
+
+
+function ensemble(
+  horizon
 ){
 
-  const chronological =
-    chronologicalEngine(
-      candles,
-      horizonMinutes
+  const a=
+    engineChronological(
+      horizon
     );
 
-  const math =
-    mathematicalEngine(
-      candles,
-      horizonMinutes
+  const b=
+    engineMath(
+      horizon
     );
 
-  const information =
-    informationEngine(
-      candles,
-      horizonMinutes
+  const c=
+    engineInformation(
+      horizon
     );
 
-  const oldAdaptive =
-    (
-      chronological +
-      math +
-      information
-    )/3;
+  const d=
+    (a+b+c)/3;
 
-  const weights =
-    adaptiveWeights();
+  const w=
+    weights();
 
-  let forecast =
+  let forecast=
+    a*w.a+
+    b*w.b+
+    c*w.c+
+    d*w.d;
 
-    chronological *
-    weights.chronological +
+  forecast+=
+    correction()*.35;
 
-    math *
-    weights.math +
+  const disagreement=
+    std([a,b,c]);
 
-    information *
-    weights.information +
-
-    oldAdaptive *
-    weights.adaptive;
-
-
-  const correction =
-    residualCorrection();
-
-  /*
-   * Error correction is deliberately damped.
-   */
-  forecast +=
-    correction*0.35;
-
-  const values = [
-
-    chronological,
-    math,
-    information
-
-  ];
-
-  const avg =
-    mean(values);
-
-  const disagreement =
-    std(values);
-
-  const regime =
-    detectRegime(
-      candles
-    );
-
-  /*
-   * Confidence falls when the engines disagree.
-   */
-  let confidence =
-    1 -
-    disagreement /
+  let confidence=
+    1-
+    disagreement/
     Math.max(
-      0.0005,
-      Math.abs(avg)+0.002
+      Math.abs(
+        (a+b+c)/3
+      )+.002,
+      .0005
     );
 
-  confidence =
+  confidence=
     clamp(
       confidence,
-      0.15,
-      0.98
+      .15,
+      .97
     );
 
-  if(regime === "RANGE / NOISY")
-    confidence *= 0.70;
+  if(
+    regime()==="RANGE / NOISY"
+  )
+    confidence*=.7;
 
-  if(regime === "HIGH VOLATILITY")
-    confidence *= 0.80;
-
-  /*
-   * Data-quality penalty.
-   */
-  if(candles.length < 100)
-    confidence *= 0.80;
+  if(
+    regime()==="HIGH VOLATILITY"
+  )
+    confidence*=.8;
 
   return {
 
     forecast:
       clamp(
         forecast,
-        -0.15,
-        0.15
+        -.15,
+        .15
       ),
 
     confidence,
 
     disagreement,
 
-    regime,
-
-    correction,
-
-    weights,
+    regime:
+      regime(),
 
     engines:{
+      a,
+      b,
+      c,
+      d
+    },
 
-      chronological,
+    weights:w,
 
-      math,
-
-      information,
-
-      adaptive:
-        oldAdaptive
-
-    }
+    correction:
+      correction()
 
   };
 
@@ -3706,312 +2991,220 @@ function adaptiveEnsemble(
 
 
 /* =========================================================
-   PREDICTION DISTRIBUTION
+   DISTRIBUTION
    ========================================================= */
 
-function empiricalErrorScale(){
-
-  const errors =
-    state.learning.errors || [];
-
-  if(errors.length < 10)
-    return null;
-
-  const a =
-    errors
-      .filter(
-        x=>Number.isFinite(x)
-      )
-      .map(
-        x=>Math.abs(x)
-      )
-      .sort(
-        (x,y)=>x-y
-      );
-
-  if(!a.length)
-    return null;
-
-  /*
-   * Approximate conformal-style empirical
-   * absolute-error quantile.
-   */
-  const index =
-    Math.min(
-      a.length-1,
-      Math.ceil(
-        0.90*a.length
-      )-1
-    );
-
-  return a[index];
-
-}
-
-
-function predictionDistribution(
-  currentPrice,
-  ensemble,
-  horizonMinutes
+function distribution(
+  ens,
+  horizon
 ){
 
-  const base =
-    currentPrice;
+  const base=
+    state.price;
 
-  const expectedReturn =
-    ensemble.forecast;
-
-  const marketVol =
+  const marketVol=
     volatility(
       state.candles,
-      Math.min(
-        100,
-        state.candles.length
-      )
+      60
     );
 
-  /*
-   * Scale volatility by square root of time.
-   */
-  const timeScale =
+  const timeScale=
     Math.sqrt(
       Math.max(
         1,
-        horizonMinutes/5
+        horizon/5
       )
     );
 
-  let sigma =
-    marketVol *
+  let sigma=
+    marketVol*
     timeScale;
 
-  /*
-   * Prevent extreme ranges.
-   */
-  sigma =
+  sigma=
     clamp(
       sigma,
-      0.001,
-      0.25
+      .001,
+      .20
     );
 
-  const empirical =
-    empiricalErrorScale();
+  const expected=
+    ens.forecast;
 
-  if(
-    Number.isFinite(empirical)
-  ){
+  const p50=
+    base*
+    Math.exp(expected);
 
-    sigma =
-      Math.max(
-        sigma,
-        empirical*1.10
-      );
-
-  }
-
-  const p50 =
-    base *
+  const p10=
+    base*
     Math.exp(
-      expectedReturn
-    );
-
-  const p10 =
-    base *
-    Math.exp(
-      expectedReturn -
+      expected-
       1.2816*sigma
     );
 
-  const p25 =
-    base *
+  const p25=
+    base*
     Math.exp(
-      expectedReturn -
-      0.6745*sigma
+      expected-
+      .6745*sigma
     );
 
-  const p75 =
-    base *
+  const p75=
+    base*
     Math.exp(
-      expectedReturn +
-      0.6745*sigma
+      expected+
+      .6745*sigma
     );
 
-  const p90 =
-    base *
+  const p90=
+    base*
     Math.exp(
-      expectedReturn +
+      expected+
       1.2816*sigma
     );
 
-  /*
-   * Probability approximation from
-   * expected return / uncertainty.
-   */
-  const score =
-    expectedReturn /
+  const score=
+    expected/
     Math.max(
       sigma,
-      0.0001
+      .0001
     );
 
-  const up =
+  let up=
     clamp(
-      0.5 +
-      score*0.22,
-      0.02,
-      0.96
+      .5+score*.22,
+      .02,
+      .96
     );
 
-  const down =
+  let down=
     clamp(
-      0.5 -
-      score*0.22,
-      0.02,
-      0.96
+      .5-score*.22,
+      .02,
+      .96
     );
 
-  const flat =
+  let flat=
     clamp(
       1-up-down,
-      0.02,
-      0.96
+      .02,
+      .96
     );
 
-  /*
-   * Normalize.
-   */
-  const total =
+  const total=
     up+down+flat;
 
-  return {
+  up/=total;
+  down/=total;
+  flat/=total;
 
+  return {
     p10,
     p25,
     p50,
     p75,
     p90,
-
-    expectedReturn,
-
+    expected,
     sigma,
-
-    up:up/total,
-
-    flat:flat/total,
-
-    down:down/total
-
+    up,
+    down,
+    flat
   };
 
 }
 
 
 /* =========================================================
-   AUTOMATIC PREDICTIONS
+   CREATE PREDICTION
    ========================================================= */
 
-function createAutomaticPrediction(
-  horizonKey
+function createPrediction(
+  horizonName,
+  horizon
 ){
-
-  const minutes =
-    horizonKey === "15m"
-      ? 15
-      : 30;
 
   if(!Number.isFinite(state.price))
     return null;
 
-  const ensemble =
-    adaptiveEnsemble(
-      state.candles,
-      minutes,
-      "automatic"
+  const e=
+    ensemble(
+      horizon
     );
 
-  const dist =
-    predictionDistribution(
-      state.price,
-      ensemble,
-      minutes
+  const d=
+    distribution(
+      e,
+      horizon
     );
 
-  const now =
+  const now=
     Date.now();
-
-  const targetAt =
-    now +
-    minutes*60000;
 
   return {
 
     id:
-      horizonKey +
-      "-" +
+      horizonName+
+      "-"+
       now,
 
-    horizon:
-      horizonKey,
+    type:
+      horizonName,
 
     createdAt:
       now,
 
-    targetAt,
+    targetAt:
+      now+
+      horizon*60000,
 
-    horizonMinutes:
-      minutes,
+    horizon,
 
-    basePrice:
+    base:
       state.price,
 
     predicted:
-      dist.p50,
+      d.p50,
 
     p10:
-      dist.p10,
+      d.p10,
 
     p25:
-      dist.p25,
+      d.p25,
 
     p75:
-      dist.p75,
+      d.p75,
 
     p90:
-      dist.p90,
+      d.p90,
 
     expectedReturn:
-      dist.expectedReturn,
+      d.expected,
 
     sigma:
-      dist.sigma,
+      d.sigma,
 
     up:
-      dist.up,
-
-    flat:
-      dist.flat,
+      d.up,
 
     down:
-      dist.down,
+      d.down,
+
+    flat:
+      d.flat,
 
     confidence:
-      ensemble.confidence,
-
-    disagreement:
-      ensemble.disagreement,
+      e.confidence,
 
     regime:
-      ensemble.regime,
+      e.regime,
 
     engines:
-      ensemble.engines,
+      e.engines,
 
     weights:
-      ensemble.weights,
+      e.weights,
 
     correction:
-      ensemble.correction,
+      e.correction,
 
     status:
       "ACTIVE"
@@ -4021,141 +3214,79 @@ function createAutomaticPrediction(
 }
 
 
-function ensureAutomaticPredictions(){
+/* =========================================================
+   KEEP TARGETS LOCKED
+   ========================================================= */
+
+function ensurePredictions(){
 
   if(!state.active["15m"])
-    state.active["15m"] =
-      createAutomaticPrediction(
-        "15m"
+    state.active["15m"]=
+      createPrediction(
+        "15m",
+        15
       );
 
   if(!state.active["30m"])
-    state.active["30m"] =
-      createAutomaticPrediction(
-        "30m"
+    state.active["30m"]=
+      createPrediction(
+        "30m",
+        30
       );
 
-  saveStorage();
-
-  updateForecastUI();
-
-  updateForecastLines();
-
-}
-
-
-/*
- * Important:
- * Once created, targetAt is NEVER changed.
- */
-function refreshAutomaticPredictions(){
-
-  /*
-   * Only create a new prediction when
-   * there is no active prediction.
-   */
-  ensureAutomaticPredictions();
+  save();
 
 }
 
 
 /* =========================================================
-   EXACT TARGET SETTLEMENT
+   TARGET SETTLEMENT
    ========================================================= */
 
-async function getExactTargetPrice(
+async function targetPrice(
   targetAt
 ){
 
   /*
-   * First search local 1-minute data.
+   * Settlement definition:
+   * first completed 1-minute candle at or
+   * after the target minute.
+   *
+   * This prevents the application from using
+   * today's later screen price.
    */
-  const targetMinute =
+
+  const minute=
     Math.floor(
       targetAt/60000
     )*60000;
 
-  let local =
-    state.oneMinute.find(
-      c =>
-        c.ms >= targetMinute
+  const rows=
+    await fetchKlines(
+      SYMBOL,
+      "1m",
+      minute,
+      minute+120000,
+      5
     );
 
-  if(local){
+  if(!rows.length)
+    return null;
 
-    return {
-
-      price:
-        local.open,
-
-      time:
-        local.ms
-
-    };
-
-  }
-
-
-  /*
-   * If the target is outside the local buffer,
-   * request a narrow window from Binance.
-   */
-  try{
-
-    const start =
-      targetMinute;
-
-    const end =
-      targetMinute +
-      120000;
-
-    const rows =
-      await fetchKlines(
-        SYMBOL,
-        "1m",
-        start,
-        end,
-        5
-      );
-
-    if(rows.length){
-
-      const c =
-        convertKline(
-          rows[0]
-        );
-
-      return {
-
-        price:
-          c.open,
-
-        time:
-          c.ms
-
-      };
-
-    }
-
-  }catch(e){
-
-    console.warn(
-      "Target settlement fetch failed",
-      e
+  const c=
+    convertKline(
+      rows[0]
     );
 
-  }
-
-  return null;
+  return {
+    price:c.close,
+    time:c.ms
+  };
 
 }
 
 
-/* =========================================================
-   LEARNING
-   ========================================================= */
-
-function learnFromPrediction(
+function learn(
   p
 ){
 
@@ -4166,137 +3297,136 @@ function learnFromPrediction(
   )
     return;
 
-  const error =
-    p.errorReturn;
-
   if(
-    !Number.isFinite(error)
+    !Number.isFinite(
+      p.errorReturn
+    )
   )
     return;
 
-  state.learning.residuals.push(
-    error
-  );
-
   state.learning.errors.push(
-    Math.abs(error)
+    Math.abs(
+      p.errorReturn
+    )
   );
 
-  state.learning.residuals =
-    state.learning.residuals.slice(
-      -200
-    );
+  state.learning.residuals.push(
+    p.errorReturn
+  );
 
-  state.learning.errors =
-    state.learning.errors.slice(
-      -200
-    );
+  state.learning.errors=
+    state.learning.errors.slice(-200);
 
-  state.learning.sampleCount++;
+  state.learning.residuals=
+    state.learning.residuals.slice(-200);
+
+  state.learning.samples++;
 
 }
 
 
-/* =========================================================
-   SETTLE AUTOMATIC
-   ========================================================= */
-
-async function settlePrediction(
-  p
+async function settle(
+  p,
+  custom=false
 ){
 
   if(!p)
     return;
 
-  if(p.status !== "ACTIVE")
+  if(p.status!=="ACTIVE")
     return;
 
-  if(
-    Date.now() <
-    p.targetAt
-  )
+  if(Date.now()<p.targetAt)
     return;
 
-  const result =
-    await getExactTargetPrice(
-      p.targetAt
+  try{
+
+    const result=
+      await targetPrice(
+        p.targetAt
+      );
+
+    if(!result)
+      return;
+
+    p.actual=
+      result.price;
+
+    p.actualTime=
+      result.time;
+
+    p.actualReturn=
+      Math.log(
+        p.actual/p.base
+      );
+
+    p.errorPrice=
+      p.actual-p.predicted;
+
+    p.errorPct=
+      p.errorPrice/
+      p.predicted;
+
+    p.errorReturn=
+      p.actualReturn-
+      p.expectedReturn;
+
+    p.directionCorrect=
+      Math.sign(
+        p.actualReturn
+      )===
+      Math.sign(
+        p.expectedReturn
+      );
+
+    p.intervalHit=
+      p.actual>=p.p10 &&
+      p.actual<=p.p90;
+
+    p.status=
+      "COMPLETED";
+
+    learn(p);
+
+    state.history.push(p);
+
+    state.history=
+      state.history.slice(-500);
+
+    if(custom){
+
+      state.custom=null;
+
+    }else{
+
+      state.active[p.type]=
+        createPrediction(
+          p.type,
+          p.horizon
+        );
+
+    }
+
+    save();
+
+    updateHistory();
+
+    updateModel();
+
+    updateForecastUI();
+
+    updateCustomUI();
+
+    updateForecastLines();
+
+  }catch(e){
+
+    console.warn(
+      "Settlement",
+      e
     );
 
-  if(!result)
-    return;
-
-  const actual =
-    result.price;
-
-  p.actual =
-    actual;
-
-  p.actualTime =
-    result.time;
-
-  p.actualReturn =
-    Math.log(
-      actual/p.basePrice
-    );
-
-  p.errorPrice =
-    actual-p.predicted;
-
-  p.errorPct =
-    (actual-p.predicted) /
-    p.predicted;
-
-  p.errorReturn =
-    p.actualReturn -
-    p.expectedReturn;
-
-  p.directionCorrect =
-    Math.sign(
-      p.actualReturn
-    ) ===
-    Math.sign(
-      p.expectedReturn
-    );
-
-  p.intervalHit =
-    actual >= p.p10 &&
-    actual <= p.p90;
-
-  p.status =
-    "COMPLETED";
-
-  learnFromPrediction(
-    p
-  );
-
-  state.history.push(
-    p
-  );
-
-  state.history =
-    state.history.slice(
-      -500
-    );
-
-  /*
-   * Immediately create the next forecast.
-   */
-  state.active[p.horizon] =
-    createAutomaticPrediction(
-      p.horizon
-    );
-
-  saveStorage();
-
-  updateHistoryUI();
-
-  updateValidationUI();
-
-  updateModelUI();
-
-  updateForecastUI();
-
-  updateForecastLines();
+  }
 
 }
 
@@ -4305,38 +3435,31 @@ async function settlePrediction(
    CUSTOM FORECAST
    ========================================================= */
 
-function setCustomForecast(){
+function setCustom(){
 
-  const dateValue =
-    $("customTargetDate").value;
+  const date=
+    el("customDate").value;
 
-  const timeValue =
-    $("customTargetTime").value;
+  const time=
+    el("customTime").value;
 
-  if(
-    !dateValue ||
-    !timeValue
-  ){
+  if(!date||!time){
 
     alert(
-      "Select a future date and time."
+      "Choose a target date and time."
     );
 
     return;
 
   }
 
-  const targetAt =
+  const target=
     new Date(
-      dateValue +
-      "T" +
-      timeValue
+      date+"T"+time
     ).getTime();
 
   if(
-    !Number.isFinite(
-      targetAt
-    )
+    !Number.isFinite(target)
   ){
 
     alert(
@@ -4347,42 +3470,12 @@ function setCustomForecast(){
 
   }
 
-  if(
-    targetAt <=
-    Date.now()
-  ){
-
-    alert(
-      "Custom target must be in the future."
-    );
-
-    return;
-
-  }
-
-  if(
-    !Number.isFinite(
-      state.price
-    )
-  ){
-
-    alert(
-      "Live ETH price is not available yet."
-    );
-
-    return;
-
-  }
-
-  const horizonMinutes =
+  const horizon=
     (
-      targetAt -
-      Date.now()
+      target-Date.now()
     )/60000;
 
-  if(
-    horizonMinutes < 5
-  ){
+  if(horizon<5){
 
     alert(
       "Choose a target at least 5 minutes ahead."
@@ -4392,308 +3485,178 @@ function setCustomForecast(){
 
   }
 
-  /*
-   * Keep the custom forecast within
-   * the intended 7-day research horizon.
-   */
-  if(
-    horizonMinutes >
-    7*24*60
-  ){
+  if(horizon>10080){
 
     alert(
-      "Custom forecast can currently be up to 7 days ahead."
+      "Custom forecast is limited to 7 days."
     );
 
     return;
 
   }
 
-  const ensemble =
-    adaptiveEnsemble(
-      state.candles,
-      horizonMinutes,
-      "custom"
+  if(!Number.isFinite(state.price)){
+
+    alert(
+      "ETH market data has not loaded yet."
     );
 
-  const distribution =
-    predictionDistribution(
-      state.price,
-      ensemble,
-      horizonMinutes
+    return;
+
+  }
+
+  const e=
+    ensemble(
+      horizon
     );
 
-  state.customForecast = {
+  const d=
+    distribution(
+      e,
+      horizon
+    );
+
+  state.custom={
 
     id:
-      "custom-" +
-      Date.now(),
+      "custom-"+Date.now(),
+
+    type:
+      "CUSTOM",
 
     createdAt:
       Date.now(),
 
-    targetAt,
+    targetAt:
+      target,
 
-    horizonMinutes,
+    horizon,
 
-    basePrice:
+    base:
       state.price,
 
     predicted:
-      distribution.p50,
+      d.p50,
 
     p10:
-      distribution.p10,
+      d.p10,
 
     p25:
-      distribution.p25,
+      d.p25,
 
     p75:
-      distribution.p75,
+      d.p75,
 
     p90:
-      distribution.p90,
+      d.p90,
 
     expectedReturn:
-      distribution.expectedReturn,
+      d.expected,
 
     sigma:
-      distribution.sigma,
+      d.sigma,
 
     up:
-      distribution.up,
-
-    flat:
-      distribution.flat,
+      d.up,
 
     down:
-      distribution.down,
+      d.down,
+
+    flat:
+      d.flat,
 
     confidence:
-      ensemble.confidence,
-
-    disagreement:
-      ensemble.disagreement,
+      e.confidence,
 
     regime:
-      ensemble.regime,
+      e.regime,
 
     engines:
-      ensemble.engines,
+      e.engines,
 
     weights:
-      ensemble.weights,
+      e.weights,
 
     correction:
-      ensemble.correction,
+      e.correction,
 
     status:
       "ACTIVE"
 
   };
 
-  saveStorage();
+  save();
 
-  updateCustomForecastUI();
-
-  updateForecastLines();
-
-  updateModelUI();
-
-}
-
-
-async function settleCustomForecast(){
-
-  const p =
-    state.customForecast;
-
-  if(!p)
-    return;
-
-  if(
-    p.status !== "ACTIVE"
-  )
-    return;
-
-  if(
-    Date.now() <
-    p.targetAt
-  )
-    return;
-
-  const result =
-    await getExactTargetPrice(
-      p.targetAt
-    );
-
-  if(!result)
-    return;
-
-  const actual =
-    result.price;
-
-  p.actual =
-    actual;
-
-  p.actualTime =
-    result.time;
-
-  p.actualReturn =
-    Math.log(
-      actual/p.basePrice
-    );
-
-  p.errorPrice =
-    actual-p.predicted;
-
-  p.errorPct =
-    (actual-p.predicted) /
-    p.predicted;
-
-  p.errorReturn =
-    p.actualReturn -
-    p.expectedReturn;
-
-  p.directionCorrect =
-    Math.sign(
-      p.actualReturn
-    ) ===
-    Math.sign(
-      p.expectedReturn
-    );
-
-  p.intervalHit =
-    actual >= p.p10 &&
-    actual <= p.p90;
-
-  p.status =
-    "COMPLETED";
-
-  learnFromPrediction(
-    p
-  );
-
-  state.history.push(
-    p
-  );
-
-  state.history =
-    state.history.slice(
-      -500
-    );
-
-  /*
-   * Only one custom forecast is active.
-   * After settlement the slot becomes empty.
-   */
-  state.customForecast =
-    null;
-
-  saveStorage();
-
-  updateHistoryUI();
-
-  updateModelUI();
-
-  updateValidationUI();
-
-  updateCustomForecastUI();
+  updateCustomUI();
 
   updateForecastLines();
 
 }
 
 
-function updateCustomForecastUI(){
+function updateCustomUI(){
 
-  const el =
-    $("customForecastState");
-
-  if(!el)
-    return;
-
-  const p =
-    state.customForecast;
+  const p=
+    state.custom;
 
   if(!p){
 
-    el.innerHTML =
+    el("customState").innerHTML=
       "No custom forecast active.";
 
     return;
 
   }
 
-  const remaining =
+  const remaining=
     Math.max(
       0,
       p.targetAt-Date.now()
     );
 
-  const minutes =
+  const mins=
     Math.floor(
       remaining/60000
     );
 
-  const hours =
+  const h=
     Math.floor(
-      minutes/60
+      mins/60
     );
 
-  const mins =
-    minutes%60;
+  const m=
+    mins%60;
 
-  el.innerHTML =
+  el("customState").innerHTML=
 
-    "<b>CUSTOM FORECAST LOCKED</b>" +
-
-    "<br><br>" +
-
-    "Target: " +
-    timeText(p.targetAt) +
-
-    "<br>" +
-
-    "Predicted P50: " +
-    fmtPrice(p.predicted) +
-
-    "<br>" +
-
-    "P10: " +
-    fmtPrice(p.p10) +
-
-    " • P90: " +
-    fmtPrice(p.p90) +
-
-    "<br>" +
-
-    "Up: " +
-    pct(p.up) +
-
-    " • Flat: " +
-    pct(p.flat) +
-
-    " • Down: " +
-    pct(p.down) +
-
-    "<br>" +
-
-    "Confidence: " +
-    pct(p.confidence) +
-
-    "<br>" +
-
-    "Regime: " +
-    p.regime +
-
-    "<br>" +
-
-    "Remaining: " +
-    hours +
-    "h " +
-    mins +
-    "m";
+    "<b>CUSTOM FORECAST LOCKED</b>"+
+    "<br><br>"+
+    "Target: "+
+    timeText(p.targetAt)+
+    "<br>"+
+    "Predicted P50: "+
+    fmtPrice(p.predicted)+
+    "<br>"+
+    "P10: "+
+    fmtPrice(p.p10)+
+    " → P90: "+
+    fmtPrice(p.p90)+
+    "<br>"+
+    "Up: "+
+    fmtPct(p.up)+
+    " • Flat: "+
+    fmtPct(p.flat)+
+    " • Down: "+
+    fmtPct(p.down)+
+    "<br>"+
+    "Confidence: "+
+    fmtPct(p.confidence)+
+    "<br>"+
+    "Regime: "+
+    p.regime+
+    "<br>"+
+    "Remaining: "+
+    h+"h "+m+"m";
 
 }
 
@@ -4702,14 +3665,89 @@ function updateCustomForecastUI(){
    FORECAST UI
    ========================================================= */
 
+function updateOne(
+  key,
+  minutes
+){
+
+  const p=
+    state.active[key];
+
+  const suffix=
+    minutes;
+
+  if(!p){
+
+    el("badge"+suffix)
+      .textContent="--";
+
+    el("forecast"+suffix)
+      .textContent="--";
+
+    return;
+
+  }
+
+  el("badge"+suffix)
+    .textContent=p.status;
+
+  el("forecast"+suffix)
+    .textContent=
+      fmtPrice(
+        p.predicted
+      );
+
+  el("target"+suffix)
+    .textContent=
+      "Target: "+
+      timeText(
+        p.targetAt
+      );
+
+  el("range"+suffix)
+    .textContent=
+      "P10 "+
+      fmtPrice(p.p10)+
+      " → P90 "+
+      fmtPrice(p.p90);
+
+  el("conf"+suffix)
+    .textContent=
+      "Confidence "+
+      fmtPct(p.confidence)+
+      " • "+
+      p.regime;
+
+  const elapsed=
+    Date.now()-
+    p.createdAt;
+
+  const total=
+    p.targetAt-
+    p.createdAt;
+
+  const progress=
+    clamp(
+      elapsed/total*100,
+      0,
+      100
+    );
+
+  el("bar"+suffix)
+    .style.width=
+      progress+"%";
+
+}
+
+
 function updateForecastUI(){
 
-  updateOneForecastUI(
+  updateOne(
     "15m",
     15
   );
 
-  updateOneForecastUI(
+  updateOne(
     "30m",
     30
   );
@@ -4717,262 +3755,77 @@ function updateForecastUI(){
 }
 
 
-function updateOneForecastUI(
-  key,
-  minutes
-){
-
-  const p =
-    state.active[key];
-
-  if(!p){
-
-    $("status"+minutes).textContent =
-      "--";
-
-    $("forecast"+minutes).textContent =
-      "--";
-
-    $("target"+minutes).textContent =
-      "--";
-
-    $("range"+minutes).textContent =
-      "--";
-
-    $("confidence"+minutes).textContent =
-      "--";
-
-    $("progress"+minutes).style.width =
-      "0%";
-
-    return;
-
-  }
-
-  $("status"+minutes).textContent =
-    p.status;
-
-  $("forecast"+minutes).textContent =
-    fmtPrice(p.predicted);
-
-  $("target"+minutes).textContent =
-    "Target: " +
-    timeText(p.targetAt);
-
-  $("range"+minutes).textContent =
-    "P10 " +
-    fmtPrice(p.p10) +
-    " → P90 " +
-    fmtPrice(p.p90);
-
-  $("confidence"+minutes).textContent =
-    "Confidence " +
-    pct(p.confidence) +
-    " • " +
-    p.regime;
-
-  const elapsed =
-    Date.now() -
-    p.createdAt;
-
-  const total =
-    p.targetAt -
-    p.createdAt;
-
-  const progress =
-    total > 0
-      ? clamp(
-          elapsed/total*100,
-          0,
-          100
-        )
-      : 0;
-
-  $("progress"+minutes)
-    .style.width =
-      progress+"%";
-
-}
-
-
 function updateForecastLines(){
 
   if(
-    !state.chart ||
+    !state.chart||
     !state.candles.length
   )
     return;
 
-  const last =
+  const last=
     state.candles[
       state.candles.length-1
     ];
 
-  const nowTime =
+  const now=
     last.time;
 
-  const createLineData =
-    (p) => {
 
-      if(!p)
-        return [];
+  function line(p){
 
-      return [
+    if(!p)
+      return [];
 
-        {
-          time:nowTime,
-          value:state.price
-        },
+    return [
 
-        {
-          time:
-            Math.floor(
-              p.targetAt/1000
-            ),
-          value:p.predicted
-        }
+      {
+        time:now,
+        value:state.price
+      },
 
-      ];
+      {
+        time:
+          Math.floor(
+            p.targetAt/1000
+          ),
+        value:p.predicted
+      }
 
-    };
+    ];
+
+  }
 
 
-  if(state.forecast15Series){
-
-    state.forecast15Series.setData(
-
-      createLineData(
+  state.forecast15Series
+    .setData(
+      line(
         state.active["15m"]
       )
-
     );
 
-  }
 
-
-  if(state.forecast30Series){
-
-    state.forecast30Series.setData(
-
-      createLineData(
+  state.forecast30Series
+    .setData(
+      line(
         state.active["30m"]
       )
-
     );
 
-  }
 
-
-  if(state.customForecastSeries){
-
-    state.customForecastSeries.setData(
-
-      createLineData(
-        state.customForecast
+  state.customSeries
+    .setData(
+      line(
+        state.custom
       )
-
     );
 
-  }
-
 }
-
-
-/* =========================================================
-   SETTLEMENT LOOP
-   ========================================================= */
-
-async function settlementLoop(){
-
-  const now =
-    Date.now();
-
-  for(
-    const key of ["15m","30m"]
-  ){
-
-    const p =
-      state.active[key];
-
-    if(
-      p &&
-      p.status === "ACTIVE" &&
-      now >= p.targetAt
-    ){
-
-      await settlePrediction(
-        p
-      );
-
-    }
-
-  }
-
-  await settleCustomForecast();
-
-  updateForecastUI();
-
-  updateCustomForecastUI();
-
-}
-
-
-setInterval(
-  settlementLoop,
-  1000
-);
 
 
 /* =========================================================
    MARKET UI
    ========================================================= */
-
-async function updateMarketStats(){
-
-  try{
-
-    const url =
-      BINANCE_REST +
-      "/api/v3/ticker/24hr" +
-      "?symbol=" +
-      SYMBOL;
-
-    const x =
-      await fetchJSON(
-        url
-      );
-
-    $("dayHigh").textContent =
-      fmtPrice(
-        Number(x.highPrice)
-      );
-
-    $("dayLow").textContent =
-      fmtPrice(
-        Number(x.lowPrice)
-      );
-
-    $("dayVolume").textContent =
-      Number(
-        x.volume
-      ).toLocaleString(
-        undefined,
-        {
-          maximumFractionDigits:0
-        }
-      );
-
-  }catch(e){
-
-    console.warn(
-      "24h stats",
-      e
-    );
-
-  }
-
-}
-
 
 function updateMarketUI(){
 
@@ -4982,78 +3835,58 @@ function updateMarketUI(){
     )
   ){
 
-    $("currentPrice")
-      .textContent =
-      fmtPrice(
-        state.price
-      );
+    el("currentPrice")
+      .textContent=
+        fmtPrice(
+          state.price
+        );
 
   }
 
   if(
     Number.isFinite(
       state.price
-    ) &&
+    )&&
     Number.isFinite(
-      state.prevPrice
+      state.previousPrice
     )
   ){
 
-    const change =
+    const change=
       (
-        state.price -
-        state.prevPrice
-      ) /
-      state.prevPrice;
+        state.price-
+        state.previousPrice
+      )/
+      state.previousPrice;
 
-    const el =
-      $("priceChange");
+    el("priceChange")
+      .textContent=
+        (
+          change>=0
+            ?"+"
+            :""
+        )+
+        fmtPct(
+          change,
+          3
+        );
 
-    el.textContent =
-      (
-        change>=0
-          ? "+"
-          : ""
-      ) +
-      pct(
-        change,
-        3
-      );
-
-    el.className =
-      "small " +
-      (
-        change>=0
-          ? "green"
-          : "red"
-      );
+    el("priceChange")
+      .className=
+        "change "+
+        (
+          change>=0
+            ?"green"
+            :"red"
+        );
 
   }
 
-  $("lastUpdate").textContent =
-    shortTime(
-      Date.now()
-    );
-
-}
-
-
-function setStatus(
-  text,
-  live
-){
-
-  $("statusText").textContent =
-    text;
-
-  $("statusDot")
-    .className =
-    "dot " +
-    (
-      live
-        ? "live"
-        : ""
-    );
+  el("lastUpdate")
+    .textContent=
+      shortTime(
+        Date.now()
+      );
 
 }
 
@@ -5062,344 +3895,259 @@ function setStatus(
    FEATURE UI
    ========================================================= */
 
-function calculateCurrentFeatures(){
+function updateFeatures(){
 
-  if(
-    state.candles.length < 20
-  )
+  if(state.candles.length<30)
     return;
 
-  const c =
+  const c=
     state.candles;
 
-  const v =
+  const v=
     volatility(
       c,
-      Math.min(
-        50,
-        c.length
-      )
+      50
     );
 
-  const vr =
-    volumeRatio(
-      c,
-      Math.min(
-        30,
-        c.length-1
-      )
-    );
+  const r=
+    rsi(c);
 
-  const vw =
-    vwapValue(c);
-
-  const r =
-    rsi(
-      c,
-      14
-    );
-
-  const e21 =
+  const e21=
     emaValue(
       c,
       21
     );
 
-  const e50 =
+  const e50=
     emaValue(
       c,
       50
     );
 
-  const ac =
-    autocorrelation(
-      c,
-      1,
-      Math.min(
-        80,
-        c.length-1
-      )
-    );
+  const vw=
+    vwapValue(c);
 
-  const regime =
-    detectRegime(c);
+  const vr=
+    volumeRatio(c);
 
-  $("volatility").textContent =
-    pct(
-      v,
-      3
-    );
+  const tr=
+    takerRatio(c);
 
-  $("rvol").textContent =
-    vr.toFixed(2)+"x";
+  const en=
+    entropy(c);
 
-  $("vwapDistance").textContent =
-    vw
-      ? pct(
-          Math.log(
-            state.price/vw
-          ),
-          3
-        )
-      : "--";
+  const re=
+    regime();
 
-  $("entropy").textContent =
-    entropy(
-      c
-    ).toFixed(3);
+  el("volatility")
+    .textContent=
+      fmtPct(v,3);
 
-  $("rsiValue").textContent =
-    r.toFixed(2);
+  el("rsi")
+    .textContent=
+      r.toFixed(1);
 
-  $("ema21Value").textContent =
-    fmtPrice(e21);
+  el("ema21")
+    .textContent=
+      fmtPrice(e21);
 
-  $("ema50Value").textContent =
-    fmtPrice(e50);
+  el("ema50")
+    .textContent=
+      fmtPrice(e50);
 
-  $("vwapValue").textContent =
-    fmtPrice(vw);
+  el("vwap")
+    .textContent=
+      fmtPrice(vw);
 
-  $("autocorrValue").textContent =
-    ac.toFixed(3);
+  el("rvol")
+    .textContent=
+      vr.toFixed(2)+"x";
 
-  const flow =
-    takerBuyRatio(
-      c,
-      Math.min(
-        30,
-        c.length
-      )
-    );
+  el("taker")
+    .textContent=
+      fmtPct(tr);
 
-  $("flowValue").textContent =
-    pct(
-      flow,
-      2
-    );
+  el("entropy")
+    .textContent=
+      en.toFixed(3);
 
-  $("regime").textContent =
-    regime;
+  el("regime")
+    .textContent=
+      re;
 
-  const quality =
+
+  const e=
+    ensemble(15);
+
+  el("engine1")
+    .textContent=
+      fmtPct(
+        e.engines.a,
+        3
+      );
+
+  el("engine2")
+    .textContent=
+      fmtPct(
+        e.engines.b,
+        3
+      );
+
+  el("engine3")
+    .textContent=
+      fmtPct(
+        e.engines.c,
+        3
+      );
+
+  el("engine4")
+    .textContent=
+      fmtPct(
+        e.forecast,
+        3
+      );
+
+
+  const quality=
     clamp(
       (
         Math.min(
-          1,
-          c.length/300
-        )*.4 +
-
-        clamp(
-          1 -
-          entropy(c)*.5,
-          0,
+          c.length/300,
           1
-        )*.3 +
-
-        clamp(
-          1 -
-          Math.abs(
-            ac
-          ),
-          0,
-          1
-        )*.3
+        )*.6+
+        (1-en)*.4
       )*100,
       0,
       100
     );
 
-  $("dataQuality").textContent =
-    quality.toFixed(0)+"%";
+  el("dataQuality")
+    .textContent=
+      quality.toFixed(0)+"%";
 
 
-  const ens =
-    adaptiveEnsemble(
-      c,
-      15
-    );
+  el("decision").innerHTML=
 
-  $("engineChronological").textContent =
-    pct(
-      ens.engines.chronological,
+    "<b>ENSEMBLE:</b> "+
+    fmtPct(
+      e.forecast,
       3
-    );
+    )+
 
-  $("engineMath").textContent =
-    pct(
-      ens.engines.math,
+    "<br><b>CONFIDENCE:</b> "+
+    fmtPct(
+      e.confidence
+    )+
+
+    "<br><b>DISAGREEMENT:</b> "+
+    fmtPct(
+      e.disagreement,
       3
-    );
+    )+
 
-  $("engineInformation").textContent =
-    pct(
-      ens.engines.information,
+    "<br><b>REGIME:</b> "+
+    e.regime;
+
+
+  el("why").innerHTML=
+
+    "12-bar momentum: "+
+    fmtPct(
+      momentum(c,12),
       3
-    );
+    )+
 
-  $("engineAdaptive").textContent =
-    pct(
-      ens.forecast,
-      3
-    );
+    "<br>Regression trend: "+
+    fmtPct(
+      regression(c,50).slope,
+      4
+    )+
 
+    "<br>RSI: "+
+    r.toFixed(1)+
 
-  $("modelDecision").innerHTML =
-
-    "<b>ENSEMBLE RETURN:</b> " +
-    pct(
-      ens.forecast,
-      3
-    ) +
-
-    "<br><b>CONFIDENCE:</b> " +
-    pct(
-      ens.confidence,
-      1
-    ) +
-
-    "<br><b>ENGINE DISAGREEMENT:</b> " +
-    pct(
-      ens.disagreement,
-      3
-    ) +
-
-    "<br><b>REGIME:</b> " +
-    ens.regime;
-
-
-  const direction =
-    ens.forecast > 0
-      ? "positive"
-      : ens.forecast < 0
-        ? "negative"
-        : "neutral";
-
-  $("whyPrediction").innerHTML =
-
-    "Momentum return: " +
-    pct(
-      momentum(
-        c,
-        Math.min(
-          12,
-          c.length-1
+    "<br>VWAP distance: "+
+    (
+      vw
+        ?fmtPct(
+          Math.log(
+            state.price/vw
+          ),
+          3
         )
-      ),
-      3
-    ) +
+        :"--"
+    )+
 
-    "<br>Regression R²: " +
-    regression(
-      c,
-      Math.min(
-        50,
-        c.length
-      )
-    ).r2.toFixed(3) +
+    "<br>Relative volume: "+
+    vr.toFixed(2)+"x"+
 
-    "<br>Volume ratio: " +
-    vr.toFixed(2) +
-    "x" +
+    "<br>Taker-buy ratio: "+
+    fmtPct(tr)+
 
-    "<br>Taker-buy ratio: " +
-    pct(
-      flow,
-      2
-    ) +
+    "<br>Entropy: "+
+    en.toFixed(3)+
 
-    "<br>Entropy: " +
-    entropy(c).toFixed(3) +
-
-    "<br>Autocorrelation: " +
-    ac.toFixed(3) +
-
-    "<br>Cross-market BTC return: " +
-    pct(
-      btcFeature(),
-      3
-    ) +
-
-    "<br>Model direction: " +
-    direction;
+    "<br>Autocorrelation: "+
+    autocorrelation(c,1).toFixed(3);
 
 }
 
 
 /* =========================================================
-   HISTORY UI
+   HISTORY
    ========================================================= */
 
-function updateHistoryUI(){
+function updateHistory(){
 
-  const body =
-    $("historyBody");
+  const body=
+    el("historyBody");
 
-  if(!body)
-    return;
+  body.innerHTML="";
 
-  body.innerHTML = "";
-
-  const rows =
+  for(
+    const p of
     state.history
       .slice()
       .reverse()
-      .slice(0,100);
+      .slice(0,100)
+  ){
 
-  for(const p of rows){
+    const tr=
+      document.createElement("tr");
 
-    const tr =
-      document.createElement(
-        "tr"
-      );
-
-    const horizon =
-      p.horizon ||
-      (
-        p.horizonMinutes
-          ? p.horizonMinutes+"m"
-          : "CUSTOM"
-      );
-
-    const correct =
-      p.directionCorrect;
-
-    const result =
-      correct
-        ? "CORRECT"
-        : "WRONG";
-
-    tr.innerHTML =
-
-      "<td>"+horizon+"</td>" +
+    tr.innerHTML=
 
       "<td>"+
-      shortTime(p.createdAt)+
-      "</td>" +
+      p.type+
+      "</td>"+
 
       "<td>"+
       shortTime(p.targetAt)+
-      "</td>" +
+      "</td>"+
 
       "<td>"+
       fmtPrice(p.predicted)+
-      "</td>" +
+      "</td>"+
 
       "<td>"+
       fmtPrice(p.actual)+
-      "</td>" +
+      "</td>"+
 
       "<td>"+
-      pct(p.errorPct,3)+
-      "</td>" +
+      fmtPct(p.errorPct,3)+
+      "</td>"+
 
       "<td class='"+
       (
-        correct
-          ? "green"
-          : "red"
+        p.directionCorrect
+          ?"green"
+          :"red"
       )+"'>"+
-      result+
+      (
+        p.directionCorrect
+          ?"CORRECT"
+          :"WRONG"
+      )+
       "</td>";
 
     body.appendChild(tr);
@@ -5410,129 +4158,147 @@ function updateHistoryUI(){
 
 
 /* =========================================================
-   VALIDATION
+   MODEL
    ========================================================= */
 
-function simpleWalkForward(
-  horizonMinutes
+function updateModel(){
+
+  const w=
+    weights();
+
+  el("w1").textContent=
+    fmtPct(w.a);
+
+  el("w2").textContent=
+    fmtPct(w.b);
+
+  el("w3").textContent=
+    fmtPct(w.c);
+
+  el("w4").textContent=
+    fmtPct(w.d);
+
+  el("learning").innerHTML=
+
+    "Completed samples: "+
+    state.learning.samples+
+
+    "<br>Stored residuals: "+
+    state.learning.residuals.length+
+
+    "<br>Current correction: "+
+    fmtPct(
+      correction(),
+      3
+    );
+
+}
+
+
+/* =========================================================
+   WALK FORWARD VALIDATION
+   ========================================================= */
+
+function backtest(
+  horizon
 ){
 
-  /*
-   * This validation deliberately walks forward
-   * through historical data.
-   *
-   * At each test point only data before the
-   * test point is used.
-   */
-  const candles =
+  const c=
     state.candles;
 
-  const baseStep =
-    intervalMilliseconds(
-      state.effectiveInterval
-    )/60000;
-
-  const steps =
+  const step=
     Math.max(
       1,
       Math.round(
-        horizonMinutes/baseStep
+        horizon/
+        (
+          intervalMs(
+            state.interval
+          )/60000
+        )
       )
     );
 
-  const minimum =
-    Math.max(
-      120,
-      steps*4
-    );
-
   if(
-    candles.length <
-    minimum+steps+10
+    c.length<
+    step+100
   ){
 
     return {
       samples:0,
-      mae:null,
-      direction:null
+      mae:null
     };
 
   }
 
   const errors=[];
-  let correct=0;
 
-  /*
-   * Keep the backtest computationally
-   * reasonable in a browser.
-   */
-  const start =
+  const start=
     Math.max(
-      minimum,
-      candles.length-600
+      100,
+      c.length-600
     );
 
   for(
     let i=start;
-    i<candles.length-steps;
+    i<c.length-step;
     i++
   ){
 
-    const train =
-      candles.slice(
+    const train=
+      c.slice(
         0,
         i+1
       );
 
-    const current =
+    const current=
       train[
         train.length-1
       ].close;
 
-    const future =
-      candles[
-        i+steps
-      ].close;
+    const future=
+      c[i+step].close;
 
-    const ens =
-      adaptiveEnsemble(
+    const m=
+      momentum(
         train,
-        horizonMinutes
+        Math.min(
+          12,
+          train.length-1
+        )
       );
 
-    const predicted =
-      current *
-      Math.exp(
-        ens.forecast
+    const reg=
+      regression(
+        train,
+        Math.min(
+          50,
+          train.length
+        )
       );
 
-    const actualReturn =
+    const predicted=
+      clamp(
+        m*.5+
+        reg.slope*
+        Math.max(
+          1,
+          horizon/15
+        )*.7,
+        -.15,
+        .15
+      );
+
+    const actual=
       Math.log(
         future/current
       );
 
-    const predictedReturn =
-      ens.forecast;
-
     errors.push(
       Math.abs(
-        predictedReturn -
-        actualReturn
+        predicted-actual
       )
     );
-
-    if(
-      Math.sign(
-        predictedReturn
-      ) ===
-      Math.sign(
-        actualReturn
-      )
-    ){
-
-      correct++;
-
-    }
 
   }
 
@@ -5542,12 +4308,7 @@ function simpleWalkForward(
       errors.length,
 
     mae:
-      mean(errors),
-
-    direction:
-      errors.length
-        ? correct/errors.length
-        : null
+      mean(errors)
 
   };
 
@@ -5556,142 +4317,51 @@ function simpleWalkForward(
 
 async function runBacktest(){
 
-  $("backtestStatus").textContent =
-    "Running walk-forward validation...";
+  el("backtestStatus")
+    .textContent=
+      "Running...";
 
   await new Promise(
-    resolve =>
-      setTimeout(
-        resolve,
-        50
-      )
+    r=>setTimeout(r,30)
   );
 
-  const a =
-    simpleWalkForward(
-      15
-    );
+  const a=
+    backtest(15);
 
-  const b =
-    simpleWalkForward(
-      30
-    );
+  const b=
+    backtest(30);
 
-  state.validation["15m"] =
+  state.validation["15m"]=
     a;
 
-  state.validation["30m"] =
+  state.validation["30m"]=
     b;
 
-  state.lastValidationRun =
-    Date.now();
+  el("samples15")
+    .textContent=
+      a.samples;
 
-  saveStorage();
+  el("samples30")
+    .textContent=
+      b.samples;
 
-  updateValidationUI();
+  el("mae15")
+    .textContent=
+      a.mae===null
+        ?"--"
+        :fmtPct(a.mae,3);
 
-  $("backtestStatus").innerHTML =
+  el("mae30")
+    .textContent=
+      b.mae===null
+        ?"--"
+        :fmtPct(b.mae,3);
 
-    "Validation completed at " +
-    timeText(
-      state.lastValidationRun
-    ) +
+  el("backtestStatus")
+    .textContent=
+      "Walk-forward validation completed.";
 
-    ". The test walks forward through historical candles.";
-
-}
-
-
-function updateValidationUI(){
-
-  const a =
-    state.validation["15m"];
-
-  const b =
-    state.validation["30m"];
-
-  $("val15Samples").textContent =
-    a && Number.isFinite(a.samples)
-      ? a.samples
-      : "--";
-
-  $("val15Mae").textContent =
-    a && Number.isFinite(a.mae)
-      ? pct(a.mae,3)
-      : "--";
-
-  $("val30Samples").textContent =
-    b && Number.isFinite(b.samples)
-      ? b.samples
-      : "--";
-
-  $("val30Mae").textContent =
-    b && Number.isFinite(b.mae)
-      ? pct(b.mae,3)
-      : "--";
-
-}
-
-
-/* =========================================================
-   MODEL UI
-   ========================================================= */
-
-function updateModelUI(){
-
-  const w =
-    adaptiveWeights();
-
-  $("weightChronological").textContent =
-    pct(
-      w.chronological,
-      1
-    );
-
-  $("weightMath").textContent =
-    pct(
-      w.math,
-      1
-    );
-
-  $("weightInformation").textContent =
-    pct(
-      w.information,
-      1
-    );
-
-  $("weightAdaptive").textContent =
-    pct(
-      w.adaptive,
-      1
-    );
-
-
-  $("learningStatus").innerHTML =
-
-    "Completed learning samples: " +
-    (
-      state.learning.sampleCount || 0
-    ) +
-
-    "<br>" +
-
-    "Stored residuals: " +
-    (
-      state.learning.residuals || []
-    ).length +
-
-    "<br>" +
-
-    "Adaptive correction: " +
-    pct(
-      residualCorrection(),
-      3
-    ) +
-
-    "<br><br>" +
-
-    "Weights are recalculated from historical engine errors after enough completed observations.";
+  save();
 
 }
 
@@ -5702,37 +4372,24 @@ function updateModelUI(){
 
 function connectWebSocket(){
 
-  if(state.websocket){
+  if(state.ws){
 
     try{
-      state.websocket.close();
+      state.ws.close();
     }catch(e){}
 
   }
 
-  const stream =
-    SYMBOL.toLowerCase() +
-    "@kline_1m";
-
-  const url =
-    BINANCE_WS +
-    "?streams=" +
-    stream;
-
   try{
 
-    state.websocket =
-      new WebSocket(
-        url
-      );
+    state.ws=
+      new WebSocket(WS);
 
   }catch(e){
 
-    console.error(e);
-
     setStatus(
-      "WS ERROR",
-      false
+      "REST ONLY",
+      "error"
     );
 
     return;
@@ -5740,89 +4397,81 @@ function connectWebSocket(){
   }
 
 
-  state.websocket.onopen =
-    () => {
+  state.ws.onopen=
+    ()=>{
 
       setStatus(
         "LIVE",
-        true
+        "live"
       );
 
     };
 
 
-  state.websocket.onmessage =
-    event => {
+  state.ws.onmessage=
+    event=>{
 
       try{
 
-        const message =
+        const msg=
           JSON.parse(
             event.data
           );
 
-        const k =
-          message?.data?.k;
+        const k=
+          msg.k;
 
         if(!k)
           return;
 
-        const c = {
+        const c={
+
+          ms:Number(k.t),
 
           time:
             Math.floor(
               Number(k.t)/1000
             ),
 
-          ms:
-            Number(k.t),
+          open:Number(k.o),
 
-          open:
-            Number(k.o),
+          high:Number(k.h),
 
-          high:
-            Number(k.h),
+          low:Number(k.l),
 
-          low:
-            Number(k.l),
+          close:Number(k.c),
 
-          close:
-            Number(k.c),
+          volume:Number(k.v),
 
-          volume:
-            Number(k.v),
+          quoteVolume:Number(k.q),
 
-          quoteVolume:
-            Number(k.q),
+          trades:Number(k.n),
 
-          trades:
-            Number(k.n),
-
-          takerBuyBase:
-            Number(k.V),
-
-          takerBuyQuote:
-            Number(k.Q)
+          takerBuy:Number(k.V)
 
         };
 
 
+        state.price=
+          c.close;
+
+
         /*
-         * Update 1m buffer.
+         * Maintain 1-minute buffer.
          */
-        const last =
+        const last1=
           state.oneMinute[
             state.oneMinute.length-1
           ];
 
         if(
-          last &&
-          last.ms === c.ms
+          last1 &&
+          last1.ms===c.ms
         ){
 
           state.oneMinute[
             state.oneMinute.length-1
-          ] = c;
+          ]=c;
 
         }else{
 
@@ -5830,59 +4479,138 @@ function connectWebSocket(){
 
         }
 
-        state.oneMinute =
-          state.oneMinute.slice(
-            -1500
-          );
+        state.oneMinute=
+          state.oneMinute.slice(-1500);
 
 
         /*
-         * Update main chart when the selected
-         * chart interval is 1m or when current
-         * realtime candle corresponds to view.
+         * Default 5-minute chart.
          */
-        const selected =
-          state.effectiveInterval;
+        if(
+          state.interval==="5m"
+        ){
 
-        if(selected === "1m"){
+          const bucket=
+            Math.floor(
+              c.ms/300000
+            )*300000;
 
-          updateChartRealtime(c);
+          const last=
+            state.candles[
+              state.candles.length-1
+            ];
+
+          if(
+            last &&
+            last.ms===bucket
+          ){
+
+            last.high=
+              Math.max(
+                last.high,
+                c.high
+              );
+
+            last.low=
+              Math.min(
+                last.low,
+                c.low
+              );
+
+            last.close=
+              c.close;
+
+            last.volume+=
+              c.volume;
+
+            last.takerBuy+=
+              c.takerBuy;
+
+          }else{
+
+            state.candles.push({
+
+              ms:bucket,
+
+              time:
+                Math.floor(
+                  bucket/1000
+                ),
+
+              open:c.open,
+
+              high:c.high,
+
+              low:c.low,
+
+              close:c.close,
+
+              volume:c.volume,
+
+              quoteVolume:c.quoteVolume,
+
+              trades:c.trades,
+
+              takerBuy:c.takerBuy
+
+            });
+
+            state.candles=
+              state.candles.slice(-5000);
+
+          }
+
+          const x=
+            state.candles[
+              state.candles.length-1
+            ];
+
+          state.candleSeries.update({
+
+            time:x.time,
+
+            open:x.open,
+
+            high:x.high,
+
+            low:x.low,
+
+            close:x.close
+
+          });
+
+          state.volumeSeries.update({
+
+            time:x.time,
+
+            value:x.volume,
+
+            color:
+              x.close>=x.open
+                ?"#22c55e"
+                :"#ef4444"
+
+          });
+
+          updateIndicators();
 
         }
 
-
-        /*
-         * For the normal 5m view, aggregate the
-         * incoming 1m candles into the current
-         * 5m candle.
-         */
-        if(selected !== "1m"){
-
-          updateAggregatedRealtime(
-            c,
-            selected
-          );
-
-        }
-
-
-        state.price =
-          c.close;
 
         updateMarketUI();
 
-        calculateCurrentFeatures();
+        updateFeatures();
 
         updateForecastUI();
 
-        updateCustomForecastUI();
+        updateCustomUI();
 
         updateForecastLines();
 
       }catch(e){
 
         console.warn(
-          "WS message",
+          "WebSocket message",
           e
         );
 
@@ -5891,23 +4619,23 @@ function connectWebSocket(){
     };
 
 
-  state.websocket.onerror =
-    () => {
+  state.ws.onerror=
+    ()=>{
 
       setStatus(
-        "RECONNECTING",
-        false
+        "REST DATA",
+        "error"
       );
 
     };
 
 
-  state.websocket.onclose =
-    () => {
+  state.ws.onclose=
+    ()=>{
 
       setStatus(
         "RECONNECTING",
-        false
+        ""
       );
 
       setTimeout(
@@ -5920,208 +4648,120 @@ function connectWebSocket(){
 }
 
 
-function updateAggregatedRealtime(
-  c,
-  interval
-){
+/* =========================================================
+   LOAD MARKET
+   ========================================================= */
 
-  const ms =
-    intervalMilliseconds(
-      interval
-    );
+async function loadMarket(){
 
-  const bucket =
-    Math.floor(
-      c.ms/ms
-    )*ms;
+  setStatus(
+    "LOADING DATA",
+    ""
+  );
 
-  const last =
-    state.candles[
-      state.candles.length-1
-    ];
+  el("errorBox")
+    .style.display="none";
 
-  if(
-    !last ||
-    last.ms !== bucket
-  ){
+  try{
 
-    const n = {
+    const config=
+      rangeConfig();
 
-      time:
-        Math.floor(
-          bucket/1000
-        ),
+    state.interval=
+      config.interval;
 
-      ms:
-        bucket,
-
-      open:
-        c.open,
-
-      high:
-        c.high,
-
-      low:
-        c.low,
-
-      close:
-        c.close,
-
-      volume:
-        c.volume,
-
-      quoteVolume:
-        c.quoteVolume,
-
-      trades:
-        c.trades,
-
-      takerBuyBase:
-        c.takerBuyBase,
-
-      takerBuyQuote:
-        c.takerBuyQuote
-
-    };
-
-    state.candles.push(n);
-
-    state.candles =
-      state.candles.slice(
-        -5000
+    const data=
+      await loadKlines(
+        SYMBOL,
+        config.interval,
+        config.ms
       );
-
-  }else{
-
-    last.high =
-      Math.max(
-        last.high,
-        c.high
-      );
-
-    last.low =
-      Math.min(
-        last.low,
-        c.low
-      );
-
-    last.close =
-      c.close;
-
-    last.volume +=
-      c.volume;
-
-    last.quoteVolume +=
-      c.quoteVolume;
-
-    last.trades +=
-      c.trades;
-
-    last.takerBuyBase +=
-      c.takerBuyBase;
-
-    last.takerBuyQuote +=
-      c.takerBuyQuote;
-
-  }
-
-
-  if(
-    state.candleSeries
-  ){
-
-    const x =
-      state.candles[
-        state.candles.length-1
-      ];
-
-    state.candleSeries.update({
-
-      time:x.time,
-
-      open:x.open,
-
-      high:x.high,
-
-      low:x.low,
-
-      close:x.close
-
-    });
-
 
     if(
-      state.volumeSeries
+      !Array.isArray(data)||
+      !data.length
     ){
 
-      state.volumeSeries.update({
-
-        time:x.time,
-
-        value:x.volume,
-
-        color:
-          x.close>=x.open
-            ? "#22c55e"
-            : "#ef4444"
-
-      });
+      throw new Error(
+        "Binance returned no ETH/USDT candles."
+      );
 
     }
+
+    state.candles=
+      data;
+
+    /*
+     * Separate 1-minute settlement buffer.
+     */
+    state.oneMinute=
+      await loadKlines(
+        SYMBOL,
+        "1m",
+        86400000
+      );
+
+
+    state.previousPrice=
+      state.price;
+
+    state.price=
+      state.candles[
+        state.candles.length-1
+      ].close;
+
+
+    drawChart();
+
+    updateMarketUI();
+
+    updateFeatures();
+
+    updateHistory();
+
+    updateModel();
+
+    ensurePredictions();
+
+    updateForecastUI();
+
+    updateCustomUI();
+
+    updateForecastLines();
+
+    await loadTicker();
+
+    setStatus(
+      "LIVE DATA",
+      "live"
+    );
+
+    /*
+     * WebSocket is an additional realtime layer.
+     */
+    connectWebSocket();
+
+  }catch(error){
+
+    console.error(
+      "MARKET LOAD ERROR",
+      error
+    );
+
+    setStatus(
+      "DATA ERROR",
+      "error"
+    );
+
+    showError(
+      "Could not load ETH/USDT market data. "+
+      error.message+
+      " Refresh the page and try again."
+    );
 
   }
 
 }
-
-
-/* =========================================================
-   TABS
-   ========================================================= */
-
-document
-  .querySelectorAll(".tab")
-  .forEach(
-    button => {
-
-      button.addEventListener(
-        "click",
-        () => {
-
-          document
-            .querySelectorAll(".tab")
-            .forEach(
-              x =>
-                x.classList.remove(
-                  "active"
-                )
-            );
-
-          document
-            .querySelectorAll(".section")
-            .forEach(
-              x =>
-                x.classList.remove(
-                  "active"
-                )
-            );
-
-          button.classList.add(
-            "active"
-          );
-
-          const target =
-            $(button.dataset.tab);
-
-          if(target)
-            target.classList.add(
-              "active"
-            );
-
-        }
-      );
-
-    }
-  );
 
 
 /* =========================================================
@@ -6132,56 +4772,100 @@ document
   .querySelectorAll(
     "[data-range]"
   )
-  .forEach(
-    button => {
+  .forEach(button=>{
 
-      button.addEventListener(
-        "click",
-        async () => {
+    button.addEventListener(
+      "click",
+      async ()=>{
 
-          state.range =
-            button.dataset.range;
-
-          document
-            .querySelectorAll(
-              "[data-range]"
-            )
-            .forEach(
-              x =>
-                x.classList.remove(
-                  "active"
-                )
-            );
-
-          button.classList.add(
-            "active"
+        document
+          .querySelectorAll(
+            "[data-range]"
+          )
+          .forEach(
+            x=>
+              x.classList.remove(
+                "active"
+              )
           );
 
-          await loadMarket();
+        button.classList.add(
+          "active"
+        );
 
-        }
-      );
+        state.range=
+          button.dataset.range;
 
-    }
-  );
+        await loadMarket();
+
+      }
+    );
+
+  });
 
 
 /* =========================================================
-   CUSTOM FORECAST BUTTON
+   TABS
    ========================================================= */
 
-$("setCustomForecast")
+document
+  .querySelectorAll(".tab")
+  .forEach(button=>{
+
+    button.addEventListener(
+      "click",
+      ()=>{
+
+        document
+          .querySelectorAll(".tab")
+          .forEach(
+            x=>
+              x.classList.remove(
+                "active"
+              )
+          );
+
+        document
+          .querySelectorAll(".section")
+          .forEach(
+            x=>
+              x.classList.remove(
+                "active"
+              )
+          );
+
+        button.classList.add(
+          "active"
+        );
+
+        el(
+          button.dataset.tab
+        ).classList.add(
+          "active"
+        );
+
+      }
+    );
+
+  });
+
+
+/* =========================================================
+   CUSTOM BUTTON
+   ========================================================= */
+
+el("customButton")
   .addEventListener(
     "click",
-    setCustomForecast
+    setCustom
   );
 
 
 /* =========================================================
-   BACKTEST BUTTON
+   BACKTEST
    ========================================================= */
 
-$("runBacktest")
+el("backtestButton")
   .addEventListener(
     "click",
     runBacktest
@@ -6192,66 +4876,51 @@ $("runBacktest")
    RESET
    ========================================================= */
 
-$("resetData")
+el("resetButton")
   .addEventListener(
     "click",
-    () => {
+    ()=>{
 
-      const yes =
-        confirm(
-          "Delete saved predictions and learning data from this browser?"
-        );
-
-      if(!yes)
+      if(
+        !confirm(
+          "Delete saved predictions and learning data?"
+        )
+      )
         return;
 
       localStorage.removeItem(
-        STORAGE_KEY
+        STORAGE
       );
 
-      state.history =
-        [];
-
-      state.customForecast =
-        null;
-
-      state.active = {
-
+      state.active={
         "15m":null,
-
         "30m":null
-
       };
 
-      state.validation = {
+      state.custom=null;
 
-        "15m":null,
+      state.history=[];
 
-        "30m":null
-
-      };
-
-      state.learning = {
-
-        residuals:[],
-
+      state.learning={
         errors:[],
-
-        sampleCount:0
-
+        residuals:[],
+        samples:0
       };
 
-      ensureAutomaticPredictions();
+      state.validation={
+        "15m":null,
+        "30m":null
+      };
 
-      updateHistoryUI();
+      ensurePredictions();
 
-      updateModelUI();
+      updateHistory();
 
-      updateValidationUI();
-
-      updateCustomForecastUI();
+      updateModel();
 
       updateForecastUI();
+
+      updateCustomUI();
 
       updateForecastLines();
 
@@ -6263,137 +4932,175 @@ $("resetData")
    DEFAULT CUSTOM DATE/TIME
    ========================================================= */
 
-function initializeCustomInputs(){
+function setDefaultCustomTime(){
 
-  const now =
-    new Date();
-
-  const future =
+  const d=
     new Date(
-      now.getTime() +
-      60*60000
+      Date.now()+3600000
     );
 
-  const yyyy =
-    future.getFullYear();
+  const yyyy=
+    d.getFullYear();
 
-  const mm =
+  const mm=
     String(
-      future.getMonth()+1
-    ).padStart(
-      2,
-      "0"
-    );
+      d.getMonth()+1
+    ).padStart(2,"0");
 
-  const dd =
+  const dd=
     String(
-      future.getDate()
-    ).padStart(
-      2,
-      "0"
-    );
+      d.getDate()
+    ).padStart(2,"0");
 
-  const hh =
+  const hh=
     String(
-      future.getHours()
-    ).padStart(
-      2,
-      "0"
-    );
+      d.getHours()
+    ).padStart(2,"0");
 
-  const min =
+  const mi=
     String(
-      future.getMinutes()
-    ).padStart(
-      2,
-      "0"
-    );
+      d.getMinutes()
+    ).padStart(2,"0");
 
-  $("customTargetDate").value =
+  el("customDate").value=
     yyyy+"-"+mm+"-"+dd;
 
-  $("customTargetTime").value =
-    hh+":"+min;
+  el("customTime").value=
+    hh+":"+mi;
 
 }
 
 
 /* =========================================================
-   PERIODIC REFRESH
+   CONTINUOUS SETTLEMENT
    ========================================================= */
 
 setInterval(
-  async () => {
+  async ()=>{
 
+    const a=
+      state.active["15m"];
+
+    const b=
+      state.active["30m"];
+
+    if(
+      a &&
+      Date.now()>=a.targetAt
+    )
+      await settle(
+        a,
+        false
+      );
+
+    if(
+      b &&
+      Date.now()>=b.targetAt
+    )
+      await settle(
+        b,
+        false
+      );
+
+    if(
+      state.custom &&
+      Date.now()>=
+      state.custom.targetAt
+    )
+      await settle(
+        state.custom,
+        true
+      );
+
+    updateForecastUI();
+
+    updateCustomUI();
+
+  },
+  1000
+);
+
+
+/* =========================================================
+   KEEP TICKER FRESH
+   ========================================================= */
+
+setInterval(
+  loadTicker,
+  60000
+);
+
+
+/* =========================================================
+   PERIODIC REST REFRESH
+   ========================================================= */
+
+setInterval(
+  async ()=>{
+
+    /*
+     * Do not recreate predictions.
+     * This refresh only keeps chart data current.
+     */
     try{
 
-      /*
-       * Refresh historical data periodically,
-       * but active target times remain untouched.
-       */
-      const latest =
-        await loadHistory(
+      const config=
+        rangeConfig();
+
+      const latest=
+        await loadKlines(
           SYMBOL,
-          state.effectiveInterval,
+          config.interval,
           Math.min(
-            rangeMilliseconds(),
+            config.ms,
             86400000
           )
         );
 
-      if(latest.length){
+      if(!latest.length)
+        return;
 
-        /*
-         * Merge the latest candles without
-         * changing prediction target timestamps.
-         */
-        const map =
-          new Map();
-
-        for(
-          const c of state.candles
-        ){
-
-          map.set(
-            c.ms,
-            c
-          );
-
-        }
-
-        for(
-          const c of latest
-        ){
-
-          map.set(
-            c.ms,
-            c
-          );
-
-        }
-
-        state.candles =
-          Array.from(
-            map.values()
+      const map=
+        new Map(
+          state.candles.map(
+            c=>[c.ms,c]
           )
-          .sort(
-            (a,b)=>
-              a.ms-b.ms
-          )
-          .slice(
-            -5000
-          );
+        );
 
-        updateIndicators();
+      for(
+        const c of latest
+      )
+        map.set(c.ms,c);
 
-        calculateCurrentFeatures();
+      state.candles=
+        Array.from(
+          map.values()
+        )
+        .sort(
+          (a,b)=>a.ms-b.ms
+        );
 
-      }
+      state.price=
+        state.candles[
+          state.candles.length-1
+        ].close;
+
+      drawChart();
+
+      updateMarketUI();
+
+      updateFeatures();
+
+      updateForecastUI();
+
+      updateCustomUI();
+
+      updateForecastLines();
 
     }catch(e){
 
       console.warn(
-        "periodic refresh",
+        "Periodic refresh",
         e
       );
 
@@ -6405,84 +5112,39 @@ setInterval(
 
 
 /* =========================================================
-   MAIN UI UPDATE
-   ========================================================= */
-
-function updateUI(){
-
-  updateMarketUI();
-
-  updateForecastUI();
-
-  updateCustomForecastUI();
-
-  calculateCurrentFeatures();
-
-  updateModelUI();
-
-}
-
-
-/* =========================================================
-   STARTUP
+   START
    ========================================================= */
 
 async function start(){
 
-  loadStorage();
+  load();
 
-  initializeCustomInputs();
+  setDefaultCustomTime();
 
-  /*
-   * Highlight default range.
-   */
   document
     .querySelector(
       '[data-range="1D"]'
     )
-    ?.classList.add(
+    .classList.add(
       "active"
     );
 
-  updateHistoryUI();
+  updateHistory();
 
-  updateModelUI();
+  updateModel();
 
-  updateValidationUI();
+  updateCustomUI();
 
-  updateCustomForecastUI();
-
+  /*
+   * This is the important sequence:
+   *
+   * 1. REST data
+   * 2. price
+   * 3. chart
+   * 4. predictions
+   * 5. WebSocket
+   */
   await loadMarket();
-
-  await updateMarketStats();
-
-  connectWebSocket();
-
-  /*
-   * Keep 24h statistics fresh.
-   */
-  setInterval(
-    updateMarketStats,
-    60000
-  );
-
-  /*
-   * Recheck predictions continuously.
-   */
-  setInterval(
-    () => {
-
-      ensureAutomaticPredictions();
-
-      updateForecastUI();
-
-      updateCustomForecastUI();
-
-      updateForecastLines();
-
-    },
-    5000
-  );
 
 }
 
