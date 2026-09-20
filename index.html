@@ -3,91 +3,821 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#070c16">
-<link rel="manifest" href="manifest.webmanifest">
-<title>ETH Predictor</title>
+<title>ETH Global Predictor</title>
+
 <style>
-:root{--bg:#070c16;--card:#101827;--line:#233149;--muted:#8290a8;--blue:#5ca7ff;--green:#55d98d;--red:#ff7185;--yellow:#f3c653}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#f4f7fc;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
-main{max-width:620px;margin:auto;padding:calc(12px + env(safe-area-inset-top)) 13px calc(24px + env(safe-area-inset-bottom))}
-header{display:flex;justify-content:space-between;align-items:center}h1{font-size:23px;margin:0}.muted{color:var(--muted);font-size:11px}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px;margin-top:11px}
-.price{font-size:35px;font-weight:800;margin-top:2px}.row{display:flex;gap:7px;align-items:center;flex-wrap:wrap}.btn{border:0;background:#263d68;color:white;border-radius:11px;padding:9px 12px;font-weight:700}.tf{background:#18243a;color:#94a2ba;padding:7px 10px;border-radius:9px;font-size:12px}.tf.on{background:#385c91;color:#fff}
-canvas{width:100%;height:310px;background:#0a1220;border-radius:12px;margin-top:11px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.box{background:#0b1321;padding:11px;border-radius:12px}.label{font-size:11px;color:var(--muted)}.value{font-size:19px;font-weight:750;margin-top:4px}
-.green{color:var(--green)}.red{color:var(--red)}.yellow{color:var(--yellow)}.blue{color:var(--blue)}
-.bar{height:7px;background:#202c40;border-radius:9px;overflow:hidden;margin-top:8px}.bar i{display:block;height:100%;background:var(--green)}
-.notice{line-height:1.45;color:#9aa8bf;font-size:12px}
-#status{margin-top:8px}
+:root{
+  --bg:#070c16;
+  --card:#101827;
+  --line:#233149;
+  --muted:#8290a8;
+  --green:#55d98d;
+  --red:#ff7185;
+  --yellow:#f3c653;
+  --blue:#5ca7ff
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:#f4f7fc;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif
+}
+
+main{
+  max-width:620px;
+  margin:auto;
+  padding:20px 14px calc(30px + env(safe-area-inset-bottom))
+}
+
+header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px
+}
+
+h1{
+  font-size:28px;
+  margin:0
+}
+
+.muted{
+  color:var(--muted);
+  font-size:12px
+}
+
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:14px;
+  margin:12px 0
+}
+
+.price{
+  font-size:36px;
+  font-weight:800;
+  margin-top:4px
+}
+
+.label{
+  font-size:13px;
+  color:var(--muted)
+}
+
+button{
+  background:#294777;
+  color:#fff;
+  border:0;
+  border-radius:10px;
+  padding:11px 15px;
+  font-weight:700;
+  font-size:15px
+}
+
+button:disabled{
+  opacity:.6
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:9px
+}
+
+.box{
+  background:#0b1321;
+  padding:12px;
+  border-radius:12px
+}
+
+.value{
+  font-size:20px;
+  font-weight:700;
+  margin-top:4px
+}
+
+.green{color:var(--green)}
+.red{color:var(--red)}
+.yellow{color:var(--yellow)}
+.blue{color:var(--blue)}
+
+canvas{
+  display:block;
+  width:100%;
+  height:310px;
+  background:#0a1220;
+  border-radius:12px;
+  margin-top:12px
+}
+
+.status{
+  line-height:1.45;
+  margin-top:10px
+}
+
+.error{
+  color:#ff9aaa
+}
 </style>
 </head>
-<body><main>
-<header><div><h1>ETH Global Predictor</h1><div class=muted>iPhone research dashboard</div></div><button class=btn onclick="refresh()">↻ Refresh</button></header>
 
-<section class=card>
-<div class=muted>ETH / USDT</div><div id=price class=price>Loading…</div>
-<div class=row style="margin-top:9px"><span class="tf on">4H</span><span class=tf>1H</span><span class=tf>1D</span></div>
-<canvas id=chart></canvas>
+<body>
+
+<main>
+
+<header>
+  <div>
+    <h1>ETH Global Predictor</h1>
+    <div class="muted">Live ETH data • iPhone research dashboard</div>
+  </div>
+
+  <button id="refresh">↻ Refresh</button>
+</header>
+
+
+<section class="card">
+
+  <div class="label">ETH / USDT</div>
+
+  <div id="price" class="price">Loading…</div>
+
+  <canvas id="chart" aria-label="ETH price chart"></canvas>
+
 </section>
 
-<section class=card><div class=grid>
-<div class=box><div class=label>Bullish</div><div id=bull class="value green">—</div><div class=bar><i id=bbar></i></div></div>
-<div class=box><div class=label>Neutral</div><div id=neutral class=value>—</div></div>
-<div class=box><div class=label>Bearish</div><div id=bear class="value red">—</div></div>
-<div class=box><div class=label>Confidence</div><div id=confidence class="value yellow">—</div></div>
-</div></section>
 
-<section class=card><div class=grid>
-<div class=box><div class=label>Expected range</div><div id=range class="value blue">—</div></div>
-<div class=box><div class=label>Backtest accuracy</div><div id=accuracy class=value>—</div></div>
-<div class=box><div class=label>Funding rate</div><div id=funding class=value>—</div></div>
-<div class=box><div class=label>Model</div><div class=value>ML v1</div></div>
-</div><div id=status class=muted>Connecting…</div></section>
+<section class="card">
 
-<section class=card><div class=notice>
-<b>Paper-test mode.</b> This app does not place trades. The prediction is a probability estimate from historical market features and should not be treated as a guaranteed price forecast.
-</div></section>
+  <div class="grid">
+
+    <div class="box">
+      <div class="label">Bullish</div>
+      <div id="bullish" class="value green">—</div>
+    </div>
+
+    <div class="box">
+      <div class="label">Neutral</div>
+      <div id="neutral" class="value">—</div>
+    </div>
+
+    <div class="box">
+      <div class="label">Bearish</div>
+      <div id="bearish" class="value red">—</div>
+    </div>
+
+    <div class="box">
+      <div class="label">Confidence</div>
+      <div id="confidence" class="value yellow">—</div>
+    </div>
+
+    <div class="box">
+      <div class="label">Expected range</div>
+      <div id="range" class="value blue">—</div>
+    </div>
+
+    <div class="box">
+      <div class="label">Funding</div>
+      <div id="funding" class="value">—</div>
+    </div>
+
+  </div>
+
+  <div id="status" class="muted status">
+    Connecting directly to Binance…
+  </div>
+
+</section>
+
+
+<section class="card muted">
+  Research signal only. It is not a guaranteed forecast and does not place trades.
+</section>
+
 </main>
+
+
 <script>
-/*
-  iPhone-only frontend.
-  Set API_BASE to the HTTPS URL of the Python backend before publishing.
-*/
-const API_BASE="https://YOUR-BACKEND.example.com";
-async function refresh(){
- try{
-  const [m,f]=await Promise.all([
-   fetch(API_BASE+"/api/market",{cache:"no-store"}),
-   fetch(API_BASE+"/api/funding",{cache:"no-store"})
-  ]);
-  if(!m.ok||!f.ok) throw new Error("API error");
-  const x=await m.json(), y=await f.json();
-  price.textContent="$"+Number(x.price).toFixed(2);
-  bull.textContent=x.bullish+"%";neutral.textContent=x.neutral+"%";bear.textContent=x.bearish+"%";confidence.textContent=x.confidence+"%";
-  bbar.style.width=x.bullish+"%";
-  range.textContent="$"+x.range[0]+" – $"+x.range[1];
-  accuracy.textContent=(x.accuracy==null?"—":x.accuracy+"%");
-  funding.textContent=(Number(y.lastFundingRate)*100).toFixed(4)+"%";
-  status.textContent="Live data • Updated "+new Date().toLocaleTimeString();
-  draw(x.candles,x.price,x.range);
- }catch(e){
-  status.textContent="Backend not connected. Publish the Python backend and set API_BASE in index.html.";
- }
+
+"use strict";
+
+
+const $ = id => document.getElementById(id);
+
+
+const els = {
+
+  price: $("price"),
+
+  bullish: $("bullish"),
+
+  neutral: $("neutral"),
+
+  bearish: $("bearish"),
+
+  confidence: $("confidence"),
+
+  range: $("range"),
+
+  funding: $("funding"),
+
+  status: $("status"),
+
+  refresh: $("refresh"),
+
+  chart: $("chart")
+
+};
+
+
+
+async function getJSON(url){
+
+  const response = await fetch(
+    url,
+    {cache:"no-store"}
+  );
+
+  if(!response.ok){
+
+    throw new Error("HTTP " + response.status);
+
+  }
+
+  return response.json();
+
 }
-function draw(a,p,r){
- const c=document.getElementById("chart"),d=devicePixelRatio||1,w=c.clientWidth,h=c.clientHeight;
- c.width=w*d;c.height=h*d;const q=c.getContext("2d");q.scale(d,d);
- q.fillStyle="#0a1220";q.fillRect(0,0,w,h);
- const v=a.map(z=>+z.close),mx=Math.max(...v,r[1]),mn=Math.min(...v,r[0]);
- const X=i=>15+i*(w-30)/(v.length-1),Y=z=>h-25-(z-mn)/(mx-mn)*(h-45);
- q.strokeStyle="#233149";q.lineWidth=1;
- [r[0],p,r[1]].forEach(z=>{let y=Y(z);q.beginPath();q.moveTo(0,y);q.lineTo(w,y);q.stroke()});
- q.strokeStyle="#5ca7ff";q.lineWidth=2;q.beginPath();
- v.forEach((z,i)=>i?q.lineTo(X(i),Y(z)):q.moveTo(X(i),Y(z)));q.stroke();
- q.setLineDash([6,5]);q.strokeStyle="#f3c653";q.beginPath();q.moveTo(X(v.length-1),Y(p));q.lineTo(w-15,Y(r[1]));q.stroke();
- q.strokeStyle="#ff7185";q.beginPath();q.moveTo(X(v.length-1),Y(p));q.lineTo(w-15,Y(r[0]));q.stroke();q.setLineDash([]);
- q.fillStyle="#8290a8";q.font="11px -apple-system";q.fillText("ACTUAL",15,17);q.fillText("FORECAST RANGE →",90,17);
+
+
+
+function average(a){
+
+  return a.reduce(
+    (s,v)=>s+v,
+    0
+  ) / a.length;
+
 }
-refresh();setInterval(refresh,60000);
+
+
+
+function stdev(a){
+
+  const m = average(a);
+
+  return Math.sqrt(
+    average(
+      a.map(v => (v-m)**2)
+    )
+  );
+
+}
+
+
+
+function calcRSI(closes){
+
+  if(closes.length < 15){
+
+    return 50;
+
+  }
+
+  let gains = 0;
+
+  let losses = 0;
+
+
+  for(
+    let i = closes.length - 14;
+    i < closes.length;
+    i++
+  ){
+
+    const d =
+      closes[i] -
+      closes[i-1];
+
+
+    if(d > 0){
+
+      gains += d;
+
+    }else{
+
+      losses -= d;
+
+    }
+
+  }
+
+
+  gains /= 14;
+
+  losses /= 14;
+
+
+  if(losses === 0){
+
+    return 100;
+
+  }
+
+
+  return 100 -
+    (100 / (1 + gains/losses));
+
+}
+
+
+
+function clamp(v,min,max){
+
+  return Math.max(
+    min,
+    Math.min(max,v)
+  );
+
+}
+
+
+
+async function load(){
+
+  els.refresh.disabled = true;
+
+  els.status.classList.remove("error");
+
+  els.status.textContent =
+    "Fetching live ETH market data…";
+
+
+  try{
+
+    const klines = await getJSON(
+      "https://api.binance.com/api/v3/klines?symbol=ETHUSDT&interval=1h&limit=200"
+    );
+
+
+    if(
+      !Array.isArray(klines) ||
+      klines.length < 50
+    ){
+
+      throw new Error(
+        "Not enough candle data"
+      );
+
+    }
+
+
+    const candles =
+      klines.map(k => ({
+
+        high:Number(k[2]),
+
+        low:Number(k[3]),
+
+        close:Number(k[4]),
+
+        volume:Number(k[5])
+
+      }));
+
+
+    const closes =
+      candles.map(x => x.close);
+
+
+    const volumes =
+      candles.map(x => x.volume);
+
+
+    const price =
+      closes[closes.length-1];
+
+
+    const ma12 =
+      average(
+        closes.slice(-12)
+      );
+
+
+    const ma48 =
+      average(
+        closes.slice(-48)
+      );
+
+
+    const trend =
+      ma12 / ma48 - 1;
+
+
+    const ret6 =
+      price /
+      closes[closes.length-7] - 1;
+
+
+    const ret24 =
+      price /
+      closes[closes.length-25] - 1;
+
+
+    const recentVol =
+      volumes[volumes.length-1];
+
+
+    const volBase =
+      volumes.slice(-48);
+
+
+    const z =
+      (
+        recentVol -
+        average(volBase)
+      ) /
+      (stdev(volBase) || 1);
+
+
+    const rsi =
+      calcRSI(closes);
+
+
+    let score =
+      0.5 +
+      ret6 * 18 +
+      ret24 * 7 +
+      trend * 35 +
+      clamp(z,-15,15) * 0.008;
+
+
+    if(rsi > 70){
+
+      score -= 0.08;
+
+    }
+
+
+    if(rsi < 30){
+
+      score += 0.08;
+
+    }
+
+
+    score =
+      clamp(
+        score,
+        0.05,
+        0.95
+      );
+
+
+    let bullish =
+      Math.round(score * 100);
+
+
+    let bearish =
+      Math.round(
+        (1-score) * 70
+      );
+
+
+    let neutral =
+      100 -
+      bullish -
+      bearish;
+
+
+    if(neutral < 5){
+
+      neutral = 5;
+
+      bullish =
+        100 -
+        bearish -
+        neutral;
+
+    }
+
+
+    const atr =
+      average(
+        candles
+          .slice(-14)
+          .map(
+            x => x.high - x.low
+          )
+      );
+
+
+    const low =
+      price - 2 * atr;
+
+
+    const high =
+      price + 2 * atr;
+
+
+    const fundingData =
+      await getJSON(
+        "https://fapi.binance.com/fapi/v1/premiumIndex?symbol=ETHUSDT"
+      );
+
+
+    const fundingRate =
+      Number(
+        fundingData.lastFundingRate
+      );
+
+
+    els.price.textContent =
+      "$" +
+      price.toLocaleString(
+        undefined,
+        {
+          minimumFractionDigits:2,
+          maximumFractionDigits:2
+        }
+      );
+
+
+    els.bullish.textContent =
+      bullish + "%";
+
+
+    els.neutral.textContent =
+      neutral + "%";
+
+
+    els.bearish.textContent =
+      bearish + "%";
+
+
+    els.confidence.textContent =
+      Math.round(
+        50 +
+        Math.abs(score-0.5) * 100
+      ) + "%";
+
+
+    els.range.textContent =
+      "$" +
+      Math.round(low).toLocaleString() +
+      " – $" +
+      Math.round(high).toLocaleString();
+
+
+    els.funding.textContent =
+      (fundingRate * 100).toFixed(4) +
+      "%";
+
+
+    els.status.textContent =
+      "Live Binance data • RSI " +
+      rsi.toFixed(1) +
+      " • Updated " +
+      new Date().toLocaleTimeString();
+
+
+    drawChart(
+      closes,
+      price,
+      low,
+      high
+    );
+
+
+  }catch(error){
+
+    els.status.classList.add("error");
+
+    els.status.textContent =
+      "Data connection failed: " +
+      error.message +
+      ". Tap Refresh.";
+
+  }finally{
+
+    els.refresh.disabled = false;
+
+  }
+
+}
+
+
+
+function drawChart(
+  values,
+  price,
+  low,
+  high
+){
+
+  const canvas =
+    els.chart;
+
+
+  const rect =
+    canvas.getBoundingClientRect();
+
+
+  const d =
+    window.devicePixelRatio || 1;
+
+
+  const w =
+    Math.max(
+      280,
+      rect.width
+    );
+
+
+  const h =
+    Math.max(
+      220,
+      rect.height
+    );
+
+
+  canvas.width =
+    Math.round(w*d);
+
+
+  canvas.height =
+    Math.round(h*d);
+
+
+  const ctx =
+    canvas.getContext("2d");
+
+
+  ctx.setTransform(
+    d,
+    0,
+    0,
+    d,
+    0,
+    0
+  );
+
+
+  ctx.fillStyle =
+    "#0a1220";
+
+
+  ctx.fillRect(
+    0,
+    0,
+    w,
+    h
+  );
+
+
+  const min =
+    Math.min(
+      ...values,
+      low
+    );
+
+
+  const max =
+    Math.max(
+      ...values,
+      high
+    );
+
+
+  const span =
+    (max-min) || 1;
+
+
+  const X =
+    i =>
+      15 +
+      i *
+      (w-30) /
+      (values.length-1);
+
+
+  const Y =
+    v =>
+      h-25 -
+      (v-min) /
+      span *
+      (h-45);
+
+
+  ctx.strokeStyle =
+    "#5ca7ff";
+
+
+  ctx.lineWidth = 2;
+
+
+  ctx.beginPath();
+
+
+  values.forEach(
+    (v,i) => {
+
+      if(i){
+
+        ctx.lineTo(
+          X(i),
+          Y(v)
+        );
+
+      }else{
+
+        ctx.moveTo(
+          X(i),
+          Y(v)
+        );
+
+      }
+
+    }
+  );
+
+
+  ctx.stroke();
+
+
+  ctx.setLineDash(
+    [6,5]
+  );
+
+
+  ctx.strokeStyle =
+    "#f3c653";
+
+
+  ctx.beginPath();
+
+
+  ctx.moveTo(
+    X(values.length-1),
+    Y(price)
+  );
+
+
+  ctx.lineTo(
+    w-15,
+    Y(high)
+  );
+
+
+  ctx.stroke();
+
+
+  ctx.strokeStyle =
+    "#ff7185";
+
+
+  ctx.beginPath();
+
+
+  ctx.moveTo(
+    X(values.length-1),
+    Y(price)
+  );
+
+
+  ctx.lineTo(
+    w-15,
+    Y(low)
+  );
+
+
+  ctx.stroke();
+
+
+  ctx.setLineDash([]);
+
+}
+
+
+
+els.refresh.addEventListener(
+  "click",
+  load
+);
+
+
+load();
+
+
+setInterval(
+  load,
+  60000
+);
+
 </script>
-</body></html>
+
+</body>
+</html>
