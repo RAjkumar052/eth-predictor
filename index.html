@@ -2,25 +2,24 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"
-      content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#07101c">
-<title>ETH Predictor V15.2.1</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#050b14">
+<title>ETH Predictor V15.2.2</title>
 
 <style>
 :root{
   --bg:#050a12;
-  --panel:#0a1320;
-  --panel2:#0e1928;
-  --line:#1d3045;
+  --panel:#09131f;
+  --panel2:#0c1826;
+  --border:#203247;
   --text:#edf5ff;
-  --muted:#8295aa;
+  --muted:#7f92a6;
   --green:#16d98b;
-  --red:#ff5268;
+  --red:#ff5368;
   --blue:#4da3ff;
+  --cyan:#40d9ff;
   --yellow:#ffd166;
-  --purple:#a879ff;
-  --cyan:#37d7ff;
+  --purple:#a878ff;
 }
 
 *{box-sizing:border-box}
@@ -28,15 +27,17 @@
 html,body{
   margin:0;
   padding:0;
+  width:100%;
+  min-height:100%;
   background:var(--bg);
   color:var(--text);
   font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",
-               "SF Pro Text",Inter,Arial,sans-serif;
+  "SF Pro Text",Inter,Arial,sans-serif;
 }
 
 body{
-  min-height:100vh;
   overflow-x:hidden;
+  padding-bottom:82px;
 }
 
 button,select{
@@ -44,231 +45,242 @@ button,select{
 }
 
 button{
-  color:var(--text);
+  -webkit-tap-highlight-color:transparent;
 }
 
 .app{
   width:100%;
   max-width:1500px;
   margin:auto;
-  padding-bottom:90px;
 }
 
 /* HEADER */
 
 .header{
-  position:sticky;
-  top:0;
-  z-index:50;
   padding:
-    calc(env(safe-area-inset-top) + 12px)
-    14px 12px;
-  background:rgba(5,10,18,.94);
-  backdrop-filter:blur(18px);
+    calc(env(safe-area-inset-top) + 20px)
+    18px 15px;
   border-bottom:1px solid rgba(255,255,255,.07);
+  background:#050b13;
 }
 
-.headerRow{
+.headerLine{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:10px;
-}
-
-.brand{
-  min-width:0;
+  gap:12px;
 }
 
 .kicker{
-  font-size:10px;
-  letter-spacing:1.7px;
   color:var(--cyan);
-  font-weight:800;
+  font-size:10px;
+  font-weight:850;
+  letter-spacing:2px;
 }
 
 .title{
-  font-size:25px;
-  font-weight:850;
-  letter-spacing:-.7px;
-  margin-top:2px;
+  margin-top:5px;
+  font-size:34px;
+  line-height:1;
+  font-weight:900;
+  letter-spacing:-1.5px;
 }
 
 .subtitle{
-  color:var(--muted);
-  font-size:11px;
-  margin-top:2px;
+  margin-top:9px;
+  color:#8497aa;
+  font-size:13px;
 }
 
 .version{
-  white-space:nowrap;
-  border:1px solid #23415b;
-  color:#9ecaff;
-  background:#0b1a2a;
-  padding:6px 8px;
+  flex:0 0 auto;
+  padding:8px 11px;
+  border:1px solid #315271;
   border-radius:999px;
-  font-size:9px;
-  font-weight:800;
+  color:#a9d0ff;
+  background:#0c1c2d;
+  font-size:11px;
+  font-weight:850;
 }
 
-/* PRICE */
+/* VIEWS */
 
-.pricePanel{
-  margin:12px 12px 0;
-  padding:14px;
-  border:1px solid var(--line);
-  background:
-    radial-gradient(circle at 90% 0%,rgba(55,215,255,.09),transparent 40%),
-    var(--panel);
+.view{
+  display:none;
+}
+
+.view.active{
+  display:block;
+}
+
+/* COMMON */
+
+.section{
+  margin:14px 12px;
+}
+
+.sectionTitle{
+  margin:0 0 8px 3px;
+  color:#a8b9ca;
+  font-size:11px;
+  font-weight:850;
+  letter-spacing:1.5px;
+}
+
+.panel{
+  border:1px solid var(--border);
+  background:var(--panel);
   border-radius:18px;
+  overflow:hidden;
 }
 
-.priceTop{
+/* MARKET */
+
+.marketCard{
+  margin:12px;
+  padding:14px;
+  border:1px solid var(--border);
+  border-radius:18px;
+  background:
+    radial-gradient(circle at 100% 0%,rgba(64,217,255,.09),transparent 42%),
+    var(--panel);
+}
+
+.marketTop{
   display:flex;
-  justify-content:space-between;
   align-items:flex-start;
-  gap:10px;
+  justify-content:space-between;
+  gap:12px;
 }
 
 .symbol{
   color:var(--muted);
-  font-size:12px;
-  font-weight:700;
+  font-size:11px;
+  font-weight:750;
 }
 
 .price{
-  font-size:30px;
-  font-weight:850;
-  letter-spacing:-1px;
   margin-top:3px;
+  font-size:31px;
+  font-weight:900;
+  letter-spacing:-1px;
 }
 
-.priceChange{
+.change{
   margin-top:4px;
   font-size:12px;
-  font-weight:750;
+  font-weight:800;
 }
 
 .up{color:var(--green)}
 .down{color:var(--red)}
 .neutral{color:var(--muted)}
 
-.liveBadge{
+.live{
   display:flex;
   align-items:center;
-  gap:5px;
+  gap:6px;
   border:1px solid rgba(22,217,139,.25);
-  color:var(--green);
   background:rgba(22,217,139,.06);
-  padding:6px 8px;
   border-radius:9px;
-  font-size:10px;
-  font-weight:800;
+  padding:7px 9px;
+  color:var(--green);
+  font-size:9px;
+  font-weight:850;
 }
 
-.dot{
+.liveDot{
   width:7px;
   height:7px;
   border-radius:50%;
   background:var(--green);
-  box-shadow:0 0 9px var(--green);
+  box-shadow:0 0 8px var(--green);
 }
 
 .status{
-  margin-top:9px;
+  margin-top:10px;
   color:var(--muted);
-  font-size:10px;
+  font-size:9px;
+  line-height:1.4;
 }
 
 /* CONTROLS */
 
-.section{
-  margin:12px;
-}
-
-.sectionTitle{
-  font-size:11px;
-  font-weight:850;
-  letter-spacing:1px;
-  color:#a7b9cc;
-  margin:0 0 7px 2px;
-}
-
-.controlRow{
+.scroller{
   display:flex;
   gap:6px;
   overflow-x:auto;
-  padding-bottom:3px;
   scrollbar-width:none;
+  padding-bottom:2px;
 }
 
-.controlRow::-webkit-scrollbar{
+.scroller::-webkit-scrollbar{
   display:none;
 }
 
 .btn{
   flex:0 0 auto;
-  border:1px solid var(--line);
-  background:#0b1624;
-  border-radius:9px;
-  padding:8px 10px;
+  min-height:38px;
+  padding:8px 12px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  background:#0a1624;
+  color:#dce8f4;
   font-size:11px;
-  font-weight:750;
-  cursor:pointer;
+  font-weight:800;
 }
 
 .btn.active{
-  color:#fff;
-  background:#17314a;
-  border-color:#3c7fb2;
-  box-shadow:0 0 0 1px rgba(77,163,255,.1) inset;
+  border-color:#4b88b8;
+  background:#15314a;
 }
 
 .btn.green.active{
-  background:#103528;
-  border-color:#237d5a;
+  border-color:#27845f;
+  background:#103b2b;
 }
 
-.btn.purple.active{
-  background:#241839;
-  border-color:#7252a8;
+.btn:active{
+  transform:scale(.97);
 }
 
 /* CHART */
 
 .chartPanel{
   margin:12px;
-  border:1px solid var(--line);
-  background:#07101a;
+  border:1px solid var(--border);
   border-radius:18px;
+  background:#07101a;
   overflow:hidden;
 }
 
 .chartHeader{
-  padding:11px 11px 8px;
+  padding:11px 12px;
+  border-bottom:1px solid rgba(255,255,255,.06);
   display:flex;
   justify-content:space-between;
-  gap:8px;
   align-items:center;
-  border-bottom:1px solid rgba(255,255,255,.05);
+  gap:10px;
 }
 
 .chartTitle{
-  font-size:12px;
-  font-weight:850;
+  font-size:13px;
+  font-weight:900;
 }
 
-.chartInfo{
-  font-size:9px;
+.chartMeta{
   color:var(--muted);
+  font-size:9px;
   text-align:right;
 }
 
 .chartTools{
-  padding:7px 9px;
   display:flex;
-  gap:5px;
+  gap:6px;
   overflow-x:auto;
+  padding:8px;
   scrollbar-width:none;
+  border-bottom:1px solid rgba(255,255,255,.04);
 }
 
 .chartTools::-webkit-scrollbar{
@@ -277,295 +289,265 @@ button{
 
 .tool{
   flex:0 0 auto;
-  border:1px solid #1c2c3d;
-  background:#0b1521;
-  border-radius:7px;
-  padding:6px 8px;
+  padding:7px 10px;
+  border:1px solid #1d3044;
+  border-radius:8px;
+  background:#0a1622;
+  color:#cbd9e7;
   font-size:9px;
-  font-weight:800;
+  font-weight:850;
 }
 
 .tool.active{
-  color:#d9f4ff;
-  border-color:#3b6e8c;
-  background:#112434;
+  border-color:#477c9f;
+  background:#10283b;
+  color:white;
 }
 
-.canvasWrap{
+.chartViewport{
   position:relative;
-  height:470px;
-  min-height:360px;
+  width:100%;
+  height:520px;
+  overflow:hidden;
   touch-action:none;
   background:
-    linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);
-  background-size:48px 48px;
+    linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+  background-size:55px 55px;
 }
 
 #chart{
-  width:100%;
-  height:100%;
-  display:block;
-}
-
-.chartOverlay{
   position:absolute;
   inset:0;
-  pointer-events:none;
-}
-
-.priceTag{
-  position:absolute;
-  right:5px;
-  padding:3px 5px;
-  border-radius:4px;
-  background:#12314a;
-  color:#dff5ff;
-  font-size:9px;
-  font-weight:800;
-  transform:translateY(-50%);
-}
-
-.forecastTag{
-  position:absolute;
-  padding:5px 7px;
-  border-radius:7px;
-  background:#1e1732;
-  border:1px solid #7050a8;
-  color:#e5d9ff;
-  font-size:9px;
-  font-weight:800;
-  white-space:nowrap;
-  transform:translate(-50%,-100%);
+  width:100%;
+  height:100%;
 }
 
 .chartHint{
   position:absolute;
-  left:9px;
-  top:8px;
-  color:#617589;
+  left:10px;
+  top:9px;
+  z-index:3;
+  pointer-events:none;
+  color:#60758a;
   font-size:8px;
+}
+
+.forecastLabel{
+  position:absolute;
+  z-index:5;
+  display:none;
+  transform:translate(-50%,-100%);
+  padding:6px 8px;
+  border:1px solid #7555a8;
+  border-radius:7px;
+  background:#211737;
+  color:#e6d9ff;
+  font-size:8px;
+  font-weight:850;
+  white-space:nowrap;
+  pointer-events:none;
+}
+
+.currentLabel{
+  position:absolute;
+  right:3px;
+  z-index:5;
+  transform:translateY(-50%);
+  padding:4px 6px;
+  border-radius:5px;
+  background:#17334a;
+  color:#e7f7ff;
+  font-size:9px;
+  font-weight:850;
   pointer-events:none;
 }
 
 /* PREDICTIONS */
 
-.predictions{
+.predictionGrid{
   display:grid;
   grid-template-columns:1fr;
   gap:9px;
 }
 
 .prediction{
-  border:1px solid var(--line);
-  background:var(--panel);
-  border-radius:15px;
   padding:12px;
+  border:1px solid var(--border);
+  border-radius:15px;
+  background:var(--panel);
 }
 
-.predictionTop{
+.predHead{
   display:flex;
   justify-content:space-between;
   align-items:center;
 }
 
-.horizon{
+.predTitle{
   font-size:15px;
-  font-weight:850;
+  font-weight:900;
 }
 
-.stateBadge{
-  font-size:8px;
+.badge{
   padding:5px 7px;
   border-radius:999px;
-  background:#132235;
-  border:1px solid #263c53;
-  color:#a9bfd3;
+  border:1px solid #294057;
+  background:#0e1d2d;
+  color:#a9bdd0;
+  font-size:8px;
   font-weight:850;
 }
 
-.predictionMain{
+.predGrid{
   display:grid;
   grid-template-columns:1fr 1fr;
-  gap:8px;
-  margin-top:12px;
+  gap:7px;
+  margin-top:10px;
 }
 
 .metric{
-  background:#07111d;
-  border:1px solid #142536;
-  border-radius:10px;
+  min-width:0;
   padding:9px;
+  border:1px solid #172b3e;
+  border-radius:10px;
+  background:#07111c;
 }
 
 .metricLabel{
+  color:#73879a;
   font-size:8px;
-  color:var(--muted);
   text-transform:uppercase;
-  letter-spacing:.6px;
 }
 
 .metricValue{
-  font-size:16px;
-  font-weight:850;
   margin-top:4px;
+  font-size:15px;
+  font-weight:900;
 }
 
-.predictionFooter{
-  margin-top:9px;
+.predFoot{
   display:flex;
   justify-content:space-between;
-  gap:10px;
-  color:var(--muted);
-  font-size:9px;
+  gap:8px;
+  margin-top:9px;
+  color:#718397;
+  font-size:8px;
 }
 
-.confidence{
-  color:var(--cyan);
-  font-weight:800;
-}
-
-/* MODEL */
-
-.modelPanel{
-  border:1px solid var(--line);
-  background:var(--panel);
-  border-radius:15px;
-  padding:12px;
-}
+/* MODELS */
 
 .modelGrid{
   display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:7px;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  padding:12px;
 }
 
 .model{
-  border:1px solid #17283a;
-  background:#08121e;
-  border-radius:10px;
-  padding:9px;
+  padding:10px;
+  border:1px solid #1a2c40;
+  border-radius:11px;
+  background:#08131f;
 }
 
 .modelName{
-  font-size:10px;
+  font-size:11px;
   font-weight:850;
 }
 
-.modelValue{
-  font-size:9px;
-  color:var(--muted);
+.modelScore{
   margin-top:4px;
+  color:#8497a9;
+  font-size:9px;
 }
 
 .bar{
-  margin-top:7px;
   height:4px;
-  border-radius:5px;
-  background:#162433;
+  margin-top:8px;
   overflow:hidden;
+  border-radius:5px;
+  background:#172635;
 }
 
 .bar i{
   display:block;
   height:100%;
-  width:0%;
-  background:var(--cyan);
+  width:25%;
   border-radius:5px;
+  background:var(--cyan);
 }
 
-/* DIAGNOSTICS */
+.diagGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  padding:0 12px 12px;
+}
 
 .diag{
-  margin-top:9px;
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:7px;
-}
-
-.diagItem{
-  background:#08121e;
-  border:1px solid #17283a;
-  border-radius:9px;
-  padding:8px;
+  padding:10px;
+  border:1px solid #1a2c40;
+  border-radius:10px;
+  background:#08131f;
 }
 
 .diagLabel{
-  color:var(--muted);
+  color:#7c8fa1;
   font-size:8px;
 }
 
 .diagValue{
-  font-size:12px;
-  font-weight:850;
-  margin-top:3px;
+  margin-top:4px;
+  font-size:14px;
+  font-weight:900;
 }
 
 /* HISTORY */
 
-.historyPanel{
-  border:1px solid var(--line);
-  background:var(--panel);
-  border-radius:15px;
+.history{
   overflow:hidden;
 }
 
-.historyHead,
+.historyHeader,
 .historyRow{
   display:grid;
-  grid-template-columns:55px 1fr 1fr 70px;
+  grid-template-columns:52px 1fr 1fr 66px;
   gap:6px;
   align-items:center;
-  padding:9px 10px;
+  padding:10px;
 }
 
-.historyHead{
-  color:var(--muted);
+.historyHeader{
+  color:#718497;
+  border-bottom:1px solid #18293a;
   font-size:8px;
-  text-transform:uppercase;
-  border-bottom:1px solid #162637;
 }
 
 .historyRow{
+  border-bottom:1px solid rgba(255,255,255,.045);
   font-size:9px;
-  border-bottom:1px solid rgba(255,255,255,.04);
 }
 
 .historyRow:last-child{
   border-bottom:0;
 }
 
-.resultGood{
-  color:var(--green);
-  font-weight:850;
-}
-
-.resultBad{
-  color:var(--red);
-  font-weight:850;
-}
-
 .empty{
-  color:var(--muted);
-  padding:18px;
+  padding:25px 12px;
   text-align:center;
+  color:#7d91a5;
   font-size:10px;
 }
 
 /* SETTINGS */
 
-.settings{
-  border:1px solid var(--line);
-  background:var(--panel);
-  border-radius:15px;
-  padding:11px;
-}
-
 .setting{
   display:flex;
-  justify-content:space-between;
   align-items:center;
-  padding:9px 0;
+  justify-content:space-between;
+  gap:12px;
+  padding:13px;
   border-bottom:1px solid rgba(255,255,255,.05);
 }
 
@@ -575,84 +557,114 @@ button{
 
 .settingName{
   font-size:11px;
-  font-weight:750;
+  font-weight:850;
 }
 
 .settingDesc{
-  color:var(--muted);
+  margin-top:3px;
+  color:#718497;
   font-size:8px;
-  margin-top:2px;
 }
 
 select{
-  background:#0a1725;
-  color:#fff;
-  border:1px solid #263c51;
-  border-radius:8px;
-  padding:7px;
+  min-width:92px;
+  padding:8px;
+  border:1px solid #294057;
+  border-radius:9px;
+  background:#0b1826;
+  color:white;
+}
+
+/* SOURCES */
+
+.sourceGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:7px;
+  padding:12px;
+}
+
+.source{
+  padding:9px;
+  border:1px solid #1b2d40;
+  border-radius:10px;
+  background:#08131f;
+}
+
+.sourceName{
   font-size:10px;
+  font-weight:850;
+}
+
+.sourceStatus{
+  margin-top:4px;
+  color:#708498;
+  font-size:8px;
+}
+
+.online{
+  color:var(--green);
 }
 
 /* BOTTOM NAV */
 
-.bottom{
+.bottomNav{
   position:fixed;
-  z-index:60;
   left:0;
   right:0;
   bottom:0;
-  padding:7px 9px calc(env(safe-area-inset-bottom) + 7px);
+  z-index:100;
+  padding:
+    7px 8px
+    calc(env(safe-area-inset-bottom) + 7px);
   background:rgba(5,10,18,.96);
-  backdrop-filter:blur(18px);
+  backdrop-filter:blur(20px);
   border-top:1px solid rgba(255,255,255,.08);
 }
 
-.bottomInner{
-  max-width:650px;
+.navInner{
+  max-width:700px;
   margin:auto;
   display:grid;
   grid-template-columns:repeat(4,1fr);
-  gap:5px;
+  gap:4px;
 }
 
 .nav{
+  min-height:43px;
   border:0;
+  border-radius:11px;
   background:transparent;
-  color:#63788c;
-  padding:7px 4px;
-  border-radius:9px;
+  color:#718499;
   font-size:9px;
-  font-weight:800;
+  font-weight:850;
 }
 
 .nav.active{
-  color:#fff;
-  background:#102132;
+  color:white;
+  background:#132438;
 }
 
 /* DESKTOP */
 
 @media(min-width:800px){
-  .predictions{
+
+  .predictionGrid{
     grid-template-columns:1fr 1fr;
   }
 
-  .canvasWrap{
-    height:620px;
+  .chartViewport{
+    height:650px;
   }
 
   .modelGrid{
     grid-template-columns:repeat(4,1fr);
   }
 
-  .diag{
+  .diagGrid{
     grid-template-columns:repeat(4,1fr);
   }
 
-  .app{
-    padding-left:8px;
-    padding-right:8px;
-  }
 }
 </style>
 </head>
@@ -662,502 +674,577 @@ select{
 <div class="app">
 
 <header class="header">
-  <div class="headerRow">
-    <div class="brand">
+
+  <div class="headerLine">
+
+    <div>
       <div class="kicker">LIVE MARKET INTELLIGENCE</div>
       <div class="title">ETH Predictor</div>
       <div class="subtitle">Adaptive multi-model research engine</div>
     </div>
 
-    <div class="version">
-      V15.2.1
-    </div>
+    <div class="version">V15.2.2</div>
+
   </div>
+
 </header>
 
-<section class="pricePanel">
 
-  <div class="priceTop">
+<!-- =====================================================
+     CHART VIEW
+     ===================================================== -->
 
-    <div>
-      <div class="symbol">ETH / USDT · SPOT</div>
-      <div id="livePrice" class="price">—</div>
-      <div id="priceChange" class="priceChange neutral">Waiting for market...</div>
+<main id="viewChart" class="view active">
+
+  <section class="marketCard">
+
+    <div class="marketTop">
+
+      <div>
+
+        <div class="symbol">
+          ETH / USDT · SPOT
+        </div>
+
+        <div id="price" class="price">
+          —
+        </div>
+
+        <div id="change" class="change neutral">
+          Waiting...
+        </div>
+
+      </div>
+
+      <div id="liveStatus" class="live">
+        <span class="liveDot"></span>
+        CONNECTING
+      </div>
+
     </div>
 
-    <div id="connection" class="liveBadge">
-      <span class="dot"></span>
-      CONNECTING
+    <div id="status" class="status">
+      Starting market engine...
     </div>
 
-  </div>
-
-  <div id="status" class="status">
-    Initializing market data...
-  </div>
-
-</section>
+  </section>
 
 
-<!-- RANGE -->
+  <section class="section">
 
-<section class="section">
-  <div class="sectionTitle">HISTORICAL RANGE</div>
+    <div class="sectionTitle">
+      HISTORICAL RANGE
+    </div>
 
-  <div class="controlRow">
+    <div class="scroller">
 
-    <button class="btn rangeBtn active" data-range="1D">1D</button>
-    <button class="btn rangeBtn" data-range="1W">1W</button>
-    <button class="btn rangeBtn" data-range="1M">1M</button>
-    <button class="btn rangeBtn" data-range="3M">3M</button>
-    <button class="btn rangeBtn" data-range="6M">6M</button>
-    <button class="btn rangeBtn" data-range="1Y">1Y</button>
-    <button class="btn rangeBtn" data-range="3Y">3Y</button>
-    <button class="btn rangeBtn" data-range="ALL">ALL</button>
+      <button class="btn range active" data-range="1D">1D</button>
+      <button class="btn range" data-range="1W">1W</button>
+      <button class="btn range" data-range="1M">1M</button>
+      <button class="btn range" data-range="3M">3M</button>
+      <button class="btn range" data-range="6M">6M</button>
+      <button class="btn range" data-range="1Y">1Y</button>
+      <button class="btn range" data-range="3Y">3Y</button>
+      <button class="btn range" data-range="ALL">ALL</button>
 
-  </div>
-</section>
+    </div>
 
-
-<!-- INTERVAL -->
-
-<section class="section">
-
-  <div class="sectionTitle">CHART INTERVAL</div>
-
-  <div class="controlRow">
-
-    <button class="btn intervalBtn" data-interval="1m">1m</button>
-    <button class="btn intervalBtn active" data-interval="5m">5m</button>
-    <button class="btn intervalBtn" data-interval="15m">15m</button>
-    <button class="btn intervalBtn" data-interval="1h">1h</button>
-    <button class="btn intervalBtn" data-interval="4h">4h</button>
-    <button class="btn intervalBtn" data-interval="1d">1D</button>
-
-  </div>
-
-</section>
+  </section>
 
 
-<!-- PREDICTION HORIZONS -->
+  <section class="section">
 
-<section class="section">
+    <div class="sectionTitle">
+      CHART INTERVAL
+    </div>
 
-  <div class="sectionTitle">ACTIVE FORECASTS</div>
+    <div class="scroller">
 
-  <div class="controlRow">
+      <button class="btn interval" data-interval="1m">1m</button>
+      <button class="btn interval active" data-interval="5m">5m</button>
+      <button class="btn interval" data-interval="15m">15m</button>
+      <button class="btn interval" data-interval="1h">1h</button>
+      <button class="btn interval" data-interval="4h">4h</button>
+      <button class="btn interval" data-interval="1d">1D</button>
 
-    <button id="add15" class="btn green active">
-      + 15 MIN
-    </button>
+    </div>
 
-    <button id="add30" class="btn green active">
-      + 30 MIN
-    </button>
-
-    <button id="clearPredictions" class="btn">
-      RESET ACTIVE
-    </button>
-
-  </div>
-
-</section>
+  </section>
 
 
-<!-- CHART -->
+  <section class="section">
 
-<section class="chartPanel">
+    <div class="sectionTitle">
+      PREDICTION ENTRIES
+    </div>
 
-  <div class="chartHeader">
+    <div class="scroller">
 
-    <div>
+      <button id="add15" class="btn green active">
+        + 15 MIN
+      </button>
+
+      <button id="add30" class="btn green active">
+        + 30 MIN
+      </button>
+
+      <button id="resetPred" class="btn">
+        RESET ACTIVE
+      </button>
+
+    </div>
+
+  </section>
+
+
+  <!-- CHART -->
+
+  <section class="chartPanel">
+
+    <div class="chartHeader">
+
       <div class="chartTitle">
         PROFESSIONAL CHART BOARD
       </div>
+
+      <div id="chartMeta" class="chartMeta">
+        Loading
+      </div>
+
     </div>
 
-    <div id="chartMeta" class="chartInfo">
-      Loading...
+
+    <div class="chartTools">
+
+      <button id="candles" class="tool active">
+        Candles
+      </button>
+
+      <button id="line" class="tool">
+        Line
+      </button>
+
+      <button id="ema" class="tool active">
+        EMA
+      </button>
+
+      <button id="vwap" class="tool active">
+        VWAP
+      </button>
+
+      <button id="volume" class="tool active">
+        Volume
+      </button>
+
+      <button id="rsi" class="tool active">
+        RSI
+      </button>
+
+      <button id="forecast" class="tool active">
+        Forecast
+      </button>
+
+      <button id="resetZoom" class="tool">
+        Reset
+      </button>
+
     </div>
 
-  </div>
 
+    <div id="chartViewport" class="chartViewport">
 
-  <div class="chartTools">
+      <canvas id="chart"></canvas>
 
-    <button id="candleBtn" class="tool active">
-      Candles
-    </button>
+      <div class="chartHint">
+        Drag = pan · pinch = zoom · wheel = zoom
+      </div>
 
-    <button id="lineBtn" class="tool">
-      Line
-    </button>
-
-    <button id="emaBtn" class="tool active">
-      EMA
-    </button>
-
-    <button id="vwapBtn" class="tool active">
-      VWAP
-    </button>
-
-    <button id="rsiBtn" class="tool active">
-      RSI
-    </button>
-
-    <button id="volumeBtn" class="tool active">
-      Volume
-    </button>
-
-    <button id="forecastBtn" class="tool active">
-      Forecast
-    </button>
-
-    <button id="resetZoom" class="tool">
-      Reset Zoom
-    </button>
-
-  </div>
-
-
-  <div id="canvasWrap" class="canvasWrap">
-
-    <canvas id="chart"></canvas>
-
-    <div class="chartOverlay">
-
-      <div id="currentPriceTag" class="priceTag">
+      <div id="currentLabel" class="currentLabel">
         —
       </div>
 
-      <div id="forecastTag" class="forecastTag" style="display:none">
+      <div id="forecastLabel" class="forecastLabel">
         —
       </div>
 
     </div>
 
-    <div class="chartHint">
-      Drag = pan · Pinch / wheel = zoom
+  </section>
+
+
+  <!-- ACTIVE PREDICTIONS -->
+
+  <section class="section">
+
+    <div class="sectionTitle">
+      ACTIVE FORECASTS
     </div>
 
-  </div>
-
-</section>
-
-
-<!-- PREDICTIONS -->
-
-<section class="section">
-
-  <div class="sectionTitle">
-    LOCKED PREDICTIONS
-  </div>
-
-  <div id="predictionGrid" class="predictions"></div>
-
-</section>
-
-
-<!-- MODEL -->
-
-<section class="section">
-
-  <div class="sectionTitle">
-    ADAPTIVE MODEL ENSEMBLE
-  </div>
-
-  <div class="modelPanel">
-
-    <div class="modelGrid">
-
-      <div class="model">
-        <div class="modelName">
-          Momentum
-        </div>
-        <div id="mMomentum" class="modelValue">
-          Initializing
-        </div>
-        <div class="bar">
-          <i id="bMomentum"></i>
-        </div>
-      </div>
-
-      <div class="model">
-        <div class="modelName">
-          Trend
-        </div>
-        <div id="mTrend" class="modelValue">
-          Initializing
-        </div>
-        <div class="bar">
-          <i id="bTrend"></i>
-        </div>
-      </div>
-
-      <div class="model">
-        <div class="modelName">
-          Volatility
-        </div>
-        <div id="mVolatility" class="modelValue">
-          Initializing
-        </div>
-        <div class="bar">
-          <i id="bVolatility"></i>
-        </div>
-      </div>
-
-      <div class="model">
-        <div class="modelName">
-          Regime
-        </div>
-        <div id="mRegime" class="modelValue">
-          Initializing
-        </div>
-        <div class="bar">
-          <i id="bRegime"></i>
-        </div>
-      </div>
-
+    <div id="predictionGrid" class="predictionGrid">
     </div>
 
+  </section>
 
-    <div class="diag">
+</main>
 
-      <div class="diagItem">
-        <div class="diagLabel">Samples</div>
-        <div id="diagSamples" class="diagValue">0</div>
+
+<!-- =====================================================
+     PREDICTIONS VIEW
+     ===================================================== -->
+
+<main id="viewPredictions" class="view">
+
+  <section class="section">
+
+    <div class="sectionTitle">
+      LOCKED PREDICTIONS
+    </div>
+
+    <div id="predictionGrid2" class="predictionGrid">
+    </div>
+
+  </section>
+
+
+  <section class="section">
+
+    <div class="sectionTitle">
+      ADAPTIVE MODELS
+    </div>
+
+    <div class="panel">
+
+      <div class="modelGrid">
+
+        <div class="model">
+          <div class="modelName">Momentum</div>
+          <div id="scoreMomentum" class="modelScore">—</div>
+          <div class="bar"><i id="barMomentum"></i></div>
+        </div>
+
+        <div class="model">
+          <div class="modelName">Trend</div>
+          <div id="scoreTrend" class="modelScore">—</div>
+          <div class="bar"><i id="barTrend"></i></div>
+        </div>
+
+        <div class="model">
+          <div class="modelName">Volatility</div>
+          <div id="scoreVolatility" class="modelScore">—</div>
+          <div class="bar"><i id="barVolatility"></i></div>
+        </div>
+
+        <div class="model">
+          <div class="modelName">Regime</div>
+          <div id="scoreRegime" class="modelScore">—</div>
+          <div class="bar"><i id="barRegime"></i></div>
+        </div>
+
       </div>
 
-      <div class="diagItem">
-        <div class="diagLabel">Completed</div>
-        <div id="diagCompleted" class="diagValue">0</div>
-      </div>
 
-      <div class="diagItem">
-        <div class="diagLabel">Accuracy</div>
-        <div id="diagAccuracy" class="diagValue">—</div>
-      </div>
+      <div class="diagGrid">
 
-      <div class="diagItem">
-        <div class="diagLabel">Status</div>
-        <div id="diagStatus" class="diagValue">Learning</div>
+        <div class="diag">
+          <div class="diagLabel">Historical candles</div>
+          <div id="samples" class="diagValue">0</div>
+        </div>
+
+        <div class="diag">
+          <div class="diagLabel">Completed forecasts</div>
+          <div id="completed" class="diagValue">0</div>
+        </div>
+
+        <div class="diag">
+          <div class="diagLabel">Directional accuracy</div>
+          <div id="accuracy" class="diagValue">—</div>
+        </div>
+
+        <div class="diag">
+          <div class="diagLabel">Evaluation</div>
+          <div id="evaluation" class="diagValue">Insufficient</div>
+        </div>
+
       </div>
 
     </div>
 
-  </div>
+  </section>
 
-</section>
+</main>
 
 
-<!-- HISTORY -->
+<!-- =====================================================
+     HISTORY VIEW
+     ===================================================== -->
 
-<section class="section">
+<main id="viewHistory" class="view">
 
-  <div class="sectionTitle">
-    PREDICTION HISTORY
-  </div>
+  <section class="section">
 
-  <div class="historyPanel">
-
-    <div class="historyHead">
-      <div>TIME</div>
-      <div>PRED</div>
-      <div>ACTUAL</div>
-      <div>RESULT</div>
+    <div class="sectionTitle">
+      COMPLETED PREDICTION HISTORY
     </div>
 
-    <div id="historyList">
-      <div class="empty">
-        No completed predictions yet.
-      </div>
-    </div>
+    <div class="panel history">
 
-  </div>
-
-</section>
-
-
-<!-- SETTINGS -->
-
-<section class="section">
-
-  <div class="sectionTitle">
-    FLEXIBLE ENGINE SETTINGS
-  </div>
-
-  <div class="settings">
-
-    <div class="setting">
-
-      <div>
-        <div class="settingName">
-          Engine Mode
-        </div>
-        <div class="settingDesc">
-          Controls background learning workload
-        </div>
+      <div class="historyHeader">
+        <div>HORIZON</div>
+        <div>PRED</div>
+        <div>ACTUAL</div>
+        <div>RESULT</div>
       </div>
 
-      <select id="engineMode">
-        <option value="light">Light</option>
-        <option value="normal" selected>Normal</option>
-        <option value="deep">Deep</option>
-      </select>
+      <div id="historyList"></div>
 
     </div>
 
+  </section>
 
-    <div class="setting">
+</main>
 
-      <div>
-        <div class="settingName">
-          Auto Refresh
+
+<!-- =====================================================
+     MORE VIEW
+     ===================================================== -->
+
+<main id="viewMore" class="view">
+
+  <section class="section">
+
+    <div class="sectionTitle">
+      ENGINE SETTINGS
+    </div>
+
+    <div class="panel">
+
+      <div class="setting">
+
+        <div>
+          <div class="settingName">Engine Mode</div>
+          <div class="settingDesc">
+            Controls background processing
+          </div>
         </div>
-        <div class="settingDesc">
-          Refresh secondary market data
-        </div>
+
+        <select id="engineMode">
+          <option value="light">Light</option>
+          <option value="normal" selected>Normal</option>
+          <option value="deep">Deep</option>
+        </select>
+
       </div>
 
-      <select id="autoRefresh">
-        <option value="on" selected>ON</option>
-        <option value="off">OFF</option>
-      </select>
 
-    </div>
+      <div class="setting">
 
-
-    <div class="setting">
-
-      <div>
-        <div class="settingName">
-          Learning
+        <div>
+          <div class="settingName">Auto Refresh</div>
+          <div class="settingDesc">
+            Secondary market refresh
+          </div>
         </div>
-        <div class="settingDesc">
-          Update models from completed forecasts
-        </div>
+
+        <select id="autoRefresh">
+          <option value="on" selected>ON</option>
+          <option value="off">OFF</option>
+        </select>
+
       </div>
 
-      <select id="learningMode">
-        <option value="on" selected>ON</option>
-        <option value="off">OFF</option>
-      </select>
+
+      <div class="setting">
+
+        <div>
+          <div class="settingName">Learning</div>
+          <div class="settingDesc">
+            Learn from completed forecasts
+          </div>
+        </div>
+
+        <select id="learning">
+          <option value="on" selected>ON</option>
+          <option value="off">OFF</option>
+        </select>
+
+      </div>
 
     </div>
 
-  </div>
-
-</section>
+  </section>
 
 
-<!-- FOOTER -->
+  <section class="section">
 
-<section class="section">
+    <div class="sectionTitle">
+      MARKET DATA SOURCES
+    </div>
 
-  <div style="
-    color:#56697d;
-    font-size:8px;
-    line-height:1.5;
-    text-align:center;
-    padding:5px 10px 20px;
-  ">
+    <div class="panel">
 
-    V15.2.1 is a research and forecasting interface.
-    Predictions are statistical estimates, not guaranteed future prices.
-    Market data availability depends on public exchange APIs.
+      <div class="sourceGrid">
 
-  </div>
+        <div class="source">
+          <div class="sourceName">Binance</div>
+          <div id="srcBinance" class="sourceStatus">Connecting</div>
+        </div>
 
-</section>
+        <div class="source">
+          <div class="sourceName">Coinbase</div>
+          <div id="srcCoinbase" class="sourceStatus">Waiting</div>
+        </div>
 
-</div>
+        <div class="source">
+          <div class="sourceName">OKX</div>
+          <div id="srcOKX" class="sourceStatus">Waiting</div>
+        </div>
+
+        <div class="source">
+          <div class="sourceName">Bybit</div>
+          <div id="srcBybit" class="sourceStatus">Waiting</div>
+        </div>
+
+        <div class="source">
+          <div class="sourceName">BTC context</div>
+          <div id="srcBTC" class="sourceStatus">Waiting</div>
+        </div>
+
+        <div class="source">
+          <div class="sourceName">Derivatives</div>
+          <div id="srcDerivatives" class="sourceStatus">Waiting</div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
 
 
-<!-- BOTTOM NAV -->
+  <section class="section">
 
-<div class="bottom">
+    <div style="
+      padding:10px;
+      color:#617589;
+      text-align:center;
+      font-size:8px;
+      line-height:1.6;
+    ">
+      V15.2.2 is a research forecasting interface.
+      Predictions are statistical estimates and are not guaranteed future prices.
+    </div>
 
-  <div class="bottomInner">
+  </section>
 
-    <button class="nav active" data-nav="chart">
+</main>
+
+
+<!-- BOTTOM -->
+
+<nav class="bottomNav">
+
+  <div class="navInner">
+
+    <button class="nav active" data-view="chart">
       CHART
     </button>
 
-    <button class="nav" data-nav="predictions">
+    <button class="nav" data-view="predictions">
       PREDICTIONS
     </button>
 
-    <button class="nav" data-nav="history">
+    <button class="nav" data-view="history">
       HISTORY
     </button>
 
-    <button class="nav" data-nav="settings">
+    <button class="nav" data-view="more">
       MORE
     </button>
 
   </div>
 
+</nav>
+
 </div>
 
 
 <script>
-
-/* =========================================================
-   ETH PREDICTOR V15.2.1
-   ========================================================= */
-
 "use strict";
 
-
 /* =========================================================
-   CONFIG
+   V15.2.2 ENGINE
    ========================================================= */
 
-const VERSION = "V15.2.1";
+const API="https://data-api.binance.vision";
+const API2="https://api.binance.com";
 
-const BINANCE =
-  "https://data-api.binance.vision";
+const WS=
+"wss://stream.binance.com:9443/stream?streams=ethusdt@kline_1m/ethusdt@miniTicker";
 
-const BINANCE_FALLBACK =
-  "https://api.binance.com";
-
-const WS_URL =
-  "wss://stream.binance.com:9443/stream?streams=ethusdt@kline_1m/ethusdt@miniTicker/ethusdt@trade";
-
-const STORAGE_HISTORY =
-  "ethPredictorV1521_history";
-
-const STORAGE_ACTIVE =
-  "ethPredictorV1521_active";
-
-const STORAGE_SETTINGS =
-  "ethPredictorV1521_settings";
+const HIST_KEY="ethPredictor1522History";
+const ACTIVE_KEY="ethPredictor1522Active";
+const SETTINGS_KEY="ethPredictor1522Settings";
 
 
-/* =========================================================
-   STATE
-   ========================================================= */
-
-const state = {
-
-  symbol:"ETHUSDT",
-
+const S={
   range:"1D",
-
-  requestedInterval:"5m",
-
-  effectiveInterval:"5m",
+  requested:"5m",
+  effective:"5m",
 
   candles:[],
 
-  livePrice:null,
-
+  price:null,
   previousPrice:null,
+  change:0,
 
-  priceChange:0,
+  ws:null,
+  connected:false,
 
-  sourceStatus:{
-    binance:false,
+  loading:false,
+
+  chartType:"candle",
+
+  ema:true,
+  vwap:true,
+  volume:true,
+  rsi:true,
+  forecast:true,
+
+  zoom:1,
+  offset:0,
+
+  pointer:false,
+  startX:0,
+  startOffset:0,
+
+  pinch:false,
+  pinchDistance:0,
+  pinchZoom:1,
+
+  predictions:[],
+  history:[],
+
+  models:{
+    momentum:.25,
+    trend:.25,
+    volatility:.25,
+    regime:.25
+  },
+
+  scores:{
+    momentum:.5,
+    trend:.5,
+    volatility:.5,
+    regime:.5
+  },
+
+  mode:"normal",
+  auto:true,
+  learning:true,
+
+  training:false,
+
+  secondary:{
     coinbase:false,
     okx:false,
     bybit:false,
@@ -1165,349 +1252,103 @@ const state = {
     derivatives:false
   },
 
-  btcPrice:null,
-
+  btc:null,
   funding:null,
-
-  openInterest:null,
-
-  websocket:null,
-
-  wsConnected:false,
-
-  reconnectTimer:null,
-
-  loading:false,
-
-  lastHistoricalLoad:0,
-
-  lastSecondaryRefresh:0,
-
-  lastRender:0,
-
-  chartType:"candle",
-
-  showEMA:true,
-
-  showVWAP:true,
-
-  showRSI:true,
-
-  showVolume:true,
-
-  showForecast:true,
-
-  zoom:1,
-
-  pan:0,
-
-  drag:false,
-
-  dragStartX:0,
-
-  originalPan:0,
-
-  predictions:[],
-
-  history:[],
-
-  models:{
-    momentum:0.25,
-    trend:0.25,
-    volatility:0.25,
-    regime:0.25
-  },
-
-  modelScores:{
-    momentum:0.5,
-    trend:0.5,
-    volatility:0.5,
-    regime:0.5
-  },
-
-  learningUpdates:0,
-
-  engineMode:"normal",
-
-  autoRefresh:true,
-
-  learning:true,
-
-  trainingBusy:false,
-
-  lastForecast:0
-
+  oi:null
 };
 
 
-/* =========================================================
-   DOM
-   ========================================================= */
+const $=id=>document.getElementById(id);
 
-const $ = id => document.getElementById(id);
-
-const chart =
-  $("chart");
-
-const canvasWrap =
-  $("canvasWrap");
-
-const ctx =
-  chart.getContext("2d");
+const canvas=$("chart");
+const viewport=$("chartViewport");
+const ctx=canvas.getContext("2d");
 
 
 /* =========================================================
-   UTILITIES
+   BASIC
    ========================================================= */
 
-function clamp(v,a,b){
-  return Math.max(a,Math.min(b,v));
-}
-
-function lerp(a,b,t){
-  return a+(b-a)*t;
-}
-
-function median(arr){
-
-  if(!arr.length) return 0;
-
-  const a=[...arr].sort((x,y)=>x-y);
-
-  const m=Math.floor(a.length/2);
-
-  return a.length%2
-    ? a[m]
-    : (a[m-1]+a[m])/2;
-}
-
-function mean(arr){
-
-  if(!arr.length) return 0;
-
-  return arr.reduce((a,b)=>a+b,0)/arr.length;
-}
-
-function std(arr){
-
-  if(arr.length<2) return 0;
-
-  const m=mean(arr);
-
-  return Math.sqrt(
-    mean(arr.map(x=>(x-m)*(x-m)))
-  );
+function clamp(x,a,b){
+  return Math.max(a,Math.min(b,x));
 }
 
 function pct(a,b){
-
-  if(!b) return 0;
-
-  return ((a-b)/b)*100;
+  return b ? (a-b)/b*100 : 0;
 }
 
-function fmtPrice(v){
-
-  if(v==null || !isFinite(v))
-    return "—";
-
-  return "$"+Number(v).toLocaleString(
-    "en-US",
-    {
-      minimumFractionDigits:2,
-      maximumFractionDigits:2
-    }
-  );
+function mean(a){
+  return a.length
+    ? a.reduce((x,y)=>x+y,0)/a.length
+    : 0;
 }
 
-function fmtPct(v){
-
-  if(!isFinite(v))
-    return "—";
-
-  return (v>=0?"+":"")+v.toFixed(2)+"%";
-}
-
-function fmtTime(ts){
-
-  if(!ts)
-    return "—";
-
-  return new Date(ts).toLocaleString(
-    undefined,
-    {
-      day:"2-digit",
-      month:"short",
-      year:"numeric",
-      hour:"2-digit",
-      minute:"2-digit",
-      second:"2-digit"
-    }
-  );
-}
-
-function fmtShortTime(ts){
-
-  return new Date(ts).toLocaleString(
-    undefined,
-    {
-      day:"2-digit",
-      month:"short",
-      hour:"2-digit",
-      minute:"2-digit"
-    }
-  );
-}
-
-function save(){
-
-  try{
-
-    localStorage.setItem(
-      STORAGE_HISTORY,
-      JSON.stringify(state.history)
-    );
-
-    localStorage.setItem(
-      STORAGE_ACTIVE,
-      JSON.stringify(state.predictions)
-    );
-
-    localStorage.setItem(
-      STORAGE_SETTINGS,
-      JSON.stringify({
-        engineMode:state.engineMode,
-        autoRefresh:state.autoRefresh,
-        learning:state.learning
+function fmt(v){
+  return isFinite(v)
+    ? "$"+Number(v).toLocaleString("en-US",{
+        minimumFractionDigits:2,
+        maximumFractionDigits:2
       })
-    );
-
-  }catch(e){}
+    : "—";
 }
 
-
-function loadSaved(){
-
-  try{
-
-    const h =
-      JSON.parse(
-        localStorage.getItem(STORAGE_HISTORY)||"[]"
-      );
-
-    const p =
-      JSON.parse(
-        localStorage.getItem(STORAGE_ACTIVE)||"[]"
-      );
-
-    const s =
-      JSON.parse(
-        localStorage.getItem(STORAGE_SETTINGS)||"{}"
-      );
-
-    if(Array.isArray(h))
-      state.history=h;
-
-    if(Array.isArray(p))
-      state.predictions=p;
-
-    if(s.engineMode)
-      state.engineMode=s.engineMode;
-
-    if(typeof s.autoRefresh==="boolean")
-      state.autoRefresh=s.autoRefresh;
-
-    if(typeof s.learning==="boolean")
-      state.learning=s.learning;
-
-  }catch(e){
-
-    console.warn("Storage error",e);
-
-  }
-
+function timeText(t){
+  return new Date(t).toLocaleString(undefined,{
+    day:"2-digit",
+    month:"short",
+    year:"numeric",
+    hour:"2-digit",
+    minute:"2-digit"
+  });
 }
 
-
-/* =========================================================
-   RANGE / INTERVAL
-   ========================================================= */
-
-function rangeMs(range){
-
-  const map={
-
-    "1D":86400000,
-
-    "1W":7*86400000,
-
-    "1M":30*86400000,
-
-    "3M":90*86400000,
-
-    "6M":180*86400000,
-
-    "1Y":365*86400000,
-
-    "3Y":1095*86400000,
-
-    "ALL":3650*86400000
-
-  };
-
-  return map[range]||86400000;
-
+function shortTime(t){
+  return new Date(t).toLocaleString(undefined,{
+    day:"2-digit",
+    month:"short",
+    hour:"2-digit",
+    minute:"2-digit"
+  });
 }
 
-
-function intervalMs(interval){
-
-  const map={
-
+function intervalMS(x){
+  return ({
     "1m":60000,
-
     "5m":300000,
-
     "15m":900000,
-
     "1h":3600000,
-
     "4h":14400000,
-
     "1d":86400000
-
-  };
-
-  return map[interval]||300000;
-
+  })[x]||300000;
 }
 
+function rangeMS(x){
+  return ({
+    "1D":86400000,
+    "1W":604800000,
+    "1M":2592000000,
+    "3M":7776000000,
+    "6M":15552000000,
+    "1Y":31536000000,
+    "3Y":94608000000,
+    "ALL":315360000000
+  })[x]||86400000;
+}
 
 function smartInterval(range,wanted){
 
-  if(range==="ALL" || range==="3Y")
+  if(range==="ALL"||range==="3Y")
     return "1d";
 
-  if(range==="1Y" &&
-     ["1m","5m","15m"].includes(wanted))
-    return "4h";
+  if(range==="1Y")
+    return ["1m","5m","15m"].includes(wanted)
+      ?"4h":wanted;
 
-  if(
-    ["6M","3M"].includes(range) &&
-    ["1m","5m"].includes(wanted)
-  )
-    return "1h";
+  if(["3M","6M"].includes(range))
+    return ["1m","5m"].includes(wanted)
+      ?"1h":wanted;
 
-  if(
-    range==="1M" &&
-    wanted==="1m"
-  )
-    return "5m";
-
-  if(
-    range==="1W" &&
-    wanted==="1m"
-  )
+  if(range==="1M"&&wanted==="1m")
     return "5m";
 
   return wanted;
@@ -1515,35 +1356,101 @@ function smartInterval(range,wanted){
 
 
 /* =========================================================
-   BINANCE REST
+   STORAGE
    ========================================================= */
 
-async function fetchJSON(url,timeout=10000){
-
-  const controller =
-    new AbortController();
-
-  const timer =
-    setTimeout(
-      ()=>controller.abort(),
-      timeout
-    );
+function save(){
 
   try{
 
-    const r =
-      await fetch(
-        url,
-        {
-          signal:controller.signal,
-          cache:"no-store"
-        }
+    localStorage.setItem(
+      HIST_KEY,
+      JSON.stringify(S.history)
+    );
+
+    localStorage.setItem(
+      ACTIVE_KEY,
+      JSON.stringify(S.predictions)
+    );
+
+    localStorage.setItem(
+      SETTINGS_KEY,
+      JSON.stringify({
+        mode:S.mode,
+        auto:S.auto,
+        learning:S.learning
+      })
+    );
+
+  }catch(e){}
+
+}
+
+function load(){
+
+  try{
+
+    const h=
+      JSON.parse(
+        localStorage.getItem(HIST_KEY)||"[]"
       );
 
-    if(!r.ok)
-      throw new Error(
-        "HTTP "+r.status
+    const a=
+      JSON.parse(
+        localStorage.getItem(ACTIVE_KEY)||"[]"
       );
+
+    const s=
+      JSON.parse(
+        localStorage.getItem(SETTINGS_KEY)||"{}"
+      );
+
+    if(Array.isArray(h))S.history=h;
+    if(Array.isArray(a))S.predictions=a;
+
+    if(s.mode)S.mode=s.mode;
+    if(typeof s.auto==="boolean")S.auto=s.auto;
+    if(typeof s.learning==="boolean")S.learning=s.learning;
+
+  }catch(e){}
+
+}
+
+
+/* =========================================================
+   STATUS
+   ========================================================= */
+
+function status(t){
+  $("status").textContent=t;
+}
+
+
+/* =========================================================
+   API
+   ========================================================= */
+
+async function getJSON(url){
+
+  const c=new AbortController();
+
+  const timer=setTimeout(
+    ()=>c.abort(),
+    12000
+  );
+
+  try{
+
+    const r=await fetch(
+      url,
+      {
+        signal:c.signal,
+        cache:"no-store"
+      }
+    );
+
+    if(!r.ok)
+      throw new Error("HTTP "+r.status);
 
     return await r.json();
 
@@ -1556,186 +1463,140 @@ async function fetchJSON(url,timeout=10000){
 }
 
 
-async function binanceFetch(path){
+async function binance(path){
 
   try{
-
-    return await fetchJSON(
-      BINANCE+path,
-      12000
-    );
-
+    return await getJSON(API+path);
   }catch(e){
-
-    return await fetchJSON(
-      BINANCE_FALLBACK+path,
-      12000
-    );
-
+    return await getJSON(API2+path);
   }
 
 }
 
 
 /* =========================================================
-   HISTORICAL DATA
+   HISTORICAL
    ========================================================= */
 
-async function loadHistorical(){
+async function loadHistory(){
 
-  if(state.loading)
-    return;
+  if(S.loading)return;
 
-  state.loading=true;
+  S.loading=true;
 
-  setStatus(
-    "Loading ETH historical market data..."
-  );
+  status("Loading ETH historical candles...");
 
-  const effective =
+  const effective=
     smartInterval(
-      state.range,
-      state.requestedInterval
+      S.range,
+      S.requested
     );
 
-  state.effectiveInterval=effective;
+  S.effective=effective;
 
-  const step =
-    intervalMs(effective);
+  const step=intervalMS(effective);
 
-  const end =
-    Date.now();
+  const end=Date.now();
 
-  const start =
-    end-rangeMs(state.range);
+  const start=
+    end-rangeMS(S.range);
 
   let cursor=end;
 
-  let all=[];
+  let result=[];
 
-  const maxBlocks =
-    state.engineMode==="deep"
-      ? 50
-      : state.engineMode==="light"
-        ? 8
-        : 20;
+  const blocks=
+    S.mode==="deep"
+      ?40
+      :S.mode==="light"
+        ?8
+        :20;
 
   try{
 
     for(
-      let block=0;
-      block<maxBlocks;
-      block++
+      let i=0;
+      i<blocks;
+      i++
     ){
 
-      if(cursor<start)
+      if(cursor<=start)
         break;
 
-      const url =
+      const url=
         "/api/v3/klines"+
         "?symbol=ETHUSDT"+
         "&interval="+effective+
         "&limit=1000"+
         "&endTime="+cursor;
 
-      const data =
-        await binanceFetch(url);
+      const data=
+        await binance(url);
 
       if(!Array.isArray(data)||!data.length)
         break;
 
-      all =
-        data.concat(all);
+      result=
+        data.concat(result);
 
-      const first =
-        data[0][0];
-
-      cursor =
-        first-step;
-
-      if(first<=start)
-        break;
+      cursor=
+        Number(data[0][0])-step;
 
       if(data.length<1000)
         break;
+
+      if(i%3===0)
+        await new Promise(r=>setTimeout(r,0));
     }
 
 
-    const cleaned =
-      all
-      .map(k=>({
+    const map=new Map();
 
-        time:Number(k[0]),
+    for(const k of result){
 
+      const t=Number(k[0]);
+
+      if(t<start)continue;
+
+      map.set(t,{
+        time:t,
         open:Number(k[1]),
-
         high:Number(k[2]),
-
         low:Number(k[3]),
-
         close:Number(k[4]),
-
         volume:Number(k[5]),
-
         closeTime:Number(k[6])
+      });
 
-      }))
-      .filter(k=>k.time>=start)
+    }
+
+
+    S.candles=
+      [...map.values()]
       .sort((a,b)=>a.time-b.time);
 
 
-    const unique=[];
+    if(S.candles.length){
 
-    const seen=new Set();
+      S.previousPrice=S.price;
 
-    for(const k of cleaned){
+      S.price=
+        S.candles[S.candles.length-1].close;
 
-      if(!seen.has(k.time)){
+      updatePrice();
 
-        seen.add(k.time);
+      trainHistorical();
 
-        unique.push(k);
-
-      }
-
-    }
-
-
-    state.candles=unique;
-
-    state.lastHistoricalLoad=Date.now();
-
-    state.sourceStatus.binance=
-      state.candles.length>0;
-
-
-    if(state.candles.length){
-
-      state.previousPrice =
-        state.livePrice;
-
-      state.livePrice =
-        state.candles.at(-1).close;
-
-      updatePriceUI();
-
-      initializeModels();
-
-      runBackgroundTraining();
-
-      setStatus(
-        "Loaded "+
-        state.candles.length.toLocaleString()+
-        " ETH candles · "+
+      status(
+        S.candles.length.toLocaleString()+
+        " candles loaded · "+
         effective+
-        " · historical + realtime mode"
+        " · realtime connected separately"
       );
 
     }else{
 
-      throw new Error(
-        "No candle data returned"
-      );
+      status("No ETH candle data received.");
 
     }
 
@@ -1743,16 +1604,16 @@ async function loadHistorical(){
 
     console.error(e);
 
-    setStatus(
-      "Historical data error: "+
+    status(
+      "Market data error: "+
       e.message
     );
 
   }finally{
 
-    state.loading=false;
+    S.loading=false;
 
-    render();
+    draw();
 
   }
 
@@ -1760,36 +1621,37 @@ async function loadHistorical(){
 
 
 /* =========================================================
-   LIVE WEBSOCKET
+   WEBSOCKET
    ========================================================= */
 
-function connectWebSocket(){
+function connect(){
 
   if(
-    state.websocket &&
+    S.ws &&
     (
-      state.websocket.readyState===WebSocket.OPEN ||
-      state.websocket.readyState===WebSocket.CONNECTING
+      S.ws.readyState===WebSocket.OPEN||
+      S.ws.readyState===WebSocket.CONNECTING
     )
-  )
-    return;
+  )return;
 
   try{
 
-    const ws =
-      new WebSocket(WS_URL);
+    const ws=new WebSocket(WS);
 
-    state.websocket=ws;
+    S.ws=ws;
 
     ws.onopen=()=>{
 
-      state.wsConnected=true;
+      S.connected=true;
 
-      $("connection").innerHTML =
-        '<span class="dot"></span> LIVE';
+      $("liveStatus").innerHTML=
+        '<span class="liveDot"></span> LIVE';
 
-      $("connection").style.color =
-        "var(--green)";
+      $("srcBinance").textContent=
+        "WebSocket live";
+
+      $("srcBinance").className=
+        "sourceStatus online";
 
     };
 
@@ -1798,88 +1660,56 @@ function connectWebSocket(){
 
       try{
 
-        const packet=
-          JSON.parse(e.data);
+        const p=JSON.parse(e.data);
+        const d=p.data;
 
-        const d=
-          packet.data;
+        if(!d)return;
 
-        if(!d)
-          return;
-
-
-        /* MINI TICKER */
 
         if(d.e==="24hrMiniTicker"){
 
-          const price =
-            Number(d.c);
+          const price=Number(d.c);
 
-          if(
-            isFinite(price) &&
-            price>0
-          ){
+          if(isFinite(price)){
 
-            state.previousPrice=
-              state.livePrice;
+            S.previousPrice=S.price;
+            S.price=price;
+            S.change=Number(d.P||0);
 
-            state.livePrice=
-              price;
-
-            state.priceChange=
-              Number(d.P||0);
-
-            updatePriceUI();
+            updatePrice();
 
           }
 
         }
 
 
-        /* KLINE */
-
         if(d.e==="kline"){
 
           const k=d.k;
 
-          if(!k)
-            return;
+          if(!k)return;
 
-          const oneMinute={
-
+          mergeMinute({
             time:Number(k.t),
-
             open:Number(k.o),
-
             high:Number(k.h),
-
             low:Number(k.l),
-
             close:Number(k.c),
-
             volume:Number(k.v),
-
             closeTime:Number(k.T)
+          });
 
-          };
+          S.price=Number(k.c);
 
-          mergeLiveMinute(oneMinute);
+          updatePrice();
 
-          state.livePrice=
-            oneMinute.close;
-
-          updatePriceUI();
-
-          render();
+          draw();
 
         }
 
       }catch(err){
 
-        console.warn(
-          "WS parse",
-          err
-        );
+        console.log(err);
 
       }
 
@@ -1888,39 +1718,32 @@ function connectWebSocket(){
 
     ws.onerror=()=>{
 
-      state.wsConnected=false;
+      S.connected=false;
 
-      $("connection").innerHTML =
-        '<span class="dot"></span> RETRYING';
+      $("liveStatus").innerHTML=
+        '<span class="liveDot"></span> RETRYING';
 
     };
 
 
     ws.onclose=()=>{
 
-      state.wsConnected=false;
+      S.connected=false;
 
-      $("connection").innerHTML =
-        '<span class="dot"></span> RECONNECTING';
+      $("liveStatus").innerHTML=
+        '<span class="liveDot"></span> RECONNECTING';
 
-      clearTimeout(
-        state.reconnectTimer
+      setTimeout(
+        connect,
+        3000
       );
-
-      state.reconnectTimer=
-        setTimeout(
-          connectWebSocket,
-          3000
-        );
 
     };
 
   }catch(e){
 
-    console.error(e);
-
     setTimeout(
-      connectWebSocket,
+      connect,
       5000
     );
 
@@ -1930,219 +1753,193 @@ function connectWebSocket(){
 
 
 /* =========================================================
-   LIVE CANDLE AGGREGATION
+   LIVE AGGREGATION
    ========================================================= */
 
-function mergeLiveMinute(m){
+function mergeMinute(m){
 
-  const ms =
-    intervalMs(
-      state.effectiveInterval
-    );
+  const step=intervalMS(S.effective);
 
-  const bucket =
-    Math.floor(
-      m.time/ms
-    )*ms;
+  const bucket=
+    Math.floor(m.time/step)*step;
 
   let last=
-    state.candles.at(-1);
+    S.candles[S.candles.length-1];
 
 
-  if(
-    !last ||
-    last.time!==bucket
-  ){
+  if(!last||last.time!==bucket){
 
     last={
-
       time:bucket,
-
       open:m.open,
-
       high:m.high,
-
       low:m.low,
-
       close:m.close,
-
       volume:m.volume,
-
-      closeTime:
-        bucket+ms-1
-
+      closeTime:bucket+step-1
     };
 
-    state.candles.push(last);
+    S.candles.push(last);
 
   }else{
 
-    last.high=
-      Math.max(
-        last.high,
-        m.high
-      );
-
-    last.low=
-      Math.min(
-        last.low,
-        m.low
-      );
-
-    last.close=
-      m.close;
-
+    last.high=Math.max(last.high,m.high);
+    last.low=Math.min(last.low,m.low);
+    last.close=m.close;
     last.volume+=m.volume;
 
   }
 
 
-  const maxKeep=
-    state.engineMode==="deep"
-      ? 10000
-      : 6000;
+  const max=
+    S.mode==="deep"
+      ?12000
+      :7000;
 
-  if(state.candles.length>maxKeep){
-
-    state.candles.splice(
+  if(S.candles.length>max)
+    S.candles.splice(
       0,
-      state.candles.length-maxKeep
+      S.candles.length-max
     );
-
-  }
 
 }
 
 
 /* =========================================================
-   SECONDARY DATA SOURCES
+   SECONDARY SOURCES
    ========================================================= */
 
-async function loadSecondaryData(){
+async function secondary(){
 
-  const tasks={
+  const requests={
 
     coinbase:
-      fetchJSON(
-        "https://api.exchange.coinbase.com/products/ETH-USD/ticker",
-        8000
-      ),
+      "https://api.exchange.coinbase.com/products/ETH-USD/ticker",
 
     okx:
-      fetchJSON(
-        "https://www.okx.com/api/v5/market/ticker?instId=ETH-USDT",
-        8000
-      ),
+      "https://www.okx.com/api/v5/market/ticker?instId=ETH-USDT",
 
     bybit:
-      fetchJSON(
-        "https://api.bybit.com/v5/market/tickers?category=spot&symbol=ETHUSDT",
-        8000
-      ),
+      "https://api.bybit.com/v5/market/tickers?category=spot&symbol=ETHUSDT",
 
     btc:
-      binanceFetch(
-        "/api/v3/ticker/price?symbol=BTCUSDT"
-      ),
+      API+"/api/v3/ticker/price?symbol=BTCUSDT",
 
     funding:
-      binanceFetch(
-        "/fapi/v1/premiumIndex?symbol=ETHUSDT"
-      ),
+      "https://fapi.binance.com/fapi/v1/premiumIndex?symbol=ETHUSDT",
 
     oi:
-      binanceFetch(
-        "/fapi/v1/openInterest?symbol=ETHUSDT"
-      )
+      "https://fapi.binance.com/fapi/v1/openInterest?symbol=ETHUSDT"
 
   };
 
 
-  const keys=
-    Object.keys(tasks);
+  const keys=Object.keys(requests);
 
-  const results=
+  const out=
     await Promise.allSettled(
-      keys.map(k=>tasks[k])
+      keys.map(k=>getJSON(requests[k]))
     );
 
 
-  results.forEach(
-    (result,i)=>{
+  out.forEach((x,i)=>{
 
-      const key=keys[i];
+    if(x.status!=="fulfilled")
+      return;
 
-      if(result.status!=="fulfilled")
-        return;
+    const key=keys[i];
+    const d=x.value;
 
-      const d=result.value;
 
-      try{
+    if(key==="coinbase"){
 
-        if(key==="coinbase"){
-
-          state.sourceStatus.coinbase=true;
-
-        }
-
-        if(key==="okx"){
-
-          if(
-            d &&
-            d.data &&
-            d.data.length
-          )
-            state.sourceStatus.okx=true;
-
-        }
-
-        if(key==="bybit"){
-
-          if(
-            d &&
-            d.result &&
-            d.result.list &&
-            d.result.list.length
-          )
-            state.sourceStatus.bybit=true;
-
-        }
-
-        if(key==="btc"){
-
-          state.btcPrice=
-            Number(d.price);
-
-          state.sourceStatus.btc=
-            isFinite(state.btcPrice);
-
-        }
-
-        if(key==="funding"){
-
-          state.funding=
-            Number(d.lastFundingRate);
-
-          state.sourceStatus.derivatives=
-            isFinite(state.funding);
-
-        }
-
-        if(key==="oi"){
-
-          state.openInterest=
-            Number(d.openInterest);
-
-        }
-
-      }catch(e){}
+      S.secondary.coinbase=true;
 
     }
-  );
 
 
-  state.lastSecondaryRefresh=
-    Date.now();
+    if(key==="okx"){
+
+      if(d?.data?.length)
+        S.secondary.okx=true;
+
+    }
+
+
+    if(key==="bybit"){
+
+      if(d?.result?.list?.length)
+        S.secondary.bybit=true;
+
+    }
+
+
+    if(key==="btc"){
+
+      S.btc=Number(d.price);
+
+      S.secondary.btc=
+        isFinite(S.btc);
+
+    }
+
+
+    if(key==="funding"){
+
+      S.funding=
+        Number(d.lastFundingRate);
+
+      S.secondary.derivatives=
+        isFinite(S.funding);
+
+    }
+
+
+    if(key==="oi"){
+
+      S.oi=
+        Number(d.openInterest);
+
+    }
+
+  });
+
+
+  updateSources();
+
+}
+
+
+function updateSources(){
+
+  const map={
+    coinbase:"srcCoinbase",
+    okx:"srcOKX",
+    bybit:"srcBybit",
+    btc:"srcBTC",
+    derivatives:"srcDerivatives"
+  };
+
+
+  for(const key of Object.keys(map)){
+
+    const el=$(map[key]);
+
+    if(S.secondary[key]){
+
+      el.textContent="Available";
+
+      el.className="sourceStatus online";
+
+    }else{
+
+      el.textContent="Unavailable / waiting";
+
+      el.className="sourceStatus";
+
+    }
+
+  }
 
 }
 
@@ -2153,108 +1950,67 @@ async function loadSecondaryData(){
 
 function closes(){
 
-  return state.candles
-    .map(x=>x.close)
-    .filter(isFinite);
+  return S.candles.map(x=>x.close);
 }
 
 
-function returns(n=50){
+function EMA(period){
 
   const c=closes();
 
-  const out=[];
-
-  for(
-    let i=n;
-    i<c.length;
-    i++
-  ){
-
-    if(c[i-n]>0)
-      out.push(
-        (c[i]-c[i-n])/c[i-n]
-      );
-
-  }
-
-  return out;
-}
-
-
-function ema(period){
-
-  const c=closes();
-
-  if(!c.length)
-    return [];
+  if(!c.length)return [];
 
   const k=2/(period+1);
 
-  let prev=c[0];
+  let e=c[0];
 
-  const out=[prev];
+  const out=[e];
 
   for(let i=1;i<c.length;i++){
 
-    prev=
+    e=
       c[i]*k+
-      prev*(1-k);
+      e*(1-k);
 
-    out.push(prev);
+    out.push(e);
 
   }
 
   return out;
+
 }
 
 
-function rsi(period=14){
+function RSI(period=14){
 
   const c=closes();
 
   if(c.length<period+1)
     return [];
 
-  let gains=0;
-  let losses=0;
+  let gain=0;
+  let loss=0;
 
-  for(
-    let i=1;
-    i<=period;
-    i++
-  ){
+  for(let i=1;i<=period;i++){
 
-    const d=
-      c[i]-c[i-1];
+    const d=c[i]-c[i-1];
 
-    if(d>=0)
-      gains+=d;
-    else
-      losses-=d;
+    if(d>=0)gain+=d;
+    else loss-=d;
 
   }
 
-  let avgGain=
-    gains/period;
-
-  let avgLoss=
-    losses/period;
+  let ag=gain/period;
+  let al=loss/period;
 
   const out=
-    Array(period).fill(null);
+    new Array(period).fill(null);
 
-  function calc(){
-
-    if(avgLoss===0)
-      return 100;
-
-    const rs=
-      avgGain/avgLoss;
-
-    return 100-(100/(1+rs));
-
-  }
+  const calc=()=>{
+    if(al===0)return 100;
+    const rs=ag/al;
+    return 100-100/(1+rs);
+  };
 
   out.push(calc());
 
@@ -2264,20 +2020,13 @@ function rsi(period=14){
     i++
   ){
 
-    const d=
-      c[i]-c[i-1];
+    const d=c[i]-c[i-1];
 
-    const gain=
-      d>0?d:0;
+    ag=
+      (ag*(period-1)+(d>0?d:0))/period;
 
-    const loss=
-      d<0?-d:0;
-
-    avgGain=
-      (avgGain*(period-1)+gain)/period;
-
-    avgLoss=
-      (avgLoss*(period-1)+loss)/period;
+    al=
+      (al*(period-1)+(d<0?-d:0))/period;
 
     out.push(calc());
 
@@ -2288,30 +2037,23 @@ function rsi(period=14){
 }
 
 
-function atr(period=14){
+function ATR(period=14){
 
-  const c=state.candles;
-
-  if(c.length<period+2)
+  if(S.candles.length<period+2)
     return 0;
 
   const tr=[];
 
-  for(
-    let i=1;
-    i<c.length;
-    i++
-  ){
+  for(let i=1;i<S.candles.length;i++){
+
+    const a=S.candles[i];
+    const b=S.candles[i-1];
 
     tr.push(
       Math.max(
-        c[i].high-c[i].low,
-        Math.abs(
-          c[i].high-c[i-1].close
-        ),
-        Math.abs(
-          c[i].low-c[i-1].close
-        )
+        a.high-a.low,
+        Math.abs(a.high-b.close),
+        Math.abs(a.low-b.close)
       )
     );
 
@@ -2324,188 +2066,85 @@ function atr(period=14){
 }
 
 
-function vwap(){
-
-  const c=state.candles;
+function VWAP(){
 
   let pv=0;
-  let volume=0;
+  let vol=0;
 
-  for(const x of c){
+  for(const c of S.candles){
 
     const typical=
-      (x.high+x.low+x.close)/3;
+      (c.high+c.low+c.close)/3;
 
-    pv+=typical*x.volume;
-
-    volume+=x.volume;
+    pv+=typical*c.volume;
+    vol+=c.volume;
 
   }
 
-  return volume
-    ? pv/volume
-    : state.livePrice;
+  return vol?pv/vol:S.price;
 
 }
 
 
 /* =========================================================
-   MODEL FEATURES
+   MODEL
    ========================================================= */
 
-function modelFeatures(){
+function features(){
 
   const c=closes();
 
-  if(c.length<50)
+  if(c.length<60)
     return null;
 
-  const price=
-    c.at(-1);
+  const p=c[c.length-1];
 
-  const ema21=
-    ema(21).at(-1);
+  const e21=EMA(21).at(-1);
+  const e50=EMA(50).at(-1);
+  const r=RSI().at(-1);
 
-  const ema50=
-    ema(50).at(-1);
+  const r5=pct(p,c[c.length-6]);
+  const r15=pct(p,c[c.length-16]);
+  const r30=pct(p,c[c.length-31]);
 
-  const r=
-    rsi(14).at(-1);
+  const a=ATR();
 
-  const ret5=
-    pct(
-      price,
-      c.at(-6)
-    );
+  const volatility=
+    p?a/p*100:0;
 
-  const ret15=
-    pct(
-      price,
-      c.at(-16)
-    );
-
-  const ret30=
-    pct(
-      price,
-      c.at(-31)
-    );
-
-  const atrValue=
-    atr(14);
-
-  const volPct=
-    price
-      ? (atrValue/price)*100
-      : 0;
-
-  const volumeRecent=
+  const recent=
     mean(
-      state.candles
-        .slice(-10)
-        .map(x=>x.volume)
+      S.candles.slice(-10)
+      .map(x=>x.volume)
     );
 
-  const volumeLong=
+  const long=
     mean(
-      state.candles
-        .slice(-50)
-        .map(x=>x.volume)
+      S.candles.slice(-50)
+      .map(x=>x.volume)
     );
-
-  const volumeRatio=
-    volumeLong
-      ? volumeRecent/volumeLong
-      : 1;
-
 
   return {
-
-    price,
-
-    ema21,
-
-    ema50,
-
+    price:p,
+    ema21:e21,
+    ema50:e50,
     rsi:r,
-
-    ret5,
-
-    ret15,
-
-    ret30,
-
-    volatility:volPct,
-
-    volumeRatio,
-
-    vwap:vwap(),
-
-    btc:state.btcPrice,
-
-    funding:
-      state.funding||0,
-
-    oi:
-      state.openInterest||0
-
+    r5,
+    r15,
+    r30,
+    volatility,
+    volumeRatio:long?recent/long:1
   };
 
 }
 
 
-/* =========================================================
-   MODEL A — MOMENTUM
-   ========================================================= */
-
-function modelMomentum(f){
-
-  let score=0;
-
-  score+=clamp(
-    f.ret5/0.5,
-    -1,
-    1
-  )*.45;
-
-  score+=clamp(
-    f.ret15/1.0,
-    -1,
-    1
-  )*.35;
-
-  score+=clamp(
-    f.ret30/2.0,
-    -1,
-    1
-  )*.20;
-
-  return score;
-
-}
-
-
-/* =========================================================
-   MODEL B — TREND
-   ========================================================= */
-
-function modelTrend(f){
-
-  if(!f)
-    return 0;
-
-  const d1=
-    f.ema21
-      ? (f.price-f.ema21)/f.price
-      : 0;
-
-  const d2=
-    f.ema50
-      ? (f.price-f.ema50)/f.price
-      : 0;
+function momentum(f){
 
   return clamp(
-    d1*25+
-    d2*20,
+    .45*clamp(f.r5/0.5,-1,1)+
+    .35*clamp(f.r15/1,-1,1)+
+    .20*clamp(f.r30/2,-1,1),
     -1,
     1
   );
@@ -2513,787 +2152,178 @@ function modelTrend(f){
 }
 
 
-/* =========================================================
-   MODEL C — VOLATILITY
-   ========================================================= */
+function trend(f){
 
-function modelVolatility(f){
+  return clamp(
+    ((f.price-f.ema21)/f.price)*25+
+    ((f.price-f.ema50)/f.price)*20,
+    -1,
+    1
+  );
 
-  if(!f)
-    return 0;
+}
 
-  const r=
-    f.rsi;
 
-  if(r==null)
-    return 0;
+function volatilityModel(f){
 
-  let score=0;
+  let s=0;
 
-  if(r<30)
-    score+=0.45;
+  if(f.rsi<30)s+=.45;
+  if(f.rsi>70)s-=.45;
 
-  if(r>70)
-    score-=0.45;
-
-  score+=clamp(
+  s+=clamp(
     f.volumeRatio-1,
     -1,
     1
   )*.15;
 
-  return clamp(
-    score,
-    -1,
-    1
-  );
+  return clamp(s,-1,1);
 
 }
 
 
-/* =========================================================
-   MODEL D — REGIME
-   ========================================================= */
+function regime(f){
 
-function modelRegime(f){
+  let x=trend(f);
 
-  if(!f)
-    return 0;
+  if(f.volatility>3)
+    x*=.55;
 
-  const trend=
-    modelTrend(f);
+  if(f.volatility<.3)
+    x*=.75;
 
-  const volatility=
-    f.volatility;
-
-  let multiplier=1;
-
-  if(volatility>3)
-    multiplier=.55;
-
-  if(volatility<.3)
-    multiplier=.75;
-
-  return clamp(
-    trend*multiplier,
-    -1,
-    1
-  );
+  return clamp(x,-1,1);
 
 }
 
 
-/* =========================================================
-   ADAPTIVE ENSEMBLE
-   ========================================================= */
+function ensemble(f){
 
-function ensembleScore(f){
+  const a=momentum(f);
+  const b=trend(f);
+  const c=volatilityModel(f);
+  const d=regime(f);
 
-  if(!f)
-    return 0;
-
-  const a=
-    modelMomentum(f);
-
-  const b=
-    modelTrend(f);
-
-  const c=
-    modelVolatility(f);
-
-  const d=
-    modelRegime(f);
-
-
-  const weights=
-    state.models;
-
-
-  const total=
-    weights.momentum+
-    weights.trend+
-    weights.volatility+
-    weights.regime;
-
-
-  if(!total)
-    return 0;
-
-
-  return clamp(
-    (
-      a*weights.momentum+
-      b*weights.trend+
-      c*weights.volatility+
-      d*weights.regime
-    )/total,
-    -1,
-    1
-  );
-
-}
-
-
-/* =========================================================
-   PREDICTION
-   ========================================================= */
-
-function makePrediction(minutes){
-
-  const f=
-    modelFeatures();
-
-  if(!f)
-    return null;
-
-
-  const score=
-    ensembleScore(f);
-
-
-  const atrPct=
-    f.volatility;
-
-
-  /*
-    Horizon scaling.
-
-    Longer horizons allow the signal
-    to move further, but confidence is
-    reduced when volatility is extreme.
-  */
-
-  const horizonScale=
-    minutes<=15
-      ? .55
-      : minutes<=30
-        ? .75
-        : minutes<=60
-          ? 1
-          : 1.25;
-
-
-  let expectedPct=
-    score*
-    Math.max(
-      .08,
-      atrPct*.70
-    )*
-    horizonScale;
-
-
-  expectedPct=
-    clamp(
-      expectedPct,
-      -8,
-      8
-    );
-
-
-  /*
-    Multi-source confirmation.
-  */
-
-  let confirmation=0;
-
-  let confirmationCount=0;
-
-
-  if(state.btcPrice){
-
-    const eth=
-      f.price;
-
-    /*
-      BTC itself is only used as a
-      cross-market context signal.
-    */
-
-    if(eth>0)
-      confirmationCount++;
-
-  }
-
-
-  if(state.funding!=null){
-
-    if(
-      state.funding>0.0005
-    )
-      confirmation-=.04;
-
-    if(
-      state.funding<-0.0005
-    )
-      confirmation+=.04;
-
-    confirmationCount++;
-
-  }
-
-
-  const adjusted=
-    expectedPct+
-    confirmation;
-
-
-  const targetPrice=
-    f.price*
-    (1+adjusted/100);
-
-
-  /*
-    Confidence is NOT claimed as
-    probability of correctness.
-    It is a model confidence score.
-  */
-
-  const baseConfidence=
-    50+
-    Math.abs(score)*28;
-
-  const volatilityPenalty=
-    clamp(
-      atrPct*4,
-      0,
-      20
-    );
-
-  const confidence=
-    clamp(
-      baseConfidence-
-      volatilityPenalty+
-      confirmationCount*1.5,
-      35,
-      92
-    );
-
-
-  const now=
-    Date.now();
-
-  const target=
-    now+
-    minutes*60000;
-
-
-  const direction=
-    adjusted>0.05
-      ? "UP"
-      : adjusted<-0.05
-        ? "DOWN"
-        : "NEUTRAL";
-
+  const w=S.models;
 
   return {
-
-    id:
-      "P"+
-      now+
-      "_"+
-      minutes,
-
-    horizon:minutes,
-
-    createdAt:now,
-
-    targetTime:target,
-
-    basePrice:f.price,
-
-    predictedPrice:targetPrice,
-
-    expectedPct:adjusted,
-
-    direction,
-
-    confidence,
-
-    score,
-
-    features:f,
-
-    status:"ACTIVE",
-
-    actualPrice:null,
-
-    errorPct:null,
-
-    completedAt:null,
-
-    settlement:"pending"
-
-  };
-
-}
-
-
-/* =========================================================
-   CREATE / REPLACE PREDICTIONS
-   ========================================================= */
-
-function createPrediction(minutes){
-
-  const existing=
-    state.predictions.find(
-      p=>
-        p.status==="ACTIVE" &&
-        p.horizon===minutes
-    );
-
-  if(existing){
-
-    setStatus(
-      minutes+
-      "m prediction is already locked until "+
-      fmtTime(existing.targetTime)
-    );
-
-    return;
-
-  }
-
-
-  const prediction=
-    makePrediction(minutes);
-
-
-  if(!prediction){
-
-    setStatus(
-      "Not enough historical ETH data yet."
-    );
-
-    return;
-
-  }
-
-
-  state.predictions.push(
-    prediction
-  );
-
-
-  state.lastForecast=
-    Date.now();
-
-
-  save();
-
-  renderPredictions();
-
-  render();
-
-  setStatus(
-    minutes+
-    "m prediction generated immediately · target "+
-    fmtTime(prediction.targetTime)
-  );
-
-}
-
-
-/* =========================================================
-   SETTLEMENT
-   ========================================================= */
-
-function settlePredictions(){
-
-  if(!state.livePrice)
-    return;
-
-
-  let changed=false;
-
-
-  for(const p of state.predictions){
-
-    if(
-      p.status!=="ACTIVE"
-    )
-      continue;
-
-
-    if(
-      Date.now()<
-      p.targetTime
-    )
-      continue;
-
-
-    /*
-      We use the first live price available
-      at/after the target timestamp.
-
-      This avoids pretending that the browser
-      knew the future target price beforehand.
-    */
-
-    const actual=
-      state.livePrice;
-
-
-    if(!actual)
-      continue;
-
-
-    p.actualPrice=
-      actual;
-
-    p.errorPct=
-      pct(
-        actual,
-        p.predictedPrice
-      );
-
-    p.completedAt=
-      Date.now();
-
-    p.status=
-      "COMPLETED";
-
-    p.settlement=
-      "live-target-snapshot";
-
-
-    state.history.unshift(
-      p
-    );
-
-
-    changed=true;
-
-
-    if(state.learning){
-
-      learnFromPrediction(p);
-
+    score:
+      a*w.momentum+
+      b*w.trend+
+      c*w.volatility+
+      d*w.regime,
+
+    values:{
+      momentum:a,
+      trend:b,
+      volatility:c,
+      regime:d
     }
-
-  }
-
-
-  if(changed){
-
-    /*
-      Keep history manageable.
-    */
-
-    if(state.history.length>500)
-      state.history=
-        state.history.slice(0,500);
-
-
-    /*
-      Remove completed active predictions.
-    */
-
-    state.predictions=
-      state.predictions.filter(
-        p=>p.status==="ACTIVE"
-      );
-
-
-    save();
-
-    renderHistory();
-
-    renderPredictions();
-
-    updateDiagnostics();
-
-  }
-
-}
-
-
-/* =========================================================
-   LEARNING
-   ========================================================= */
-
-function learnFromPrediction(p){
-
-  if(
-    p.actualPrice==null ||
-    !p.predictedPrice
-  )
-    return;
-
-
-  const actualMove=
-    pct(
-      p.actualPrice,
-      p.basePrice
-    );
-
-
-  const predictedMove=
-    p.expectedPct;
-
-
-  const correct=
-    (
-      Math.sign(actualMove) ===
-      Math.sign(predictedMove)
-    );
-
-
-  const models=
-    [
-      "momentum",
-      "trend",
-      "volatility",
-      "regime"
-    ];
-
-
-  for(const m of models){
-
-    const score=
-      state.modelScores[m];
-
-
-    const adjustment=
-      correct
-        ? .025
-        : -.025;
-
-
-    state.modelScores[m]=
-      clamp(
-        score+adjustment,
-        .05,
-        .95
-      );
-
-  }
-
-
-  /*
-    Convert scores into normalized
-    ensemble weights.
-  */
-
-  const total=
-    models.reduce(
-      (s,m)=>
-        s+state.modelScores[m],
-      0
-    );
-
-
-  for(const m of models){
-
-    state.models[m]=
-      state.modelScores[m]/total;
-
-  }
-
-
-  state.learningUpdates++;
-
-}
-
-
-/* =========================================================
-   HISTORICAL BACKGROUND TRAINING
-   ========================================================= */
-
-function initializeModels(){
-
-  const f=
-    modelFeatures();
-
-  if(!f)
-    return;
-
-  /*
-    Start from equal weights.
-    Historical directional evidence
-    is then used to gently adapt them.
-  */
-
-  state.models={
-    momentum:.25,
-    trend:.25,
-    volatility:.25,
-    regime:.25
-  };
-
-  state.modelScores={
-    momentum:.5,
-    trend:.5,
-    volatility:.5,
-    regime:.5
   };
 
 }
 
 
-async function runBackgroundTraining(){
+/* =========================================================
+   HISTORICAL LEARNING
+   ========================================================= */
 
-  if(state.trainingBusy)
+async function trainHistorical(){
+
+  if(S.training||S.candles.length<100)
     return;
 
-  if(state.candles.length<100)
-    return;
+  S.training=true;
 
+  const original=S.candles;
 
-  state.trainingBusy=true;
+  const size=
+    S.mode==="deep"
+      ?700
+      :S.mode==="normal"
+        ?300
+        :100;
+
+  const start=
+    Math.max(
+      60,
+      original.length-size
+    );
+
+  const score={
+    momentum:0,
+    trend:0,
+    volatility:0,
+    regime:0
+  };
+
+  let n=0;
 
 
   try{
 
-    const mode=
-      state.engineMode;
-
-    const sampleCount=
-      mode==="deep"
-        ? 1000
-        : mode==="normal"
-          ? 500
-          : 150;
-
-
-    const candles=
-      state.candles;
-
-
-    /*
-      Lightweight walk-forward learning.
-
-      No future candle is used to create
-      the feature set for an earlier sample.
-    */
-
-    const start=
-      Math.max(
-        60,
-        candles.length-sampleCount
-      );
-
-
-    let scores={
-      momentum:0,
-      trend:0,
-      volatility:0,
-      regime:0
-    };
-
-    let counts=0;
-
-
     for(
       let i=start;
-      i<candles.length-2;
+      i<original.length-1;
       i++
     ){
 
-      /*
-        Temporarily use historical prefix.
-      */
+      S.candles=
+        original.slice(0,i+1);
 
-      const backup=
-        state.candles;
-
-
-      state.candles=
-        candles.slice(
-          0,
-          i+1
-        );
-
-
-      const f=
-        modelFeatures();
-
+      const f=features();
 
       if(f){
 
-        const models={
-          momentum:modelMomentum(f),
-          trend:modelTrend(f),
-          volatility:modelVolatility(f),
-          regime:modelRegime(f)
+        const actual=
+          original[i+1].close;
+
+        const move=
+          pct(actual,f.price);
+
+        const m={
+          momentum:momentum(f),
+          trend:trend(f),
+          volatility:volatilityModel(f),
+          regime:regime(f)
         };
 
 
-        /*
-          Evaluate direction on the next candle.
-        */
+        for(const k of Object.keys(m)){
 
-        const next=
-          candles[i+1].close;
-
-
-        const actual=
-          pct(
-            next,
-            f.price
-          );
-
-
-        for(const key of Object.keys(models)){
-
-          const prediction=
-            models[key];
-
-          const correct=
-            Math.sign(actual) ===
-            Math.sign(prediction);
-
-          scores[key]+=
-            correct?1:0;
+          if(
+            Math.sign(move)===
+            Math.sign(m[k])
+          )
+            score[k]++;
 
         }
 
-
-        counts++;
+        n++;
 
       }
 
 
-      state.candles=
-        backup;
-
-
-      /*
-        Yield periodically so Safari
-        remains responsive.
-      */
-
-      if(
-        i%20===0
-      ){
-
+      if(i%15===0)
         await new Promise(
-          resolve=>
-            setTimeout(
-              resolve,
-              0
-            )
+          r=>setTimeout(r,0)
         );
-
-      }
 
     }
 
 
-    if(counts){
-
-      const keys=
-        Object.keys(scores);
+    S.candles=original;
 
 
-      for(const key of keys){
+    if(n){
 
-        const accuracy=
-          scores[key]/counts;
+      const keys=Object.keys(score);
 
+      for(const k of keys){
 
-        state.modelScores[key]=
+        S.scores[k]=
           clamp(
-            accuracy,
+            score[k]/n,
             .05,
             .95
           );
@@ -3303,39 +2333,29 @@ async function runBackgroundTraining(){
 
       const total=
         keys.reduce(
-          (s,k)=>
-            s+state.modelScores[k],
+          (a,k)=>a+S.scores[k],
           0
         );
 
 
-      for(const key of keys){
+      for(const k of keys){
 
-        state.models[key]=
-          state.modelScores[key]/total;
+        S.models[k]=
+          S.scores[k]/total;
 
       }
 
     }
 
-
-    state.learningUpdates++;
-
-    updateModelUI();
-
-    updateDiagnostics();
-
+    updateModels();
 
   }catch(e){
 
-    console.warn(
-      "Training error",
-      e
-    );
+    S.candles=original;
 
   }finally{
 
-    state.trainingBusy=false;
+    S.training=false;
 
   }
 
@@ -3343,104 +2363,255 @@ async function runBackgroundTraining(){
 
 
 /* =========================================================
-   MODEL UI
+   PREDICTIONS
    ========================================================= */
 
-function updateModelUI(){
+function createPrediction(minutes){
 
-  const names=[
-    ["momentum","Momentum","mMomentum","bMomentum"],
-    ["trend","Trend","mTrend","bTrend"],
-    ["volatility","Volatility","mVolatility","bVolatility"],
-    ["regime","Regime","mRegime","bRegime"]
-  ];
+  const exists=
+    S.predictions.find(
+      p=>
+        p.horizon===minutes&&
+        p.status==="ACTIVE"
+    );
+
+  if(exists){
+
+    status(
+      minutes+
+      "m prediction already locked until "+
+      shortTime(exists.target)
+    );
+
+    return;
+
+  }
 
 
-  for(const [
-    key,
-    label,
-    textId,
-    barId
-  ] of names){
+  const f=features();
 
-    const score=
-      state.modelScores[key]*100;
+  if(!f){
 
-    $(textId).textContent=
-      score.toFixed(1)+"% historical score";
+    status(
+      "Need more historical candles before generating a prediction."
+    );
 
-    $(barId).style.width=
-      clamp(score,5,100)+"%";
+    return;
+
+  }
+
+
+  const e=ensemble(f);
+
+  const atrPct=f.volatility;
+
+  const scale=
+    minutes===15?.55:
+    minutes===30?.75:
+    minutes===60?1:
+    1.2;
+
+
+  let expected=
+    e.score*
+    Math.max(.08,atrPct*.7)*
+    scale;
+
+
+  expected=clamp(
+    expected,
+    -8,
+    8
+  );
+
+
+  /*
+    Secondary market context is used only
+    as a small adjustment. Missing sources
+    never stop prediction generation.
+  */
+
+  if(S.funding!=null){
+
+    if(S.funding>.0005)
+      expected-=.04;
+
+    if(S.funding<-.0005)
+      expected+=.04;
+
+  }
+
+
+  const targetPrice=
+    f.price*
+    (1+expected/100);
+
+
+  const confidence=
+    clamp(
+      50+
+      Math.abs(e.score)*28-
+      Math.min(
+        20,
+        atrPct*4
+      ),
+      35,
+      92
+    );
+
+
+  const now=Date.now();
+
+
+  const p={
+    id:"P"+now+"_"+minutes,
+    horizon:minutes,
+    created:now,
+    target:now+minutes*60000,
+    base:f.price,
+    predicted:targetPrice,
+    expected,
+    score:e.score,
+    confidence,
+    direction:
+      expected>.05
+        ?"UP"
+        :expected<-.05
+          ?"DOWN"
+          :"NEUTRAL",
+    status:"ACTIVE",
+    actual:null,
+    error:null,
+    completed:null
+  };
+
+
+  S.predictions.push(p);
+
+  save();
+
+  renderPredictions();
+
+  draw();
+
+  status(
+    minutes+
+    "m forecast created immediately · target "+
+    timeText(p.target)
+  );
+
+}
+
+
+/* =========================================================
+   SETTLEMENT
+   ========================================================= */
+
+function settle(){
+
+  if(!S.price)return;
+
+  let changed=false;
+
+
+  for(const p of S.predictions){
+
+    if(p.status!=="ACTIVE")
+      continue;
+
+    if(Date.now()<p.target)
+      continue;
+
+
+    p.actual=S.price;
+
+    p.error=
+      pct(
+        p.actual,
+        p.predicted
+      );
+
+    p.completed=Date.now();
+
+    p.status="COMPLETED";
+
+
+    S.history.unshift(p);
+
+    learn(p);
+
+    changed=true;
+
+  }
+
+
+  if(changed){
+
+    S.predictions=
+      S.predictions.filter(
+        p=>p.status==="ACTIVE"
+      );
+
+
+    if(S.history.length>500)
+      S.history=
+        S.history.slice(0,500);
+
+
+    save();
+
+    renderPredictions();
+
+    renderHistory();
+
+    updateModels();
 
   }
 
 }
 
 
-/* =========================================================
-   DIAGNOSTICS
-   ========================================================= */
+function learn(p){
 
-function updateDiagnostics(){
+  if(!S.learning)
+    return;
 
-  $("diagSamples").textContent=
-    state.candles.length.toLocaleString();
-
-  $("diagCompleted").textContent=
-    state.history.length;
-
-
-  if(!state.history.length){
-
-    $("diagAccuracy").textContent=
-      "—";
-
-  }else{
-
-    let correct=0;
-
-    for(const p of state.history){
-
-      const actualMove=
-        pct(
-          p.actualPrice,
-          p.basePrice
-        );
-
-      if(
-        Math.sign(actualMove)===
-        Math.sign(p.expectedPct)
-      )
-        correct++;
-
-    }
+  const actualMove=
+    pct(
+      p.actual,
+      p.base
+    );
 
 
-    const accuracy=
-      correct/state.history.length*100;
+  const correct=
+    Math.sign(actualMove)===
+    Math.sign(p.expected);
 
 
-    $("diagAccuracy").textContent=
-      accuracy.toFixed(1)+"%";
+  const keys=Object.keys(S.scores);
+
+
+  for(const k of keys){
+
+    S.scores[k]=clamp(
+      S.scores[k]+
+      (correct?.02:-.02),
+      .05,
+      .95
+    );
 
   }
 
 
-  let status="Learning";
+  const total=
+    keys.reduce(
+      (a,k)=>a+S.scores[k],
+      0
+    );
 
 
-  if(state.history.length<20)
-    status="Insufficient history";
-  else if(state.history.length<50)
-    status="Early evaluation";
-  else if(state.history.length<100)
-    status="Developing";
-  else
-    status="Meaningful evaluation";
-
-
-  $("diagStatus").textContent=
-    status;
+  for(const k of keys)
+    S.models[k]=S.scores[k]/total;
 
 }
 
@@ -3449,80 +2620,47 @@ function updateDiagnostics(){
    PRICE UI
    ========================================================= */
 
-function updatePriceUI(){
+function updatePrice(){
 
-  const price=
-    state.livePrice;
+  if(!S.price)return;
 
-  if(!price)
-    return;
-
-
-  $("livePrice").textContent=
-    fmtPrice(price);
+  $("price").textContent=
+    fmt(S.price);
 
 
-  let change=
-    state.priceChange;
+  let c=S.change;
+
+  if(!c&&S.previousPrice)
+    c=pct(S.price,S.previousPrice);
 
 
-  if(
-    !isFinite(change) ||
-    change===0
-  ){
-
-    if(state.previousPrice)
-      change=
-        pct(
-          price,
-          state.previousPrice
-        );
-
-  }
+  $("change").textContent=
+    (c>=0?"+":"")+
+    c.toFixed(2)+
+    "% · realtime";
 
 
-  $("priceChange").textContent=
-    fmtPct(change)+
-    " · realtime";
-
-
-  $("priceChange").className=
-    "priceChange "+
+  $("change").className=
+    "change "+
     (
-      change>0
-        ? "up"
-        : change<0
-          ? "down"
-          : "neutral"
+      c>0
+        ?"up"
+        :c<0
+          ?"down"
+          :"neutral"
     );
 
-
-  $("currentPriceTag").textContent=
-    fmtPrice(price);
-
 }
 
 
 /* =========================================================
-   STATUS
+   CHART GEOMETRY
    ========================================================= */
 
-function setStatus(message){
+function resize(){
 
-  $("status").textContent=
-    message;
-
-}
-
-
-/* =========================================================
-   CANVAS RESIZE
-   ========================================================= */
-
-function resizeCanvas(){
-
-  const rect=
-    canvasWrap.getBoundingClientRect();
+  const r=
+    viewport.getBoundingClientRect();
 
   const dpr=
     Math.min(
@@ -3532,22 +2670,16 @@ function resizeCanvas(){
 
 
   canvas.width=
-    Math.round(
-      rect.width*dpr
-    );
+    Math.round(r.width*dpr);
 
   canvas.height=
-    Math.round(
-      rect.height*dpr
-    );
-
+    Math.round(r.height*dpr);
 
   canvas.style.width=
-    rect.width+"px";
+    r.width+"px";
 
   canvas.style.height=
-    rect.height+"px";
-
+    r.height+"px";
 
   ctx.setTransform(
     dpr,
@@ -3558,152 +2690,85 @@ function resizeCanvas(){
     0
   );
 
-
-  render();
+  draw();
 
 }
 
 
-/* =========================================================
-   VISIBLE CANDLE WINDOW
-   ========================================================= */
+/*
+  IMPORTANT:
+  The chart now uses an explicit visible
+  candle index window. This fixes the
+  "candles stuck on the left" problem.
+*/
 
-function visibleCandles(){
+function windowData(){
 
-  const data=
-    state.candles;
+  const all=S.candles;
 
-  if(!data.length)
-    return [];
+  if(all.length<2)
+    return {
+      data:[],
+      start:0
+    };
 
 
-  const maxVisible=
-    state.engineMode==="deep"
-      ? 900
-      : 650;
+  const base=
+    Math.min(
+      all.length,
+      180
+    );
 
 
   const count=
-    Math.max(
-      40,
-      Math.round(
-        maxVisible/state.zoom
-      )
-    );
-
-
-  const end=
-    data.length;
-
-
-  let start=
-    Math.max(
-      0,
-      end-count
-    );
-
-
-  const shift=
-    Math.round(
-      state.pan*
-      count*.7
-    );
-
-
-  start=
     clamp(
-      start-shift,
-      0,
-      Math.max(
-        0,
-        data.length-count
-      )
+      Math.round(base/S.zoom),
+      25,
+      all.length
     );
 
 
-  return data.slice(
-    start,
-    start+count
-  );
-
-}
-
-
-/* =========================================================
-   CHART MATH
-   ========================================================= */
-
-function chartBounds(data){
-
-  let min=
-    Math.min(
-      ...data.map(x=>x.low)
-    );
-
-  let max=
+  const maxStart=
     Math.max(
-      ...data.map(x=>x.high)
+      0,
+      all.length-count
     );
 
 
-  if(state.showForecast){
+  /*
+    offset is measured in candles.
+    Positive offset moves backwards.
+  */
 
-    for(const p of state.predictions){
-
-      if(p.status==="ACTIVE"){
-
-        min=
-          Math.min(
-            min,
-            p.predictedPrice
-          );
-
-        max=
-          Math.max(
-            max,
-            p.predictedPrice
-          );
-
-      }
-
-    }
-
-  }
-
-
-  const pad=
-    (max-min)*.08||1;
+  const start=
+    clamp(
+      Math.round(
+        maxStart/2+
+        S.offset*all.length
+      ),
+      0,
+      maxStart
+    );
 
 
   return {
-    min:min-pad,
-    max:max+pad
+    data:all.slice(start,start+count),
+    start
   };
 
 }
 
 
 /* =========================================================
-   CHART DRAWING
+   DRAW
    ========================================================= */
 
-function render(){
+function draw(){
 
-  const rect=
-    canvasWrap.getBoundingClientRect();
+  const W=viewport.clientWidth;
+  const H=viewport.clientHeight;
 
-  const W=
-    rect.width;
-
-  const H=
-    rect.height;
-
-
-  if(
-    !W ||
-    !H
-  )
-    return;
+  if(!W||!H)return;
 
 
   ctx.clearRect(
@@ -3714,20 +2779,17 @@ function render(){
   );
 
 
-  const data=
-    visibleCandles();
+  const wd=windowData();
+  const data=wd.data;
 
 
   if(data.length<2){
 
-    ctx.fillStyle=
-      "#617589";
-
-    ctx.font=
-      "12px -apple-system";
+    ctx.fillStyle="#71869a";
+    ctx.font="12px -apple-system";
 
     ctx.fillText(
-      "Waiting for market data...",
+      "Waiting for ETH market data...",
       20,
       30
     );
@@ -3737,251 +2799,252 @@ function render(){
   }
 
 
+  const priceAxis=72;
+  const timeAxis=25;
   const left=8;
-  const right=68;
-  const top=15;
-  const bottom=
-    state.showRSI
-      ? 72
-      : 34;
+  const right=W-priceAxis;
+  const top=12;
+  const bottom=H-timeAxis;
+
+  const chartWidth=right-left;
+  const chartHeight=bottom-top;
 
 
-  const chartW=
-    W-left-right;
-
-  const chartH=
-    H-top-bottom;
+  let min=Math.min(...data.map(x=>x.low));
+  let max=Math.max(...data.map(x=>x.high));
 
 
-  const bounds=
-    chartBounds(data);
+  for(const p of S.predictions){
+
+    if(p.status==="ACTIVE"){
+
+      min=Math.min(min,p.predicted);
+      max=Math.max(max,p.predicted);
+
+    }
+
+  }
 
 
-  const range=
-    bounds.max-bounds.min;
+  const pad=(max-min)*.08||1;
+
+  min-=pad;
+  max+=pad;
 
 
-  const y=
-    price=>{
+  const priceY=price=>{
 
-      return top+
-        (
-          bounds.max-price
-        )/
-        range*
-        chartH;
+    return top+
+      (max-price)/(max-min)*
+      chartHeight;
 
-    };
+  };
 
 
-  const x=
-    i=>{
+  const xAt=i=>{
 
-      return left+
-        i/
-        (data.length-1)*
-        chartW;
+    return left+
+      i/(data.length-1)*
+      chartWidth;
 
-    };
+  };
 
 
   /* GRID */
 
-  ctx.strokeStyle=
-    "rgba(255,255,255,.055)";
-
+  ctx.strokeStyle="rgba(255,255,255,.055)";
   ctx.lineWidth=1;
 
 
-  for(let i=0;i<7;i++){
+  for(let i=0;i<=6;i++){
 
-    const yy=
+    const y=
       top+
-      chartH*i/6;
+      i/6*
+      chartHeight;
 
     ctx.beginPath();
-
-    ctx.moveTo(
-      left,
-      yy
-    );
-
-    ctx.lineTo(
-      W-right,
-      yy
-    );
-
+    ctx.moveTo(left,y);
+    ctx.lineTo(right,y);
     ctx.stroke();
 
   }
 
 
-  for(let i=0;i<8;i++){
+  for(let i=0;i<=7;i++){
 
-    const xx=
+    const x=
       left+
-      chartW*i/7;
+      i/7*
+      chartWidth;
 
     ctx.beginPath();
-
-    ctx.moveTo(
-      xx,
-      top
-    );
-
-    ctx.lineTo(
-      xx,
-      top+chartH
-    );
-
+    ctx.moveTo(x,top);
+    ctx.lineTo(x,bottom);
     ctx.stroke();
 
   }
 
 
-  /* PRICE SCALE */
+  /* PRICE AXIS */
 
-  ctx.fillStyle=
-    "#73879a";
-
-  ctx.font=
-    "9px -apple-system";
-
-  ctx.textAlign=
-    "left";
+  ctx.fillStyle="#8193a5";
+  ctx.font="9px -apple-system";
+  ctx.textAlign="left";
 
 
-  for(let i=0;i<7;i++){
+  for(let i=0;i<=6;i++){
 
     const price=
-      bounds.max-
-      range*i/6;
+      max-
+      i/6*
+      (max-min);
 
-    const yy=
+    const y=
       top+
-      chartH*i/6;
+      i/6*
+      chartHeight;
 
     ctx.fillText(
-      fmtPrice(price),
-      W-right+6,
-      yy+3
+      fmt(price),
+      right+6,
+      y+3
     );
+
+  }
+
+
+  /* VOLUME */
+
+  if(S.volume){
+
+    const maxVol=
+      Math.max(
+        ...data.map(x=>x.volume)
+      );
+
+
+    const vTop=
+      top+
+      chartHeight*.78;
+
+    const vHeight=
+      chartHeight*.18;
+
+
+    const barWidth=
+      Math.max(
+        1,
+        chartWidth/data.length*.65
+      );
+
+
+    data.forEach((c,i)=>{
+
+      const h=
+        maxVol
+          ? c.volume/maxVol*vHeight
+          : 0;
+
+      ctx.fillStyle=
+        c.close>=c.open
+          ?"rgba(22,217,139,.20)"
+          :"rgba(255,83,104,.20)";
+
+      ctx.fillRect(
+        xAt(i)-barWidth/2,
+        vTop+vHeight-h,
+        barWidth,
+        h
+      );
+
+    });
 
   }
 
 
   /* CANDLES */
 
-  if(state.chartType==="candle"){
+  if(S.chartType==="candle"){
 
     const spacing=
-      chartW/
-      Math.max(
-        1,
-        data.length-1
-      );
+      chartWidth/
+      data.length;
 
-    const bodyW=
+    const body=
       Math.max(
         1,
         Math.min(
-          12,
+          13,
           spacing*.68
         )
       );
 
 
-    data.forEach(
-      (c,i)=>{
+    data.forEach((c,i)=>{
 
-        const xx=x(i);
+      const x=xAt(i);
 
-        const yo=y(c.open);
-        const yc=y(c.close);
-        const yh=y(c.high);
-        const yl=y(c.low);
+      const yo=priceY(c.open);
+      const yc=priceY(c.close);
+      const yh=priceY(c.high);
+      const yl=priceY(c.low);
 
-        const rising=
-          c.close>=c.open;
-
-
-        ctx.strokeStyle=
-          rising
-            ? "#16d98b"
-            : "#ff5268";
-
-        ctx.lineWidth=1;
-
-        ctx.beginPath();
-
-        ctx.moveTo(
-          xx,
-          yh
-        );
-
-        ctx.lineTo(
-          xx,
-          yl
-        );
-
-        ctx.stroke();
+      const green=
+        c.close>=c.open;
 
 
-        ctx.fillStyle=
-          rising
-            ? "#16d98b"
-            : "#ff5268";
+      ctx.strokeStyle=
+        green
+          ?"#16d98b"
+          :"#ff5368";
+
+      ctx.lineWidth=1;
+
+      ctx.beginPath();
+      ctx.moveTo(x,yh);
+      ctx.lineTo(x,yl);
+      ctx.stroke();
 
 
-        const topBody=
-          Math.min(
-            yo,
-            yc
-          );
-
-        const height=
-          Math.max(
-            1,
-            Math.abs(
-              yc-yo
-            )
-          );
+      ctx.fillStyle=
+        green
+          ?"#16d98b"
+          :"#ff5368";
 
 
-        ctx.fillRect(
-          xx-bodyW/2,
-          topBody,
-          bodyW,
-          height
-        );
+      ctx.fillRect(
+        x-body/2,
+        Math.min(yo,yc),
+        body,
+        Math.max(
+          1,
+          Math.abs(yc-yo)
+        )
+      );
 
-      }
-    );
+    });
 
   }else{
 
     /* LINE */
 
-    ctx.strokeStyle=
-      "#37d7ff";
-
-    ctx.lineWidth=1.5;
+    ctx.strokeStyle="#40d9ff";
+    ctx.lineWidth=1.6;
 
     ctx.beginPath();
 
-    data.forEach(
-      (c,i)=>{
+    data.forEach((c,i)=>{
 
-        const xx=x(i);
-        const yy=y(c.close);
+      const x=xAt(i);
+      const y=priceY(c.close);
 
-        if(i===0)
-          ctx.moveTo(xx,yy);
-        else
-          ctx.lineTo(xx,yy);
+      if(i===0)
+        ctx.moveTo(x,y);
+      else
+        ctx.lineTo(x,y);
 
-      }
-    );
+    });
 
     ctx.stroke();
 
@@ -3990,370 +3053,114 @@ function render(){
 
   /* EMA */
 
-  if(state.showEMA){
+  if(S.ema){
 
-    const fullEma21=
-      ema(21);
+    const e21=EMA(21);
+    const e50=EMA(50);
 
-    const firstTime=
-      data[0].time;
-
-
-    ctx.strokeStyle=
-      "#ffd166";
-
-    ctx.lineWidth=1;
-
-
-    let started=false;
-
-
-    state.candles.forEach(
-      (c,i)=>{
-
-        if(
-          c.time<
-          firstTime
-        )
-          return;
-
-
-        const local=
-          data.findIndex(
-            d=>d.time===c.time
-          );
-
-
-        if(local<0)
-          return;
-
-
-        const value=
-          fullEma21[i];
-
-
-        if(!isFinite(value))
-          return;
-
-
-        const xx=
-          x(local);
-
-        const yy=
-          y(value);
-
-
-        if(!started){
-
-          ctx.beginPath();
-
-          ctx.moveTo(
-            xx,
-            yy
-          );
-
-          started=true;
-
-        }else{
-
-          ctx.lineTo(
-            xx,
-            yy
-          );
-
-        }
-
-      }
+    drawIndicator(
+      data,
+      wd.start,
+      e21,
+      "#ffd166",
+      xAt,
+      priceY
     );
 
-
-    if(started)
-      ctx.stroke();
-
-
-    /* EMA 50 */
-
-    const fullEma50=
-      ema(50);
-
-    ctx.strokeStyle=
-      "#a879ff";
-
-
-    started=false;
-
-
-    state.candles.forEach(
-      (c,i)=>{
-
-        if(c.time<firstTime)
-          return;
-
-
-        const local=
-          data.findIndex(
-            d=>d.time===c.time
-          );
-
-
-        if(local<0)
-          return;
-
-
-        const value=
-          fullEma50[i];
-
-
-        if(!isFinite(value))
-          return;
-
-
-        const xx=x(local);
-        const yy=y(value);
-
-
-        if(!started){
-
-          ctx.beginPath();
-
-          ctx.moveTo(
-            xx,
-            yy
-          );
-
-          started=true;
-
-        }else{
-
-          ctx.lineTo(
-            xx,
-            yy
-          );
-
-        }
-
-      }
+    drawIndicator(
+      data,
+      wd.start,
+      e50,
+      "#a878ff",
+      xAt,
+      priceY
     );
-
-
-    if(started)
-      ctx.stroke();
 
   }
 
 
   /* VWAP */
 
-  if(state.showVWAP){
+  if(S.vwap){
 
-    const vw=
-      vwap();
+    const vw=VWAP();
+    const y=priceY(vw);
 
-    const yy=
-      y(vw);
+    ctx.strokeStyle=
+      "rgba(64,217,255,.75)";
 
+    ctx.setLineDash([5,4]);
 
-    if(
-      yy>=top &&
-      yy<=top+chartH
-    ){
+    ctx.beginPath();
+    ctx.moveTo(left,y);
+    ctx.lineTo(right,y);
+    ctx.stroke();
 
-      ctx.strokeStyle=
-        "rgba(55,215,255,.75)";
-
-      ctx.setLineDash(
-        [5,4]
-      );
-
-      ctx.beginPath();
-
-      ctx.moveTo(
-        left,
-        yy
-      );
-
-      ctx.lineTo(
-        W-right,
-        yy
-      );
-
-      ctx.stroke();
-
-      ctx.setLineDash([]);
-
-    }
-
-  }
-
-
-  /* VOLUME */
-
-  if(state.showVolume){
-
-    const maxVol=
-      Math.max(
-        ...data.map(
-          x=>x.volume
-        )
-      );
-
-
-    const volumeTop=
-      top+chartH*.76;
-
-    const volumeHeight=
-      chartH*.22;
-
-
-    data.forEach(
-      (c,i)=>{
-
-        const xx=x(i);
-
-        const vh=
-          maxVol
-            ? c.volume/maxVol*
-              volumeHeight
-            : 0;
-
-
-        ctx.fillStyle=
-          c.close>=c.open
-            ? "rgba(22,217,139,.22)"
-            : "rgba(255,82,104,.22)";
-
-
-        const spacing=
-          chartW/
-          Math.max(
-            1,
-            data.length-1
-          );
-
-
-        ctx.fillRect(
-          xx-Math.max(1,spacing*.25),
-          volumeTop+volumeHeight-vh,
-          Math.max(1,spacing*.5),
-          vh
-        );
-
-      }
-    );
+    ctx.setLineDash([]);
 
   }
 
 
   /* RSI */
 
-  if(state.showRSI){
+  if(S.rsi){
 
-    const r=
-      rsi(14);
-
-
-    const rTop=
-      H-55;
-
-    const rHeight=
-      35;
-
+    const values=RSI();
+    const rTop=H-48;
+    const rHeight=28;
 
     ctx.strokeStyle=
       "rgba(255,255,255,.08)";
 
     ctx.beginPath();
-
-    ctx.moveTo(
-      left,
-      rTop
-    );
-
-    ctx.lineTo(
-      W-right,
-      rTop
-    );
-
+    ctx.moveTo(left,rTop);
+    ctx.lineTo(right,rTop);
     ctx.stroke();
 
 
-    ctx.strokeStyle=
-      "#a879ff";
-
+    ctx.strokeStyle="#a878ff";
     ctx.lineWidth=1;
 
 
     let started=false;
 
 
-    state.candles.forEach(
-      (c,i)=>{
+    data.forEach((c,i)=>{
 
-        if(
-          c.time<
-          data[0].time
-        )
-          return;
+      const global=wd.start+i;
+      const v=values[global];
 
+      if(!isFinite(v))
+        return;
 
-        const local=
-          data.findIndex(
-            d=>d.time===c.time
-          );
+      const x=xAt(i);
 
-
-        if(local<0)
-          return;
+      const y=
+        rTop+
+        (100-v)/100*rHeight;
 
 
-        const rv=
-          r[i];
+      if(!started){
 
+        ctx.beginPath();
+        ctx.moveTo(x,y);
+        started=true;
 
-        if(!isFinite(rv))
-          return;
+      }else{
 
-
-        const xx=x(local);
-
-        const yy=
-          rTop+
-          (100-rv)/100*rHeight;
-
-
-        if(!started){
-
-          ctx.beginPath();
-
-          ctx.moveTo(
-            xx,
-            yy
-          );
-
-          started=true;
-
-        }else{
-
-          ctx.lineTo(
-            xx,
-            yy
-          );
-
-        }
+        ctx.lineTo(x,y);
 
       }
-    );
+
+    });
 
 
     if(started)
       ctx.stroke();
 
 
-    ctx.fillStyle=
-      "#687c8f";
-
-    ctx.font=
-      "8px -apple-system";
+    ctx.fillStyle="#6e8295";
+    ctx.font="8px -apple-system";
 
     ctx.fillText(
       "RSI",
@@ -4361,35 +3168,56 @@ function render(){
       rTop-4
     );
 
-    ctx.fillText(
-      "70",
-      W-right+6,
-      rTop+12
-    );
+  }
 
-    ctx.fillText(
-      "30",
-      W-right+6,
-      rTop+30
-    );
+
+  /* CURRENT PRICE */
+
+  if(S.price){
+
+    const y=priceY(S.price);
+
+    ctx.strokeStyle=
+      "rgba(64,217,255,.65)";
+
+    ctx.setLineDash([3,3]);
+
+    ctx.beginPath();
+    ctx.moveTo(left,y);
+    ctx.lineTo(right,y);
+    ctx.stroke();
+
+    ctx.setLineDash([]);
+
+    $("currentLabel").style.top=
+      y+"px";
+
+    $("currentLabel").textContent=
+      fmt(S.price);
 
   }
 
 
+  /* FORECAST */
+
+  drawForecast(
+    data,
+    left,
+    right,
+    top,
+    bottom,
+    priceY
+  );
+
+
   /* TIME AXIS */
 
-  ctx.fillStyle=
-    "#708396";
-
-  ctx.font=
-    "8px -apple-system";
-
-  ctx.textAlign=
-    "center";
+  ctx.fillStyle="#728599";
+  ctx.font="8px -apple-system";
+  ctx.textAlign="center";
 
 
   const labels=6;
-
 
   for(let i=0;i<labels;i++){
 
@@ -4398,29 +3226,23 @@ function render(){
         i*(data.length-1)/(labels-1)
       );
 
+    const c=data[idx];
 
-    const c=
-      data[idx];
+    const x=xAt(idx);
 
-
-    const xx=
-      x(idx);
+    const duration=
+      data[data.length-1].time-
+      data[0].time;
 
 
     let text;
 
 
-    const duration=
-      data.at(-1).time-
-      data[0].time;
-
-
     if(duration>=365*86400000){
 
       text=
-        new Date(
-          c.time
-        ).toLocaleDateString(
+        new Date(c.time)
+        .toLocaleDateString(
           undefined,
           {
             month:"short",
@@ -4431,9 +3253,8 @@ function render(){
     }else if(duration>=7*86400000){
 
       text=
-        new Date(
-          c.time
-        ).toLocaleDateString(
+        new Date(c.time)
+        .toLocaleDateString(
           undefined,
           {
             day:"2-digit",
@@ -4444,9 +3265,8 @@ function render(){
     }else{
 
       text=
-        new Date(
-          c.time
-        ).toLocaleTimeString(
+        new Date(c.time)
+        .toLocaleTimeString(
           undefined,
           {
             hour:"2-digit",
@@ -4459,404 +3279,338 @@ function render(){
 
     ctx.fillText(
       text,
-      xx,
+      x,
       H-8
     );
 
   }
 
 
-  /* CURRENT PRICE */
-
-  const current=
-    state.livePrice;
-
-
-  if(current){
-
-    const yy=y(current);
-
-
-    ctx.strokeStyle=
-      "rgba(55,215,255,.5)";
-
-    ctx.setLineDash(
-      [3,3]
-    );
-
-    ctx.beginPath();
-
-    ctx.moveTo(
-      left,
-      yy
-    );
-
-    ctx.lineTo(
-      W-right,
-      yy
-    );
-
-    ctx.stroke();
-
-    ctx.setLineDash([]);
-
-
-    $("currentPriceTag").style.top=
-      yy+"px";
-
-  }
-
-
-  /* FORECAST */
-
-  drawForecast(
-    data,
-    x,
-    y,
-    left,
-    W-right,
-    top,
-    chartH
-  );
-
-
   $("chartMeta").textContent=
-    state.candles.length.toLocaleString()+
-    " candles · "+
-    state.effectiveInterval+
+    data.length+
+    " visible · "+
+    S.candles.length+
+    " total · "+
+    S.effective+
     " · "+
-    state.range;
+    S.range;
+
+}
+
+
+function drawIndicator(
+  data,
+  start,
+  values,
+  color,
+  xAt,
+  priceY
+){
+
+  ctx.strokeStyle=color;
+  ctx.lineWidth=1;
+
+  let started=false;
+
+  data.forEach((c,i)=>{
+
+    const v=values[start+i];
+
+    if(!isFinite(v))
+      return;
+
+    const x=xAt(i);
+    const y=priceY(v);
+
+
+    if(!started){
+
+      ctx.beginPath();
+      ctx.moveTo(x,y);
+      started=true;
+
+    }else{
+
+      ctx.lineTo(x,y);
+
+    }
+
+  });
+
+
+  if(started)
+    ctx.stroke();
 
 }
 
 
 /* =========================================================
-   FORECAST DRAW
+   FORECAST
    ========================================================= */
 
 function drawForecast(
   data,
-  x,
-  y,
   left,
   right,
   top,
-  chartH
+  bottom,
+  priceY
 ){
 
-  const tag=
-    $("forecastTag");
+  const label=$("forecastLabel");
 
 
   if(
-    !state.showForecast ||
-    !state.predictions.length
+    !S.forecast||
+    !S.predictions.length
   ){
 
-    tag.style.display=
-      "none";
+    label.style.display="none";
 
     return;
 
   }
 
 
-  const p=
-    state.predictions[0];
-
+  const p=S.predictions[0];
 
   if(!p){
 
-    tag.style.display=
-      "none";
+    label.style.display="none";
 
     return;
 
   }
 
 
-  const now=
-    Date.now();
+  const first=data[0].time;
+  const last=data[data.length-1].time;
 
+  const target=p.target;
+
+
+  /*
+    Keep future prediction visible to
+    the right of the latest candle.
+  */
 
   const span=
-    data.at(-1).time-
-    data[0].time;
-
-
-  const px=
-    clamp(
-      (
-        p.targetTime-
-        data[0].time
-      )/
-      Math.max(
-        span,
-        intervalMs(state.effectiveInterval)
-      ),
-      0,
-      1.5
+    Math.max(
+      last-first,
+      intervalMS(S.effective)*40
     );
 
 
-  const chartWidth=
-    right-left;
+  const futureSpan=
+    Math.max(
+      span*.18,
+      target-last
+    );
 
 
-  const xx=
+  const total=
+    span+futureSpan;
+
+
+  const ratio=
+    (target-first)/total;
+
+
+  const x=
     left+
-    px*
-    chartWidth;
+    clamp(
+      ratio,
+      0,
+      1.25
+    )*
+    (right-left);
 
 
-  const yy=
-    y(p.predictedPrice);
+  const y=
+    priceY(p.predicted);
 
 
-  ctx.strokeStyle=
-    "#a879ff";
-
-  ctx.setLineDash(
-    [6,5]
-  );
+  ctx.strokeStyle="#a878ff";
+  ctx.setLineDash([6,5]);
+  ctx.lineWidth=1;
 
   ctx.beginPath();
-
-  ctx.moveTo(
-    xx,
-    top
-  );
-
-  ctx.lineTo(
-    xx,
-    top+chartH
-  );
-
+  ctx.moveTo(x,top);
+  ctx.lineTo(x,bottom);
   ctx.stroke();
 
   ctx.setLineDash([]);
 
 
-  ctx.fillStyle=
-    "rgba(168,121,255,.12)";
+  label.style.display="block";
 
-  ctx.fillRect(
-    xx,
-    top,
-    Math.max(
-      1,
-      right-xx
-    ),
-    chartH
-  );
-
-
-  tag.style.display=
-    "block";
-
-  tag.style.left=
+  label.style.left=
     clamp(
-      xx,
-      80,
-      right-30
+      x,
+      90,
+      right-20
     )+"px";
 
-  tag.style.top=
+  label.style.top=
     clamp(
-      yy,
-      top+20,
-      top+chartH-20
+      y,
+      top+30,
+      bottom-30
     )+"px";
 
-
-  tag.textContent=
-    fmtShortTime(
-      p.targetTime
-    )+
+  label.textContent=
+    p.horizon+
+    "m · "+
+    shortTime(p.target)+
     " · "+
-    fmtPrice(
-      p.predictedPrice
-    );
+    fmt(p.predicted);
 
 }
 
 
 /* =========================================================
-   PREDICTION UI
+   PREDICTION RENDER
    ========================================================= */
+
+function predictionHTML(p){
+
+  const remaining=
+    Math.max(
+      0,
+      p.target-Date.now()
+    );
+
+  const minutes=
+    Math.floor(
+      remaining/60000
+    );
+
+  const seconds=
+    Math.floor(
+      remaining%60000/1000
+    );
+
+
+  const countdown=
+    minutes+
+    "m "+
+    String(seconds).padStart(2,"0")+
+    "s";
+
+
+  return `
+
+  <article class="prediction">
+
+    <div class="predHead">
+
+      <div class="predTitle">
+        ${p.horizon} MIN
+      </div>
+
+      <div class="badge">
+        LOCKED
+      </div>
+
+    </div>
+
+
+    <div class="predGrid">
+
+      <div class="metric">
+        <div class="metricLabel">Predicted price</div>
+        <div class="metricValue">
+          ${fmt(p.predicted)}
+        </div>
+      </div>
+
+      <div class="metric">
+        <div class="metricLabel">Direction</div>
+        <div class="metricValue ${
+          p.direction==="UP"
+            ?"up"
+            :p.direction==="DOWN"
+              ?"down"
+              :"neutral"
+        }">
+          ${p.direction}
+        </div>
+      </div>
+
+      <div class="metric">
+        <div class="metricLabel">Target time</div>
+        <div class="metricValue" style="font-size:10px">
+          ${timeText(p.target)}
+        </div>
+      </div>
+
+      <div class="metric">
+        <div class="metricLabel">Model confidence</div>
+        <div class="metricValue">
+          ${p.confidence.toFixed(1)}%
+        </div>
+      </div>
+
+    </div>
+
+
+    <div class="predFoot">
+
+      <span>
+        Base ${fmt(p.base)}
+      </span>
+
+      <span>
+        ${countdown}
+      </span>
+
+    </div>
+
+  </article>
+
+  `;
+
+}
+
 
 function renderPredictions(){
 
-  const box=
-    $("predictionGrid");
-
-
-  if(!state.predictions.length){
-
-    box.innerHTML=
-      `
-      <div class="prediction">
-        <div class="empty">
-          No active predictions.
-          Tap +15 MIN or +30 MIN.
+  const html=
+    S.predictions.length
+      ?S.predictions
+        .map(predictionHTML)
+        .join("")
+      :`
+        <div class="panel">
+          <div class="empty">
+            No active predictions.<br>
+            Create a 15m or 30m forecast.
+          </div>
         </div>
-      </div>
       `;
 
-    return;
 
-  }
-
-
-  box.innerHTML=
-    state.predictions
-    .map(p=>{
-
-      const remaining=
-        Math.max(
-          0,
-          p.targetTime-Date.now()
-        );
-
-
-      const mins=
-        Math.floor(
-          remaining/60000
-        );
-
-      const secs=
-        Math.floor(
-          (remaining%60000)/1000
-        );
-
-
-      const countdown=
-        mins+
-        "m "+
-        String(secs).padStart(2,"0")+
-        "s";
-
-
-      return `
-
-      <div class="prediction">
-
-        <div class="predictionTop">
-
-          <div class="horizon">
-            ${p.horizon} MIN
-          </div>
-
-          <div class="stateBadge">
-            ${p.status}
-          </div>
-
-        </div>
-
-
-        <div class="predictionMain">
-
-          <div class="metric">
-
-            <div class="metricLabel">
-              Prediction
-            </div>
-
-            <div class="metricValue">
-              ${fmtPrice(p.predictedPrice)}
-            </div>
-
-          </div>
-
-
-          <div class="metric">
-
-            <div class="metricLabel">
-              Direction
-            </div>
-
-            <div class="metricValue ${
-              p.direction==="UP"
-                ?"up"
-                :p.direction==="DOWN"
-                  ?"down"
-                  :"neutral"
-            }">
-              ${p.direction}
-            </div>
-
-          </div>
-
-
-          <div class="metric">
-
-            <div class="metricLabel">
-              Target Time
-            </div>
-
-            <div class="metricValue"
-                 style="font-size:11px">
-              ${fmtShortTime(p.targetTime)}
-            </div>
-
-          </div>
-
-
-          <div class="metric">
-
-            <div class="metricLabel">
-              Confidence
-            </div>
-
-            <div class="metricValue">
-              ${p.confidence.toFixed(1)}%
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <div class="predictionFooter">
-
-          <span>
-            Created ${fmtShortTime(p.createdAt)}
-          </span>
-
-          <span class="confidence">
-            LOCKED · ${countdown}
-          </span>
-
-        </div>
-
-      </div>
-
-      `;
-
-    })
-    .join("");
+  $("predictionGrid").innerHTML=html;
+  $("predictionGrid2").innerHTML=html;
 
 }
 
 
 /* =========================================================
-   HISTORY UI
+   HISTORY
    ========================================================= */
 
 function renderHistory(){
 
-  const box=
-    $("historyList");
+  const box=$("historyList");
 
 
-  if(!state.history.length){
+  if(!S.history.length){
 
     box.innerHTML=
-      `
-      <div class="empty">
+      `<div class="empty">
         No completed predictions yet.
-      </div>
-      `;
+      </div>`;
 
     return;
 
@@ -4864,59 +3618,41 @@ function renderHistory(){
 
 
   box.innerHTML=
-    state.history
-    .slice(0,50)
+    S.history
+    .slice(0,100)
     .map(p=>{
 
       const actualMove=
-        pct(
-          p.actualPrice,
-          p.basePrice
-        );
-
+        pct(p.actual,p.base);
 
       const correct=
         Math.sign(actualMove)===
-        Math.sign(p.expectedPct);
+        Math.sign(p.expected);
 
 
       return `
 
       <div class="historyRow">
 
-        <div>
-          ${p.horizon}m
-        </div>
+        <div>${p.horizon}m</div>
 
-        <div>
-          ${fmtPrice(p.predictedPrice)}
-        </div>
+        <div>${fmt(p.predicted)}</div>
 
-        <div>
-          ${fmtPrice(p.actualPrice)}
-        </div>
+        <div>${fmt(p.actual)}</div>
 
         <div class="${
           correct
-            ?"resultGood"
-            :"resultBad"
+            ?"up"
+            :"down"
         }">
-
-          ${
-            correct
-              ?"CORRECT"
-              :"MISS"
-          }
-
+          ${correct?"CORRECT":"MISS"}
           <br>
-
           <span style="
-            font-size:7px;
-            color:#718396;
+            color:#6f8397;
+            font-size:7px
           ">
-            ${p.errorPct.toFixed(2)}%
+            ${p.error.toFixed(2)}%
           </span>
-
         </div>
 
       </div>
@@ -4930,375 +3666,375 @@ function renderHistory(){
 
 
 /* =========================================================
-   UI CONTROLS
+   MODEL UI
    ========================================================= */
 
-document
-.querySelectorAll(".rangeBtn")
-.forEach(btn=>{
+function updateModels(){
 
-  btn.addEventListener(
-    "click",
-    ()=>{
+  const names=[
+    ["momentum","Momentum"],
+    ["trend","Trend"],
+    ["volatility","Volatility"],
+    ["regime","Regime"]
+  ];
 
-      document
-      .querySelectorAll(".rangeBtn")
-      .forEach(
-        b=>b.classList.remove("active")
-      );
 
-      btn.classList.add("active");
+  for(const [key,label] of names){
 
-      state.range=
-        btn.dataset.range;
+    const score=
+      S.scores[key]*100;
 
-      state.pan=0;
+    $("score"+label).textContent=
+      score.toFixed(1)+
+      "% historical directional score";
 
-      state.zoom=1;
+    $("bar"+label).style.width=
+      score+"%";
 
-      loadHistorical();
+  }
+
+
+  $("samples").textContent=
+    S.candles.length.toLocaleString();
+
+  $("completed").textContent=
+    S.history.length;
+
+
+  if(!S.history.length){
+
+    $("accuracy").textContent="—";
+
+  }else{
+
+    let correct=0;
+
+    for(const p of S.history){
+
+      const actual=
+        pct(p.actual,p.base);
+
+      if(
+        Math.sign(actual)===
+        Math.sign(p.expected)
+      )
+        correct++;
 
     }
-  );
+
+    $("accuracy").textContent=
+      (
+        correct/
+        S.history.length*
+        100
+      ).toFixed(1)+"%";
+
+  }
+
+
+  const n=S.history.length;
+
+  $("evaluation").textContent=
+    n<20
+      ?"Insufficient"
+      :n<50
+        ?"Early"
+        :n<100
+          ?"Developing"
+          :"Meaningful";
+
+}
+
+
+/* =========================================================
+   CONTROLS
+   ========================================================= */
+
+document.querySelectorAll(".range")
+.forEach(b=>{
+
+  b.onclick=()=>{
+
+    document
+      .querySelectorAll(".range")
+      .forEach(x=>x.classList.remove("active"));
+
+    b.classList.add("active");
+
+    S.range=b.dataset.range;
+
+    S.offset=0;
+    S.zoom=1;
+
+    loadHistory();
+
+  };
 
 });
 
 
-document
-.querySelectorAll(".intervalBtn")
-.forEach(btn=>{
+document.querySelectorAll(".interval")
+.forEach(b=>{
 
-  btn.addEventListener(
-    "click",
-    ()=>{
+  b.onclick=()=>{
 
-      document
-      .querySelectorAll(".intervalBtn")
-      .forEach(
-        b=>b.classList.remove("active")
-      );
+    document
+      .querySelectorAll(".interval")
+      .forEach(x=>x.classList.remove("active"));
 
-      btn.classList.add("active");
+    b.classList.add("active");
 
-      state.requestedInterval=
-        btn.dataset.interval;
+    S.requested=b.dataset.interval;
 
-      state.pan=0;
+    S.offset=0;
+    S.zoom=1;
 
-      state.zoom=1;
+    loadHistory();
 
-      loadHistorical();
-
-    }
-  );
+  };
 
 });
 
 
-$("add15")
-.addEventListener(
-  "click",
-  ()=>createPrediction(15)
-);
+$("add15").onclick=
+  ()=>createPrediction(15);
+
+$("add30").onclick=
+  ()=>createPrediction(30);
 
 
-$("add30")
-.addEventListener(
-  "click",
-  ()=>createPrediction(30)
-);
+$("resetPred").onclick=()=>{
+
+  S.predictions=[];
+
+  save();
+
+  renderPredictions();
+
+  draw();
+
+  status("Active predictions cleared.");
+
+};
 
 
-$("clearPredictions")
-.addEventListener(
-  "click",
-  ()=>{
+/* CHART TOOLS */
 
-    state.predictions=[];
+function toggle(id,key){
 
-    save();
+  S[key]=!S[key];
 
-    renderPredictions();
+  $(id).classList.toggle(
+    "active",
+    S[key]
+  );
 
-    render();
+  draw();
 
-    setStatus(
-      "Active predictions reset."
+}
+
+
+$("candles").onclick=()=>{
+
+  S.chartType="candle";
+
+  $("candles").classList.add("active");
+  $("line").classList.remove("active");
+
+  draw();
+
+};
+
+
+$("line").onclick=()=>{
+
+  S.chartType="line";
+
+  $("line").classList.add("active");
+  $("candles").classList.remove("active");
+
+  draw();
+
+};
+
+
+$("ema").onclick=
+  ()=>toggle("ema","ema");
+
+$("vwap").onclick=
+  ()=>toggle("vwap","vwap");
+
+$("volume").onclick=
+  ()=>toggle("volume","volume");
+
+$("rsi").onclick=
+  ()=>toggle("rsi","rsi");
+
+$("forecast").onclick=
+  ()=>toggle("forecast","forecast");
+
+
+$("resetZoom").onclick=()=>{
+
+  S.zoom=1;
+  S.offset=0;
+
+  draw();
+
+};
+
+
+/* =========================================================
+   TOUCH / MOUSE ZOOM
+   ========================================================= */
+
+/*
+  One finger:
+  horizontal pan.
+
+  Two fingers:
+  pinch zoom.
+
+  Wheel:
+  zoom.
+
+  Zoom is centred around the pointer position.
+*/
+
+viewport.addEventListener(
+  "pointerdown",
+  e=>{
+
+    if(e.pointerType==="touch")
+      return;
+
+    S.pointer=true;
+
+    S.startX=e.clientX;
+
+    S.startOffset=S.offset;
+
+    viewport.setPointerCapture?.(
+      e.pointerId
     );
 
   }
 );
 
 
-/* CHART TOOLS */
-
-$("candleBtn")
-.addEventListener(
-  "click",
-  ()=>{
-
-    state.chartType="candle";
-
-    $("candleBtn")
-      .classList.add("active");
-
-    $("lineBtn")
-      .classList.remove("active");
-
-    render();
-
-  }
-);
-
-
-$("lineBtn")
-.addEventListener(
-  "click",
-  ()=>{
-
-    state.chartType="line";
-
-    $("lineBtn")
-      .classList.add("active");
-
-    $("candleBtn")
-      .classList.remove("active");
-
-    render();
-
-  }
-);
-
-
-function toggleTool(
-  button,
-  key
-){
-
-  state[key]=
-    !state[key];
-
-  button.classList.toggle(
-    "active",
-    state[key]
-  );
-
-  render();
-
-}
-
-
-$("emaBtn")
-.addEventListener(
-  "click",
-  ()=>toggleTool(
-    $("emaBtn"),
-    "showEMA"
-  )
-);
-
-
-$("vwapBtn")
-.addEventListener(
-  "click",
-  ()=>toggleTool(
-    $("vwapBtn"),
-    "showVWAP"
-  )
-);
-
-
-$("rsiBtn")
-.addEventListener(
-  "click",
-  ()=>toggleTool(
-    $("rsiBtn"),
-    "showRSI"
-  )
-);
-
-
-$("volumeBtn")
-.addEventListener(
-  "click",
-  ()=>toggleTool(
-    $("volumeBtn"),
-    "showVolume"
-  )
-);
-
-
-$("forecastBtn")
-.addEventListener(
-  "click",
-  ()=>toggleTool(
-    $("forecastBtn"),
-    "showForecast"
-  )
-);
-
-
-$("resetZoom")
-.addEventListener(
-  "click",
-  ()=>{
-
-    state.zoom=1;
-
-    state.pan=0;
-
-    render();
-
-  }
-);
-
-
-/* =========================================================
-   ZOOM / PAN
-   ========================================================= */
-
-canvasWrap.addEventListener(
-  "wheel",
-  e=>{
-
-    e.preventDefault();
-
-    const old=
-      state.zoom;
-
-
-    if(e.deltaY<0){
-
-      state.zoom=
-        clamp(
-          state.zoom*1.12,
-          .5,
-          12
-        );
-
-    }else{
-
-      state.zoom=
-        clamp(
-          state.zoom/1.12,
-          .5,
-          12
-        );
-
-    }
-
-
-    /*
-      Keep zoom centered.
-    */
-
-    if(old!==state.zoom){
-
-      render();
-
-    }
-
-  },
-  {
-    passive:false
-  }
-);
-
-
-/* POINTER DRAG */
-
-canvasWrap.addEventListener(
-  "pointerdown",
-  e=>{
-
-    state.drag=true;
-
-    state.dragStartX=
-      e.clientX;
-
-    state.originalPan=
-      state.pan;
-
-    try{
-      canvasWrap.setPointerCapture(
-        e.pointerId
-      );
-    }catch(_){}
-
-  }
-);
-
-
-canvasWrap.addEventListener(
+viewport.addEventListener(
   "pointermove",
   e=>{
 
-    if(!state.drag)
+    if(!S.pointer)
       return;
 
-
     const dx=
-      e.clientX-
-      state.dragStartX;
-
+      e.clientX-S.startX;
 
     const width=
-      canvasWrap.clientWidth;
+      viewport.clientWidth;
 
 
-    state.pan=
-      state.originalPan-
+    S.offset=
+      S.startOffset-
       dx/
+      width/
       Math.max(
-        width,
-        1
+        .5,
+        S.zoom
       );
 
 
-    state.pan=
+    S.offset=
       clamp(
-        state.pan,
+        S.offset,
         -1,
         1
       );
 
 
-    render();
+    draw();
 
   }
 );
 
 
-function endDrag(){
-
-  state.drag=false;
-
-}
-
-
-canvasWrap.addEventListener(
+viewport.addEventListener(
   "pointerup",
-  endDrag
+  ()=>{
+    S.pointer=false;
+  }
 );
 
-canvasWrap.addEventListener(
+viewport.addEventListener(
   "pointercancel",
-  endDrag
-);
-
-canvasWrap.addEventListener(
-  "pointerleave",
-  endDrag
+  ()=>{
+    S.pointer=false;
+  }
 );
 
 
-/* TOUCH PINCH */
+viewport.addEventListener(
+  "wheel",
+  e=>{
 
-let pinchStartDist=null;
-let pinchStartZoom=1;
+    e.preventDefault();
+
+    const old=S.zoom;
+
+    const factor=
+      e.deltaY<0
+        ?1.15
+        :.87;
 
 
-canvasWrap.addEventListener(
+    S.zoom=
+      clamp(
+        S.zoom*factor,
+        .5,
+        12
+      );
+
+
+    /*
+      Slightly compensate pan so
+      the chart doesn't jump wildly.
+    */
+
+    if(old!==S.zoom){
+
+      const rect=
+        viewport.getBoundingClientRect();
+
+      const x=
+        (e.clientX-rect.left)/
+        rect.width;
+
+      S.offset+=
+        (x-.5)*
+        (1/old-1/S.zoom)*.35;
+
+      S.offset=
+        clamp(
+          S.offset,
+          -1,
+          1
+        );
+
+    }
+
+
+    draw();
+
+  },
+  {passive:false}
+);
+
+
+/* TOUCH */
+
+viewport.addEventListener(
   "touchstart",
   e=>{
 
@@ -5307,14 +4043,15 @@ canvasWrap.addEventListener(
       const a=e.touches[0];
       const b=e.touches[1];
 
-      pinchStartDist=
+      S.pinch=true;
+
+      S.pinchDistance=
         Math.hypot(
           a.clientX-b.clientX,
           a.clientY-b.clientY
         );
 
-      pinchStartZoom=
-        state.zoom;
+      S.pinchZoom=S.zoom;
 
     }
 
@@ -5323,13 +4060,12 @@ canvasWrap.addEventListener(
 );
 
 
-canvasWrap.addEventListener(
+viewport.addEventListener(
   "touchmove",
   e=>{
 
     if(e.touches.length!==2)
       return;
-
 
     e.preventDefault();
 
@@ -5338,7 +4074,7 @@ canvasWrap.addEventListener(
     const b=e.touches[1];
 
 
-    const dist=
+    const distance=
       Math.hypot(
         a.clientX-b.clientX,
         a.clientY-b.clientY
@@ -5346,21 +4082,21 @@ canvasWrap.addEventListener(
 
 
     if(
-      pinchStartDist &&
-      dist>0
+      S.pinch&&
+      S.pinchDistance
     ){
 
-      state.zoom=
+      S.zoom=
         clamp(
-          pinchStartZoom*
-          dist/
-          pinchStartDist,
+          S.pinchZoom*
+          distance/
+          S.pinchDistance,
           .5,
           12
         );
 
 
-      render();
+      draw();
 
     }
 
@@ -5369,52 +4105,11 @@ canvasWrap.addEventListener(
 );
 
 
-/* =========================================================
-   SETTINGS
-   ========================================================= */
-
-$("engineMode").addEventListener(
-  "change",
-  e=>{
-
-    state.engineMode=
-      e.target.value;
-
-    save();
-
-    setStatus(
-      "Engine mode: "+
-      state.engineMode
-    );
-
-    runBackgroundTraining();
-
-  }
-);
-
-
-$("autoRefresh").addEventListener(
-  "change",
-  e=>{
-
-    state.autoRefresh=
-      e.target.value==="on";
-
-    save();
-
-  }
-);
-
-
-$("learningMode").addEventListener(
-  "change",
-  e=>{
-
-    state.learning=
-      e.target.value==="on";
-
-    save();
-
+viewport.addEventListener(
+  "touchend",
+  ()=>{
+    if(S.pinch)
+      S.pinch=false;
   }
 );
 
@@ -5423,327 +4118,189 @@ $("learningMode").addEventListener(
    BOTTOM NAV
    ========================================================= */
 
-document
-.querySelectorAll(".nav")
-.forEach(nav=>{
+const views={
+  chart:"viewChart",
+  predictions:"viewPredictions",
+  history:"viewHistory",
+  more:"viewMore"
+};
 
-  nav.addEventListener(
-    "click",
-    ()=>{
 
-      document
+document.querySelectorAll(".nav")
+.forEach(n=>{
+
+  n.onclick=()=>{
+
+    document
       .querySelectorAll(".nav")
-      .forEach(
-        n=>n.classList.remove("active")
-      );
+      .forEach(x=>x.classList.remove("active"));
 
-      nav.classList.add("active");
+    n.classList.add("active");
 
 
-      const target=
-        nav.dataset.nav;
+    document
+      .querySelectorAll(".view")
+      .forEach(v=>v.classList.remove("active"));
 
 
-      let element=null;
+    $(views[n.dataset.view])
+      .classList.add("active");
 
 
-      if(target==="chart")
-        element=
-          document.querySelector(".chartPanel");
-
-      if(target==="predictions")
-        element=
-          document.getElementById("predictionGrid");
-
-      if(target==="history")
-        element=
-          document.querySelector(".historyPanel");
-
-      if(target==="settings")
-        element=
-          document.querySelector(".settings");
+    window.scrollTo({
+      top:0,
+      behavior:"instant"
+    });
 
 
-      if(element){
+    if(n.dataset.view==="chart")
+      setTimeout(resize,30);
 
-        element.scrollIntoView({
-          behavior:"smooth",
-          block:"start"
-        });
-
-      }
-
-    }
-  );
+  };
 
 });
 
 
 /* =========================================================
-   REFRESH LOOP
+   SETTINGS
    ========================================================= */
 
-let refreshCounter=0;
+$("engineMode").onchange=e=>{
 
+  S.mode=e.target.value;
+
+  save();
+
+  trainHistorical();
+
+};
+
+
+$("autoRefresh").onchange=e=>{
+
+  S.auto=e.target.value==="on";
+
+  save();
+
+};
+
+
+$("learning").onchange=e=>{
+
+  S.learning=e.target.value==="on";
+
+  save();
+
+};
+
+
+/* =========================================================
+   REFRESH
+   ========================================================= */
 
 setInterval(
-  async()=>{
+  ()=>{
 
-    refreshCounter++;
-
-
-    /*
-      Price/candle data comes from WebSocket.
-      Secondary APIs are refreshed separately.
-    */
-
-    if(
-      state.autoRefresh &&
-      refreshCounter%2===0
-    ){
-
-      loadSecondaryData();
-
-    }
-
-
-    /*
-      Reload historical data occasionally
-      so missing candles are recovered.
-    */
-
-    if(
-      state.autoRefresh &&
-      Date.now()-
-      state.lastHistoricalLoad>
-      5*60000
-    ){
-
-      loadHistorical();
-
-    }
-
-
-    settlePredictions();
+    settle();
 
     renderPredictions();
 
-    updateDiagnostics();
+    updateModels();
 
-    render();
+    draw();
 
   },
   1000
 );
 
 
-/* =========================================================
-   SECONDARY REFRESH
-   ========================================================= */
-
 setInterval(
   ()=>{
 
-    if(state.autoRefresh)
-      loadSecondaryData();
+    if(S.auto)
+      secondary();
 
   },
   30000
 );
 
 
-/* =========================================================
-   REALTIME MODEL REFRESH
-   ========================================================= */
-
 setInterval(
   ()=>{
 
-    /*
-      Recalculate feature state without
-      replacing locked predictions.
-    */
-
     if(
-      state.candles.length>50
+      S.auto&&
+      !S.loading
     ){
 
-      updateModelUI();
+      /*
+        Refresh historical data only every
+        few minutes. WebSocket handles the
+        realtime portion.
+      */
 
-      updateDiagnostics();
-
-      render();
+      loadHistory();
 
     }
 
   },
-  30000
+  5*60*1000
 );
 
 
 /* =========================================================
-   INITIALIZATION
+   INIT
    ========================================================= */
 
 async function init(){
 
-  loadSaved();
+  load();
 
 
-  $("engineMode").value=
-    state.engineMode;
+  $("engineMode").value=S.mode;
 
   $("autoRefresh").value=
-    state.autoRefresh
-      ?"on"
-      :"off";
+    S.auto?"on":"off";
 
-  $("learningMode").value=
-    state.learning
-      ?"on"
-      :"off";
+  $("learning").value=
+    S.learning?"on":"off";
 
-
-  renderHistory();
 
   renderPredictions();
 
-  updateDiagnostics();
+  renderHistory();
+
+  updateModels();
+
+  resize();
 
 
-  resizeCanvas();
+  await loadHistory();
 
 
-  /*
-    Historical data first.
-  */
+  connect();
 
-  await loadHistorical();
-
-
-  /*
-    Secondary sources do not block
-    the main ETH chart.
-  */
-
-  loadSecondaryData();
-
-
-  /*
-    Realtime connection.
-  */
-
-  connectWebSocket();
-
-
-  /*
-    Restore active predictions.
-
-    IMPORTANT:
-    Their target timestamps are NOT
-    recalculated after page reload.
-  */
-
-  if(state.predictions.length){
-
-    setStatus(
-      "Restored "+
-      state.predictions.length+
-      " locked prediction(s)."
-    );
-
-  }
+  secondary();
 
 }
 
 
 window.addEventListener(
   "resize",
-  resizeCanvas
+  resize
 );
 
 
 document.addEventListener(
   "visibilitychange",
   ()=>{
-
-    if(
-      !document.hidden &&
-      !state.wsConnected
-    ){
-
-      connectWebSocket();
-
-    }
-
+    if(!document.hidden&&!S.connected)
+      connect();
   }
 );
 
 
 init();
-
-
-/* =========================================================
-   SAFETY AGAINST STALE ACTIVE PREDICTIONS
-   ========================================================= */
-
-setInterval(
-  ()=>{
-
-    /*
-      A prediction older than 12 hours
-      that somehow remains active is
-      settled instead of being recreated.
-    */
-
-    const cutoff=
-      Date.now()-
-      12*60*60*1000;
-
-
-    for(const p of state.predictions){
-
-      if(
-        p.status==="ACTIVE" &&
-        p.createdAt<cutoff
-      ){
-
-        p.targetTime=
-          Math.min(
-            p.targetTime,
-            Date.now()
-          );
-
-      }
-
-    }
-
-    settlePredictions();
-
-  },
-  10000
-);
-
-
-/* =========================================================
-   DEBUG INFO
-   ========================================================= */
-
-window.ethPredictor={
-
-  state,
-
-  createPrediction,
-
-  loadHistorical,
-
-  loadSecondaryData,
-
-  render,
-
-  settlePredictions
-
-};
 
 </script>
 
