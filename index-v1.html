@@ -1,0 +1,3130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#07100d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>ETH/USDT Reliable Predictor V1</title>
+
+<script src="https://unpkg.com/lightweight-charts@5.2.1/dist/lightweight-charts.standalone.production.js"></script>
+
+<style>
+:root{
+  --bg:#050807;
+  --panel:rgba(14,22,19,.72);
+  --panel2:rgba(20,31,27,.58);
+  --line:rgba(255,255,255,.08);
+  --text:#eef7f2;
+  --muted:#8da198;
+  --green:#39f29a;
+  --greenGlass:rgba(57,242,154,.42);
+  --red:#ff5879;
+  --redGlass:rgba(255,88,121,.40);
+  --yellow:#ffd166;
+  --blue:#69b7ff;
+  --shadow:0 10px 35px rgba(0,0,0,.28);
+}
+
+*{box-sizing:border-box}
+
+html,body{
+  margin:0;
+  padding:0;
+  width:100%;
+  min-height:100%;
+  background:
+    radial-gradient(circle at 20% 0%,rgba(57,242,154,.08),transparent 30%),
+    radial-gradient(circle at 100% 30%,rgba(105,183,255,.06),transparent 35%),
+    var(--bg);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",
+               "SF Pro Text",Inter,Arial,sans-serif;
+}
+
+body{
+  padding:
+    max(10px,env(safe-area-inset-top))
+    max(10px,env(safe-area-inset-right))
+    max(18px,env(safe-area-inset-bottom))
+    max(10px,env(safe-area-inset-left));
+}
+
+button,select{
+  font:inherit;
+}
+
+button{
+  border:1px solid var(--line);
+  color:var(--text);
+  background:rgba(255,255,255,.055);
+  border-radius:13px;
+  padding:9px 12px;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+
+button:active{
+  transform:scale(.98);
+}
+
+button.active{
+  border-color:rgba(57,242,154,.45);
+  background:rgba(57,242,154,.12);
+}
+
+select{
+  background:#101714;
+  color:var(--text);
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:9px;
+}
+
+.app{
+  width:100%;
+  max-width:1250px;
+  margin:auto;
+}
+
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin-bottom:10px;
+}
+
+.title{
+  font-size:22px;
+  font-weight:750;
+  letter-spacing:-.4px;
+}
+
+.subtitle{
+  color:var(--muted);
+  font-size:12px;
+  margin-top:3px;
+}
+
+.statusRow{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+
+.badge{
+  padding:6px 9px;
+  border-radius:999px;
+  background:rgba(255,255,255,.055);
+  border:1px solid var(--line);
+  font-size:11px;
+  color:var(--muted);
+}
+
+.badge.ok{
+  color:var(--green);
+  border-color:rgba(57,242,154,.25);
+}
+
+.badge.warn{
+  color:var(--yellow);
+  border-color:rgba(255,209,102,.25);
+}
+
+.badge.bad{
+  color:var(--red);
+  border-color:rgba(255,88,121,.25);
+}
+
+.panel{
+  background:linear-gradient(
+    145deg,
+    rgba(20,31,27,.76),
+    rgba(8,13,11,.64)
+  );
+  border:1px solid var(--line);
+  border-radius:20px;
+  box-shadow:var(--shadow);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+  margin-bottom:10px;
+  overflow:hidden;
+}
+
+.controls{
+  padding:10px;
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+}
+
+.section{
+  padding:13px;
+}
+
+.priceHeader{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap:12px;
+}
+
+.price{
+  font-size:31px;
+  font-weight:800;
+  letter-spacing:-1px;
+}
+
+.priceMeta{
+  color:var(--muted);
+  font-size:12px;
+  margin-top:3px;
+}
+
+.marketStats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:7px;
+  margin-top:12px;
+}
+
+.stat{
+  padding:10px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:rgba(255,255,255,.035);
+}
+
+.statLabel{
+  color:var(--muted);
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+}
+
+.statValue{
+  margin-top:4px;
+  font-size:14px;
+  font-weight:700;
+}
+
+#chart{
+  width:100%;
+  height:500px;
+}
+
+@media(max-width:700px){
+  #chart{height:420px}
+  .marketStats{grid-template-columns:repeat(2,1fr)}
+  .price{font-size:27px}
+}
+
+.tfGroup,.rangeGroup{
+  display:flex;
+  gap:5px;
+  flex-wrap:wrap;
+}
+
+.small{
+  font-size:11px;
+  padding:7px 9px;
+}
+
+.predGrid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:9px;
+}
+
+@media(max-width:700px){
+  .predGrid{grid-template-columns:1fr}
+}
+
+.pred{
+  border:1px solid var(--line);
+  border-radius:17px;
+  padding:13px;
+  background:rgba(255,255,255,.035);
+}
+
+.predTitle{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:9px;
+}
+
+.predTitle strong{
+  font-size:15px;
+}
+
+.direction{
+  font-size:11px;
+  padding:5px 8px;
+  border-radius:999px;
+  background:rgba(255,255,255,.06);
+}
+
+.direction.up{
+  color:var(--green);
+}
+
+.direction.down{
+  color:var(--red);
+}
+
+.direction.flat{
+  color:var(--yellow);
+}
+
+.predPrice{
+  font-size:24px;
+  font-weight:800;
+}
+
+.predRow{
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+  margin-top:6px;
+  color:var(--muted);
+  font-size:11px;
+}
+
+.predRow span:last-child{
+  color:var(--text);
+}
+
+.conf{
+  margin-top:11px;
+  height:5px;
+  border-radius:99px;
+  background:rgba(255,255,255,.08);
+  overflow:hidden;
+}
+
+.conf > div{
+  height:100%;
+  border-radius:99px;
+  background:var(--green);
+}
+
+.engineGrid{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:7px;
+}
+
+@media(max-width:900px){
+  .engineGrid{grid-template-columns:repeat(2,1fr)}
+}
+
+.engine{
+  padding:10px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:rgba(255,255,255,.035);
+}
+
+.engineNum{
+  color:var(--muted);
+  font-size:10px;
+}
+
+.engineName{
+  font-size:11px;
+  font-weight:700;
+  margin-top:4px;
+}
+
+.engineValue{
+  font-size:14px;
+  font-weight:800;
+  margin-top:8px;
+}
+
+.engineReason{
+  color:var(--muted);
+  font-size:10px;
+  line-height:1.35;
+  margin-top:5px;
+}
+
+.tableWrap{
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:11px;
+}
+
+th,td{
+  padding:9px 7px;
+  border-bottom:1px solid var(--line);
+  white-space:nowrap;
+  text-align:left;
+}
+
+th{
+  color:var(--muted);
+  font-weight:600;
+}
+
+.good{
+  color:var(--green);
+}
+
+.badText{
+  color:var(--red);
+}
+
+.note{
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.5;
+}
+
+.footer{
+  text-align:center;
+  color:#62736b;
+  font-size:10px;
+  padding:8px;
+}
+
+.hidden{
+  display:none!important;
+}
+
+.loading{
+  color:var(--yellow);
+}
+
+.errorBox{
+  color:var(--red);
+  padding:12px;
+  border:1px solid rgba(255,88,121,.25);
+  border-radius:14px;
+  background:rgba(255,88,121,.06);
+  margin-top:10px;
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+  <div class="header">
+    <div>
+      <div class="title">ETH/USDT Predictor</div>
+      <div class="subtitle">Reliable V1 • Binance public market data</div>
+    </div>
+
+    <div class="statusRow">
+      <div id="connBadge" class="badge warn">CONNECTING</div>
+      <div id="dbBadge" class="badge">DB...</div>
+      <div id="dataBadge" class="badge">DATA...</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="section">
+      <div class="priceHeader">
+        <div>
+          <div id="price" class="price">—</div>
+          <div id="priceMeta" class="priceMeta">Waiting for market data</div>
+        </div>
+
+        <button id="refreshBtn">↻ Refresh</button>
+      </div>
+
+      <div class="marketStats">
+        <div class="stat">
+          <div class="statLabel">24h High</div>
+          <div id="high24" class="statValue">—</div>
+        </div>
+        <div class="stat">
+          <div class="statLabel">24h Low</div>
+          <div id="low24" class="statValue">—</div>
+        </div>
+        <div class="stat">
+          <div class="statLabel">Volume</div>
+          <div id="volume24" class="statValue">—</div>
+        </div>
+        <div class="stat">
+          <div class="statLabel">Buy Ratio</div>
+          <div id="buyRatio" class="statValue">—</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="controls">
+
+      <div class="tfGroup">
+        <button class="small tf active" data-tf="1m">1m</button>
+        <button class="small tf" data-tf="5m">5m</button>
+        <button class="small tf" data-tf="15m">15m</button>
+        <button class="small tf" data-tf="30m">30m</button>
+        <button class="small tf" data-tf="1h">1h</button>
+        <button class="small tf" data-tf="4h">4h</button>
+        <button class="small tf" data-tf="1d">1D</button>
+      </div>
+
+      <div class="rangeGroup">
+        <button class="small range active" data-range="1D">1D</button>
+        <button class="small range" data-range="1W">1W</button>
+        <button class="small range" data-range="1M">1M</button>
+        <button class="small range" data-range="3M">3M</button>
+        <button class="small range" data-range="6M">6M</button>
+        <button class="small range" data-range="1Y">1Y</button>
+        <button class="small range" data-range="ALL">ALL</button>
+      </div>
+
+      <button id="zoomIn" class="small">＋ Zoom</button>
+      <button id="zoomOut" class="small">－ Zoom</button>
+      <button id="fitBtn" class="small">Fit</button>
+    </div>
+
+    <div id="chart"></div>
+
+    <div class="section">
+      <div class="note">
+        Real OHLC candles and volume. No drawing layer. Pinch/drag/zoom are enabled by
+        Lightweight Charts.
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="section">
+      <div style="font-size:16px;font-weight:750;margin-bottom:10px">
+        Automatic Predictions
+      </div>
+
+      <div class="predGrid">
+
+        <div id="pred15" class="pred">
+          <div class="predTitle">
+            <strong>15 Minute</strong>
+            <span class="direction">WAITING</span>
+          </div>
+          <div class="predPrice">—</div>
+          <div class="predRow">
+            <span>Target</span><span>—</span>
+          </div>
+          <div class="predRow">
+            <span>Confidence</span><span>—</span>
+          </div>
+          <div class="conf"><div style="width:0%"></div></div>
+        </div>
+
+        <div id="pred30" class="pred">
+          <div class="predTitle">
+            <strong>30 Minute</strong>
+            <span class="direction">WAITING</span>
+          </div>
+          <div class="predPrice">—</div>
+          <div class="predRow">
+            <span>Target</span><span>—</span>
+          </div>
+          <div class="predRow">
+            <span>Confidence</span><span>—</span>
+          </div>
+          <div class="conf"><div style="width:0%"></div></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="section">
+      <div style="font-size:16px;font-weight:750;margin-bottom:10px">
+        Forecast Engines
+      </div>
+
+      <div class="engineGrid">
+
+        <div class="engine">
+          <div class="engineNum">01</div>
+          <div class="engineName">CHRONOLOGICAL</div>
+          <div id="e1" class="engineValue">—</div>
+          <div id="e1r" class="engineReason">Waiting</div>
+        </div>
+
+        <div class="engine">
+          <div class="engineNum">02</div>
+          <div class="engineName">MATHEMATICAL</div>
+          <div id="e2" class="engineValue">—</div>
+          <div id="e2r" class="engineReason">Waiting</div>
+        </div>
+
+        <div class="engine">
+          <div class="engineNum">03</div>
+          <div class="engineName">INFORMATION / REGIME</div>
+          <div id="e3" class="engineValue">—</div>
+          <div id="e3r" class="engineReason">Waiting</div>
+        </div>
+
+        <div class="engine">
+          <div class="engineNum">04</div>
+          <div class="engineName">ERROR CORRECTION</div>
+          <div id="e4" class="engineValue">—</div>
+          <div id="e4r" class="engineReason">Waiting</div>
+        </div>
+
+        <div class="engine">
+          <div class="engineNum">05</div>
+          <div class="engineName">CONSULTATION / META</div>
+          <div id="e5" class="engineValue">—</div>
+          <div id="e5r" class="engineReason">Waiting</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="section">
+
+      <div style="display:flex;justify-content:space-between;gap:10px;align-items:center">
+        <div style="font-size:16px;font-weight:750">
+          Prediction History
+        </div>
+
+        <div style="display:flex;gap:6px">
+          <button id="exportBtn" class="small">Export</button>
+          <button id="resetBtn" class="small">Reset</button>
+        </div>
+      </div>
+
+      <div id="historyStats" class="note" style="margin:9px 0">
+        No completed predictions yet.
+      </div>
+
+      <div class="tableWrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Horizon</th>
+              <th>Forecast</th>
+              <th>Actual</th>
+              <th>Error</th>
+              <th>Method</th>
+            </tr>
+          </thead>
+          <tbody id="historyBody"></tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="section">
+      <div style="font-size:16px;font-weight:750;margin-bottom:7px">
+        Reliability
+      </div>
+
+      <div id="reliabilityText" class="note">
+        Initializing...
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    Charts by TradingView Lightweight Charts™ • Market data from Binance public APIs
+  </div>
+
+</div>
+
+<script>
+"use strict";
+
+/* =========================================================
+   CONFIGURATION
+========================================================= */
+
+const SYMBOL = "ETHUSDT";
+
+const REST_BASES = [
+  "https://api.binance.com/api/v3",
+  "https://api1.binance.com/api/v3",
+  "https://api2.binance.com/api/v3",
+  "https://api3.binance.com/api/v3",
+  "https://api4.binance.com/api/v3"
+];
+
+const WS_URLS = [
+  "wss://stream.binance.com:9443/ws/ethusdt@kline_1m",
+  "wss://stream.binance.com:443/ws/ethusdt@kline_1m"
+];
+
+const DB_NAME = "ETH_PREDICTOR_V1";
+const DB_VERSION = 1;
+
+const STORE_CANDLES = "candles";
+const STORE_PRED = "predictions";
+const STORE_HISTORY = "history";
+const STORE_META = "meta";
+
+const TF_MS = {
+  "1m": 60 * 1000,
+  "5m": 5 * 60 * 1000,
+  "15m": 15 * 60 * 1000,
+  "30m": 30 * 60 * 1000,
+  "1h": 60 * 60 * 1000,
+  "4h": 4 * 60 * 60 * 1000,
+  "1d": 24 * 60 * 60 * 1000
+};
+
+const RANGE_MS = {
+  "1D": 24 * 60 * 60 * 1000,
+  "1W": 7 * 24 * 60 * 60 * 1000,
+  "1M": 30 * 24 * 60 * 60 * 1000,
+  "3M": 90 * 24 * 60 * 60 * 1000,
+  "6M": 180 * 24 * 60 * 60 * 1000,
+  "1Y": 365 * 24 * 60 * 60 * 1000,
+  "ALL": null
+};
+
+let db = null;
+
+let selectedTF = "1m";
+let selectedRange = "1D";
+
+let chart = null;
+let candleSeries = null;
+let volumeSeries = null;
+
+let candles = [];
+let oneMin = [];
+
+let ws = null;
+let wsIndex = 0;
+let reconnectTimer = null;
+
+let lastMarketUpdate = 0;
+let lastRestUpdate = 0;
+let lastWSUpdate = 0;
+
+let currentPrice = null;
+let serverOffset = 0;
+
+let activePredictions = [];
+let history = [];
+
+let busyLoad = false;
+let predictionBusy = false;
+let settlementBusy = false;
+
+let lastForecast = null;
+
+
+/* =========================================================
+   DOM HELPERS
+========================================================= */
+
+const $ = id => document.getElementById(id);
+
+function setBadge(id, text, type=""){
+  const el = $(id);
+  if(!el) return;
+
+  el.textContent = text;
+  el.className = "badge";
+
+  if(type) el.classList.add(type);
+}
+
+function fmtPrice(x){
+  if(!Number.isFinite(x)) return "—";
+
+  if(x >= 1000) return x.toLocaleString(undefined,{
+    minimumFractionDigits:2,
+    maximumFractionDigits:2
+  });
+
+  return x.toLocaleString(undefined,{
+    minimumFractionDigits:2,
+    maximumFractionDigits:4
+  });
+}
+
+function fmtPct(x){
+  if(!Number.isFinite(x)) return "—";
+  return `${x >= 0 ? "+" : ""}${x.toFixed(3)}%`;
+}
+
+function fmtTime(ms){
+  if(!ms) return "—";
+
+  return new Date(ms).toLocaleString([],{
+    month:"short",
+    day:"numeric",
+    hour:"2-digit",
+    minute:"2-digit"
+  });
+}
+
+function fmtTarget(ms){
+  if(!ms) return "—";
+
+  return new Date(ms).toLocaleString([],{
+    month:"short",
+    day:"numeric",
+    hour:"2-digit",
+    minute:"2-digit",
+    second:"2-digit"
+  });
+}
+
+function clamp(x,a,b){
+  return Math.max(a,Math.min(b,x));
+}
+
+function mean(arr){
+  if(!arr.length) return 0;
+  return arr.reduce((a,b)=>a+b,0)/arr.length;
+}
+
+function stdev(arr){
+  if(arr.length < 2) return 0;
+
+  const m = mean(arr);
+  const v = mean(arr.map(x => (x-m)*(x-m)));
+
+  return Math.sqrt(v);
+}
+
+function pctReturn(a,b){
+  if(!Number.isFinite(a) || !Number.isFinite(b) || a <= 0) return 0;
+  return Math.log(b/a);
+}
+
+
+/* =========================================================
+   INDEXED DB
+========================================================= */
+
+function openDB(){
+  return new Promise((resolve,reject)=>{
+
+    if(!("indexedDB" in window)){
+      reject(new Error("IndexedDB unavailable"));
+      return;
+    }
+
+    const request = indexedDB.open(DB_NAME,DB_VERSION);
+
+    request.onupgradeneeded = event => {
+
+      const database = event.target.result;
+
+      if(!database.objectStoreNames.contains(STORE_CANDLES)){
+        const s = database.createObjectStore(
+          STORE_CANDLES,
+          {keyPath:"id"}
+        );
+
+        s.createIndex(
+          "tf_time",
+          ["tf","time"],
+          {unique:true}
+        );
+      }
+
+      if(!database.objectStoreNames.contains(STORE_PRED)){
+        const s = database.createObjectStore(
+          STORE_PRED,
+          {keyPath:"id"}
+        );
+
+        s.createIndex(
+          "status",
+          "status",
+          {unique:false}
+        );
+      }
+
+      if(!database.objectStoreNames.contains(STORE_HISTORY)){
+        const s = database.createObjectStore(
+          STORE_HISTORY,
+          {keyPath:"id"}
+        );
+
+        s.createIndex(
+          "settledAt",
+          "settledAt",
+          {unique:false}
+        );
+      }
+
+      if(!database.objectStoreNames.contains(STORE_META)){
+        database.createObjectStore(
+          STORE_META,
+          {keyPath:"key"}
+        );
+      }
+    };
+
+    request.onsuccess = event => {
+      db = event.target.result;
+
+      db.onversionchange = () => {
+        db.close();
+      };
+
+      resolve(db);
+    };
+
+    request.onerror = () => reject(request.error);
+  });
+}
+
+function dbTx(storeNames,mode="readonly"){
+  return db.transaction(storeNames,mode);
+}
+
+function dbPut(storeName,obj){
+  return new Promise((resolve,reject)=>{
+    const tx = dbTx([storeName],"readwrite");
+    tx.objectStore(storeName).put(obj);
+
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+}
+
+function dbGetAll(storeName){
+  return new Promise((resolve,reject)=>{
+    const tx = dbTx([storeName],"readonly");
+    const req = tx.objectStore(storeName).getAll();
+
+    req.onsuccess = () => resolve(req.result || []);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+function dbClear(storeName){
+  return new Promise((resolve,reject)=>{
+    const tx = dbTx([storeName],"readwrite");
+    tx.objectStore(storeName).clear();
+
+    tx.oncomplete = resolve;
+    tx.onerror = () => reject(tx.error);
+  });
+}
+
+async function loadDatabase(){
+
+  try{
+    await openDB();
+
+    setBadge("dbBadge","DB READY","ok");
+
+    const pred = await dbGetAll(STORE_PRED);
+    const hist = await dbGetAll(STORE_HISTORY);
+
+    activePredictions = pred.filter(
+      p => p.status === "active"
+    );
+
+    history = hist
+      .sort((a,b)=>(b.settledAt||0)-(a.settledAt||0));
+
+  }catch(err){
+
+    console.error(err);
+
+    setBadge("dbBadge","DB ERROR","bad");
+
+    throw err;
+  }
+}
+
+
+/* =========================================================
+   LOCAL STORAGE MIGRATION
+========================================================= */
+
+async function migrateLegacyData(){
+
+  if(!db) return;
+
+  const marker = await new Promise((resolve,reject)=>{
+    const tx = dbTx([STORE_META],"readonly");
+    const req = tx.objectStore(STORE_META).get("legacyMigrationDone");
+
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+
+  if(marker) return;
+
+  try{
+
+    const oldActive =
+      JSON.parse(
+        localStorage.getItem("eth_active_reliable_v4") || "[]"
+      );
+
+    const oldHistory =
+      JSON.parse(
+        localStorage.getItem("eth_history_reliable_v4") || "[]"
+      );
+
+    const tx = dbTx(
+      [STORE_PRED,STORE_HISTORY,STORE_META],
+      "readwrite"
+    );
+
+    const ps = tx.objectStore(STORE_PRED);
+    const hs = tx.objectStore(STORE_HISTORY);
+    const ms = tx.objectStore(STORE_META);
+
+    if(Array.isArray(oldActive)){
+      for(const p of oldActive){
+        if(p && p.id){
+          ps.put({
+            ...p,
+            status:"active",
+            migratedFrom:"v4"
+          });
+        }
+      }
+    }
+
+    if(Array.isArray(oldHistory)){
+      for(const h of oldHistory){
+        if(h && h.id){
+          hs.put({
+            ...h,
+            migratedFrom:"v4"
+          });
+        }
+      }
+    }
+
+    ms.put({
+      key:"legacyMigrationDone",
+      at:Date.now()
+    });
+
+    await new Promise((resolve,reject)=>{
+      tx.oncomplete = resolve;
+      tx.onerror = () => reject(tx.error);
+    });
+
+    const pred = await dbGetAll(STORE_PRED);
+    const hist = await dbGetAll(STORE_HISTORY);
+
+    activePredictions = pred.filter(p=>p.status==="active");
+    history = hist.sort(
+      (a,b)=>(b.settledAt||0)-(a.settledAt||0)
+    );
+
+  }catch(err){
+    console.warn("Migration skipped:",err);
+  }
+}
+
+
+/* =========================================================
+   BINANCE REST
+========================================================= */
+
+async function rest(path,params={}){
+
+  let lastError = null;
+
+  const query = new URLSearchParams(params).toString();
+
+  for(const base of REST_BASES){
+
+    try{
+
+      const controller = new AbortController();
+
+      const timeout = setTimeout(
+        ()=>controller.abort(),
+        9000
+      );
+
+      const url =
+        `${base}${path}?${query}`;
+
+      const response = await fetch(
+        url,
+        {
+          cache:"no-store",
+          signal:controller.signal
+        }
+      );
+
+      clearTimeout(timeout);
+
+      if(!response.ok){
+        throw new Error(`HTTP ${response.status}`);
+      }
+
+      return await response.json();
+
+    }catch(err){
+      lastError = err;
+    }
+  }
+
+  throw lastError || new Error("REST unavailable");
+}
+
+async function syncClock(){
+
+  try{
+
+    const data = await rest("/time");
+
+    if(data && Number.isFinite(data.serverTime)){
+      serverOffset =
+        data.serverTime - Date.now();
+    }
+
+  }catch(err){
+    console.warn("Clock sync failed",err);
+  }
+}
+
+function nowServer(){
+  return Date.now() + serverOffset;
+}
+
+
+/* =========================================================
+   BINANCE KLINES
+========================================================= */
+
+function parseKline(k){
+
+  return {
+    time:Number(k[0]),
+    open:Number(k[1]),
+    high:Number(k[2]),
+    low:Number(k[3]),
+    close:Number(k[4]),
+    volume:Number(k[5]),
+    closeTime:Number(k[6]),
+    quoteVolume:Number(k[7]),
+    trades:Number(k[8]),
+    takerBuyVolume:Number(k[9]),
+    takerBuyQuote:Number(k[10])
+  };
+}
+
+async function fetchKlines(tf,limit=1000){
+
+  const raw = await rest(
+    "/klines",
+    {
+      symbol:SYMBOL,
+      interval:tf,
+      limit:String(limit)
+    }
+  );
+
+  return raw
+    .map(parseKline)
+    .filter(x =>
+      Number.isFinite(x.time) &&
+      Number.isFinite(x.open) &&
+      Number.isFinite(x.high) &&
+      Number.isFinite(x.low) &&
+      Number.isFinite(x.close)
+    );
+}
+
+async function fetchKlinesRange(tf,startTime,endTime){
+
+  const raw = await rest(
+    "/klines",
+    {
+      symbol:SYMBOL,
+      interval:tf,
+      startTime:String(startTime),
+      endTime:String(endTime),
+      limit:"1000"
+    }
+  );
+
+  return raw.map(parseKline);
+}
+
+
+/* =========================================================
+   CANDLE DATABASE
+========================================================= */
+
+function candleId(tf,time){
+  return `${SYMBOL}|${tf}|${time}`;
+}
+
+async function saveCandles(tf,list){
+
+  if(!db || !list.length) return;
+
+  const tx = dbTx([STORE_CANDLES],"readwrite");
+  const store = tx.objectStore(STORE_CANDLES);
+
+  for(const c of list){
+
+    store.put({
+      id:candleId(tf,c.time),
+      symbol:SYMBOL,
+      tf,
+      ...c,
+      savedAt:Date.now()
+    });
+  }
+
+  await new Promise((resolve,reject)=>{
+    tx.oncomplete=resolve;
+    tx.onerror=()=>reject(tx.error);
+  });
+}
+
+
+/* =========================================================
+   1-MINUTE SOURCE DATA
+========================================================= */
+
+async function loadOneMinute(){
+
+  try{
+
+    const list = await fetchKlines("1m",1000);
+
+    oneMin = mergeCandles(oneMin,list);
+
+    await saveCandles("1m",list);
+
+    lastRestUpdate = Date.now();
+
+    return true;
+
+  }catch(err){
+
+    console.error("1m load error",err);
+    return false;
+  }
+}
+
+
+/* =========================================================
+   CHART
+========================================================= */
+
+function initChart(){
+
+  if(!window.LightweightCharts){
+    throw new Error("Lightweight Charts failed to load");
+  }
+
+  const container = $("chart");
+
+  chart = LightweightCharts.createChart(
+    container,
+    {
+      autoSize:true,
+
+      layout:{
+        background:{
+          type:"solid",
+          color:"transparent"
+        },
+        textColor:"#a9b7b0",
+        panes:{
+          separatorColor:"rgba(255,255,255,.06)",
+          separatorHoverColor:"rgba(255,255,255,.10)",
+          enableResize:false
+        }
+      },
+
+      grid:{
+        vertLines:{
+          color:"rgba(255,255,255,.035)"
+        },
+        horzLines:{
+          color:"rgba(255,255,255,.035)"
+        }
+      },
+
+      crosshair:{
+        mode:LightweightCharts.CrosshairMode.Normal
+      },
+
+      rightPriceScale:{
+        borderColor:"rgba(255,255,255,.08)"
+      },
+
+      timeScale:{
+        borderColor:"rgba(255,255,255,.08)",
+        timeVisible:true,
+        secondsVisible:false,
+        rightOffset:4
+      },
+
+      handleScale:{
+        mouseWheel:true,
+        pinch:true,
+        axisPressedMouseMove:true
+      },
+
+      handleScroll:{
+        mouseWheel:true,
+        pressedMouseMove:true,
+        horzTouchDrag:true,
+        vertTouchDrag:true
+      }
+    }
+  );
+
+  candleSeries = chart.addSeries(
+    LightweightCharts.CandlestickSeries,
+    {
+      upColor:"rgba(57,242,154,.46)",
+      downColor:"rgba(255,88,121,.44)",
+
+      borderUpColor:"rgba(101,255,185,.92)",
+      borderDownColor:"rgba(255,123,148,.92)",
+
+      wickUpColor:"rgba(101,255,185,.95)",
+      wickDownColor:"rgba(255,123,148,.95)"
+    },
+    0
+  );
+
+  volumeSeries = chart.addSeries(
+    LightweightCharts.HistogramSeries,
+    {
+      priceFormat:{
+        type:"volume"
+      },
+
+      priceScaleId:""
+    },
+    1
+  );
+
+  chart.panes()[1].setHeight(105);
+
+  window.addEventListener(
+    "resize",
+    ()=>chart.resize(
+      container.clientWidth,
+      container.clientHeight
+    )
+  );
+}
+
+
+/* =========================================================
+   CANDLE HELPERS
+========================================================= */
+
+function mergeCandles(a,b){
+
+  const map = new Map();
+
+  for(const c of [...a,...b]){
+    if(c && Number.isFinite(c.time)){
+      map.set(c.time,c);
+    }
+  }
+
+  return [...map.values()]
+    .sort((x,y)=>x.time-y.time);
+}
+
+function chartCandle(c){
+
+  return {
+    time:Math.floor(c.time/1000),
+    open:c.open,
+    high:c.high,
+    low:c.low,
+    close:c.close
+  };
+}
+
+function chartVolume(c){
+
+  return {
+    time:Math.floor(c.time/1000),
+    value:c.volume,
+    color:
+      c.close >= c.open
+        ? "rgba(57,242,154,.28)"
+        : "rgba(255,88,121,.27)"
+  };
+}
+
+function renderChart(preserve=true){
+
+  if(!chart || !candleSeries || !volumeSeries) return;
+
+  let oldRange = null;
+
+  if(preserve){
+    try{
+      oldRange =
+        chart.timeScale().getVisibleLogicalRange();
+    }catch(_){}
+  }
+
+  candleSeries.setData(
+    candles.map(chartCandle)
+  );
+
+  volumeSeries.setData(
+    candles.map(chartVolume)
+  );
+
+  if(oldRange){
+    try{
+      chart.timeScale().setVisibleLogicalRange(oldRange);
+    }catch(_){}
+  }else{
+    chart.timeScale().fitContent();
+  }
+}
+
+
+/* =========================================================
+   MARKET LOADING
+========================================================= */
+
+async function loadMarket(preserve=true){
+
+  if(busyLoad) return;
+
+  busyLoad = true;
+
+  setBadge("dataBadge","LOADING","warn");
+
+  try{
+
+    const list = await fetchKlines(
+      selectedTF,
+      1000
+    );
+
+    candles = mergeCandles(candles,list);
+
+    /* Only keep the chart dataset bounded. */
+    if(candles.length > 1500){
+      candles = candles.slice(-1500);
+    }
+
+    await saveCandles(selectedTF,list);
+
+    renderChart(preserve);
+
+    if(list.length){
+      const latest = list[list.length-1];
+
+      currentPrice = latest.close;
+
+      updatePriceUI(latest);
+
+      lastMarketUpdate = Date.now();
+    }
+
+    setBadge(
+      "dataBadge",
+      `${selectedTF} • ${list.length}`,
+      "ok"
+    );
+
+  }catch(err){
+
+    console.error(err);
+
+    setBadge(
+      "dataBadge",
+      "REST ERROR",
+      "bad"
+    );
+
+  }finally{
+
+    busyLoad=false;
+  }
+}
+
+
+/* =========================================================
+   LIVE 1M WEBSOCKET
+========================================================= */
+
+function connectWS(){
+
+  clearTimeout(reconnectTimer);
+
+  if(ws){
+    try{
+      ws.close();
+    }catch(_){}
+  }
+
+  const url = WS_URLS[wsIndex % WS_URLS.length];
+
+  setBadge("connBadge","CONNECTING","warn");
+
+  try{
+
+    ws = new WebSocket(url);
+
+  }catch(err){
+
+    scheduleReconnect();
+    return;
+  }
+
+  ws.onopen = async ()=>{
+
+    setBadge("connBadge","LIVE","ok");
+
+    wsIndex = 0;
+
+    lastWSUpdate = Date.now();
+
+    await loadOneMinute();
+
+    await refreshChartFromOneMinuteIfNeeded();
+  };
+
+  ws.onmessage = event => {
+
+    try{
+
+      const msg = JSON.parse(event.data);
+
+      if(!msg.k) return;
+
+      const k = msg.k;
+
+      const c = {
+        time:Number(k.t),
+        open:Number(k.o),
+        high:Number(k.h),
+        low:Number(k.l),
+        close:Number(k.c),
+        volume:Number(k.v),
+        closeTime:Number(k.T),
+        quoteVolume:Number(k.q),
+        trades:Number(k.n),
+        takerBuyVolume:Number(k.V),
+        takerBuyQuote:Number(k.Q)
+      };
+
+      if(
+        !Number.isFinite(c.time) ||
+        !Number.isFinite(c.close)
+      ) return;
+
+      oneMin = mergeCandles(oneMin,[c]);
+
+      if(oneMin.length > 1200){
+        oneMin = oneMin.slice(-1200);
+      }
+
+      currentPrice = c.close;
+
+      lastWSUpdate = Date.now();
+      lastMarketUpdate = Date.now();
+
+      updatePriceUI(c);
+
+      updateSelectedLiveBucket(c);
+
+      if(c.k){
+        // defensive only
+      }
+
+    }catch(err){
+      console.warn("WS message error",err);
+    }
+  };
+
+  ws.onerror = ()=>{
+    setBadge("connBadge","ERROR","bad");
+  };
+
+  ws.onclose = ()=>{
+
+    setBadge("connBadge","RECONNECTING","warn");
+
+    wsIndex++;
+
+    scheduleReconnect();
+  };
+}
+
+function scheduleReconnect(){
+
+  clearTimeout(reconnectTimer);
+
+  reconnectTimer = setTimeout(
+    ()=>connectWS(),
+    Math.min(
+      30000,
+      2000 * Math.max(1,wsIndex)
+    )
+  );
+}
+
+
+/* =========================================================
+   LIVE CHART BUCKET
+========================================================= */
+
+function bucketStart(ms,tf){
+  const size = TF_MS[tf];
+
+  return Math.floor(ms/size)*size;
+}
+
+function aggregateBucket(tf,bucketTime){
+
+  const size = TF_MS[tf];
+
+  const end = bucketTime + size;
+
+  const list = oneMin.filter(
+    c => c.time >= bucketTime && c.time < end
+  );
+
+  if(!list.length) return null;
+
+  const first = list[0];
+  const last = list[list.length-1];
+
+  return {
+    time:bucketTime,
+    open:first.open,
+    high:Math.max(...list.map(x=>x.high)),
+    low:Math.min(...list.map(x=>x.low)),
+    close:last.close,
+    volume:list.reduce(
+      (sum,x)=>sum+x.volume,
+      0
+    ),
+    closeTime:end-1
+  };
+}
+
+function updateSelectedLiveBucket(c){
+
+  if(!candleSeries) return;
+
+  const bucket = bucketStart(
+    c.time,
+    selectedTF
+  );
+
+  if(selectedTF === "1m"){
+
+    candleSeries.update(
+      chartCandle(c)
+    );
+
+    volumeSeries.update(
+      chartVolume(c)
+    );
+
+    return;
+  }
+
+  const agg = aggregateBucket(
+    selectedTF,
+    bucket
+  );
+
+  if(!agg) return;
+
+  candleSeries.update(
+    chartCandle(agg)
+  );
+
+  volumeSeries.update(
+    chartVolume(agg)
+  );
+}
+
+async function refreshChartFromOneMinuteIfNeeded(){
+
+  if(selectedTF === "1m") return;
+
+  const latest = oneMin[oneMin.length-1];
+
+  if(!latest) return;
+
+  const bucket = bucketStart(
+    latest.time,
+    selectedTF
+  );
+
+  const agg = aggregateBucket(
+    selectedTF,
+    bucket
+  );
+
+  if(!agg) return;
+
+  try{
+    candleSeries.update(chartCandle(agg));
+    volumeSeries.update(chartVolume(agg));
+  }catch(_){}
+}
+
+
+/* =========================================================
+   PRICE UI
+========================================================= */
+
+function updatePriceUI(c){
+
+  if(!c) return;
+
+  $("price").textContent =
+    `$${fmtPrice(c.close)}`;
+
+  $("priceMeta").textContent =
+    `${selectedTF} • ${fmtTime(c.time)} • ${SYMBOL}`;
+
+  $("high24").textContent =
+    fmtPrice(c.high);
+
+  $("low24").textContent =
+    fmtPrice(c.low);
+
+  $("volume24").textContent =
+    c.volume
+      ? Number(c.volume).toLocaleString(undefined,{
+          maximumFractionDigits:2
+        })
+      : "—";
+
+  const ratio =
+    c.volume > 0
+      ? (c.takerBuyVolume / c.volume) * 100
+      : NaN;
+
+  $("buyRatio").textContent =
+    Number.isFinite(ratio)
+      ? `${ratio.toFixed(1)}%`
+      : "—";
+}
+
+
+/* =========================================================
+   FEATURE ENGINE
+========================================================= */
+
+function returns(list,n){
+
+  const out=[];
+
+  for(let i=n;i<list.length;i++){
+    const a=list[i-n].close;
+    const b=list[i].close;
+
+    if(a>0 && b>0){
+      out.push(
+        Math.log(b/a)
+      );
+    }
+  }
+
+  return out;
+}
+
+function ema(list,period){
+
+  if(list.length < period) return null;
+
+  const alpha = 2/(period+1);
+
+  let value = mean(
+    list.slice(0,period)
+  );
+
+  for(let i=period;i<list.length;i++){
+    value =
+      alpha*list[i]
+      +(1-alpha)*value;
+  }
+
+  return value;
+}
+
+function featureSet(){
+
+  const data = oneMin.filter(
+    x =>
+      Number.isFinite(x.close) &&
+      x.close > 0
+  );
+
+  if(data.length < 80){
+    return null;
+  }
+
+  const closes =
+    data.map(x=>x.close);
+
+  const shortR =
+    mean(returns(data,3).slice(-12));
+
+  const mediumR =
+    mean(returns(data,10).slice(-12));
+
+  const longR =
+    mean(returns(data,30).slice(-12));
+
+  const r1 =
+    returns(data,1);
+
+  const vol =
+    stdev(r1.slice(-60));
+
+  const ema21 =
+    ema(closes.slice(-100),21);
+
+  const ema50 =
+    ema(closes.slice(-100),50);
+
+  const last =
+    closes[closes.length-1];
+
+  const trend =
+    ema21 && ema50
+      ? (ema21-ema50)/last
+      : 0;
+
+  const recent =
+    data.slice(-30);
+
+  const volumeMean =
+    mean(
+      data
+        .slice(-90,-30)
+        .map(x=>x.volume)
+    );
+
+  const recentVolume =
+    mean(
+      recent.map(x=>x.volume)
+    );
+
+  const rvol =
+    volumeMean > 0
+      ? recentVolume/volumeMean
+      : 1;
+
+  const buyRatio =
+    mean(
+      recent.map(x =>
+        x.volume > 0
+          ? x.takerBuyVolume/x.volume
+          : .5
+      )
+    );
+
+  const range =
+    mean(
+      recent.map(x =>
+        x.open > 0
+          ? (x.high-x.low)/x.open
+          : 0
+      )
+    );
+
+  return {
+    data,
+    last,
+    shortR,
+    mediumR,
+    longR,
+    vol,
+    ema21,
+    ema50,
+    trend,
+    rvol,
+    buyRatio,
+    range
+  };
+}
+
+
+/* =========================================================
+   ERROR CORRECTION
+========================================================= */
+
+function historicalCorrection(){
+
+  const recent =
+    history
+      .filter(x =>
+        Number.isFinite(x.errorPct)
+      )
+      .slice(0,30);
+
+  if(recent.length < 5){
+    return 0;
+  }
+
+  /*
+    If previous predictions systematically
+    overshot/undershot, apply a small correction.
+  */
+
+  const errors =
+    recent.map(x => x.errorPct);
+
+  const correction =
+    mean(errors)/100;
+
+  return clamp(
+    correction,
+    -.01,
+    .01
+  );
+}
+
+
+/* =========================================================
+   FIVE-ENGINE FORECAST
+========================================================= */
+
+function forecast(horizonMinutes){
+
+  const f = featureSet();
+
+  if(!f){
+    return {
+      ok:false,
+      reason:"Not enough 1m data"
+    };
+  }
+
+  const h = horizonMinutes;
+
+  /*
+    ENGINE 1
+    Chronological / multi-window momentum
+  */
+
+  const e1Return =
+    (
+      .42*f.shortR +
+      .36*f.mediumR +
+      .22*f.longR
+    ) * Math.sqrt(h/15);
+
+
+  /*
+    ENGINE 2
+    Mathematical / EMA + volatility
+  */
+
+  const emaSignal =
+    f.ema21 && f.ema50
+      ? (f.ema21-f.ema50)/f.last
+      : 0;
+
+  const e2Return =
+    (
+      .70*emaSignal +
+      .30*f.trend
+    ) * Math.sqrt(h/15);
+
+
+  /*
+    ENGINE 3
+    Information / volume / regime
+  */
+
+  const volumePressure =
+    clamp(
+      (f.buyRatio-.5)*2,
+      -.5,
+      .5
+    );
+
+  const regimePressure =
+    clamp(
+      f.rvol-1,
+      -1,
+      1
+    ) * .001;
+
+  const e3Return =
+    (
+      .004*volumePressure +
+      regimePressure +
+      f.trend*.25
+    ) * Math.sqrt(h/15);
+
+
+  /*
+    ENGINE 4
+    Error correction
+  */
+
+  const correction =
+    historicalCorrection();
+
+  const base =
+    mean([
+      e1Return,
+      e2Return,
+      e3Return
+    ]);
+
+  const e4Return =
+    base + correction;
+
+
+  /*
+    ENGINE 5
+    Meta-consultation.
+
+    It does NOT blindly average.
+    It checks disagreement and adjusts
+    confidence/weight.
+  */
+
+  const engineReturns = [
+    e1Return,
+    e2Return,
+    e3Return,
+    e4Return
+  ];
+
+  const avg =
+    mean(engineReturns);
+
+  const disagreement =
+    stdev(engineReturns);
+
+  const regimeCompatibility =
+    clamp(
+      1 - Math.abs(f.trend)*20,
+      .25,
+      1
+    );
+
+  const agreementScore =
+    clamp(
+      1 - disagreement/.01,
+      0,
+      1
+    );
+
+  const dataScore =
+    clamp(
+      f.data.length/500,
+      .25,
+      1
+    );
+
+  const confidence =
+    clamp(
+      (
+        .40*agreementScore +
+        .25*regimeCompatibility +
+        .35*dataScore
+      ) * 100,
+      20,
+      92
+    );
+
+  const metaReturn =
+    (
+      .30*e1Return +
+      .25*e2Return +
+      .25*e3Return +
+      .20*e4Return
+    );
+
+  const corrected =
+    metaReturn *
+    clamp(
+      .70 + agreementScore*.30,
+      .70,
+      1
+    );
+
+  const predictedPrice =
+    f.last * Math.exp(corrected);
+
+  let direction="flat";
+
+  if(corrected > 0.00015)
+    direction="up";
+
+  if(corrected < -0.00015)
+    direction="down";
+
+  return {
+    ok:true,
+
+    horizon:h,
+
+    current:f.last,
+
+    price:predictedPrice,
+
+    returnPct:corrected*100,
+
+    direction,
+
+    confidence,
+
+    disagreement,
+
+    sampleSize:f.data.length,
+
+    engines:{
+      chronological:e1Return,
+      mathematical:e2Return,
+      information:e3Return,
+      correction:e4Return,
+      consultation:corrected
+    },
+
+    features:f
+  };
+}
+
+
+/* =========================================================
+   PREDICTION STORAGE
+========================================================= */
+
+function predictionId(horizon,targetAt){
+  return `${SYMBOL}|${horizon}|${targetAt}`;
+}
+
+async function putPrediction(p){
+
+  await dbPut(
+    STORE_PRED,
+    p
+  );
+}
+
+async function deletePrediction(id){
+
+  return new Promise((resolve,reject)=>{
+
+    const tx =
+      dbTx([STORE_PRED],"readwrite");
+
+    tx.objectStore(STORE_PRED).delete(id);
+
+    tx.oncomplete=resolve;
+    tx.onerror=()=>reject(tx.error);
+  });
+}
+
+async function putHistory(h){
+
+  await dbPut(
+    STORE_HISTORY,
+    h
+  );
+}
+
+
+/* =========================================================
+   PREDICTION CREATION
+========================================================= */
+
+async function ensurePredictions(){
+
+  if(predictionBusy) return;
+
+  predictionBusy=true;
+
+  try{
+
+    const horizons=[15,30];
+
+    for(const horizon of horizons){
+
+      const existing =
+        activePredictions.find(
+          p =>
+            p.horizon === horizon &&
+            p.status === "active"
+        );
+
+      if(existing) continue;
+
+      const fc =
+        forecast(horizon);
+
+      if(!fc.ok) continue;
+
+      const createdAt =
+        nowServer();
+
+      const targetAt =
+        createdAt +
+        horizon*60*1000;
+
+      const p = {
+        id:predictionId(horizon,targetAt),
+
+        symbol:SYMBOL,
+
+        horizon,
+
+        createdAt,
+
+        targetAt,
+
+        entryPrice:fc.current,
+
+        forecastPrice:fc.price,
+
+        forecastReturnPct:fc.returnPct,
+
+        direction:fc.direction,
+
+        confidence:fc.confidence,
+
+        sampleSize:fc.sampleSize,
+
+        engineSnapshot:fc.engines,
+
+        status:"active",
+
+        version:"V1"
+      };
+
+      await putPrediction(p);
+
+      activePredictions.push(p);
+    }
+
+    renderPredictions();
+
+  }catch(err){
+
+    console.error(
+      "Prediction creation error",
+      err
+    );
+
+  }finally{
+
+    predictionBusy=false;
+  }
+}
+
+
+/* =========================================================
+   TARGET SETTLEMENT
+========================================================= */
+
+/*
+  Settlement rule:
+
+  The target time is locked when prediction
+  is created.
+
+  We do NOT use the current price later.
+
+  We use the close of the first completed
+  1-minute candle whose closeTime is at
+  or after the locked target.
+
+  This creates a deterministic settlement
+  definition and avoids using a later
+  arbitrary market price.
+*/
+
+async function findTargetSettlement(targetAt){
+
+  const searchStart =
+    targetAt - 60*1000;
+
+  const searchEnd =
+    targetAt + 5*60*1000;
+
+  let list = [];
+
+  try{
+
+    list =
+      await fetchKlinesRange(
+        "1m",
+        searchStart,
+        searchEnd
+      );
+
+  }catch(err){
+
+    console.warn(
+      "Target REST query failed",
+      err
+    );
+
+    return null;
+  }
+
+  const current =
+    nowServer();
+
+  const candidates =
+    list
+      .map(parseKline)
+      .filter(k =>
+        k.closeTime >= targetAt &&
+        k.closeTime <= current
+      )
+      .sort(
+        (a,b)=>a.closeTime-b.closeTime
+      );
+
+  if(!candidates.length){
+    return null;
+  }
+
+  const c =
+    candidates[0];
+
+  return {
+    price:c.close,
+    observedAt:c.closeTime,
+    method:"1m-close-at-or-after-target"
+  };
+}
+
+
+/* =========================================================
+   ATOMIC SETTLEMENT
+========================================================= */
+
+async function settlePrediction(p){
+
+  if(settlementBusy) return;
+
+  settlementBusy=true;
+
+  try{
+
+    const settlement =
+      await findTargetSettlement(
+        p.targetAt
+      );
+
+    if(!settlement){
+      return;
+    }
+
+    const actual =
+      settlement.price;
+
+    const errorPct =
+      p.forecastPrice > 0
+        ? (
+            (actual-p.forecastPrice) /
+            p.forecastPrice
+          )*100
+        : NaN;
+
+    const settled = {
+      ...p,
+
+      status:"settled",
+
+      actualPrice:actual,
+
+      actualAt:settlement.observedAt,
+
+      settlementMethod:settlement.method,
+
+      errorPct,
+
+      absErrorPct:Math.abs(errorPct),
+
+      settledAt:Date.now()
+    };
+
+    /*
+      Single IndexedDB transaction:
+
+      1. Remove active prediction.
+      2. Save completed history.
+
+      This prevents the same prediction from
+      being recorded twice after a reload.
+    */
+
+    await new Promise((resolve,reject)=>{
+
+      const tx =
+        dbTx(
+          [STORE_PRED,STORE_HISTORY],
+          "readwrite"
+        );
+
+      tx.objectStore(
+        STORE_PRED
+      ).delete(p.id);
+
+      tx.objectStore(
+        STORE_HISTORY
+      ).put(settled);
+
+      tx.oncomplete=resolve;
+      tx.onerror=()=>reject(tx.error);
+    });
+
+    activePredictions =
+      activePredictions.filter(
+        x=>x.id!==p.id
+      );
+
+    history.unshift(settled);
+
+    history =
+      history.sort(
+        (a,b)=>
+          (b.settledAt||0) -
+          (a.settledAt||0)
+      );
+
+    renderHistory();
+
+    /*
+      Immediately create a new prediction
+      for the same horizon.
+    */
+
+    await ensurePredictions();
+
+  }catch(err){
+
+    console.error(
+      "Settlement error",
+      err
+    );
+
+  }finally{
+
+    settlementBusy=false;
+  }
+}
+
+async function settleDuePredictions(){
+
+  const now =
+    nowServer();
+
+  const due =
+    activePredictions.filter(
+      p =>
+        p.status === "active" &&
+        p.targetAt <= now
+    );
+
+  for(const p of due){
+
+    await settlePrediction(p);
+  }
+}
+
+
+/* =========================================================
+   PREDICTION UI
+========================================================= */
+
+function renderOnePrediction(
+  elementId,
+  horizon
+){
+
+  const el = $(elementId);
+
+  const p =
+    activePredictions.find(
+      x =>
+        x.horizon === horizon &&
+        x.status === "active"
+    );
+
+  if(!p){
+
+    el.querySelector(
+      ".direction"
+    ).textContent="WAITING";
+
+    el.querySelector(
+      ".direction"
+    ).className="direction";
+
+    el.querySelector(
+      ".predPrice"
+    ).textContent="—";
+
+    el.querySelectorAll(
+      ".predRow span:last-child"
+    )[0].textContent="—";
+
+    el.querySelectorAll(
+      ".predRow span:last-child"
+    )[1].textContent="—";
+
+    el.querySelector(
+      ".conf > div"
+    ).style.width="0%";
+
+    return;
+  }
+
+  const dir =
+    el.querySelector(".direction");
+
+  dir.textContent =
+    p.direction.toUpperCase();
+
+  dir.className =
+    `direction ${p.direction}`;
+
+  el.querySelector(".predPrice")
+    .textContent =
+    `$${fmtPrice(p.forecastPrice)}`;
+
+  el.querySelectorAll(
+    ".predRow span:last-child"
+  )[0].textContent =
+    fmtTarget(p.targetAt);
+
+  el.querySelectorAll(
+    ".predRow span:last-child"
+  )[1].textContent =
+    `${p.confidence.toFixed(0)}%`;
+
+  el.querySelector(
+    ".conf > div"
+  ).style.width =
+    `${p.confidence}%`;
+}
+
+function renderPredictions(){
+
+  renderOnePrediction(
+    "pred15",
+    15
+  );
+
+  renderOnePrediction(
+    "pred30",
+    30
+  );
+
+  renderEngines();
+}
+
+function renderEngines(){
+
+  if(!lastForecast || !lastForecast.ok){
+    return;
+  }
+
+  const e =
+    lastForecast.engines;
+
+  $("e1").textContent =
+    fmtPct(e.chronological*100);
+
+  $("e2").textContent =
+    fmtPct(e.mathematical*100);
+
+  $("e3").textContent =
+    fmtPct(e.information*100);
+
+  $("e4").textContent =
+    fmtPct(e.correction*100);
+
+  $("e5").textContent =
+    fmtPct(e.consultation*100);
+
+  $("e1r").textContent =
+    "Short/medium/long chronological momentum";
+
+  $("e2r").textContent =
+    "EMA structure and trend geometry";
+
+  $("e3r").textContent =
+    "Volume pressure and regime";
+
+  $("e4r").textContent =
+    "Historical residual correction";
+
+  $("e5r").textContent =
+    `Agreement ${(100 -
+      lastForecast.disagreement*10000
+    ).toFixed(0)}% • confidence ${
+      lastForecast.confidence.toFixed(0)
+    }%`;
+}
+
+
+/* =========================================================
+   HISTORY UI
+========================================================= */
+
+function renderHistory(){
+
+  const body =
+    $("historyBody");
+
+  body.innerHTML="";
+
+  if(!history.length){
+
+    $("historyStats").textContent =
+      "No completed predictions yet.";
+
+    return;
+  }
+
+  const errors =
+    history
+      .map(x=>x.absErrorPct)
+      .filter(Number.isFinite)
+      .slice(0,30);
+
+  const mae =
+    errors.length
+      ? mean(errors)
+      : NaN;
+
+  $("historyStats").textContent =
+    `${history.length} completed • ` +
+    `MAE last ${errors.length}: ` +
+    `${Number.isFinite(mae) ? mae.toFixed(3)+"%" : "—"}`;
+
+  for(const h of history.slice(0,100)){
+
+    const tr =
+      document.createElement("tr");
+
+    tr.innerHTML=`
+      <td>${fmtTime(h.settledAt)}</td>
+      <td>${h.horizon}m</td>
+      <td>$${fmtPrice(h.forecastPrice)}</td>
+      <td>$${fmtPrice(h.actualPrice)}</td>
+      <td class="${Math.abs(h.errorPct||0)<.25 ? "good":"badText"}">
+        ${fmtPct(h.errorPct)}
+      </td>
+      <td>${h.settlementMethod || "—"}</td>
+    `;
+
+    body.appendChild(tr);
+  }
+}
+
+
+/* =========================================================
+   MODEL REFRESH
+========================================================= */
+
+function refreshForecast(){
+
+  const fc =
+    forecast(15);
+
+  if(!fc.ok){
+    lastForecast=null;
+    return;
+  }
+
+  lastForecast=fc;
+
+  renderEngines();
+}
+
+async function predictionLoop(){
+
+  refreshForecast();
+
+  await settleDuePredictions();
+
+  await ensurePredictions();
+
+  renderPredictions();
+
+  const age =
+    Date.now() -
+    lastMarketUpdate;
+
+  if(age > 90000){
+
+    setBadge(
+      "dataBadge",
+      "STALE",
+      "warn"
+    );
+
+    if(age > 150000){
+      loadMarket(true);
+    }
+  }
+}
+
+
+/* =========================================================
+   TIMEFRAME / RANGE
+========================================================= */
+
+document.querySelectorAll(".tf")
+  .forEach(btn=>{
+
+    btn.addEventListener(
+      "click",
+      async ()=>{
+
+        document
+          .querySelectorAll(".tf")
+          .forEach(x=>x.classList.remove("active"));
+
+        btn.classList.add("active");
+
+        selectedTF =
+          btn.dataset.tf;
+
+        candles=[];
+
+        await loadMarket(false);
+
+        refreshChartFromOneMinuteIfNeeded();
+      }
+    );
+  });
+
+document.querySelectorAll(".range")
+  .forEach(btn=>{
+
+    btn.addEventListener(
+      "click",
+      async ()=>{
+
+        document
+          .querySelectorAll(".range")
+          .forEach(x=>x.classList.remove("active"));
+
+        btn.classList.add("active");
+
+        selectedRange =
+          btn.dataset.range;
+
+        await loadMarket(false);
+
+        applyRange();
+      }
+    );
+  });
+
+function applyRange(){
+
+  if(!chart || !candles.length) return;
+
+  const end =
+    candles[candles.length-1].time;
+
+  const duration =
+    RANGE_MS[selectedRange];
+
+  if(duration == null){
+    chart.timeScale().fitContent();
+    return;
+  }
+
+  const start =
+    end-duration;
+
+  const visible =
+    candles.filter(
+      c =>
+        c.time >= start &&
+        c.time <= end
+    );
+
+  if(!visible.length){
+    chart.timeScale().fitContent();
+    return;
+  }
+
+  chart.timeScale().setVisibleRange({
+    from:Math.floor(visible[0].time/1000),
+    to:Math.floor(end/1000)
+  });
+}
+
+
+/* =========================================================
+   CHART BUTTONS
+========================================================= */
+
+$("zoomIn").addEventListener(
+  "click",
+  ()=>{
+    const r =
+      chart.timeScale().getVisibleLogicalRange();
+
+    if(!r) return;
+
+    const center =
+      (r.from+r.to)/2;
+
+    const half =
+      Math.max(
+        5,
+        (r.to-r.from)*.35
+      );
+
+    chart.timeScale()
+      .setVisibleLogicalRange({
+        from:center-half,
+        to:center+half
+      });
+  }
+);
+
+$("zoomOut").addEventListener(
+  "click",
+  ()=>{
+    const r =
+      chart.timeScale().getVisibleLogicalRange();
+
+    if(!r) return;
+
+    const center =
+      (r.from+r.to)/2;
+
+    const half =
+      (r.to-r.from)*.72;
+
+    chart.timeScale()
+      .setVisibleLogicalRange({
+        from:center-half,
+        to:center+half
+      });
+  }
+);
+
+$("fitBtn").addEventListener(
+  "click",
+  ()=>{
+    chart.timeScale().fitContent();
+  }
+);
+
+$("refreshBtn").addEventListener(
+  "click",
+  async ()=>{
+    await syncClock();
+    await loadOneMinute();
+    await loadMarket(true);
+    await ensurePredictions();
+  }
+);
+
+
+/* =========================================================
+   EXPORT
+========================================================= */
+
+$("exportBtn").addEventListener(
+  "click",
+  async ()=>{
+
+    try{
+
+      const candleData =
+        await dbGetAll(STORE_CANDLES);
+
+      const predData =
+        await dbGetAll(STORE_PRED);
+
+      const histData =
+        await dbGetAll(STORE_HISTORY);
+
+      const backup={
+        app:"ETH/USDT Predictor V1",
+        version:1,
+        exportedAt:new Date().toISOString(),
+        candles:candleData,
+        predictions:predData,
+        history:histData
+      };
+
+      const blob =
+        new Blob(
+          [JSON.stringify(backup,null,2)],
+          {type:"application/json"}
+        );
+
+      const url =
+        URL.createObjectURL(blob);
+
+      const a =
+        document.createElement("a");
+
+      a.href=url;
+      a.download=
+        `eth-predictor-backup-${Date.now()}.json`;
+
+      a.click();
+
+      setTimeout(
+        ()=>URL.revokeObjectURL(url),
+        1000
+      );
+
+    }catch(err){
+
+      alert(
+        "Export failed: " +
+        err.message
+      );
+    }
+  }
+);
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
+$("resetBtn").addEventListener(
+  "click",
+  async ()=>{
+
+    const ok =
+      confirm(
+        "Delete V1 predictions, history and stored candles?"
+      );
+
+    if(!ok) return;
+
+    try{
+
+      await dbClear(STORE_CANDLES);
+      await dbClear(STORE_PRED);
+      await dbClear(STORE_HISTORY);
+
+      activePredictions=[];
+      history=[];
+      oneMin=[];
+      candles=[];
+
+      localStorage.removeItem(
+        "eth_active_reliable_v4"
+      );
+
+      localStorage.removeItem(
+        "eth_history_reliable_v4"
+      );
+
+      renderHistory();
+      renderPredictions();
+
+      await loadOneMinute();
+      await loadMarket(false);
+      await ensurePredictions();
+
+    }catch(err){
+
+      alert(
+        "Reset failed: " +
+        err.message
+      );
+    }
+  }
+);
+
+
+/* =========================================================
+   RELIABILITY STATUS
+========================================================= */
+
+function updateReliability(){
+
+  const wsAge =
+    lastWSUpdate
+      ? Date.now()-lastWSUpdate
+      : Infinity;
+
+  const restAge =
+    lastRestUpdate
+      ? Date.now()-lastRestUpdate
+      : Infinity;
+
+  let text =
+    `1m source candles: ${oneMin.length}. `;
+
+  text +=
+    `Active predictions: ${activePredictions.length}. `;
+
+  text +=
+    `Completed predictions: ${history.length}. `;
+
+  if(wsAge < 90000){
+    text +=
+      "WebSocket data is fresh. ";
+  }else{
+    text +=
+      "WebSocket data is stale or disconnected. ";
+  }
+
+  if(restAge < 120000){
+    text +=
+      "REST fallback is fresh.";
+  }else{
+    text +=
+      "REST data needs refresh.";
+  }
+
+  $("reliabilityText").textContent=text;
+}
+
+
+/* =========================================================
+   INITIALIZATION
+========================================================= */
+
+async function boot(){
+
+  try{
+
+    setBadge(
+      "connBadge",
+      "STARTING",
+      "warn"
+    );
+
+    setBadge(
+      "dbBadge",
+      "OPENING",
+      "warn"
+    );
+
+    await loadDatabase();
+
+    await migrateLegacyData();
+
+    await syncClock();
+
+    initChart();
+
+    /*
+      Load 1m data first because the
+      prediction engine depends on it.
+    */
+
+    const sourceOK =
+      await loadOneMinute();
+
+    if(!sourceOK){
+      setBadge(
+        "dataBadge",
+        "1m FAILED",
+        "bad"
+      );
+    }
+
+    /*
+      Load the selected chart timeframe.
+    */
+
+    await loadMarket(false);
+
+    refreshForecast();
+
+    await ensurePredictions();
+
+    renderPredictions();
+    renderHistory();
+
+    connectWS();
+
+    setInterval(
+      predictionLoop,
+      10000
+    );
+
+    setInterval(
+      async ()=>{
+        await syncClock();
+      },
+      5*60*1000
+    );
+
+    setInterval(
+      async ()=>{
+        if(
+          Date.now()-lastRestUpdate >
+          60000
+        ){
+          await loadOneMinute();
+        }
+      },
+      60000
+    );
+
+    setInterval(
+      updateReliability,
+      5000
+    );
+
+    updateReliability();
+
+  }catch(err){
+
+    console.error(err);
+
+    $("reliabilityText").innerHTML =
+      `<div class="errorBox">
+        Startup failed: ${String(err.message || err)}
+        <br><br>
+        Check your internet connection and reload.
+      </div>`;
+
+    setBadge(
+      "connBadge",
+      "FAILED",
+      "bad"
+    );
+  }
+}
+
+boot();
+
+</script>
+</body>
+</html>
