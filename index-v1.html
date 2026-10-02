@@ -4,115 +4,43 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="theme-color" content="#020609">
-<title>ETH/USDT • Matrix Core V5</title>
+<title>ETH/USDT • Classic Market Terminal</title>
 <script src="https://unpkg.com/lightweight-charts@5.2.1/dist/lightweight-charts.standalone.production.js"></script>
 <style>
 :root{--bg:#020609;--panel:#071116;--panel2:#091820;--cyan:#59f5ff;--green:#4dffa5;--red:#ff5475;--violet:#d66cff;--yellow:#ffe56b;--text:#dffcff;--muted:#6e8991;--line:#15343d}
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;background:var(--bg);color:var(--text);font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
-body{min-height:100vh;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
-button,input{font:inherit}button{cursor:pointer}
-.app{width:min(100%,620px);margin:auto;padding:8px 12px 92px}
-.top{display:flex;align-items:center;justify-content:space-between;padding:10px 2px 12px}
-.brand{display:flex;align-items:center;gap:10px}
-.logo{width:42px;height:42px;border:2px solid var(--cyan);border-radius:12px;display:grid;place-items:center;color:var(--cyan);font-size:20px;box-shadow:0 0 18px #59f5ff22}
-.title{font-weight:900;font-size:20px;letter-spacing:1px}
-.sub{font-size:8px;color:var(--muted);letter-spacing:2px;margin-top:3px}
-.status{font-size:9px;color:var(--green);border:1px solid #164d3d;border-radius:20px;padding:7px 9px;background:#06110f}
-.dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green);margin-right:5px}
-.screen{display:none}.screen.active{display:block}
-.panel{background:linear-gradient(140deg,#08151b,#050c10);border:1px solid var(--line);border-radius:16px;padding:12px;margin-bottom:10px;box-shadow:0 0 24px #0008}
-.price{font-size:30px;font-weight:900;color:var(--green)}
-.price-row{display:flex;justify-content:space-between;gap:8px}
-.ticker{font-size:9px;color:var(--muted);text-align:right}
-.change{font-size:10px;margin-top:3px}
-.green{color:var(--green)}.red{color:var(--red)}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
-.stat{border-top:1px solid var(--line);padding-top:7px}
-.lab{font-size:7px;color:var(--muted)}.val{font-size:10px;margin-top:3px}
-.scroll{display:flex;gap:6px;overflow:auto;scrollbar-width:none;margin:8px 0}
-.scroll::-webkit-scrollbar{display:none}
-.chip{flex:0 0 auto;background:#061116;color:var(--muted);border:1px solid var(--line);border-radius:9px;padding:8px 12px;font-size:10px}
-.chip.active{background:var(--cyan);color:#001114;border-color:var(--cyan);box-shadow:0 0 14px #59f5ff33}
-.chartbox{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#03090d}
-.charthead{height:32px;display:flex;align-items:center;justify-content:space-between;padding:0 10px;border-bottom:1px solid #102a31;font-size:8px;color:var(--muted)}
-#chart{height:440px}
-.range{display:flex;gap:2px;overflow:auto;border-top:1px solid #102a31;padding:5px;scrollbar-width:none}
-.range button{background:none;border:0;color:var(--muted);padding:7px 10px;border-radius:7px;font-size:9px}
-.range button.active{background:#0b2c34;color:var(--cyan)}
-.chartwrap{position:relative}
-.chart-controls{position:absolute;right:8px;top:8px;z-index:6;display:flex;gap:5px}
-.zoombtn,.zoomreset{width:34px;height:32px;border:1px solid #21434b;border-radius:9px;background:#071116dd;color:#b9e9ee;font-size:17px;backdrop-filter:blur(8px)}
-.zoomreset{width:42px;font-size:8px;color:var(--cyan)}
-.forecast-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.forecast{padding:11px;border:1px solid #16414a;border-radius:13px;background:#061116}
-.forecast.violet{border-color:#4c2357}
-.ftitle{font-size:8px;color:var(--muted);letter-spacing:1px}
-.fprice{font-size:21px;font-weight:900;margin-top:5px}
-.fmeta{font-size:8px;margin-top:4px;color:var(--muted)}
-.bar{height:4px;background:#10242b;border-radius:4px;margin-top:7px;overflow:hidden}
-.bar i{display:block;height:100%;background:var(--cyan)}
-.violet .bar i{background:var(--violet)}
-.section-title{font-size:8px;color:#88a6ad;letter-spacing:1.4px;margin-bottom:8px}
-.engines{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
-.engine{min-width:0;text-align:center;border:1px solid var(--line);border-radius:9px;padding:7px 3px;background:#061015}
-.en{font-size:6px;color:#4f6d75}
-.ename{font-size:7px;color:#88a4aa;min-height:22px;margin-top:4px}
-.ev{font-size:8px;color:var(--green);margin-top:4px}
-.row{display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid #10282f;font-size:9px}
-.row:last-child{border:0}
-.inputrow{display:flex;gap:6px}
-.inputrow input{min-width:0;flex:1;background:#03090d;color:var(--text);border:1px solid var(--line);border-radius:9px;padding:9px;font-size:10px}
-.primary{background:#0a3038;color:var(--cyan);border:1px solid var(--cyan);border-radius:9px;padding:9px 11px;font-size:9px}
-.danger{background:#250b13;color:#ff8098;border:1px solid #6b2032;border-radius:9px;padding:8px 10px}
-.historyrow{display:grid;grid-template-columns:.7fr 1fr 1fr 1fr;gap:4px;padding:8px 0;border-bottom:1px solid #10282f;font-size:8px}
-.empty{color:var(--muted);font-size:9px;padding:10px 0}
-.nav{position:fixed;z-index:20;bottom:calc(8px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);width:min(calc(100% - 24px),596px);display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:6px;border:1px solid #1a3d45;border-radius:18px;background:#050c10ee;backdrop-filter:blur(18px);box-shadow:0 10px 35px #000b}
-.nav button{border:0;background:none;color:var(--muted);padding:9px 2px;border-radius:11px;font-size:8px}
-.nav button.active{background:#0a252c;color:var(--cyan);box-shadow:inset 0 0 18px #59f5ff0c}
-.navicon{font-size:13px;display:block;margin-bottom:2px}
-.notice{font-size:8px;color:var(--muted);line-height:1.5}
-.ok{color:var(--green)}.warn{color:var(--yellow)}.err{color:var(--red)}
-.settings button{margin:4px 4px 0 0}
-.footer{text-align:center;color:#3e5960;font-size:7px;margin-top:10px}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{margin:0;background:var(--bg);color:var(--text);font-family:ui-monospace,SFMono-Regular,Menlo,monospace}body{min-height:100vh;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}button,input{font:inherit}button{cursor:pointer}.app{width:min(100%,620px);margin:auto;padding:8px 12px 92px}.top{display:flex;align-items:center;justify-content:space-between;padding:10px 2px 12px}.brand{display:flex;align-items:center;gap:10px}.logo{width:42px;height:42px;border:2px solid var(--cyan);border-radius:12px;display:grid;place-items:center;color:var(--cyan);font-size:20px;box-shadow:0 0 18px #59f5ff22}.title{font-weight:900;font-size:20px;letter-spacing:1px}.sub{font-size:8px;color:var(--muted);letter-spacing:2px;margin-top:3px}.status{font-size:9px;color:var(--green);border:1px solid #164d3d;border-radius:20px;padding:7px 9px;background:#06110f}.dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green);margin-right:5px}.screen{display:none}.screen.active{display:block}.panel{background:linear-gradient(140deg,#08151b,#050c10);border:1px solid var(--line);border-radius:16px;padding:12px;margin-bottom:10px;box-shadow:0 0 24px #0008}.price{font-size:30px;font-weight:900;color:var(--green)}.price-row{display:flex;justify-content:space-between;gap:8px}.ticker{font-size:9px;color:var(--muted);text-align:right}.change{font-size:10px;margin-top:3px}.green{color:var(--green)}.red{color:var(--red)}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.stat{border-top:1px solid var(--line);padding-top:7px}.lab{font-size:7px;color:var(--muted)}.val{font-size:10px;margin-top:3px}.scroll{display:flex;gap:6px;overflow:auto;scrollbar-width:none;margin:8px 0}.scroll::-webkit-scrollbar{display:none}.chip{flex:0 0 auto;background:#061116;color:var(--muted);border:1px solid var(--line);border-radius:9px;padding:8px 12px;font-size:10px}.chip.active{background:var(--cyan);color:#001114;border-color:var(--cyan);box-shadow:0 0 14px #59f5ff33}.chartbox{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#03090d}.charthead{height:32px;display:flex;align-items:center;justify-content:space-between;padding:0 10px;border-bottom:1px solid #102a31;font-size:8px;color:var(--muted)}#chart{height:440px}.range{display:flex;gap:2px;overflow:auto;border-top:1px solid #102a31;padding:5px;scrollbar-width:none}.range button{background:none;border:0;color:var(--muted);padding:7px 10px;border-radius:7px;font-size:9px}.range button.active{background:#0b2c34;color:var(--cyan)}.chartwrap{position:relative}.chart-controls{position:absolute;right:8px;top:8px;z-index:6;display:flex;gap:5px}.zoombtn,.zoomreset{width:34px;height:32px;border:1px solid #21434b;border-radius:9px;background:#071116dd;color:#b9e9ee;font-size:17px;backdrop-filter:blur(8px)}.zoomreset{width:42px;font-size:8px;color:var(--cyan)}.draw-layer.active{pointer-events:auto}.forecast-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.forecast{padding:11px;border:1px solid #16414a;border-radius:13px;background:#061116}.forecast.violet{border-color:#4c2357}.ftitle{font-size:8px;color:var(--muted);letter-spacing:1px}.fprice{font-size:21px;font-weight:900;margin-top:5px}.fmeta{font-size:8px;margin-top:4px;color:var(--muted)}.bar{height:4px;background:#10242b;border-radius:4px;margin-top:7px;overflow:hidden}.bar i{display:block;height:100%;background:var(--cyan)}.violet .bar i{background:var(--violet)}.section-title{font-size:8px;color:#88a6ad;letter-spacing:1.4px;margin-bottom:8px}.engines{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}.engine{min-width:0;text-align:center;border:1px solid var(--line);border-radius:9px;padding:7px 3px;background:#061015}.en{font-size:6px;color:#4f6d75}.ename{font-size:7px;color:#88a4aa;min-height:22px;margin-top:4px}.ev{font-size:8px;color:var(--green);margin-top:4px}.row{display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid #10282f;font-size:9px}.row:last-child{border:0}.inputrow{display:flex;gap:6px}.inputrow input{min-width:0;flex:1;background:#03090d;color:var(--text);border:1px solid var(--line);border-radius:9px;padding:9px;font-size:10px}.primary{background:#0a3038;color:var(--cyan);border:1px solid var(--cyan);border-radius:9px;padding:9px 11px;font-size:9px}.danger{background:#250b13;color:#ff8098;border:1px solid #6b2032;border-radius:9px;padding:8px 10px}.historyrow{display:grid;grid-template-columns:.7fr 1fr 1fr 1fr;gap:4px;padding:8px 0;border-bottom:1px solid #10282f;font-size:8px}.empty{color:var(--muted);font-size:9px;padding:10px 0}.nav{position:fixed;z-index:20;bottom:calc(8px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);width:min(calc(100% - 24px),596px);display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:6px;border:1px solid #1a3d45;border-radius:18px;background:#050c10ee;backdrop-filter:blur(18px);box-shadow:0 10px 35px #000b}.nav button{border:0;background:none;color:var(--muted);padding:9px 2px;border-radius:11px;font-size:8px}.nav button.active{background:#0a252c;color:var(--cyan);box-shadow:inset 0 0 18px #59f5ff0c}.navicon{font-size:13px;display:block;margin-bottom:2px}.notice{font-size:8px;color:var(--muted);line-height:1.5}.ok{color:var(--green)}.warn{color:var(--yellow)}.err{color:var(--red)}.settings button{margin:4px 4px 0 0}.footer{text-align:center;color:#3e5960;font-size:7px;margin-top:10px}
+
+/* CLASSIC TERMINAL UI */
+:root{--bg:#eef1f4;--panel:#ffffff;--panel2:#f7f8fa;--cyan:#1f5f8b;--green:#087f3e;--red:#c62828;--violet:#6546a3;--yellow:#8a6200;--text:#18232d;--muted:#66737d;--line:#cbd3da}
+html,body{background:#eef1f4;color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
+body{min-height:100vh}
+.app{width:min(100%,980px);padding:14px 16px 88px}
+.top{padding:10px 2px 14px;border-bottom:1px solid #c7cfd6;margin-bottom:12px}
+.logo{width:38px;height:38px;border:1px solid #315f7c;border-radius:4px;color:#315f7c;font-size:18px;box-shadow:none;background:#fff}
+.title{font-size:20px;letter-spacing:.3px;color:#17232d}.sub{font-size:9px;color:#687681;letter-spacing:1.2px}
+.status{font-size:9px;color:#176b3c;border:1px solid #a9c9b6;border-radius:4px;padding:6px 8px;background:#f4faf6}.dot{width:6px;height:6px;box-shadow:none;background:#1d914c;margin-right:5px}
+.panel{background:#fff;border:1px solid #cbd3da;border-radius:5px;padding:13px;margin-bottom:10px;box-shadow:0 1px 2px #0000000a}
+.price{font-size:30px;color:#176b3c}.ticker{font-size:9px;color:#687681}.stats{gap:0;border-top:1px solid #e1e5e8}.stat{border-top:0;padding:8px 10px 0 0}.lab{font-size:8px;color:#73808a}.val{font-size:11px}
+.scroll{margin:8px 0}.chip{background:#fff;color:#596771;border:1px solid #cbd3da;border-radius:4px;padding:7px 12px}.chip.active{background:#e9f1f7;color:#174f75;border-color:#7fa2ba;box-shadow:none}
+.chartbox{border:1px solid #bfc8cf;border-radius:4px;background:#fff}.charthead{border-bottom:1px solid #d9dfe4;color:#65737d;height:34px}.range{border-top:1px solid #d9dfe4;background:#f7f8fa}.range button{color:#687681;border-radius:3px}.range button.active{background:#dfeaf2;color:#1f5f8b}
+.chart-controls{right:8px;top:7px}.zoombtn,.zoomreset{border:1px solid #b9c4cc;border-radius:4px;background:#fff;color:#334957;backdrop-filter:none}.zoomreset{color:#1f5f8b}
+.forecast-grid{gap:8px}.forecast{padding:11px;border:1px solid #c7d1d8;border-radius:4px;background:#fff}.forecast.violet{border-color:#c8c0d9}.ftitle{color:#64737d}.fprice{font-size:20px}.bar{background:#e6eaed}.bar i{background:#1f6d9d}.violet .bar i{background:#7051a5}
+.section-title{font-size:9px;color:#53636e;letter-spacing:1px}.engines{gap:5px}.engine{border:1px solid #d1d8dd;border-radius:4px;padding:7px 3px;background:#fafbfc}.en{color:#7a8790}.ename{color:#5e6c75}.ev{color:#176b3c}
+.row{border-bottom:1px solid #e1e5e8}.inputrow input{background:#fff;color:#18232d;border:1px solid #cbd3da;border-radius:4px}.primary{background:#e7f0f6;color:#1f5f8b;border:1px solid #7fa2ba;border-radius:4px}.danger{background:#fff1f1;color:#b52222;border:1px solid #d99a9a;border-radius:4px}
+.historyrow{border-bottom:1px solid #e1e5e8}.nav{width:min(calc(100% - 24px),960px);border:1px solid #c4ccd2;border-radius:5px;background:#fff;backdrop-filter:none;box-shadow:0 -2px 12px #00000012}.nav button{color:#687681;border-radius:4px}.nav button.active{background:#e7f0f6;color:#1f5f8b;box-shadow:none}.notice{color:#687681}.footer{color:#87939b}
 </style>
 </head>
 <body>
-
 <div class="app">
-
-<header class="top">
-<div class="brand">
-<div class="logo">◆</div>
-<div>
-<div class="title">ETH/USDT</div>
-<div class="sub">MATRIX MARKET CORE</div>
-</div>
-</div>
-<div class="status"><span class="dot"></span><span id="status">STARTING</span></div>
-</header>
+<header class="top"><div class="brand"><div class="logo">◆</div><div><div class="title">ETH/USDT</div><div class="sub">CLASSIC MARKET TERMINAL</div></div></div><div class="status"><span class="dot"></span><span id="status">STARTING</span></div></header>
 
 <section id="screen-chart" class="screen active">
-
-<div class="panel">
-<div class="price-row">
-<div>
-<div id="price" class="price">--</div>
-<div id="change" class="change">--</div>
-</div>
-<div class="ticker">BINANCE SPOT<br>ETHUSDT</div>
-</div>
-
-<div class="stats">
-<div class="stat"><div class="lab">24H HIGH</div><div id="high" class="val">--</div></div>
-<div class="stat"><div class="lab">24H LOW</div><div id="low" class="val">--</div></div>
-<div class="stat"><div class="lab">24H VOLUME</div><div id="vol" class="val">--</div></div>
-</div>
-</div>
+<div class="panel"><div class="price-row"><div><div id="price" class="price">--</div><div id="change" class="change">--</div></div><div class="ticker">BINANCE SPOT<br>ETHUSDT</div></div><div class="stats"><div class="stat"><div class="lab">24H HIGH</div><div id="high" class="val">--</div></div><div class="stat"><div class="lab">24H LOW</div><div id="low" class="val">--</div></div><div class="stat"><div class="lab">24H VOLUME</div><div id="vol" class="val">--</div></div></div></div>
 
 <div class="scroll" id="tfbar">
 <button class="chip" data-tf="1m">1m</button>
 <button class="chip" data-tf="5m">5m</button>
+<button class="chip" data-tf="10m">10m</button>
 <button class="chip active" data-tf="15m">15m</button>
 <button class="chip" data-tf="30m">30m</button>
 <button class="chip" data-tf="1h">1h</button>
@@ -120,21 +48,15 @@ button,input{font:inherit}button{cursor:pointer}
 </div>
 
 <div class="chartbox">
-<div class="charthead">
-<span>ETH/USDT • LIVE</span>
-<span id="chartStatus">LOADING</span>
-</div>
-
+<div class="charthead"><span>ETH/USDT • LIVE</span><span id="chartStatus">LOADING</span></div>
 <div class="chartwrap">
 <div id="chart"></div>
-
 <div class="chart-controls">
 <button id="zoomOut" class="zoombtn">−</button>
 <button id="zoomReset" class="zoomreset">FIT</button>
 <button id="zoomIn" class="zoombtn">+</button>
 </div>
 </div>
-
 <div class="range" id="rangebar">
 <button class="active" data-range="1D">1D</button>
 <button data-range="1W">1W</button>
@@ -147,2297 +69,1607 @@ button,input{font:inherit}button{cursor:pointer}
 </div>
 
 <div class="forecast-grid">
-<div class="forecast">
-<div class="ftitle">15 MIN</div>
-<div id="p15" class="fprice">--</div>
-<div id="m15" class="fmeta">waiting</div>
-<div class="bar"><i id="b15" style="width:0"></i></div>
-</div>
-
-<div class="forecast violet">
-<div class="ftitle">30 MIN</div>
-<div id="p30" class="fprice">--</div>
-<div id="m30" class="fmeta">waiting</div>
-<div class="bar"><i id="b30" style="width:0"></i></div>
-</div>
+<div class="forecast"><div class="ftitle">10 MIN</div><div id="p10" class="fprice">--</div><div id="m10" class="fmeta">waiting</div><div class="bar"><i id="b10" style="width:0"></i></div></div>
+<div class="forecast"><div class="ftitle">15 MIN</div><div id="p15" class="fprice">--</div><div id="m15" class="fmeta">waiting</div><div class="bar"><i id="b15" style="width:0"></i></div></div>
+<div class="forecast violet"><div class="ftitle">30 MIN</div><div id="p30" class="fprice">--</div><div id="m30" class="fmeta">waiting</div><div class="bar"><i id="b30" style="width:0"></i></div></div>
 </div>
 
 <div class="panel" style="margin-top:10px">
 <div class="section-title">CUSTOM FORECAST • PRICE AT EXACT DATE / TIME</div>
-<div class="inputrow">
-<input id="customTime" type="datetime-local">
-<button class="primary" id="customBtn">FORECAST</button>
-</div>
-<div id="customMsg" class="notice" style="margin-top:7px">
-Target time is locked when submitted. Maximum horizon: 7 days.
-</div>
+<div class="inputrow"><input id="customTime" type="datetime-local"><button class="primary" id="customBtn">FORECAST</button></div>
+<div id="customMsg" class="notice" style="margin-top:7px">Target time is locked when submitted. Maximum horizon: 7 days.</div>
 </div>
 
 <div class="panel">
 <div class="section-title">CUSTOM FORECAST • WHEN WILL PRICE REACH?</div>
-
-<div class="inputrow">
-<input id="targetPrice" type="number" step="0.01" placeholder="Target ETH price">
-<button class="primary" id="targetBtn">PREDICT</button>
-</div>
-
-<div class="inputrow" style="margin-top:6px">
-<input id="targetDeadline" type="datetime-local">
-<span class="notice" style="align-self:center;min-width:82px">
-Optional deadline
-</span>
-</div>
-
-<div id="targetMsg" class="notice" style="margin-top:7px">
-Predicts an estimated first-touch time. With a deadline, it also checks whether the target can be reached before it.
-</div>
+<div class="inputrow"><input id="targetPrice" type="number" step="0.01" placeholder="Target ETH price"><button class="primary" id="targetBtn">PREDICT</button></div>
+<div class="inputrow" style="margin-top:6px"><input id="targetDeadline" type="datetime-local"><span class="notice" style="align-self:center;min-width:82px">Optional deadline</span></div>
+<div id="targetMsg" class="notice" style="margin-top:7px">Predicts an estimated first-touch time. With a deadline, it also checks whether the target can be reached before it.</div>
 </div>
 
 <div class="panel">
-<div class="section-title">PREDICTION CORE • V7</div>
-
+<div class="section-title">PREDICTION CORE • CLASSIC</div>
 <div class="engines">
-
 <div class="engine"><div class="en">01</div><div class="ename">Chronological</div><div id="e1" class="ev">--</div></div>
-
 <div class="engine"><div class="en">02</div><div class="ename">Mathematical / Geometry</div><div id="e2" class="ev">--</div></div>
-
 <div class="engine"><div class="en">03</div><div class="ename">Information / Regime</div><div id="e3" class="ev">--</div></div>
-
 <div class="engine"><div class="en">04</div><div class="ename">Adaptive Error</div><div id="e4" class="ev">--</div></div>
-
 <div class="engine"><div class="en">05</div><div class="ename">Consultation Meta</div><div id="e5" class="ev">--</div></div>
-
 <div class="engine"><div class="en">06</div><div class="ename">Online Learner</div><div id="e6" class="ev">--</div></div>
-
 <div class="engine"><div class="en">07</div><div class="ename">Momentum / Acceleration</div><div id="e7" class="ev">--</div></div>
-
 <div class="engine"><div class="en">08</div><div class="ename">Mean Reversion</div><div id="e8" class="ev">--</div></div>
-
 <div class="engine"><div class="en">09</div><div class="ename">Market Structure</div><div id="e9" class="ev">--</div></div>
-
 <div class="engine"><div class="en">10</div><div class="ename">Volatility Scenarios</div><div id="e10" class="ev">--</div></div>
-
 <div class="engine"><div class="en">11</div><div class="ename">Internet Influence</div><div id="e11" class="ev">--</div></div>
-
 <div class="engine"><div class="en">12</div><div class="ename">Social Media Influence</div><div id="e12" class="ev">--</div></div>
-
 </div>
-
 <div class="row"><span>Core agreement</span><span id="coreAgreement">--</span></div>
 <div class="row"><span>Learner samples</span><span id="learnerSamples">0</span></div>
 <div class="row"><span>Current memory context</span><span id="learnerContext">--</span></div>
-
-<div id="modelNote" class="notice" style="margin-top:8px">
-V7 multi-path statistical predictor. Completed-candle gate + freshness-aware Internet/Social influence + online learning. No neural-network claim is made.
+<div id="modelNote" class="notice" style="margin-top:8px">V7 multi-path statistical predictor. Completed-candle gate + freshness-aware Internet/Social influence + online learning. No neural-network claim is made.</div>
 </div>
+
+<div class="panel">
+<div class="section-title">13 • PREDICTION IMPROVER + REAL NEURAL MODEL</div>
+<div class="stats">
+<div class="stat"><div class="lab">NEURAL 10m</div><div id="n10" class="val">--</div></div>
+<div class="stat"><div class="lab">NEURAL 15m</div><div id="n15" class="val">--</div></div>
+<div class="stat"><div class="lab">NEURAL 30m</div><div id="n30" class="val">--</div></div>
+</div>
+<div class="row"><span>Prediction Improver</span><span id="improver">--</span></div>
+<div class="row"><span>Neural samples 10m / 15m / 30m</span><span id="neuralSamples">0 / 0 / 0</span></div>
+<div class="row"><span>Neural validation</span><span id="neuralValidation">INSUFFICIENT DATA</span></div>
+<div id="neuralNote" class="notice" style="margin-top:8px">Real in-browser trainable MLP. It learns only from settled predictions; no fake accuracy is shown.</div>
 </div>
 
 <div class="panel">
 <div class="section-title">BUY / SELL VOLUME FLOW • SEPARATE INTELLIGENCE</div>
-
 <div class="stats">
-<div class="stat">
-<div class="lab">BUY VOLUME</div>
-<div id="buyVol" class="val green">--</div>
+<div class="stat"><div class="lab">BUY VOLUME</div><div id="buyVol" class="val green">--</div></div>
+<div class="stat"><div class="lab">SELL VOLUME</div><div id="sellVol" class="val red">--</div></div>
+<div class="stat"><div class="lab">BUY %</div><div id="buyPct" class="val">--</div></div>
 </div>
-
-<div class="stat">
-<div class="lab">SELL VOLUME</div>
-<div id="sellVol" class="val red">--</div>
-</div>
-
-<div class="stat">
-<div class="lab">BUY %</div>
-<div id="buyPct" class="val">--</div>
-</div>
-</div>
-
-<div class="row"><span>Buy/Sell ratio</span><span id="bsRatio">--</span></div>
-<div class="row"><span>RVOL</span><span id="rvol">--</span></div>
-<div class="row"><span>Volume acceleration</span><span id="volAccel">--</span></div>
-<div class="row"><span>Flow direction</span><span id="flowDir">--</span></div>
+<div class="row"><span>Buy / sell ratio</span><span id="flowRatio">--</span></div>
+<div class="row"><span>RVOL</span><span id="flowRvol">--</span></div>
+<div class="row"><span>Volume acceleration</span><span id="flowAccel">--</span></div>
+<div class="row"><span>Flow direction</span><span id="flowDirection">--</span></div>
 <div class="row"><span>Flow strength</span><span id="flowStrength">--</span></div>
-
-<div class="notice" style="margin-top:8px">
-Buy/Sell Volume Flow is market intelligence only. It is kept separate from the prediction engines.
-</div>
+<div id="flowNote" class="notice" style="margin-top:8px">Separate market-flow analysis. It does not directly enter the prediction ensemble.</div>
 </div>
 
 <div class="panel">
-<div class="section-title">INTERNET INFLUENCE • REAL PUBLIC DATA</div>
-
-<div class="row"><span>News sentiment</span><span id="newsSentiment">--</span></div>
-<div class="row"><span>News velocity</span><span id="newsVelocity">--</span></div>
-<div class="row"><span>Influence</span><span id="internetInfluence">--</span></div>
-<div class="row"><span>Fresh articles</span><span id="newsCount">--</span></div>
-<div class="row"><span>Source agreement</span><span id="newsAgreement">--</span></div>
-<div class="row"><span>Data age</span><span id="newsAge">--</span></div>
-
-<div id="internetNote" class="notice" style="margin-top:8px">
-Google News public RSS is used when available. Unavailable data is not fabricated.
+<div class="section-title">11 • INTERNET INFLUENCE ENGINE</div>
+<div class="stats">
+<div class="stat"><div class="lab">NEWS SENTIMENT</div><div id="internetSentiment" class="val">--</div></div>
+<div class="stat"><div class="lab">NEWS VELOCITY</div><div id="internetVelocity" class="val">--</div></div>
+<div class="stat"><div class="lab">INFLUENCE</div><div id="internetScore" class="val">--</div></div>
 </div>
+<div class="row"><span>Fresh articles</span><span id="internetArticles">--</span></div>
+<div class="row"><span>Source agreement</span><span id="internetAgreement">--</span></div>
+<div class="row"><span>Data age</span><span id="internetAge">--</span></div>
+<div id="internetNote" class="notice" style="margin-top:8px">Waiting for live public internet information.</div>
 </div>
 
 <div class="panel">
-<div class="section-title">SOCIAL MEDIA INFLUENCE • REAL PUBLIC DATA</div>
-
-<div class="row"><span>Reddit sentiment</span><span id="redditSentiment">--</span></div>
-<div class="row"><span>Attention</span><span id="socialAttention">--</span></div>
-<div class="row"><span>Influence</span><span id="socialInfluence">--</span></div>
-<div class="row"><span>Posts analysed</span><span id="socialCount">--</span></div>
+<div class="section-title">12 • SOCIAL MEDIA INFLUENCE ENGINE</div>
+<div class="stats">
+<div class="stat"><div class="lab">REDDIT SENTIMENT</div><div id="socialSentiment" class="val">--</div></div>
+<div class="stat"><div class="lab">ATTENTION</div><div id="socialAttention" class="val">--</div></div>
+<div class="stat"><div class="lab">INFLUENCE</div><div id="socialScore" class="val">--</div></div>
+</div>
+<div class="row"><span>Posts analysed</span><span id="socialPosts">--</span></div>
 <div class="row"><span>Positive / negative</span><span id="socialMix">--</span></div>
 <div class="row"><span>Data quality</span><span id="socialQuality">--</span></div>
-
-<div id="socialNote" class="notice" style="margin-top:8px">
-Public Reddit data is used when available. X/YouTube are not fabricated when unavailable.
-</div>
+<div id="socialNote" class="notice" style="margin-top:8px">Real public Reddit data when available. X/YouTube are not fabricated when unavailable.</div>
 </div>
 
+<div class="panel">
+<div class="section-title">ACTIVE PREDICTIONS • LOCKED TARGETS</div>
+<div id="active">No active prediction.</div>
+<div class="notice" style="margin-top:8px">Settlement is independent of the WebSocket. If Safari pauses or the socket disconnects, the app reconciles overdue targets and retries target-time data until settlement succeeds.</div>
+</div>
 </section>
 
-<section id="screen-active" class="screen">
+<section id="screen-predict" class="screen">
+<div class="panel"><div class="section-title">PREDICTION CENTER</div><div class="notice">Predictions are created from the latest completed market data. Target timestamps are locked when created.</div></div>
 <div class="panel">
-<div class="section-title">ACTIVE PREDICTIONS</div>
-<div class="notice">
-Automatic 15m and 30m predictions are independent. Target time is locked at creation and does not move after refresh.
-Settlement uses target-time 1m data rather than a later current price.
+<div class="row"><span>10m</span><span id="pred10">--</span></div>
+<div class="row"><span>15m</span><span id="pred15">--</span></div>
+<div class="row"><span>30m</span><span id="pred30">--</span></div>
 </div>
-<div id="activePredictions" style="margin-top:8px"></div>
-</div>
+<div class="panel"><div class="section-title">ACTIVE TARGETS</div><div id="active2">No active prediction.</div></div>
 </section>
 
 <section id="screen-history" class="screen">
+<div class="panel"><div class="section-title">COMPLETED PREDICTIONS</div><div id="history"></div></div>
+<div class="panel"><div class="section-title">VALIDATION / LEARNING MEMORY</div><div id="metrics" class="notice">Waiting for completed observations.</div><div style="margin-top:10px"><button id="exportMemory" class="primary">EXPORT LEARNING MEMORY</button></div></div>
 <div class="panel">
-<div class="section-title">PREDICTION CENTER</div>
-<div id="metrics" class="notice">Waiting for completed observations.</div>
+<div class="section-title">14 • WALK-FORWARD VALIDATION + DRIFT MONITOR</div>
+<div class="stats">
+<div class="stat"><div class="lab">10m OOS DIRECTION</div><div id="wf10" class="val">INSUFFICIENT DATA</div></div>
+<div class="stat"><div class="lab">15m OOS DIRECTION</div><div id="wf15" class="val">INSUFFICIENT DATA</div></div>
+<div class="stat"><div class="lab">30m OOS DIRECTION</div><div id="wf30" class="val">INSUFFICIENT DATA</div></div>
 </div>
-
-<div class="panel">
-<div class="section-title">HISTORY</div>
-<div id="history"></div>
+<div class="row"><span>Walk-forward MAE</span><span id="wfMae">INSUFFICIENT DATA</span></div>
+<div class="row"><span>Recent vs prior error</span><span id="driftError">INSUFFICIENT DATA</span></div>
+<div class="row"><span>Recent vs prior direction</span><span id="driftDir">INSUFFICIENT DATA</span></div>
+<div class="row"><span>Model drift state</span><span id="driftState">WAITING</span></div>
+<div id="validationNote" class="notice" style="margin-top:8px">True chronological out-of-sample check: each prediction is scored before that sample is used for learning. No future samples are used to score earlier predictions.</div>
 </div>
 </section>
 
 <section id="screen-settings" class="screen">
 <div class="panel settings">
 <div class="section-title">SETTINGS</div>
-<button id="volumeToggle" class="primary">ON</button>
-<button id="exportMemory" class="primary">EXPORT MEMORY</button>
-<button id="reset" class="danger">RESET MEMORY</button>
+<div class="row"><span>Volume</span><button id="volumeToggle" class="primary">ON</button></div>
+<div class="row"><span>Data source</span><span>Binance public</span></div>
+<div style="margin-top:10px"><button id="reset" class="danger">RESET APP DATA</button></div>
 </div>
-
-<div class="panel">
-<div class="section-title">MODEL STATUS</div>
-<div class="notice">
-Binance is the primary live market source. Public secondary information sources are optional and non-blocking. Private API keys are not required.
-</div>
-</div>
-
-<div class="footer">ETH/USDT MATRIX MARKET CORE • V7</div>
+<div class="panel"><div class="section-title">ABOUT DATA</div><div class="notice">No private keys are used. If Binance is unreachable, the app reports the connection error instead of inventing market values.</div></div>
 </section>
 
+<div class="footer">PUBLIC MARKET DATA • ESTIMATES ONLY • NO TRADE EXECUTION</div>
 </div>
 
 <nav class="nav">
-<button class="active" data-screen="chart">
-<span class="navicon">◈</span>CHART
-</button>
-<button data-screen="active">
-<span class="navicon">◉</span>ACTIVE
-</button>
-<button data-screen="history">
-<span class="navicon">▤</span>HISTORY
-</button>
-<button data-screen="settings">
-<span class="navicon">⚙</span>SETTINGS
-</button>
+<button class="active" data-screen="chart"><span class="navicon">◆</span>CHART</button>
+<button data-screen="predict"><span class="navicon">◉</span>PREDICT</button>
+<button data-screen="history"><span class="navicon">◷</span>HISTORY</button>
+<button data-screen="settings"><span class="navicon">⚙</span>SETTINGS</button>
 </nav>
 
 <script>
-const $=id=>document.getElementById(id);
+'use strict';
 
-const API=[
+const DB_NAME='ETH_PREDICTOR_V4';
+const DB_VERSION=1;
+const STORE={candles:'candles',predictions:'predictions',history:'history',meta:'meta'};
+const WSURLS=[
+'wss://stream.binance.com:9443/ws/ethusdt@kline_1m',
+'wss://stream.binance.com:443/ws/ethusdt@kline_1m'
+];
+const TF={
+'1m':{min:1},'5m':{min:5},'10m':{min:10},
+'15m':{min:15},'30m':{min:30},'1h':{min:60},'4h':{min:240}
+};
+const RANGE={'1D':1,'1W':7,'1M':30,'3M':90,'6M':180,'1Y':365,'ALL':1095};
+
+let dbPromise=null,chart,candle,volume,priceLine,ws,reconnectTimer;
+let tf='15m',range='1D',candles=[],oneMin=[],lastPrice=null,serverOffset=0;
+let active=[],history=[],learner=defaultLearner(),settings={volume:true};
+let lastForecast=null,marketBusy=false,chartRequest=0,wsAttempt=0,settlementBusy=false;
+let targetWatchdog=null,analysisTimer=null;
+
+const $=id=>document.getElementById(id);
+const nowServer=()=>Date.now()+serverOffset;
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+
+function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
+function mean(a){return a.length?a.reduce((x,y)=>x+y,0)/a.length:0;}
+function std(a){if(a.length<2)return 0;const m=mean(a);return Math.sqrt(mean(a.map(x=>(x-m)**2)));}
+function ema(v,n){if(!v.length)return 0;if(v.length<n)return mean(v);let e=mean(v.slice(0,n)),k=2/(n+1);for(let i=n;i<v.length;i++)e=v[i]*k+e*(1-k);return e;}
+function pct(v){return Number.isFinite(v)?(v>=0?'+':'')+(v*100).toFixed(3)+'%':'--';}
+function price(v){return Number.isFinite(v)?Number(v).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}):'--';}
+function uid(){return crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2);}
+function safeJSON(s,f){try{return JSON.parse(s)}catch{return f}}
+
+function defaultLearner(){
+return {
+version:4,
+samples:0,
+global:{e1:1,e2:1,e3:1,e4:1,e5:1,e7:1,e8:1,e9:1,e10:1,e11:1,e12:1},
+contexts:{},
+bias:{all:0,short:0,long:0},
+mae:0,
+dirCorrect:0,
+lastUpdate:0,
+neural:{'10m':null,'15m':null,'30m':null}
+};
+}
+
+function contextKey(f,h){
+const v=f.vol*100;
+const vb=v<0.18?'low':v<0.45?'mid':'high';
+const fb=f.buy>.57?'buy':f.buy<.43?'sell':'balanced';
+const rv=f.rvol<.8?'low':f.rvol<1.5?'normal':'high';
+return `${h<=30?'short':'long'}|${f.regime}|${vb}|${rv}|${fb}`;
+}
+
+function getContextState(key){
+if(!learner.contexts[key])
+learner.contexts[key]={
+n:0,
+weights:{e1:1,e2:1,e3:1,e4:1,e5:1,e7:1,e8:1,e9:1,e10:1,e11:1,e12:1},
+mae:0,bias:0,dir:0
+};
+return learner.contexts[key];
+}
+
+function makeNeuralModel(seed=null){
+const h=8,hidden=10;
+let z=Number.isFinite(seed)?seed>>>0:Math.floor(Math.random()*4294967295);
+const rnd=()=>{z=(1664525*z+1013904223)>>>0;return z/4294967296};
+const rand=()=>((rnd()*2-1)*0.18);
+return {
+version:1,input:h,hidden,trained:0,seen:0,mae:0,dir:0,
+w1:Array.from({length:hidden},()=>Array.from({length:h},rand)),
+b1:Array(hidden).fill(0),
+w2:Array.from({length:hidden},rand),
+b2:0
+};
+}
+
+function neuralVector(f){
+return [
+clamp(f.r1*120,-1,1),
+clamp(f.r5*60,-1,1),
+clamp(f.r15*30,-1,1),
+clamp(f.r30*18,-1,1),
+clamp(f.vol*180,-1,1),
+clamp((f.rvol-1)/2,-1,1),
+clamp((f.buy-.5)*4,-1,1),
+clamp((f.p-f.e21)/f.p*120,-1,1)
+];
+}
+
+function neuralForward(m,x){
+const z=m.w1.map((w,i)=>Math.tanh(w.reduce((s,v,j)=>s+v*x[j],0)+m.b1[i]));
+const y=Math.tanh(m.w2.reduce((s,v,i)=>s+v*z[i],0)+m.b2);
+return {y,z};
+}
+
+function neuralEnsure(type){
+if(!learner.neural)
+learner.neural={'10m':null,'15m':null,'30m':null};
+if(!learner.neural[type])learner.neural[type]=makeNeuralModel();
+return learner.neural[type];
+}
+
+function neuralPredict(f,h){
+const type=`${Math.round(h)}m`;
+if(!['10m','15m','30m'].includes(type))
+return {ret:0,confidence:0,samples:0};
+const m=neuralEnsure(type);
+if(m.trained<12)
+return {ret:0,confidence:0,samples:m.trained};
+const y=neuralForward(m,neuralVector(f)).y;
+const ret=clamp(y*.004*Math.sqrt(h/15),-.05,.05);
+const conf=clamp(45+Math.min(40,m.trained*.35)-Math.abs(y)*8,0,95);
+return {ret,confidence:conf,samples:m.trained};
+}
+
+function neuralTrain(type,f,actualReturn,h){
+const m=neuralEnsure(type);
+const x=neuralVector(f),scale=.004*Math.sqrt(h/15);
+const target=clamp(actualReturn/scale,-1,1);
+const lr=m.trained<50?.018:.006;
+const out=neuralForward(m,x),err=target-out.y;
+for(let i=0;i<m.hidden;i++){
+const dz=(1-out.z[i]*out.z[i])*m.w2[i]*err;
+for(let j=0;j<x.length;j++)
+m.w1[i][j]=clamp(m.w1[i][j]+lr*dz*x[j],-2,2);
+m.b1[i]=clamp(m.b1[i]+lr*dz,-2,2);
+m.w2[i]=clamp(m.w2[i]+lr*err*out.z[i],-2,2);
+}
+m.b2=clamp(m.b2+lr*err,-2,2);
+m.trained++;
+m.seen++;
+m.mae=m.mae*.98+Math.abs(actualReturn-(out.y*scale))*.02;
+m.dir+=(Math.sign(actualReturn)===Math.sign(out.y))?1:0;
+return m;
+}
+
+function neuralWarmStart(){
+for(const type of ['10m','15m','30m']){
+const m=neuralEnsure(type);
+const hs=history.filter(p=>p.type===type&&p.featuresSnapshot&&Number.isFinite(p.actualReturn)).slice(-120);
+if(!hs.length)continue;
+for(let epoch=0;epoch<3;epoch++)
+for(const p of hs)
+neuralTrain(type,p.featuresSnapshot,p.actualReturn,Number(type.slice(0,-1)));
+}
+}
+
+function predictionImprover(vals,neuralRet,f,h){
+const names=['e1','e2','e3','e4','e5','e7','e8','e9','e10','e11','e12'];
+const a=names.map(n=>Number(vals[n])||0);
+const med=[...a].sort((x,y)=>x-y)[Math.floor(a.length/2)]||0;
+const dis=std(a);
+const agreement=clamp(1-dis/.02,0,1);
+const nr=Number(neuralRet)||0;
+const neuralWeight=neuralRet===0?0:clamp(.12+.28*agreement,0,.4);
+const robust=clamp(.55*med+.45*mean(a),-.10,.10);
+const adj=clamp((robust-mean(a))*.35+nr*neuralWeight,-.035,.035);
+return {adj,agreement,dis,neuralWeight};
+}
+
+function openDB(){
+if(dbPromise)return dbPromise;
+dbPromise=new Promise((resolve,reject)=>{
+const r=indexedDB.open(DB_NAME,DB_VERSION);
+r.onupgradeneeded=()=>{
+const d=r.result;
+if(!d.objectStoreNames.contains(STORE.candles)){
+const s=d.createObjectStore(STORE.candles,{keyPath:'time'});
+s.createIndex('byTime','time',{unique:true});
+}
+for(const n of [STORE.predictions,STORE.history])
+if(!d.objectStoreNames.contains(n))
+d.createObjectStore(n,{keyPath:'id'});
+if(!d.objectStoreNames.contains(STORE.meta))
+d.createObjectStore(STORE.meta,{keyPath:'key'});
+};
+r.onsuccess=()=>resolve(r.result);
+r.onerror=()=>reject(r.error);
+});
+return dbPromise;
+}
+
+async function tx(store,mode,fn){
+const db=await openDB();
+return new Promise((resolve,reject)=>{
+const t=db.transaction(store,mode);
+const s=t.objectStore(store);
+let out;
+try{out=fn(s)}catch(e){reject(e);return}
+t.oncomplete=()=>resolve(out);
+t.onerror=()=>reject(t.error);
+t.onabort=()=>reject(t.error||new Error('DB transaction aborted'));
+});
+}
+
+async function dbPut(store,val){return tx(store,'readwrite',s=>s.put(val));}
+async function dbDelete(store,key){return tx(store,'readwrite',s=>s.delete(key));}
+
+async function dbGet(store,key){
+const db=await openDB();
+return new Promise((resolve,reject)=>{
+const r=db.transaction(store).objectStore(store).get(key);
+r.onsuccess=()=>resolve(r.result);
+r.onerror=()=>reject(r.error)
+});
+}
+
+async function dbAll(store){
+const db=await openDB();
+return new Promise((resolve,reject)=>{
+const r=db.transaction(store).objectStore(store).getAll();
+r.onsuccess=()=>resolve(r.result||[]);
+r.onerror=()=>reject(r.error)
+});
+}
+
+async function dbClear(store){
+return tx(store,'readwrite',s=>s.clear());
+}
+
+async function saveState(){
+await Promise.all([
+dbPut(STORE.meta,{key:'learner',value:learner}),
+dbPut(STORE.meta,{key:'settings',value:settings})
+]);
+}
+
+async function migrateLegacy(){
+const marker=await dbGet(STORE.meta,'migratedV4');
+if(marker)return;
+const oldA=safeJSON(localStorage.getItem('matrix_active_v2')||'[]',[]);
+const oldH=safeJSON(localStorage.getItem('matrix_history_v2')||'[]',[]);
+for(const p of oldA){if(p&&p.id)await dbPut(STORE.predictions,p)}
+for(const h of oldH){if(h&&h.id)await dbPut(STORE.history,h)}
+await dbPut(STORE.meta,{key:'migratedV4',value:true});
+}
+
+async function loadState(){
+await migrateLegacy();
+const [ps,hs,l,s]=await Promise.all([
+dbAll(STORE.predictions),
+dbAll(STORE.history),
+dbGet(STORE.meta,'learner'),
+dbGet(STORE.meta,'settings')
+]);
+active=ps.filter(p=>!p.settled);
+history=hs.sort((a,b)=>(a.settledAt||0)-(b.settledAt||0));
+learner=l?.value||defaultLearner();
+
+if(!learner.global)learner=defaultLearner();
+
+for(const n of ['e1','e2','e3','e4','e5','e7','e8','e9','e10','e11','e12'])
+learner.global[n]=Number.isFinite(learner.global[n])?learner.global[n]:1;
+
+if(!learner.contexts)learner.contexts={};
+if(!learner.neural)
+learner.neural={'10m':null,'15m':null,'30m':null};
+
+settings=s?.value||{volume:true};
+
+neuralWarmStart();
+
+$('volumeToggle').textContent=settings.volume===false?'OFF':'ON';
+}
+
+function setStatus(s,cls=''){
+const el=$('status');
+el.textContent=s;
+el.className='status '+(cls||'');
+}
+
+function setChartStatus(s){
+$('chartStatus').textContent=s;
+}
+
+async function fetchJSON(path,timeout=9000){
+const bases=[
 'https://data-api.binance.vision/api/v3',
 'https://api.binance.com/api/v3',
 'https://api-gcp.binance.com/api/v3',
 'https://api3.binance.com/api/v3'
 ];
 
-const WS=[
-'wss://stream.binance.com:9443/ws/ethusdt@kline_1m',
-'wss://stream.binance.com:443/ws/ethusdt@kline_1m'
-];
+let last;
 
-const STORE={
-state:'state',
-predictions:'predictions',
-history:'history'
-};
+for(const base of bases){
+const c=new AbortController();
+const t=setTimeout(()=>c.abort(),timeout);
 
-let db=null;
-let ws=null;
-let wsIndex=0;
-let tf='15m';
-let range='1D';
-let candles=[];
-let oneMin=[];
-let history=[];
-let active=[];
-let learner=null;
-let settings={volume:true};
-let lastPrice=0;
-let serverOffset=0;
-let chart=null;
-let candleSeries=null;
-let volume=null;
-let analysisTimer=null;
-let targetWatchdog=null;
-let externalInfluence={
-internet:0,
-social:0,
-internetConfidence:0,
-socialConfidence:0,
-newsCount:0,
-socialCount:0,
-newsAt:0,
-socialAt:0,
-newsSentiment:0,
-redditSentiment:0,
-newsVelocity:0,
-socialAttention:0,
-newsAgreement:0,
-socialMix:'--'
-};
-
-function clamp(x,a,b){return Math.max(a,Math.min(b,x))}
-function mean(a){return a.length?a.reduce((s,x)=>s+x,0)/a.length:0}
-function std(a){
- if(!a.length)return 0;
- const m=mean(a);
- return Math.sqrt(mean(a.map(x=>(x-m)**2)));
+try{
+const r=await fetch(base+path,{cache:'no-store',signal:c.signal});
+if(!r.ok)throw new Error('HTTP '+r.status);
+clearTimeout(t);
+return await r.json();
+}catch(e){
+clearTimeout(t);
+last=e;
 }
-function price(x){
- return Number.isFinite(+x)?(+x).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}):'--';
-}
-function pct(x){
- return Number.isFinite(+x)?((x>=0?'+':'')+(x*100).toFixed(2)+'%'):'--';
-}
-function uid(){
- return 'p_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,9);
-}
-function nowServer(){return Date.now()+serverOffset}
-function setStatus(t,c=''){
- $('status').textContent=t;
- $('status').className='status '+c;
-}
-async function fetchJSON(path,timeout=9000){
- let last;
- for(const base of API){
-  const ctl=new AbortController();
-  const timer=setTimeout(()=>ctl.abort(),timeout);
-  try{
-   const r=await fetch(base+path,{signal:ctl.signal,cache:'no-store'});
-   if(!r.ok)throw new Error('HTTP '+r.status);
-   clearTimeout(timer);
-   return await r.json();
-  }catch(e){
-   clearTimeout(timer);
-   last=e;
-  }
- }
- throw last||new Error('request failed');
 }
 
-function openDB(){
- return new Promise((resolve,reject)=>{
-  const req=indexedDB.open('eth-matrix-v7',1);
-
-  req.onupgradeneeded=()=>{
-   const d=req.result;
-   if(!d.objectStoreNames.contains(STORE.state))
-    d.createObjectStore(STORE.state,{keyPath:'id'});
-   if(!d.objectStoreNames.contains(STORE.predictions))
-    d.createObjectStore(STORE.predictions,{keyPath:'id'});
-   if(!d.objectStoreNames.contains(STORE.history))
-    d.createObjectStore(STORE.history,{keyPath:'id'});
-  };
-
-  req.onsuccess=()=>{
-   db=req.result;
-   resolve();
-  };
-
-  req.onerror=()=>reject(req.error);
- });
+throw last||new Error('Binance unavailable');
 }
 
-function dbPut(store,obj){
- return new Promise((resolve,reject)=>{
-  const tx=db.transaction(store,'readwrite');
-  tx.objectStore(store).put(obj);
-  tx.oncomplete=resolve;
-  tx.onerror=()=>reject(tx.error);
- });
+async function syncClock(){
+try{
+const t=await fetchJSON('/time',5000);
+serverOffset=Number(t.serverTime)-Date.now();
+}catch{
+serverOffset=0
 }
-
-function dbGetAll(store){
- return new Promise((resolve,reject)=>{
-  const tx=db.transaction(store,'readonly');
-  const req=tx.objectStore(store).getAll();
-  req.onsuccess=()=>resolve(req.result||[]);
-  req.onerror=()=>reject(req.error);
- });
 }
+   externalInfluence.internet=sent;
+   externalInfluence.internetConfidence=clamp(.25+Math.min(.55,items.length/20)+Math.min(.2,fresh/10),0,1);
+   externalInfluence.newsCount=items.length;
+   externalInfluence.newsAt=now;
+   externalInfluence.newsSentiment=sent;
 
-function dbDelete(store,id){
- return new Promise((resolve,reject)=>{
-  const tx=db.transaction(store,'readwrite');
-  tx.objectStore(store).delete(id);
-  tx.oncomplete=resolve;
-  tx.onerror=()=>reject(tx.error);
- });
-}
-
-function dbClear(store){
- return new Promise((resolve,reject)=>{
-  const tx=db.transaction(store,'readwrite');
-  tx.objectStore(store).clear();
-  tx.oncomplete=resolve;
-  tx.onerror=()=>reject(tx.error);
- });
-}
-
-async function saveState(){
- await dbPut(STORE.state,{
-  id:'main',
-  learner,
-  settings,
-  externalInfluence
- });
-}
-
-function defaultLearner(){
- return{
-  version:3,
-  samples:0,
-  global:{
-   e1:1,e2:1,e3:1,e4:1,e5:1,
-   e7:1,e8:1,e9:1,e10:1,e11:1,e12:1
-  },
-  contexts:{},
-  bias:{all:0,short:0,long:0},
-  mae:0,
-  dirCorrect:0,
-  lastUpdate:0
- };
-}
-
-async function loadState(){
- try{
-  const rows=await dbGetAll(STORE.state);
-  const s=rows.find(x=>x.id==='main');
-
-  learner=s?.learner||defaultLearner();
-
-  learner.global=Object.assign({
-   e1:1,e2:1,e3:1,e4:1,e5:1,
-   e7:1,e8:1,e9:1,e10:1,e11:1,e12:1
-  },learner.global||{});
-
-  settings=Object.assign({volume:true},s?.settings||{});
-  externalInfluence=Object.assign(externalInfluence,s?.externalInfluence||{});
-
-  active=await dbGetAll(STORE.predictions);
-  history=await dbGetAll(STORE.history);
+   $('internetSentiment').textContent=labelScore(sent)+' '+(sent>=0?'+':'')+sent.toFixed(2);
+   $('internetVelocity').textContent=fresh>=10?'HIGH':fresh>=4?'MEDIUM':'LOW';
+   $('internetScore').textContent=Math.round(Math.abs(sent)*100)+'%';
+   $('internetArticles').textContent=String(items.length);
+   $('internetAgreement').textContent=Math.round(externalInfluence.internetConfidence*100)+'%';
+   $('internetAge').textContent=age+' min';
+   $('internetNote').textContent='Google News public RSS • '+fresh+' fresh articles • real public data';
 
  }catch(e){
-  learner=defaultLearner();
-  active=[];
-  history=[];
+   externalInfluence.internetConfidence=0;
+   $('internetNote').textContent='Internet news feed unavailable • no fabricated influence used.';
  }
-}
-
-function initChart(){
- chart=LightweightCharts.createChart($('chart'),{
-  layout:{
-   background:{color:'#03090d'},
-   textColor:'#8ba6ad'
-  },
-  grid:{
-   vertLines:{color:'#0c2027'},
-   horzLines:{color:'#0c2027'}
-  },
-  crosshair:{
-   mode:LightweightCharts.CrosshairMode.Normal
-  },
-  rightPriceScale:{
-   borderColor:'#15343d',
-   visible:true
-  },
-  timeScale:{
-   borderColor:'#15343d',
-   timeVisible:true,
-   secondsVisible:false
-  },
-  handleScroll:true,
-  handleScale:true
- });
-
- candleSeries=chart.addSeries(
-  LightweightCharts.CandlestickSeries,
-  {
-   upColor:'#4dffa5',
-   downColor:'#ff5475',
-   borderUpColor:'#4dffa5',
-   borderDownColor:'#ff5475',
-   wickUpColor:'#4dffa5',
-   wickDownColor:'#ff5475',
-   priceLineVisible:true,
-   lastValueVisible:true
-  }
- );
-
- volume=chart.addSeries(
-  LightweightCharts.HistogramSeries,
-  {
-   priceFormat:{type:'volume'},
-   priceScaleId:'',
-   scaleMargins:{top:.82,bottom:0}
-  }
- );
-
- window.addEventListener('resize',()=>{
-  if(chart)$('chart').clientWidth&&chart.resize($('chart').clientWidth,$('chart').clientHeight);
- });
-}
-
-function tfMs(x){
- return({
-  '1m':60000,
-  '5m':300000,
-  '15m':900000,
-  '30m':1800000,
-  '1h':3600000,
-  '4h':14400000
- })[x]||900000;
-}
-
-function rangeMs(x){
- return({
-  '1D':86400000,
-  '1W':604800000,
-  '1M':2592000000,
-  '3M':7776000000,
-  '6M':15552000000,
-  '1Y':31536000000,
-  'ALL':31536000000*8
- })[x]||86400000;
-}
-
-async function loadServerTime(){
- try{
-  const t=await fetchJSON('/time',5000);
-  serverOffset=(+t.serverTime)-Date.now();
- }catch{}
-}
-
-async function loadTicker(){
- try{
-  const t=await fetchJSON('/ticker/24hr?symbol=ETHUSDT',7000);
-  lastPrice=+t.lastPrice;
-  $('price').textContent='$'+price(t.lastPrice);
-  const ch=(+t.priceChangePercent||0)/100;
-  $('change').textContent=pct(ch);
-  $('change').className='change '+(ch>=0?'green':'red');
-  $('high').textContent='$'+price(t.highPrice);
-  $('low').textContent='$'+price(t.lowPrice);
-  $('vol').textContent=(+t.volume).toLocaleString(undefined,{maximumFractionDigits:0})+' ETH';
- }catch(e){
-  console.warn('ticker',e);
- }
-}
-
-async function loadKlines(interval,start,end,limit=1000){
- const q=`/klines?symbol=ETHUSDT&interval=${interval}&startTime=${start}&endTime=${end}&limit=${limit}`;
- return await fetchJSON(q,10000);
-}
-
-function normalizeKline(k){
- return{
-  time:Math.floor(+k[0]/1000),
-  open:+k[1],
-  high:+k[2],
-  low:+k[3],
-  close:+k[4],
-  volume:+k[5],
-  closeTime:+k[6],
-  quoteVolume:+k[7],
-  trades:+k[8],
-  buyVol:+k[9],
-  buyQuote:+k[10]
- };
-}
-
-async function loadMarket(){
- await loadServerTime();
-
- const end=nowServer();
- const start=end-rangeMs(range);
 
  try{
-  const rows=await loadKlines(tf,start,end,1000);
-  candles=rows.map(normalizeKline);
+   const url='https://www.reddit.com/search.json?q='+encodeURIComponent('ETH OR Ethereum')+'&sort=new&t=day&limit=40';
+   const j=await (await fetch(url,{headers:{Accept:'application/json'},cache:'no-store'})).json();
+   const posts=(j?.data?.children||[]).map(x=>x.data||{});
+   const vals=posts.map(p=>sentimentFromText((p.title||'')+' '+(p.selftext||'')));
+   const sent=vals.length?mean(vals):0;
+   const pos=vals.filter(x=>x>.08).length;
+   const neg=vals.filter(x=>x<-.08).length;
+   const attention=posts.length>=30?'HIGH':posts.length>=12?'MEDIUM':'LOW';
 
-  candleSeries.setData(
-   candles.map(c=>({
-    time:c.time,
-    open:c.open,
-    high:c.high,
-    low:c.low,
-    close:c.close
-   }))
-  );
+   externalInfluence.social=sent;
+   externalInfluence.socialConfidence=clamp(.2+Math.min(.55,posts.length/40)+Math.min(.25,(pos+neg)/20),0,1);
+   externalInfluence.socialCount=posts.length;
+   externalInfluence.socialAt=now;
+   externalInfluence.socialSentiment=sent;
 
-  volume.setData(
-   candles.map(c=>({
-    time:c.time,
-    value:c.volume,
-    color:c.close>=c.open?'#4dffa555':'#ff547555'
-   }))
-  );
-
-  $('chartStatus').textContent='LIVE • '+candles.length+' CANDLES';
-
-  const m1start=end-Math.max(86400000,rangeMs('1D'));
-  const r1=await loadKlines('1m',m1start,end,1000);
-  oneMin=r1.map(normalizeKline);
-
-  await loadTicker();
-  updateAnalysis();
-  updateForecastCards();
-  await ensureAuto();
+   $('socialSentiment').textContent=labelScore(sent)+' '+(sent>=0?'+':'')+sent.toFixed(2);
+   $('socialAttention').textContent=attention;
+   $('socialScore').textContent=Math.round(Math.abs(sent)*100)+'%';
+   $('socialPosts').textContent=String(posts.length);
+   $('socialMix').textContent=
+      Math.round(pos/Math.max(1,posts.length)*100)+'% / '+
+      Math.round(neg/Math.max(1,posts.length)*100)+'%';
+   $('socialQuality').textContent=Math.round(externalInfluence.socialConfidence*100)+'%';
+   $('socialNote').textContent='Reddit public search • '+posts.length+' posts analysed • real public data';
 
  }catch(e){
-  $('chartStatus').textContent='DATA RETRY';
-  setStatus('RETRY','warn');
-  console.warn('market',e);
+   externalInfluence.socialConfidence=0;
+   $('socialNote').textContent='Reddit feed unavailable • no fabricated influence used.';
  }
-}
-
-function connectWS(){
- if(ws){
-  try{ws.close()}catch{}
- }
-
- const url=WS[wsIndex%WS.length];
- wsIndex++;
-
- ws=new WebSocket(url);
-
- ws.onopen=()=>{
-  setStatus('LIVE','');
-  $('chartStatus').textContent='LIVE';
- };
-
- ws.onmessage=e=>{
-  try{
-   const d=JSON.parse(e.data);
-   const k=d.k;
-   if(!k)return;
-
-   lastPrice=+k.c;
-
-   $('price').textContent='$'+price(lastPrice);
-
-   const obj={
-    time:Math.floor(+k.t/1000),
-    open:+k.o,
-    high:+k.h,
-    low:+k.l,
-    close:+k.c,
-    volume:+k.v,
-    closeTime:+k.T,
-    quoteVolume:+k.q,
-    trades:+k.n,
-    buyVol:+k.V,
-    buyQuote:+k.Q
-   };
-
-   const idx=oneMin.findIndex(x=>x.time===obj.time);
-   if(idx>=0)oneMin[idx]=obj;
-   else oneMin.push(obj);
-
-   oneMin=oneMin.slice(-1200);
-
-   const cidx=candles.findIndex(x=>x.time===obj.time);
-
-   if(tf==='1m'){
-    if(cidx>=0)candles[cidx]=obj;
-    else candles.push(obj);
-
-    candleSeries.update({
-     time:obj.time,
-     open:obj.open,
-     high:obj.high,
-     low:obj.low,
-     close:obj.close
-    });
-
-    volume.update({
-     time:obj.time,
-     value:obj.volume,
-     color:obj.close>=obj.open?'#4dffa555':'#ff547555'
-    });
-   }
-
-   updateAnalysis();
-   updateForecastCards();
-   settleDue().catch(console.warn);
-
-  }catch(err){
-   console.warn(err);
-  }
- };
-
- ws.onclose=()=>{
-  setStatus('RECONNECT','warn');
-  setTimeout(connectWS,2000);
- };
-
- ws.onerror=()=>{
-  try{ws.close()}catch{}
- };
-}
-
-function completedOneMin(){
- const now=nowServer();
- return oneMin.filter(c=>!c.closeTime||c.closeTime<=now-500);
-}
-
-function features(){
- const completed=completedOneMin();
-
- if(completed.length<60)return null;
-
- const closes=completed.map(c=>c.close);
- const vols=completed.map(c=>c.volume);
-
- const last=closes.at(-1);
- const c5=closes.at(-6)||last;
- const c15=closes.at(-16)||last;
- const c30=closes.at(-31)||last;
- const c60=closes.at(-61)||last;
-
- const r5=Math.log(last/c5);
- const r15=Math.log(last/c15);
- const r30=Math.log(last/c30);
- const r60=Math.log(last/c60);
-
- const returns=[];
- for(let i=1;i<closes.length;i++)
-  returns.push(Math.log(closes[i]/closes[i-1]));
-
- const recent=returns.slice(-60);
- const volat=Math.sqrt(mean(recent.map(x=>x*x)));
-
- const avgVol=mean(vols.slice(-60));
- const recentVol=mean(vols.slice(-10));
- const rvol=avgVol?recentVol/avgVol:1;
-
- const trendScore=
-  .45*clamp(r5/.004,-1,1)+
-  .30*clamp(r15/.008,-1,1)+
-  .20*clamp(r30/.012,-1,1)+
-  .05*clamp(r60/.018,-1,1);
-
- const high20=Math.max(...closes.slice(-20));
- const low20=Math.min(...closes.slice(-20));
- const position=high20>low20?(last-low20)/(high20-low20):.5;
-
- let regime='NEUTRAL';
-
- if(trendScore>.35)regime='UPTREND';
- else if(trendScore<-.35)regime='DOWNTREND';
- else if(position>.78)regime='UPPER-RANGE';
- else if(position<.22)regime='LOWER-RANGE';
-
- return{
-  last,
-  r5,
-  r15,
-  r30,
-  r60,
-  trendScore,
-  volat,
-  rvol,
-  high20,
-  low20,
-  position,
-  regime,
-  closes,
-  vols
- };
-}
-
-function horizonScale(h){
- return clamp(Math.sqrt(Math.max(h,1)/15),.5,5);
-}
-
-function engine1(f,h){
- const x=
-  .55*f.r15+
-  .30*f.r30+
-  .15*f.r5;
-
- return clamp(x*horizonScale(h)*.75,-.08,.08);
-}
-
-function engine2(f,h){
- const momentum=f.r15-f.r5*.35;
- const range=f.high20-f.low20;
- const geometry=range?((f.last-f.low20)/range-.5):0;
-
- return clamp(
-  (momentum-geometry*.0015)*horizonScale(h)*1.2,
-  -.08,.08
- );
-}
-
-function engine3(f,h){
- let r=f.trendScore*.006;
-
- if(f.regime==='UPPER-RANGE')r*=.8;
- if(f.regime==='LOWER-RANGE')r*=.8;
-
- return clamp(r*horizonScale(h),-.07,.07);
-}
-
-function engine4(f,h){
- const base=
-  .45*f.r15+
-  .30*f.r30+
-  .15*f.r5+
-  .10*f.r60;
-
- const correction=
-  learner.bias.all+
-  (h<=30?learner.bias.short:learner.bias.long);
-
- return clamp((base+correction)*horizonScale(h)*.8,-.08,.08);
-}
-
-function engine5(vals,f){
- const arr=['e1','e2','e3','e4'].map(k=>vals[k]);
- const dis=std(arr);
- const agree=clamp(1-dis/.018,0,1);
-
- let r=mean(arr);
-
- if(f.regime.startsWith('UP')&&r<0)r*=.72;
- if(f.regime.startsWith('DOWN')&&r>0)r*=.72;
-
- return{
-  r,
-  agreement:agree,
-  disagreement:dis
- };
-}
-
-function getContextState(key){
- if(!learner.contexts[key]){
-  learner.contexts[key]={
-   n:0,
-   weights:{
-    e1:1,e2:1,e3:1,e4:1,e5:1,
-    e7:1,e8:1,e9:1,e10:1,e11:1,e12:1
-   },
-   mae:0,
-   bias:0,
-   dir:0
-  };
- }
-
- return learner.contexts[key];
-}
-
-function contextKey(f,h){
- return[
-  f.regime,
-  h<=15?'SHORT':h<=60?'MEDIUM':'LONG',
-  f.rvol>1.5?'HIGHVOL':f.rvol<.7?'LOWVOL':'NORMALVOL'
- ].join('_');
-}
-
-function engine6(vals,f,h){
- const key=contextKey(f,h);
- const ctx=getContextState(key);
-
- const names=[
-  'e1','e2','e3','e4','e5',
-  'e7','e8','e9','e10','e11','e12'
- ];
-
- let sw=0;
- let total=0;
-
- for(const n of names){
-  const g=learner.global[n]||1;
-  const c=ctx.weights[n]||1;
-  const w=.3*g+.7*c;
-  total+=w;
-  sw+=(vals[n]||0)*w;
- }
-
- const bias=ctx.bias+learner.bias.all;
-
- return clamp(sw/Math.max(total,.0001)+bias*.35,-.1,.1);
-}
-
-function engine7(f,h){
- const acceleration=f.r5-f.r15/3;
-
- return clamp(
-  (f.r5*1.4+acceleration*.8)*horizonScale(h),
-  -.08,.08
- );
-}
-
-function engine8(f,h){
- const center=mean(f.closes.slice(-30));
- const deviation=center?Math.log(f.last/center):0;
-
- return clamp(
-  -deviation*.55*horizonScale(h),
-  -.07,.07
- );
-}
-
-function engine9(f,h){
- const range=f.high20-f.low20;
-
- if(!range)return 0;
-
- const pos=(f.last-f.low20)/range;
-
- let r=0;
-
- if(pos>.82)r=-.0018;
- else if(pos<.18)r=.0018;
- else r=f.trendScore*.002;
-
- return clamp(r*horizonScale(h),-.06,.06);
-}
-
-function engine10(f,h){
- const risk=f.volat*Math.sqrt(Math.max(h,1));
-
- return clamp(
-  f.trendScore*.0025*horizonScale(h)*(1+risk*4),
-  -.09,.09
- );
-}
-
-function freshnessDecay(ts,halfLifeMin){
- if(!ts)return 0;
-
- const age=Math.max(
-  0,
-  (Date.now()-ts)/60000
- );
-
- return Math.exp(
-  -Math.log(2)*age/halfLifeMin
- );
-}
-
-function engine11(f,h){
- const x=externalInfluence;
-
- const fresh=freshnessDecay(x.newsAt,45);
-
- const quality=clamp(
-  (x.internetConfidence||0)*
-  Math.min(1,(x.newsCount||0)/8)*
-  fresh,
-  0,1
- );
-
- return clamp(
-  (x.internet||0)*
-  quality*
-  .035*
-  horizonScale(h),
-  -.06,.06
- );
-}
-
-function engine12(f,h){
- const x=externalInfluence;
-
- const fresh=freshnessDecay(x.socialAt,30);
-
- const quality=clamp(
-  (x.socialConfidence||0)*
-  Math.min(1,(x.socialCount||0)/12)*
-  fresh,
-  0,1
- );
-
- return clamp(
-  (x.social||0)*
-  quality*
-  .04*
-  horizonScale(h),
-  -.07,.07
- );
-}
-
-function makeForecast(h){
- const f=features();
-
- if(!f)return null;
-
- const vals={};
-
- vals.e1=engine1(f,h);
- vals.e2=engine2(f,h);
- vals.e3=engine3(f,h);
- vals.e4=engine4(f,h);
-
- const c=engine5(vals,f);
-
- vals.e5=c.r;
- vals.e7=engine7(f,h);
- vals.e8=engine8(f,h);
- vals.e9=engine9(f,h);
- vals.e10=engine10(f,h);
- vals.e11=engine11(f,h);
- vals.e12=engine12(f,h);
-
- vals.e6=engine6(vals,f,h);
-
- const agreement=
-  clamp(
-   (c.agreement+
-    (1-std([
-     vals.e6,
-     vals.e7,
-     vals.e8,
-     vals.e9,
-     vals.e10
-    ])/.025)
-   )/2,
-   0,1
-  );
-
- const uncertainty=
-  clamp(
-   std([
-    vals.e1,vals.e2,vals.e3,vals.e4,
-    vals.e5,vals.e6,vals.e7,vals.e8,
-    vals.e9,vals.e10,vals.e11,vals.e12
-   ]),
-   0,.05
-  );
-
- const bias=
-  h<=30?learner.bias.short:learner.bias.long;
-
- const ret=clamp(
-  vals.e6+bias*.25,
-  -.15,.15
- );
-
- const target=f.last*Math.exp(ret);
-
- const rangePct=
-  clamp(
-   f.volat*Math.sqrt(h)*2.5,
-   .002,.15
-  );
-
- const rangeLow=f.last*Math.exp(ret-rangePct);
- const rangeHigh=f.last*Math.exp(ret+rangePct);
-
- const confidence=Math.round(
-  clamp(
-   45+
-   agreement*35-
-   uncertainty*250,
-   5,95
-  )
- );
-
- const key=contextKey(f,h);
- const ctx=getContextState(key);
-
- return{
-  entry:f.last,
-  target,
-  ret,
-  confidence,
-  agreement,
-  uncertainty,
-  rangeLow,
-  rangeHigh,
-  regime:f.regime,
-  engines:vals,
-  context:key,
-  learnerWeights:ctx.weights,
-  features:f
- };
-}
-
-function renderEngineValues(f){
- if(!f)return;
-
- const h=15;
- const forecast=makeForecast(h);
-
- if(!forecast)return;
-
- for(let i=1;i<=12;i++){
-  const v=forecast.engines['e'+i];
-
-  if($('e'+i))
-   $('e'+i).textContent=
-    (v>=0?'+':'')+
-    (v*100).toFixed(3)+'%';
- }
-
- $('coreAgreement').textContent=
-  Math.round(forecast.agreement*100)+'%';
-
- $('learnerSamples').textContent=
-  learner.samples;
-
- $('learnerContext').textContent=
-  forecast.context;
-}
-
-function flowStats(){
- const completed=completedOneMin();
-
- if(completed.length<20)return null;
-
- const a=completed.slice(-20);
-
- const total=mean(a.map(x=>x.volume))*a.length;
- const buy=a.reduce((s,x)=>s+(x.buyVol||0),0);
- const all=a.reduce((s,x)=>s+x.volume,0);
- const sell=Math.max(0,all-buy);
-
- const buyPct=all?buy/all:0;
- const ratio=sell?buy/sell:0;
-
- const old=mean(
-  completed.slice(-60,-20).map(x=>x.volume)
- );
-
- const recent=mean(a.map(x=>x.volume));
-
- const rvol=old?recent/old:1;
-
- const prev=mean(
-  completed.slice(-30,-20).map(x=>x.volume)
- );
-
- const accel=prev?recent/prev-1:0;
-
- let dir='BALANCED';
-
- if(buyPct>.58)dir='BUY PRESSURE';
- else if(buyPct<.42)dir='SELL PRESSURE';
-
- const strength=
-  Math.round(
-   clamp(
-    Math.abs(buyPct-.5)*200,
-    0,100
-   )
-  );
-
- return{
-  buy,
-  sell,
-  buyPct,
-  ratio,
-  rvol,
-  accel,
-  dir,
-  strength
- };
-}
-
-function updateFlow(){
- const f=flowStats();
-
- if(!f)return;
-
- $('buyVol').textContent=
-  f.buy.toFixed(2);
-
- $('sellVol').textContent=
-  f.sell.toFixed(2);
-
- $('buyPct').textContent=
-  (f.buyPct*100).toFixed(1)+'%';
-
- $('bsRatio').textContent=
-  f.ratio.toFixed(2);
-
- $('rvol').textContent=
-  f.rvol.toFixed(2)+'x';
-
- $('volAccel').textContent=
-  (f.accel>=0?'+':'')+
-  (f.accel*100).toFixed(1)+'%';
-
- $('flowDir').textContent=f.dir;
- $('flowStrength').textContent=f.strength+'/100';
-}
-
-function updateForecastCards(){
- const a=makeForecast(15);
- const b=makeForecast(30);
-
- if(a){
-  $('p15').textContent='$'+price(a.target);
-  $('m15').textContent=
-   `${a.confidence}% • ${a.regime} • target +15m`;
-  $('b15').style.width=a.confidence+'%';
- }
-
- if(b){
-  $('p30').textContent='$'+price(b.target);
-  $('m30').textContent=
-   `${b.confidence}% • ${b.regime} • target +30m`;
-  $('b30').style.width=b.confidence+'%';
- }
-
- renderEngineValues(features());
-}
-
-function updateAnalysis(){
- updateFlow();
- updateForecastCards();
-
- const x=externalInfluence;
-
- $('newsSentiment').textContent=
-  x.newsCount?
-  (x.newsSentiment*100).toFixed(1)+'%':
-  'UNAVAILABLE';
-
- $('newsVelocity').textContent=
-  x.newsCount?
-  x.newsVelocity.toFixed(2):
-  'UNAVAILABLE';
-
- $('internetInfluence').textContent=
-  x.newsCount?
-  ((x.internet||0)*100).toFixed(2)+'%':
-  'UNAVAILABLE';
-
- $('newsCount').textContent=
-  x.newsCount||0;
-
- $('newsAgreement').textContent=
-  x.newsCount?
-  Math.round((x.newsAgreement||0)*100)+'%':
-  'UNAVAILABLE';
-
- $('newsAge').textContent=
-  x.newsAt?
-  Math.round((Date.now()-x.newsAt)/60000)+' min':
-  'UNAVAILABLE';
-
- $('redditSentiment').textContent=
-  x.socialCount?
-  ((x.redditSentiment||0)*100).toFixed(1)+'%':
-  'UNAVAILABLE';
-
- $('socialAttention').textContent=
-  x.socialCount?
-  Math.round((x.socialAttention||0)*100)+'%':
-  'UNAVAILABLE';
-
- $('socialInfluence').textContent=
-  x.socialCount?
-  ((x.social||0)*100).toFixed(2)+'%':
-  'UNAVAILABLE';
-
- $('socialCount').textContent=
-  x.socialCount||0;
-
- $('socialMix').textContent=
-  x.socialMix||'UNAVAILABLE';
-
- $('socialQuality').textContent=
-  x.socialCount?
-  Math.round((x.socialConfidence||0)*100)+'%':
-  'UNAVAILABLE';
-}
-
-function sentimentFromText(t){
- t=(t||'').toLowerCase();
-
- const pos=[
-  'surge','rally','bullish','bull',
-  'gain','gains','higher','high',
-  'breakout','positive','approval',
-  'adoption','inflow','rise','rises',
-  'rising','record','growth'
- ];
-
- const neg=[
-  'crash','bearish','bear',
-  'loss','losses','lower','low',
-  'breakdown','negative','hack',
-  'outflow','fall','falls','falling',
-  'risk','sell','selling','ban'
- ];
-
- let score=0;
-
- for(const w of pos)
-  if(t.includes(w))score++;
-
- for(const w of neg)
-  if(t.includes(w))score--;
-
- return clamp(score/4,-1,1);
-}
-
-async function refreshExternalInfluence(){
- await Promise.allSettled([
-  refreshNews(),
-  refreshReddit()
- ]);
 
  updateAnalysis();
 }
 
-async function refreshNews(){
- try{
-  const rss=
-   'https://news.google.com/rss/search?q=Ethereum%20ETH%20crypto&hl=en-US&gl=US&ceid=US:en';
+function makeForecast(h){
+ const f=features();
+ if(!f)return null;
 
-  const proxy=
-   'https://api.allorigins.win/raw?url='+
-   encodeURIComponent(rss);
+ const vals={
+   e1:engine1(f,h),
+   e2:engine2(f,h),
+   e3:engine3(f,h),
+   e4:engine4(f,h)
+ };
 
-  const r=await fetch(proxy,{
-   cache:'no-store',
-   signal:AbortSignal.timeout(10000)
-  });
+ const e5=engine5(vals,f);
+ vals.e5=e5.r;
+ vals.e7=engine7(f,h);
+ vals.e8=engine8(f,h);
+ vals.e9=engine9(f,h);
 
-  if(!r.ok)throw new Error('news '+r.status);
+ const e10=engine10(f,h);
+ vals.e10=e10.r;
+ vals.e11=engine11(f,h);
+ vals.e12=engine12(f,h);
 
-  const text=await r.text();
+ const base=engine6(vals,f,h);
 
-  const xml=new DOMParser().parseFromString(
-   text,'text/xml'
-  );
+ const type=`${Math.round(h)}m`;
+ const neural=neuralPredict(f,h);
+ const improver=predictionImprover(vals,neural.ret,f,h);
 
-  const items=[
-   ...xml.querySelectorAll('item')
-  ].slice(0,30);
+ let ret=clamp(
+   base.r*.68+
+   improver.adj+
+   neural.ret*(neural.confidence>0?.18:0),
+   -.15,.15
+ );
 
-  if(!items.length)throw new Error('no news');
-
-  const vals=items.map(item=>{
-   const title=
-    item.querySelector('title')?.textContent||'';
-
-   const date=
-    item.querySelector('pubDate')?.textContent||'';
-
-   return{
-    title,
-    date,
-    sentiment:sentimentFromText(title)
-   };
-  });
-
-  const now=Date.now();
-
-  const fresh=vals.filter(x=>{
-   const t=Date.parse(x.date);
-   return !Number.isFinite(t)||now-t<86400000;
-  });
-
-  const arr=fresh.length?fresh:vals;
-
-  const sent=mean(arr.map(x=>x.sentiment));
-
-  const count=arr.length;
-
-  const agreement=
-   count?
-   1-Math.min(
-    1,
-    std(arr.map(x=>x.sentiment))
-   ):
-   0;
-
-  const velocity=
-   Math.min(
-    1,
-    count/20
-   );
-
-  externalInfluence.newsSentiment=sent;
-  externalInfluence.newsCount=count;
-  externalInfluence.newsAgreement=agreement;
-  externalInfluence.newsVelocity=velocity;
-  externalInfluence.internet=clamp(
-   sent*velocity,
-   -.9,.9
-  );
-  externalInfluence.internetConfidence=
+ const uncertainty=
    clamp(
-    agreement*.7+velocity*.3,
-    0,1
+      std(Object.values(vals).filter(Number.isFinite))+
+      Math.max(0,e10.vol*.4)+
+      (1-e5.agreement)*.015,
+      .001,.08
    );
-  externalInfluence.newsAt=Date.now();
 
-  $('internetNote').textContent=
-   `Google News RSS • ${count} articles analysed • real public data`;
- }catch(e){
-  externalInfluence.newsCount=0;
-  externalInfluence.internet=0;
-  externalInfluence.internetConfidence=0;
-  $('internetNote').textContent=
-   'Internet data unavailable right now. No value is fabricated.';
+ const targetAt=nowServer()+h*60000;
+ const targetPrice=f.p*(1+ret);
+
+ const rangeLow=f.p*(1+ret-uncertainty);
+ const rangeHigh=f.p*(1+ret+uncertainty);
+
+ return {
+   id:uid(),
+   type,
+   horizon:h,
+   createdAt:nowServer(),
+   targetAt,
+   basePrice:f.p,
+   predictedPrice:targetPrice,
+   predictedReturn:ret,
+   rangeLow,
+   rangeHigh,
+   confidence:clamp(
+      50+
+      e5.agreement*25+
+      Math.min(15,learner.samples*.15)-
+      uncertainty*300+
+      neural.confidence*.10,
+      5,95
+   ),
+   direction:ret>=0?'UP':'DOWN',
+   engineValues:vals,
+   agreement:e5.agreement,
+   disagreement:e5.disagreement,
+   context:base.context,
+   featuresSnapshot:f,
+   neuralSnapshot:neural,
+   improverSnapshot:improver,
+   settled:false
+ };
+}
+
+async function createPrediction(h){
+ const p=makeForecast(h);
+ if(!p)return null;
+
+ await dbPut(STORE.predictions,p);
+ active.push(p);
+ active=active.filter(x=>!x.settled);
+
+ renderActive();
+ updatePredictionCards();
+ return p;
+}
+
+async function ensureAuto(){
+ const wanted=[10,15,30];
+
+ for(const h of wanted){
+   const type=`${h}m`;
+   const exists=active.some(p=>p.type===type&&!p.settled);
+   if(!exists)await createPrediction(h);
  }
 }
 
-async function refreshReddit(){
- try{
-  const url=
-   'https://www.reddit.com/search.json?q=ethereum%20OR%20ETH&sort=new&limit=50';
+function formatTime(t){
+ return new Date(t).toLocaleString([],{
+   day:'2-digit',
+   month:'short',
+   hour:'2-digit',
+   minute:'2-digit'
+ });
+}
 
-  const r=await fetch(url,{
-   cache:'no-store',
-   headers:{'Accept':'application/json'},
-   signal:AbortSignal.timeout(10000)
-  });
-
-  if(!r.ok)throw new Error('reddit '+r.status);
-
-  const j=await r.json();
-
-  const posts=
-   j?.data?.children||[];
-
-  if(!posts.length)throw new Error('no reddit');
-
-  const vals=posts.map(x=>{
-   const d=x.data||{};
-
-   const text=
-    (d.title||'')+
-    ' '+
-    (d.selftext||'');
-
-   return{
-    sentiment:sentimentFromText(text),
-    score:+d.score||0
-   };
-  });
-
-  const sent=mean(vals.map(x=>x.sentiment));
-
-  const positive=
-   vals.filter(x=>x.sentiment>.1).length;
-
-  const negative=
-   vals.filter(x=>x.sentiment<-.1).length;
-
-  const attention=
-   clamp(
-    Math.log10(
-     1+mean(vals.map(x=>Math.max(0,x.score)))
-    )/4,
-    0,1
-   );
-
-  externalInfluence.redditSentiment=sent;
-  externalInfluence.socialCount=vals.length;
-  externalInfluence.socialAttention=attention;
-  externalInfluence.social=clamp(
-   sent*(.5+.5*attention),
-   -.9,.9
-  );
-
-  externalInfluence.socialConfidence=
-   clamp(
-    .5+.5*attention,
-    0,1
-   );
-
-  externalInfluence.socialMix=
-   `${positive}/${negative}`;
-
-  externalInfluence.socialAt=Date.now();
-
-  $('socialNote').textContent=
-   `Reddit public search • ${vals.length} posts analysed • real public data`;
- }catch(e){
-  externalInfluence.socialCount=0;
-  externalInfluence.social=0;
-  externalInfluence.socialConfidence=0;
-  $('socialNote').textContent=
-   'Social data unavailable right now. X/YouTube values are not fabricated.';
- }
+function formatCountdown(target){
+ const sec=Math.max(0,Math.ceil((target-nowServer())/1000));
+ const m=Math.floor(sec/60);
+ const s=sec%60;
+ return `${m}m ${String(s).padStart(2,'0')}s`;
 }
 
 function renderActive(){
- const box=$('activePredictions');
+ const make=(p)=>{
+   const remaining=formatCountdown(p.targetAt);
+   const status=nowServer()>=p.targetAt?'SETTLING':'LOCKED';
+   const dir=p.direction==='UP'?'green':'red';
 
- if(!active.length){
-  box.innerHTML=
-   '<div class="empty">No active predictions.</div>';
-  return;
+   return `
+   <div class="row" style="display:block">
+     <div style="display:flex;justify-content:space-between;gap:8px">
+       <strong>${p.type}</strong>
+       <span class="${dir}">${p.direction} ${price(p.predictedPrice)}</span>
+     </div>
+     <div class="notice">
+       Forecast: <b>${price(p.predictedPrice)}</b>
+       • target ${formatTime(p.targetAt)}
+       • ${status}
+       • ${remaining}
+     </div>
+     <div class="notice">
+       Base ${price(p.basePrice)}
+       • range ${price(p.rangeLow)} – ${price(p.rangeHigh)}
+       • confidence ${p.confidence.toFixed(0)}%
+     </div>
+   </div>`;
+ };
+
+ const html=active.length?active.sort((a,b)=>a.targetAt-b.targetAt).map(make).join(''):'No active prediction.';
+ $('active').innerHTML=html;
+ $('active2').innerHTML=html;
+}
+
+function updatePredictionCards(){
+ for(const h of [10,15,30]){
+   const p=active.find(x=>x.type===`${h}m`);
+   const pe=$('p'+String(h).replace('0','0'));
+   const me=$('m'+String(h).replace('0','0'));
+   const be=$('b'+String(h).replace('0','0'));
+
+   if(!p){
+     if(pe)pe.textContent='--';
+     if(me)me.textContent='waiting';
+     if(be)be.style.width='0';
+     continue;
+   }
+
+   if(pe)pe.textContent=price(p.predictedPrice);
+   if(me)me.textContent=
+      `${p.direction} • ${formatTime(p.targetAt)} • ${formatCountdown(p.targetAt)}`;
+   if(be)be.style.width=p.confidence+'%';
+
+   const pp=$('pred'+h);
+   if(pp)pp.textContent=
+      `${price(p.predictedPrice)} • ${formatTime(p.targetAt)} • ${p.direction}`;
  }
+}
 
- const now=nowServer();
-
- box.innerHTML=active.map(p=>{
-  const remaining=Math.max(
-   0,
-   (p.targetAt-now)/60000
-  );
-
-  const target=p.type==='TARGET_PRICE'
-   ?p.targetPrice
-   :p.forecast;
-
-  const forecastTime=
-   p.targetAt?
-   new Date(p.targetAt).toLocaleString():
-   new Date(p.estimatedAt).toLocaleString();
-
-  return`
-  <div class="panel" style="margin:8px 0;padding:10px">
-   <div class="row">
-    <span>${p.type}</span>
-    <span class="${p.forecast>=p.entry?'green':'red'}">
-     ${price(p.forecast)}
-    </span>
-   </div>
-   <div class="row">
-    <span>Entry</span>
-    <span>${price(p.entry)}</span>
-   </div>
-   <div class="row">
-    <span>Target time</span>
-    <span>${forecastTime}</span>
-   </div>
-   <div class="row">
-    <span>Remaining</span>
-    <span>${p.type==='TARGET_PRICE'?'--':remaining.toFixed(1)+' min'}</span>
-   </div>
-   <div class="row">
-    <span>Confidence</span>
-    <span>${p.confidence}%</span>
-   </div>
-   <div class="row">
-    <span>Status</span>
-    <span>${p.state||'ACTIVE'}</span>
-   </div>
-  </div>`;
- }).join('');
+function targetWindowStart(targetAt){
+ return targetAt-120000;
 }
 
 async function targetObservation(targetAt){
- try{
-  const start=targetAt-60000;
-  const end=targetAt+120000;
-
-  const rows=await loadKlines(
-   '1m',
-   start,
-   end,
-   5
-  );
-
-  const eligible=
-   rows
-   .map(normalizeKline)
-   .filter(c=>
-    c.closeTime>=targetAt &&
-    nowServer()>=c.closeTime
-   )
-   .sort((a,b)=>a.closeTime-b.closeTime);
-
-  if(eligible.length){
-   const c=eligible[0];
-
-   return{
-    price:c.close,
-    time:c.closeTime,
-    method:'first completed 1m close at/after target'
-   };
-  }
- }catch(e){
-  console.warn('target kline',e);
- }
+ const target=Math.floor(targetAt/60000)*60000;
 
  try{
-  const rows=
-   await fetchJSON(
-    `/aggTrades?symbol=ETHUSDT&startTime=${Math.max(0,targetAt-60000)}&endTime=${targetAt}&limit=1000`,
-    7000
+   const start=targetWindowStart(target);
+   const raw=await fetchJSON(
+      `/klines?symbol=ETHUSDT&interval=1m&startTime=${start}&endTime=${target+180000}&limit=5`,
+      8000
    );
 
-  const eligible=
-   rows
-   .map(r=>({t:+r.T,p:+r.p}))
-   .filter(x=>x.t<=targetAt)
-   .sort((a,b)=>a.t-b.t)
-   .at(-1);
+   const rows=raw.map(klineToCandle);
 
-  if(eligible){
-   return{
-    price:eligible.p,
-    time:eligible.t,
-    method:'last trade at/before locked target'
-   };
-  }
- }catch(e){
-  console.warn('target trade',e);
- }
+   const valid=rows.find(c=>
+      c.closeTime>=target &&
+      nowServer()>=c.closeTime
+   );
+
+   if(valid){
+      return {
+        price:valid.close,
+        time:valid.closeTime,
+        source:'1m candle'
+      };
+   }
+ }catch(e){}
+
+ try{
+   const raw=await fetchJSON(
+      `/aggTrades?symbol=ETHUSDT&startTime=${targetWindowStart(target)}&endTime=${target+120000}&limit=1000`,
+      8000
+   );
+
+   const trades=raw
+      .map(x=>({
+        time:+x.T,
+        price:+x.p
+      }))
+      .filter(x=>x.time<=target)
+      .sort((a,b)=>a.time-b.time);
+
+   const t=trades.at(-1);
+
+   if(t){
+     return {
+       price:t.price,
+       time:t.time,
+       source:'aggregate trade'
+     };
+   }
+ }catch(e){}
 
  return null;
 }
 
-function removeActive(p){
- active=active.filter(
-  x=>x.id!==p.id
- );
-}
-
 async function settleOne(p){
- p.state='SETTLING';
- p.lastSettlementAttempt=nowServer();
+ if(settlementBusy)return false;
+ if(p.settled)return true;
+ if(nowServer()<p.targetAt)return false;
 
- await dbPut(
-  STORE.predictions,
-  p
- );
+ settlementBusy=true;
 
- renderActive();
+ try{
+   const obs=await targetObservation(p.targetAt);
 
- const obs=await targetObservation(
-  p.targetAt
- );
+   if(!obs){
+     p.settlementAttempts=(p.settlementAttempts||0)+1;
+     await dbPut(STORE.predictions,p);
+     return false;
+   }
 
- if(!obs){
-  p.state='RETRY';
-  await dbPut(
-   STORE.predictions,
-   p
-  );
-  return;
+   const actual=obs.price;
+   const actualReturn=(actual-p.basePrice)/p.basePrice;
+   const error=actual-p.predictedPrice;
+   const absError=Math.abs(error);
+   const dirCorrect=
+      Math.sign(actualReturn)===Math.sign(p.predictedReturn);
+
+   p.actualPrice=actual;
+   p.actualTime=obs.time;
+   p.actualReturn=actualReturn;
+   p.error=error;
+   p.absError=absError;
+   p.directionCorrect=dirCorrect;
+   p.observationSource=obs.source;
+   p.settledAt=nowServer();
+   p.settled=true;
+
+   await dbPut(STORE.predictions,p);
+   await dbPut(STORE.history,p);
+   await dbDelete(STORE.predictions,p.id);
+
+   active=active.filter(x=>x.id!==p.id);
+   history.push(p);
+
+   updateLearner(p);
+   await saveState();
+
+   renderHistory();
+   updateAnalysis();
+
+   settlementBusy=false;
+
+   await createPrediction(p.horizon);
+
+   return true;
+
+ }catch(e){
+   console.warn('Settlement failed',e);
+   settlementBusy=false;
+   return false;
  }
-
- const actualReturn=
-  Math.log(obs.price/p.entry);
-
- const predReturn=
-  Math.log(p.forecast/p.entry);
-
- const error=
-  actualReturn-predReturn;
-
- p.actual=obs.price;
- p.actualTime=obs.time;
- p.settlementMethod=obs.method;
- p.errorPct=
-  (obs.price-p.forecast)/
-  p.forecast*100;
-
- p.actualReturn=actualReturn;
- p.state='SETTLED';
- p.settled=true;
- p.settledAt=nowServer();
-
- updateLearner(
-  p,
-  actualReturn
- );
-
- const hrec={...p};
-
- await dbPut(
-  STORE.history,
-  hrec
- );
-
- removeActive(p);
-
- await dbDelete(
-  STORE.predictions,
-  p.id
- );
-
- await saveState();
-
- if(
-  p.type==='15m'||
-  p.type==='30m'
- ){
-  const h=
-   p.type==='15m'?15:30;
-
-  const f=makeForecast(h);
-
-  if(f){
-   const n={
-    id:uid(),
-    type:p.type,
-    createdAt:nowServer(),
-    targetAt:nowServer()+h*60000,
-    entry:f.entry,
-    forecast:f.target,
-    confidence:f.confidence,
-    engines:f.engines,
-    context:f.context,
-    learnerWeights:f.learnerWeights,
-    featuresSnapshot:f.features
-   };
-
-   active.push(n);
-
-   await dbPut(
-    STORE.predictions,
-    n
-   );
-  }
- }
-
- renderHistory();
- renderActive();
 }
 
 async function settleDue(){
- const now=nowServer();
+ if(!active.length)return;
 
  for(const p of [...active]){
-  if(
-   p.type!=='TARGET_PRICE' &&
-   p.targetAt<=now &&
-   p.state!=='SETTLING'
-  ){
-   await settleOne(p);
-  }
+   if(nowServer()>=p.targetAt)
+     await settleOne(p);
  }
+
+ renderActive();
+ updatePredictionCards();
 }
 
-function updateLearner(p,actualReturn){
- const pred=p.engines||{};
+function updateLearner(p){
+ if(!p.featuresSnapshot||!Number.isFinite(p.actualReturn))return;
 
- const names=[
-  'e1','e2','e3','e4','e5',
-  'e7','e8','e9','e10','e11','e12'
- ];
-
- const actualDir=
-  Math.sign(actualReturn);
-
- let avgErr=0;
-
- for(const n of names){
-  const pr=Number(pred[n])||0;
-
-  const loss=clamp(
-   Math.abs(pr-actualReturn)/
-   (Math.abs(actualReturn)+.002),
-   0,3
-  );
-
-  const reward=
-   Math.exp(-.12*loss);
-
-  learner.global[n]=clamp(
-   (learner.global[n]||1)*reward,
-   .15,5
-  );
-
-  avgErr+=
-   Math.abs(pr-actualReturn);
- }
-
- const key=p.context||'unknown';
- const ctx=getContextState(key);
-
- ctx.n++;
-
- for(const n of names){
-  const pr=Number(pred[n])||0;
-
-  const loss=clamp(
-   Math.abs(pr-actualReturn)/
-   (Math.abs(actualReturn)+.002),
-   0,3
-  );
-
-  ctx.weights[n]=clamp(
-   (ctx.weights[n]||1)*
-   Math.exp(-.18*loss),
-   .1,6
-  );
- }
-
- ctx.mae=
-  ctx.mae*.97+
-  Math.abs(actualReturn)*.03;
-
- ctx.bias=
-  ctx.bias*.97+
-  (actualReturn-(Number(pred.e6)||0))*.03;
-
- ctx.dir+=
-  (Math.sign(Number(pred.e6)||0)===actualDir)?1:0;
+ const actual=p.actualReturn;
+ const f=p.featuresSnapshot;
+ const h=p.horizon;
+ const names=['e1','e2','e3','e4','e5','e7','e8','e9','e10','e11','e12'];
 
  learner.samples++;
 
- learner.mae=
-  learner.mae*.97+
-  (avgErr/names.length)*.03;
+ const alpha=clamp(
+   .025+
+   Math.min(.04,learner.samples/2500),
+   .025,.065
+ );
 
- learner.bias.all=
-  learner.bias.all*.97+
-  (actualReturn-(Number(pred.e6)||0))*.03;
+ const context=getContextState(p.context||contextKey(f,h));
+ context.n++;
 
- if(
-  p.type==='15m'||
-  p.type==='30m'
- ){
-  learner.bias.short=
-   learner.bias.short*.97+
-   (actualReturn-(Number(pred.e6)||0))*.03;
- }else{
-  learner.bias.long=
-   learner.bias.long*.97+
-   (actualReturn-(Number(pred.e6)||0))*.03;
+ for(const n of names){
+   const pred=Number(p.engineValues?.[n])||0;
+   const err=Math.abs(actual-pred);
+
+   const targetWeight=
+      1/(1+err*80);
+
+   context.weights[n]=clamp(
+      context.weights[n]*(1-alpha)+
+      targetWeight*alpha,
+      .15,3
+   );
+
+   learner.global[n]=clamp(
+      learner.global[n]*(1-alpha*.35)+
+      targetWeight*(alpha*.35),
+      .15,3
+   );
  }
 
- learner.dirCorrect+=
-  (Math.sign(Number(pred.e6)||0)===actualDir)?1:0;
+ const short=h<=30;
+ const oldBias=short?learner.bias.short:learner.bias.long;
+
+ const residual=clamp(
+   (actual-p.predictedReturn)*.25,
+   -.015,.015
+ );
+
+ if(short)
+   learner.bias.short=clamp(oldBias*(1-alpha)+residual*alpha,-.03,.03);
+ else
+   learner.bias.long=clamp(oldBias*(1-alpha)+residual*alpha,-.03,.03);
+
+ learner.bias.all=clamp(
+   learner.bias.all*(1-alpha)+residual*alpha,
+   -.03,.03
+ );
+
+ learner.mae=learner.mae*(1-alpha)+Math.abs(actual-p.predictedReturn)*alpha;
+
+ if(
+   Math.sign(actual)===Math.sign(p.predictedReturn)
+ )
+   learner.dirCorrect++;
+
+ neuralTrain(
+   p.type,
+   f,
+   actual,
+   h
+ );
 
  learner.lastUpdate=nowServer();
+}
 
- saveState().catch(()=>{});
+function predictionAccuracy(type){
+ const rows=history.filter(p=>p.type===type&&Number.isFinite(p.actualReturn));
+
+ if(rows.length<5)
+   return null;
+
+ const dir=rows.filter(p=>p.directionCorrect).length/rows.length;
+ const mae=mean(rows.map(p=>Math.abs(p.actualReturn-p.predictedReturn)));
+
+ return {
+   n:rows.length,
+   dir,
+   mae
+ };
+}
+
+function walkForwardEngines(type){
+ const rows=history
+   .filter(p=>p.type===type&&p.featuresSnapshot&&Number.isFinite(p.actualReturn))
+   .sort((a,b)=>(a.settledAt||0)-(b.settledAt||0));
+
+ if(rows.length<12)
+   return null;
+
+ let correct=0,total=0,err=0;
+
+ const localWeights={};
+
+ for(let i=8;i<rows.length;i++){
+   const p=rows[i];
+
+   const before=rows.slice(0,i);
+
+   for(const n of ['e1','e2','e3','e4','e5','e7','e8','e9','e10','e11','e12']){
+     const errors=before
+       .map(x=>Math.abs(
+          x.actualReturn-(Number(x.engineValues?.[n])||0)
+       ));
+
+     const e=mean(errors);
+
+     localWeights[n]=1/(1+e*80);
+   }
+
+   let sum=0,ws=0;
+
+   for(const n of Object.keys(localWeights)){
+     const v=Number(p.engineValues?.[n])||0;
+     const w=localWeights[n];
+     sum+=v*w;
+     ws+=w;
+   }
+
+   const pred=ws?sum/ws:0;
+
+   err+=Math.abs(p.actualReturn-pred);
+   if(Math.sign(p.actualReturn)===Math.sign(pred))
+      correct++;
+
+   total++;
+ }
+
+ if(total<4)return null;
+
+ return {
+   direction:correct/total,
+   mae:err/total,
+   n:total
+ };
+}
+
+function walkForwardNeural(type){
+ const rows=history
+   .filter(p=>p.type===type&&p.featuresSnapshot&&Number.isFinite(p.actualReturn))
+   .sort((a,b)=>(a.settledAt||0)-(b.settledAt||0));
+
+ if(rows.length<16)return null;
+
+ let correct=0,total=0,err=0;
+
+ const model=makeNeuralModel(12345);
+
+ for(let i=8;i<rows.length;i++){
+   const p=rows[i];
+
+   if(model.trained>=8){
+      const out=neuralForward(model,neuralVector(p.featuresSnapshot));
+      const scale=.004*Math.sqrt(p.horizon/15);
+      const pred=out.y*scale;
+
+      err+=Math.abs(p.actualReturn-pred);
+
+      if(Math.sign(p.actualReturn)===Math.sign(pred))
+         correct++;
+
+      total++;
+   }
+
+   const x=neuralVector(p.featuresSnapshot);
+   const target=p.actualReturn;
+   const h=p.horizon;
+   const scale=.004*Math.sqrt(h/15);
+
+   const y=clamp(target/scale,-1,1);
+   const out=neuralForward(model,x);
+   const er=y-out.y;
+   const lr=.012;
+
+   for(let k=0;k<model.hidden;k++){
+      const dz=(1-out.z[k]*out.z[k])*model.w2[k]*er;
+
+      for(let j=0;j<x.length;j++)
+         model.w1[k][j]=clamp(
+            model.w1[k][j]+lr*dz*x[j],
+            -2,2
+         );
+
+      model.b1[k]=clamp(model.b1[k]+lr*dz,-2,2);
+      model.w2[k]=clamp(
+         model.w2[k]+lr*er*out.z[k],
+         -2,2
+      );
+   }
+
+   model.b2=clamp(model.b2+lr*er,-2,2);
+   model.trained++;
+ }
+
+ if(total<4)return null;
+
+ return {
+   direction:correct/total,
+   mae:err/total,
+   n:total
+ };
+}
+
+function driftMonitor(){
+ const rows=history
+   .filter(p=>Number.isFinite(p.actualReturn))
+   .sort((a,b)=>(a.settledAt||0)-(b.settledAt||0));
+
+ if(rows.length<30)
+   return null;
+
+ const recent=rows.slice(-20);
+ const prior=rows.slice(-40,-20);
+
+ const recentErr=mean(
+   recent.map(p=>Math.abs(p.actualReturn-p.predictedReturn))
+ );
+
+ const priorErr=mean(
+   prior.map(p=>Math.abs(p.actualReturn-p.predictedReturn))
+ );
+
+ const recentDir=mean(
+   recent.map(p=>p.directionCorrect?1:0)
+ );
+
+ const priorDir=mean(
+   prior.map(p=>p.directionCorrect?1:0)
+ );
+
+ const errorChange=
+   priorErr?recentErr/priorErr-1:0;
+
+ const dirChange=recentDir-priorDir;
+
+ let state='STABLE';
+
+ if(errorChange>.35||dirChange<-.15)
+   state='DRIFT DETECTED';
+ else if(errorChange>.18||dirChange<-.08)
+   state='WATCH';
+
+ return {
+   recentErr,
+   priorErr,
+   errorChange,
+   recentDir,
+   priorDir,
+   dirChange,
+   state
+ };
+}
+
+function updateWalkForwardPanel(){
+ const a=walkForwardEngines('10m');
+ const b=walkForwardEngines('15m');
+ const c=walkForwardEngines('30m');
+
+ $('wf10').textContent=a?
+   `${(a.direction*100).toFixed(1)}% (${a.n})`:
+   'INSUFFICIENT DATA';
+
+ $('wf15').textContent=b?
+   `${(b.direction*100).toFixed(1)}% (${b.n})`:
+   'INSUFFICIENT DATA';
+
+ $('wf30').textContent=c?
+   `${(c.direction*100).toFixed(1)}% (${c.n})`:
+   'INSUFFICIENT DATA';
+
+ const all=[a,b,c].filter(Boolean);
+
+ $('wfMae').textContent=all.length?
+   mean(all.map(x=>x.mae)).toFixed(5):
+   'INSUFFICIENT DATA';
+
+ const d=driftMonitor();
+
+ if(!d){
+   $('driftError').textContent='INSUFFICIENT DATA';
+   $('driftDir').textContent='INSUFFICIENT DATA';
+   $('driftState').textContent='WAITING';
+   return;
+ }
+
+ $('driftError').textContent=
+   (d.errorChange>=0?'+':'')+
+   (d.errorChange*100).toFixed(1)+'%';
+
+ $('driftDir').textContent=
+   (d.dirChange>=0?'+':'')+
+   (d.dirChange*100).toFixed(1)+' pp';
+
+ $('driftState').textContent=d.state;
+ $('driftState').className=
+   d.state==='DRIFT DETECTED'?'err':
+   d.state==='WATCH'?'warn':'ok';
+}
+
+function updateAnalysis(){
+ const f=features();
+ if(!f)return;
+
+ const hvals=[10,15,30];
+
+ for(const h of hvals){
+   const p=active.find(x=>x.type===`${h}m`);
+   const forecast=p||makeForecast(h);
+
+   if(!forecast)continue;
+
+   const e=forecast.engineValues||{};
+
+   for(const n of ['e1','e2','e3','e4','e5','e7','e8','e9','e10','e11','e12']){
+     const el=$(n);
+     if(el)el.textContent=pct(e[n]||0);
+   }
+
+   const e6=engine6(e,f,h);
+
+   $('e6').textContent=pct(e6.r);
+
+   $('coreAgreement').textContent=
+      Math.round((forecast.agreement||0)*100)+'%';
+
+   $('learnerSamples').textContent=String(learner.samples);
+   $('learnerContext').textContent=
+      forecast.context||contextKey(f,h);
+
+   const neural=forecast.neuralSnapshot||neuralPredict(f,h);
+
+   $('n'+h).textContent=
+      neural.confidence?
+      `${pct(neural.ret)} • ${neural.confidence.toFixed(0)}%`:
+      `learning (${neural.samples})`;
+ }
+
+ const n10=learner.neural?.['10m'];
+ const n15=learner.neural?.['15m'];
+ const n30=learner.neural?.['30m'];
+
+ $('neuralSamples').textContent=
+   `${n10?.trained||0} / ${n15?.trained||0} / ${n30?.trained||0}`;
+
+ const trained=[n10,n15,n30]
+   .filter(m=>m&&m.trained>=12);
+
+ $('neuralValidation').textContent=
+   trained.length===3?
+   trained.map(m=>
+      m.seen?
+      Math.round(m.dir/m.seen*100):
+      0
+   ).join('% / ')+'%':
+   'INSUFFICIENT DATA';
+
+ const improverP=active.find(x=>x.type==='15m');
+
+ $('improver').textContent=
+   improverP?.improverSnapshot?
+   `${pct(improverP.improverSnapshot.adj)} • agreement ${Math.round(improverP.improverSnapshot.agreement*100)}%`:
+   '--';
+
+ const flow=flowStats();
+
+ if(flow){
+   $('buyVol').textContent=flow.buy.toFixed(3);
+   $('sellVol').textContent=flow.sell.toFixed(3);
+   $('buyPct').textContent=(flow.buyPct*100).toFixed(1)+'%';
+   $('flowRatio').textContent=flow.ratio.toFixed(2);
+   $('flowRvol').textContent=flow.rvol.toFixed(2)+'x';
+   $('flowAccel').textContent=(flow.accel>=0?'+':'')+(flow.accel*100).toFixed(1)+'%';
+   $('flowDirection').textContent=flow.buyPct>.55?'BUY':
+      flow.buyPct<.45?'SELL':'BALANCED';
+   $('flowStrength').textContent=Math.round(flow.strength*100)+'%';
+ }
+
+ updateWalkForwardPanel();
+}
+
+function flowStats(){
+ const rows=oneMin
+   .filter(c=>!c.closeTime||c.closeTime<=nowServer()-500)
+   .slice(-60);
+
+ if(rows.length<20)return null;
+
+ const recent=rows.slice(-20);
+ const buy=recent.reduce((s,c)=>s+(c.buyVol||0),0);
+ const total=recent.reduce((s,c)=>s+(c.volume||0),0);
+ const sell=Math.max(0,total-buy);
+
+ const buyPct=total?buy/total:.5;
+ const ratio=sell?buy/sell:buy>0?99:1;
+
+ const vols=rows.map(c=>c.volume||0);
+ const rvol=(mean(vols.slice(-5))/(mean(vols.slice(0,-5))||1));
+
+ const prev=mean(vols.slice(-10,-5))||1;
+ const curr=mean(vols.slice(-5))||0;
+ const accel=curr/prev-1;
+
+ const strength=clamp(
+    Math.abs(buyPct-.5)*2+
+    Math.min(.5,Math.abs(accel)*.15),
+    0,1
+ );
+
+ return {buy,sell,total,buyPct,ratio,rvol,accel,strength};
 }
 
 function renderHistory(){
+ const box=$('history');
+
  if(!history.length){
-  $('history').innerHTML=
-   '<div class="empty">No completed predictions yet.</div>';
+   box.innerHTML='<div class="empty">No completed predictions yet.</div>';
+ }else{
+   const rows=history
+     .slice()
+     .sort((a,b)=>(b.settledAt||0)-(a.settledAt||0))
+     .slice(0,100);
 
-  $('metrics').textContent=
-   'Waiting for completed observations.';
-
-  return;
+   box.innerHTML=
+      `<div class="historyrow">
+        <b>TIME</b><b>FORECAST</b><b>ACTUAL</b><b>RESULT</b>
+      </div>`+
+      rows.map(p=>`
+        <div class="historyrow">
+          <span>${p.type}<br>${formatTime(p.targetAt)}</span>
+          <span>${price(p.predictedPrice)}<br>${p.direction}</span>
+          <span>${price(p.actualPrice)}<br>${pct(p.actualReturn)}</span>
+          <span class="${p.directionCorrect?'green':'red'}">
+             ${p.directionCorrect?'CORRECT':'WRONG'}<br>
+             ${price(p.absError)}
+          </span>
+        </div>
+      `).join('');
  }
 
- const hs=
-  history.slice(-100).reverse();
+ const a=predictionAccuracy('10m');
+ const b=predictionAccuracy('15m');
+ const c=predictionAccuracy('30m');
 
- $('history').innerHTML=
-  '<div class="historyrow"><b>TYPE</b><b>FORECAST</b><b>ACTUAL</b><b>ERROR</b></div>'+
-  hs.map(h=>`
-   <div class="historyrow">
-    <span>${h.type}</span>
-    <span>${price(h.forecast)}</span>
-    <span>${price(h.actual)}</span>
-    <span class="${h.errorPct>=0?'green':'red'}">
-     ${h.errorPct>=0?'+':''}${h.errorPct.toFixed(3)}%
-    </span>
-   </div>
-  `).join('');
-
- const mae=
-  mean(
-   hs.map(h=>Math.abs(h.errorPct))
-  );
-
- const dir=
-  mean(
-   hs.map(h=>
-    Math.sign(h.actual-h.entry)===
-    Math.sign(h.forecast-h.entry)?1:0
-   )
-  )*100;
+ const format=x=>x?
+   `${(x.dir*100).toFixed(1)}% direction • MAE ${(x.mae*100).toFixed(3)}% • n=${x.n}`:
+   'INSUFFICIENT DATA';
 
  $('metrics').innerHTML=
-  `Completed: <b>${history.length}</b><br>`+
-  `Recent MAE: <b>${mae.toFixed(3)}%</b><br>`+
-  `Recent direction hit rate: <b>${dir.toFixed(1)}%</b><br>`+
-  `Learner memory samples: <b>${learner.samples}</b>`;
+   `<div class="row"><span>10m accuracy</span><span>${format(a)}</span></div>`+
+   `<div class="row"><span>15m accuracy</span><span>${format(b)}</span></div>`+
+   `<div class="row"><span>30m accuracy</span><span>${format(c)}</span></div>`+
+   `<div class="row"><span>All settled samples</span><span>${history.length}</span></div>`+
+   `<div class="row"><span>All-time direction</span><span>${
+      history.length?
+      (history.filter(x=>x.directionCorrect).length/history.length*100).toFixed(1)+'%':
+      'INSUFFICIENT DATA'
+   }</span></div>`+
+   `<div class="row"><span>Online learner MAE</span><span>${
+      learner.samples?
+      (learner.mae*100).toFixed(3)+'%':
+      'INSUFFICIENT DATA'
+   }</span></div>`;
+
+ updateWalkForwardPanel();
 }
 
-function createCustom(){
- const dt=$('customTime').value;
- const target=
-  new Date(dt).getTime();
+async function customForecast(){
+ const raw=$('customTime').value;
 
- const now=nowServer();
+ if(!raw){
+   $('customMsg').textContent='Select a target date and time.';
+   return;
+ }
 
- if(!Number.isFinite(target))
-  return $('customMsg').textContent=
-   'Choose a target time.';
+ const target=new Date(raw).getTime();
 
- if(target<now+5*60000)
-  return $('customMsg').textContent=
-   'Target must be at least 5 minutes ahead.';
+ if(!Number.isFinite(target)){
+   $('customMsg').textContent='Invalid target time.';
+   return;
+ }
 
- if(target>now+7*86400000)
-  return $('customMsg').textContent=
-   'Maximum target horizon is 7 days.';
+ const diff=target-nowServer();
 
- if(active.some(
-  p=>p.type==='CUSTOM_TIME'&&!p.settled
- ))
-  return $('customMsg').textContent=
-   'A custom time prediction is already active.';
+ if(diff<60000){
+   $('customMsg').textContent='Target must be at least 1 minute in the future.';
+   return;
+ }
 
- const f=makeForecast(
-  (target-now)/60000
- );
+ if(diff>7*86400000){
+   $('customMsg').textContent='Maximum target horizon is 7 days.';
+   return;
+ }
 
- if(!f)
-  return $('customMsg').textContent=
-   'Not enough live market data.';
+ const f=features();
 
- const p={
-  id:uid(),
-  type:'CUSTOM_TIME',
-  createdAt:now,
-  targetAt:target,
-  entry:f.entry,
-  forecast:f.target,
-  confidence:f.confidence,
-  engines:f.engines,
-  context:f.context,
-  learnerWeights:f.learnerWeights,
-  featuresSnapshot:f.features
- };
+ if(!f){
+   $('customMsg').textContent='Not enough completed market data yet.';
+   return;
+ }
 
+ const h=diff/60000;
+ const p=makeForecast(Math.max(1,h));
+
+ if(!p){
+   $('customMsg').textContent='Forecast unavailable.';
+   return;
+ }
+
+ p.targetAt=target;
+ p.horizon=h;
+ p.type='CUSTOM';
+ p.predictedPrice=f.p*(1+p.predictedReturn);
+ p.rangeLow=f.p*(1+p.predictedReturn-predictionUncertainty(f,h));
+ p.rangeHigh=f.p*(1+p.predictedReturn+predictionUncertainty(f,h));
+ p.custom=true;
+
+ await dbPut(STORE.predictions,p);
  active.push(p);
-
- dbPut(
-  STORE.predictions,
-  p
- ).then(()=>renderActive());
 
  $('customMsg').innerHTML=
-  `<span class="ok">LOCKED</span> `+
-  `${new Date(target).toLocaleString()} → `+
-  `$${price(f.target)} • ${f.confidence}%`;
-}
-
-async function createTargetPrice(){
- const target=
-  Number($('targetPrice').value);
-
- const deadline=
-  $('targetDeadline').value?
-  new Date($('targetDeadline').value).getTime():
-  null;
-
- const now=nowServer();
-
- if(!Number.isFinite(target)||target<=0)
-  return $('targetMsg').textContent=
-   'Enter a valid target price.';
-
- if(
-  Math.abs(target-(lastPrice||0))/
-  (lastPrice||1)<.0001
- )
-  return $('targetMsg').textContent=
-   'Target must differ from current price.';
-
- if(
-  deadline&&
-  deadline<=now+5*60000
- )
-  return $('targetMsg').textContent=
-   'Deadline must be at least 5 minutes ahead.';
-
- if(
-  deadline&&
-  deadline>now+7*86400000
- )
-  return $('targetMsg').textContent=
-   'Maximum deadline is 7 days.';
-
- if(active.some(
-  p=>p.type==='TARGET_PRICE'&&!p.settled
- ))
-  return $('targetMsg').textContent=
-   'A target-price prediction is already active.';
-
- const direction=
-  target>(lastPrice||target)?1:-1;
-
- const dist=
-  Math.abs(
-   Math.log(target/(lastPrice||target))
-  );
-
- const f60=makeForecast(60);
-
- if(!f60)
-  return $('targetMsg').textContent=
-   'Not enough live market data.';
-
- const targetHorizon=
-  deadline?
-  Math.max(5,(deadline-now)/60000):
-  Math.max(
-   15,
-   Math.min(
-    10080,
-    Math.round(
-     dist/
-     Math.max(
-      Math.abs(f60.ret),
-      .0005
-     )*
-     15
-    )
-   )
-  );
-
- const p={
-  id:uid(),
-  type:'TARGET_PRICE',
-  createdAt:now,
-  targetPrice:target,
-  deadlineAt:deadline||null,
-  entry:lastPrice,
-  forecast:f60.target,
-  confidence:f60.confidence,
-  direction,
-  estimatedMinutes:targetHorizon,
-  estimatedAt:now+targetHorizon*60000,
-  engines:f60.engines,
-  context:f60.context,
-  learnerWeights:f60.learnerWeights,
-  featuresSnapshot:f60.features
- };
-
- active.push(p);
-
- await dbPut(
-  STORE.predictions,
-  p
- );
+   `<span class="${p.direction==='UP'?'green':'red'}">${p.direction}</span> • `+
+   `<b>${price(p.predictedPrice)}</b> at ${formatTime(target)} • `+
+   `range ${price(p.rangeLow)} – ${price(p.rangeHigh)} • `+
+   `${p.confidence.toFixed(0)}% confidence`;
 
  renderActive();
+}
+
+function predictionUncertainty(f,h){
+ const vals=[
+   engine1(f,h),engine2(f,h),engine3(f,h),
+   engine7(f,h),engine8(f,h),engine9(f,h)
+ ];
+ return clamp(std(vals)+f.vol*Math.sqrt(h)*.4,.002,.09);
+}
+
+function targetPriceForecast(){
+ const target=Number($('targetPrice').value);
+
+ if(!Number.isFinite(target)||target<=0){
+   $('targetMsg').textContent='Enter a valid ETH target price.';
+   return;
+ }
+
+ const f=features();
+
+ if(!f){
+   $('targetMsg').textContent='Not enough completed market data.';
+   return;
+ }
+
+ const deadlineRaw=$('targetDeadline').value;
+ const deadline=deadlineRaw?
+   new Date(deadlineRaw).getTime():
+   nowServer()+7*86400000;
+
+ if(!Number.isFinite(deadline)||deadline<=nowServer()){
+   $('targetMsg').textContent='Deadline must be in the future.';
+   return;
+ }
+
+ const distance=Math.abs(target-f.p);
+
+ if(distance<f.p*.0001){
+   $('targetMsg').innerHTML=
+      `<span class="green">Target is already very close to the current price.</span>`;
+   return;
+ }
+
+ const drift=mean([
+   engine1(f,60),
+   engine2(f,60),
+   engine7(f,60),
+   engine9(f,60)
+ ]);
+
+ const vol=Math.max(f.vol,.0007);
+ const expectedAbsPerMin=Math.max(
+   f.p*.00015,
+   f.p*vol*.45
+ );
+
+ const directional=Math.max(
+   .15,
+   Math.abs(drift)
+ );
+
+ let minutes=
+   distance/
+   expectedAbsPerMin/
+   directional;
+
+ minutes=clamp(minutes,5,7*1440);
+
+ const estimated=nowServer()+minutes*60000;
+ const before=estimated<=deadline;
 
  $('targetMsg').innerHTML=
-  `<span class="ok">LOCKED</span> `+
-  `Target $${price(target)} • estimated first touch `+
-  `${new Date(p.estimatedAt).toLocaleString()}`+
-  `${deadline?' • deadline '+new Date(deadline).toLocaleString():''}`;
+   `<b>Estimated first-touch:</b> ${formatTime(estimated)}<br>`+
+   `<span class="${before?'green':'warn'}">${
+      before?'Model path reaches target before deadline.':
+      'Model path does not reach target before the supplied deadline.'
+   }</span><br>`+
+   `<span class="notice">Current ${price(f.p)} → target ${price(target)} • estimated ${minutes.toFixed(0)} min</span>`;
 }
 
-async function ensureAuto(){
- if(!features())return;
+function showScreen(name){
+ document.querySelectorAll('.screen').forEach(x=>
+   x.classList.toggle('active',x.id==='screen-'+name)
+ );
 
- for(const type of ['15m','30m']){
-  const exists=
-   active.some(
-    p=>p.type===type&&!p.settled
-   );
+ document.querySelectorAll('.nav button').forEach(x=>
+   x.classList.toggle('active',x.dataset.screen===name)
+ );
 
-  if(exists)continue;
-
-  const h=type==='15m'?15:30;
-  const f=makeForecast(h);
-
-  if(!f)continue;
-
-  const p={
-   id:uid(),
-   type,
-   createdAt:nowServer(),
-   targetAt:nowServer()+h*60000,
-   entry:f.entry,
-   forecast:f.target,
-   confidence:f.confidence,
-   engines:f.engines,
-   context:f.context,
-   learnerWeights:f.learnerWeights,
-   featuresSnapshot:f.features,
-   state:'ACTIVE'
-  };
-
-  active.push(p);
-
-  await dbPut(
-   STORE.predictions,
-   p
-  );
- }
-
- renderActive();
+ if(name==='history')renderHistory();
+ if(name==='chart')setTimeout(()=>chart?.resize(
+   $('chart').clientWidth,
+   $('chart').clientHeight
+ ),30);
 }
 
-function reconcileAfterResume(){
- settleDue().catch(console.warn);
- loadMarket().catch(()=>{});
-}
+function wireUI(){
+ document.querySelectorAll('.nav button').forEach(b=>
+   b.addEventListener('click',()=>showScreen(b.dataset.screen))
+ );
 
-window.addEventListener(
- 'visibilitychange',
- ()=>{
-  if(document.visibilityState==='visible')
-   reconcileAfterResume();
- }
-);
+ document.querySelectorAll('#tfbar button').forEach(b=>
+   b.addEventListener('click',async()=>{
+      document.querySelectorAll('#tfbar button')
+        .forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      tf=b.dataset.tf;
+      await loadMarket();
+   })
+ );
 
-window.addEventListener(
- 'pageshow',
- reconcileAfterResume
-);
+ document.querySelectorAll('#rangebar button').forEach(b=>
+   b.addEventListener('click',async()=>{
+      document.querySelectorAll('#rangebar button')
+        .forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      range=b.dataset.range;
+      await loadMarket();
+   })
+ );
 
-window.addEventListener(
- 'online',
- ()=>{
-  connectWS();
-  loadMarket();
- }
-);
-
-window.addEventListener(
- 'offline',
- ()=>{
-  setStatus('OFFLINE','warn');
- }
-);
-
-document.querySelectorAll('.nav button').forEach(
- b=>b.onclick=()=>{
-  document.querySelectorAll('.screen')
-   .forEach(s=>s.classList.remove('active'));
-
-  document.querySelector(
-   '#screen-'+b.dataset.screen
-  ).classList.add('active');
-
-  document.querySelectorAll('.nav button')
-   .forEach(x=>
-    x.classList.toggle(
-     'active',
-     x===b
-    )
-   );
-
-  if(b.dataset.screen==='chart')
-   setTimeout(
-    ()=>{
-     if(chart)
-      chart.resize(
-       $('chart').clientWidth,
-       $('chart').clientHeight
-      );
-    },
-    20
-   );
- }
-);
-
-document.querySelectorAll('#tfbar .chip').forEach(
- b=>b.onclick=async()=>{
-  tf=b.dataset.tf;
-
-  document.querySelectorAll('#tfbar .chip')
-   .forEach(x=>
-    x.classList.toggle(
-     'active',
-     x===b
-    )
-   );
-
-  await loadMarket();
- }
-);
-
-document.querySelectorAll('#rangebar button').forEach(
- b=>b.onclick=async()=>{
-  range=b.dataset.range;
-
-  document.querySelectorAll('#rangebar button')
-   .forEach(x=>
-    x.classList.toggle(
-     'active',
-     x===b
-    )
-   );
-
-  await loadMarket();
- }
-);
-
-$('customBtn').onclick=createCustom;
-$('targetBtn').onclick=createTargetPrice;
-
-$('volumeToggle').onclick=()=>{
- settings.volume=
-  settings.volume===false;
-
- volume.applyOptions({
-  visible:settings.volume
- });
-
- $('volumeToggle').textContent=
-  settings.volume?'ON':'OFF';
-
- saveState();
-};
-
-$('reset').onclick=async()=>{
- if(!confirm(
-  'Reset predictions, history and learner memory?'
- ))return;
-
- for(const s of Object.values(STORE)){
-  try{
-   await dbClear(s);
-  }catch{}
- }
-
- location.reload();
-};
-
-$('exportMemory').onclick=async()=>{
- const payload={
-  version:5,
-  exportedAt:new Date().toISOString(),
-  learner,
-  active,
-  history
+ $('zoomIn').onclick=()=>{
+   const r=chart.timeScale().getVisibleLogicalRange();
+   if(!r)return;
+   const center=(r.from+r.to)/2;
+   const width=Math.max(5,(r.to-r.from)*.75);
+   chart.timeScale().setVisibleLogicalRange({
+      from:center-width/2,
+      to:center+width/2
+   });
  };
 
- const blob=new Blob(
-  [JSON.stringify(payload,null,2)],
-  {type:'application/json'}
- );
-
- const a=document.createElement('a');
-
- a.href=
-  URL.createObjectURL(blob);
-
- a.download=
-  'eth-predictor-memory-v5.json';
-
- a.click();
-
- setTimeout(
-  ()=>URL.revokeObjectURL(a.href),
-  1000
- );
-};
-
-$('zoomIn').onclick=()=>{
- const r=
-  chart.timeScale()
-  .getVisibleLogicalRange();
-
- if(r){
-  const c=(r.from+r.to)/2;
-  const h=(r.to-r.from)*.36;
-
-  chart.timeScale()
-   .setVisibleLogicalRange({
-    from:c-h,
-    to:c+h
+ $('zoomOut').onclick=()=>{
+   const r=chart.timeScale().getVisibleLogicalRange();
+   if(!r)return;
+   const center=(r.from+r.to)/2;
+   const width=(r.to-r.from)*1.35;
+   chart.timeScale().setVisibleLogicalRange({
+      from:center-width/2,
+      to:center+width/2
    });
- }
-};
+ };
 
-$('zoomOut').onclick=()=>{
- const r=
-  chart.timeScale()
-  .getVisibleLogicalRange();
+ $('zoomReset').onclick=()=>chart.timeScale().fitContent();
 
- if(r){
-  const c=(r.from+r.to)/2;
-  const h=(r.to-r.from)*.69;
+ $('customBtn').onclick=customForecast;
+ $('targetBtn').onclick=targetPriceForecast;
 
-  chart.timeScale()
-   .setVisibleLogicalRange({
-    from:c-h,
-    to:c+h
-   });
- }
-};
+ $('volumeToggle').onclick=()=>{
+   settings.volume=settings.volume===false;
+   $('volumeToggle').textContent=settings.volume?'ON':'OFF';
+   volume.applyOptions({visible:settings.volume});
+   saveState();
+ };
 
-$('zoomReset').onclick=()=>{
- chart.timeScale().fitContent();
-};
+ $('reset').onclick=async()=>{
+   if(!confirm('Reset predictions, history and learning memory?'))return;
+
+   await dbClear(STORE.predictions);
+   await dbClear(STORE.history);
+   await dbClear(STORE.meta);
+
+   active=[];
+   history=[];
+   learner=defaultLearner();
+
+   await saveState();
+   renderHistory();
+   renderActive();
+   updateAnalysis();
+   await ensureAuto();
+ };
+
+ $('exportMemory').onclick=()=>{
+   const data={
+      exportedAt:new Date().toISOString(),
+      learner,
+      history
+   };
+
+   const blob=new Blob(
+      [JSON.stringify(data,null,2)],
+      {type:'application/json'}
+   );
+
+   const url=URL.createObjectURL(blob);
+   const a=document.createElement('a');
+   a.href=url;
+   a.download='eth-predictor-learning-memory.json';
+   a.click();
+   setTimeout(()=>URL.revokeObjectURL(url),1000);
+ };
+}
 
 async function boot(){
- initChart();
-
  try{
-  await openDB();
-  await loadState();
+   wireUI();
+   initChart();
+   await loadState();
+   renderHistory();
+   await loadMarket();
+   connectWS();
+
+   await refreshExternalInfluence();
+
+   setInterval(async()=>{
+      try{
+         await settleDue();
+         renderActive();
+         updatePredictionCards();
+      }catch(e){console.warn(e)}
+   },5000);
+
+   setInterval(async()=>{
+      if(document.visibilityState==='visible'){
+         await loadMarket();
+      }else{
+         await settleDue();
+      }
+   },30000);
+
+   setInterval(()=>{
+      updatePredictionCards();
+      updateAnalysis();
+   },1000);
+
+   setInterval(()=>{
+      refreshExternalInfluence().catch(()=>{});
+   },5*60000);
+
+   document.addEventListener('visibilitychange',()=>{
+      if(document.visibilityState==='visible'){
+         loadMarket().catch(()=>{});
+         settleDue().catch(()=>{});
+      }
+   });
+
+   targetWatchdog=setInterval(()=>{
+      settleDue().catch(()=>{});
+   },15000);
+
  }catch(e){
-  setStatus('DB ERROR','err');
-  console.warn(e);
+   console.error(e);
+   setStatus('BOOT ERROR','err');
  }
-
- if(settings.volume===false)
-  volume.applyOptions({visible:false});
-
- renderActive();
- renderHistory();
-
- connectWS();
-
- await loadMarket();
-
- await refreshExternalInfluence();
-
- await ensureAuto();
-
- targetWatchdog=
-  setInterval(
-   ()=>{
-    settleDue()
-     .catch(e=>console.warn('settlement',e));
-
-    renderActive();
-   },
-   5000
-  );
-
- analysisTimer=
-  setInterval(
-   ()=>{
-    updateAnalysis();
-    ensureAuto();
-   },
-   5000
-  );
-
- setInterval(
-  ()=>{
-   loadMarket().catch(()=>{});
-   refreshExternalInfluence().catch(()=>{});
-  },
-  60000
- );
 }
 
 boot();
