@@ -4,28 +4,27 @@
 <meta charset="UTF-8">
 <meta name="viewport"
       content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#07100d">
+
+<meta name="theme-color" content="#050807">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>ETH/USDT Reliable Predictor V1</title>
+
+<title>ETH/USDT Predictor V2</title>
 
 <script src="https://unpkg.com/lightweight-charts@5.2.1/dist/lightweight-charts.standalone.production.js"></script>
 
 <style>
 :root{
   --bg:#050807;
-  --panel:rgba(14,22,19,.72);
-  --panel2:rgba(20,31,27,.58);
-  --line:rgba(255,255,255,.08);
-  --text:#eef7f2;
-  --muted:#8da198;
+  --panel:rgba(15,23,20,.78);
+  --panel2:rgba(20,30,26,.62);
+  --line:rgba(255,255,255,.09);
+  --text:#eef8f3;
+  --muted:#8b9c94;
   --green:#39f29a;
-  --greenGlass:rgba(57,242,154,.42);
   --red:#ff5879;
-  --redGlass:rgba(255,88,121,.40);
   --yellow:#ffd166;
   --blue:#69b7ff;
-  --shadow:0 10px 35px rgba(0,0,0,.28);
 }
 
 *{box-sizing:border-box}
@@ -33,7 +32,6 @@
 html,body{
   margin:0;
   padding:0;
-  width:100%;
   min-height:100%;
   background:
     radial-gradient(circle at 20% 0%,rgba(57,242,154,.08),transparent 30%),
@@ -41,7 +39,7 @@ html,body{
     var(--bg);
   color:var(--text);
   font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",
-               "SF Pro Text",Inter,Arial,sans-serif;
+              "SF Pro Text",Inter,Arial,sans-serif;
 }
 
 body{
@@ -61,31 +59,18 @@ button{
   color:var(--text);
   background:rgba(255,255,255,.055);
   border-radius:13px;
-  padding:9px 12px;
+  padding:8px 11px;
   cursor:pointer;
-  -webkit-tap-highlight-color:transparent;
-}
-
-button:active{
-  transform:scale(.98);
 }
 
 button.active{
-  border-color:rgba(57,242,154,.45);
   background:rgba(57,242,154,.12);
-}
-
-select{
-  background:#101714;
-  color:var(--text);
-  border:1px solid var(--line);
-  border-radius:12px;
-  padding:9px;
+  border-color:rgba(57,242,154,.4);
 }
 
 .app{
   width:100%;
-  max-width:1250px;
+  max-width:1300px;
   margin:auto;
 }
 
@@ -93,99 +78,91 @@ select{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  gap:12px;
+  gap:10px;
   margin-bottom:10px;
 }
 
 .title{
   font-size:22px;
-  font-weight:750;
-  letter-spacing:-.4px;
+  font-weight:800;
 }
 
 .subtitle{
   color:var(--muted);
-  font-size:12px;
+  font-size:11px;
   margin-top:3px;
 }
 
-.statusRow{
+.status{
   display:flex;
-  gap:6px;
+  gap:5px;
   flex-wrap:wrap;
   justify-content:flex-end;
 }
 
 .badge{
+  font-size:10px;
   padding:6px 9px;
   border-radius:999px;
-  background:rgba(255,255,255,.055);
   border:1px solid var(--line);
-  font-size:11px;
   color:var(--muted);
+  background:rgba(255,255,255,.04);
 }
 
-.badge.ok{
-  color:var(--green);
-  border-color:rgba(57,242,154,.25);
-}
-
-.badge.warn{
-  color:var(--yellow);
-  border-color:rgba(255,209,102,.25);
-}
-
-.badge.bad{
-  color:var(--red);
-  border-color:rgba(255,88,121,.25);
-}
+.badge.ok{color:var(--green)}
+.badge.warn{color:var(--yellow)}
+.badge.bad{color:var(--red)}
 
 .panel{
   background:linear-gradient(
     145deg,
-    rgba(20,31,27,.76),
-    rgba(8,13,11,.64)
+    rgba(20,31,27,.78),
+    rgba(7,12,10,.68)
   );
   border:1px solid var(--line);
   border-radius:20px;
-  box-shadow:var(--shadow);
-  backdrop-filter:blur(18px);
-  -webkit-backdrop-filter:blur(18px);
   margin-bottom:10px;
   overflow:hidden;
-}
-
-.controls{
-  padding:10px;
-  display:flex;
-  gap:7px;
-  flex-wrap:wrap;
+  box-shadow:0 12px 35px rgba(0,0,0,.28);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
 }
 
 .section{
   padding:13px;
 }
 
-.priceHeader{
+.controls{
+  padding:10px;
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+
+.small{
+  padding:7px 9px;
+  font-size:11px;
+}
+
+.priceRow{
   display:flex;
   justify-content:space-between;
   align-items:flex-end;
-  gap:12px;
 }
 
 .price{
   font-size:31px;
-  font-weight:800;
+  font-weight:850;
   letter-spacing:-1px;
 }
 
-.priceMeta{
+.meta{
   color:var(--muted);
-  font-size:12px;
+  font-size:11px;
   margin-top:3px;
 }
 
-.marketStats{
+.stats{
   display:grid;
   grid-template-columns:repeat(4,1fr);
   gap:7px;
@@ -193,45 +170,43 @@ select{
 }
 
 .stat{
-  padding:10px;
   border:1px solid var(--line);
   border-radius:14px;
+  padding:9px;
   background:rgba(255,255,255,.035);
 }
 
-.statLabel{
+.stat label{
   color:var(--muted);
-  font-size:10px;
+  font-size:9px;
   text-transform:uppercase;
-  letter-spacing:.5px;
 }
 
-.statValue{
+.stat div{
   margin-top:4px;
-  font-size:14px;
-  font-weight:700;
+  font-weight:750;
+  font-size:13px;
 }
 
 #chart{
   width:100%;
-  height:500px;
+  height:68vh;
+  min-height:540px;
 }
 
 @media(max-width:700px){
-  #chart{height:420px}
-  .marketStats{grid-template-columns:repeat(2,1fr)}
-  .price{font-size:27px}
-}
+  #chart{
+    height:62vh;
+    min-height:500px;
+  }
 
-.tfGroup,.rangeGroup{
-  display:flex;
-  gap:5px;
-  flex-wrap:wrap;
-}
+  .stats{
+    grid-template-columns:repeat(2,1fr);
+  }
 
-.small{
-  font-size:11px;
-  padding:7px 9px;
+  .price{
+    font-size:27px;
+  }
 }
 
 .predGrid{
@@ -241,7 +216,9 @@ select{
 }
 
 @media(max-width:700px){
-  .predGrid{grid-template-columns:1fr}
+  .predGrid{
+    grid-template-columns:1fr;
+  }
 }
 
 .pred{
@@ -251,76 +228,65 @@ select{
   background:rgba(255,255,255,.035);
 }
 
-.predTitle{
+.predHead{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  margin-bottom:9px;
-}
-
-.predTitle strong{
-  font-size:15px;
 }
 
 .direction{
-  font-size:11px;
-  padding:5px 8px;
+  font-size:10px;
   border-radius:999px;
+  padding:5px 8px;
   background:rgba(255,255,255,.06);
 }
 
-.direction.up{
-  color:var(--green);
-}
-
-.direction.down{
-  color:var(--red);
-}
-
-.direction.flat{
-  color:var(--yellow);
-}
+.up{color:var(--green)}
+.down{color:var(--red)}
+.flat{color:var(--yellow)}
 
 .predPrice{
-  font-size:24px;
-  font-weight:800;
+  font-size:25px;
+  font-weight:850;
+  margin-top:12px;
 }
 
 .predRow{
   display:flex;
   justify-content:space-between;
-  gap:8px;
-  margin-top:6px;
   color:var(--muted);
   font-size:11px;
+  margin-top:7px;
 }
 
-.predRow span:last-child{
+.predRow b{
   color:var(--text);
 }
 
-.conf{
+.bar{
   margin-top:11px;
   height:5px;
   border-radius:99px;
-  background:rgba(255,255,255,.08);
   overflow:hidden;
+  background:rgba(255,255,255,.08);
 }
 
-.conf > div{
+.bar div{
   height:100%;
   border-radius:99px;
   background:var(--green);
 }
 
-.engineGrid{
+.engines{
   display:grid;
   grid-template-columns:repeat(5,1fr);
   gap:7px;
 }
 
 @media(max-width:900px){
-  .engineGrid{grid-template-columns:repeat(2,1fr)}
+  .engines{
+    grid-template-columns:repeat(2,1fr);
+  }
 }
 
 .engine{
@@ -332,325 +298,383 @@ select{
 
 .engineNum{
   color:var(--muted);
-  font-size:10px;
+  font-size:9px;
 }
 
 .engineName{
-  font-size:11px;
-  font-weight:700;
+  font-size:10px;
+  font-weight:750;
   margin-top:4px;
 }
 
 .engineValue{
   font-size:14px;
-  font-weight:800;
+  font-weight:850;
   margin-top:8px;
 }
 
-.engineReason{
+.engineInfo{
   color:var(--muted);
-  font-size:10px;
+  font-size:9px;
   line-height:1.35;
   margin-top:5px;
 }
 
 .tableWrap{
-  overflow-x:auto;
+  overflow:auto;
 }
 
 table{
   width:100%;
   border-collapse:collapse;
-  font-size:11px;
+  font-size:10px;
 }
 
 th,td{
-  padding:9px 7px;
-  border-bottom:1px solid var(--line);
-  white-space:nowrap;
+  padding:8px;
   text-align:left;
+  white-space:nowrap;
+  border-bottom:1px solid var(--line);
 }
 
 th{
   color:var(--muted);
-  font-weight:600;
 }
 
-.good{
-  color:var(--green);
-}
-
-.badText{
-  color:var(--red);
-}
+.good{color:var(--green)}
+.badText{color:var(--red)}
 
 .note{
   color:var(--muted);
-  font-size:11px;
+  font-size:10px;
   line-height:1.5;
 }
 
 .footer{
   text-align:center;
-  color:#62736b;
-  font-size:10px;
-  padding:8px;
-}
-
-.hidden{
-  display:none!important;
-}
-
-.loading{
-  color:var(--yellow);
-}
-
-.errorBox{
-  color:var(--red);
-  padding:12px;
-  border:1px solid rgba(255,88,121,.25);
-  border-radius:14px;
-  background:rgba(255,88,121,.06);
-  margin-top:10px;
+  color:#5f7068;
+  font-size:9px;
+  padding:10px;
 }
 </style>
 </head>
 
 <body>
+
 <div class="app">
 
-  <div class="header">
+<div class="header">
+  <div>
+    <div class="title">ETH/USDT Predictor</div>
+    <div class="subtitle">V2 • Live market + 5-engine analysis</div>
+  </div>
+
+  <div class="status">
+    <div id="wsStatus" class="badge warn">CONNECTING</div>
+    <div id="dataStatus" class="badge">DATA</div>
+    <div id="dbStatus" class="badge">DB</div>
+  </div>
+</div>
+
+
+<!-- MARKET -->
+
+<div class="panel">
+  <div class="section">
+
+    <div class="priceRow">
+
+      <div>
+        <div id="price" class="price">—</div>
+        <div id="priceMeta" class="meta">
+          Waiting for live ETH/USDT data
+        </div>
+      </div>
+
+      <button id="refreshBtn">↻ Refresh</button>
+
+    </div>
+
+    <div class="stats">
+
+      <div class="stat">
+        <label>24h High</label>
+        <div id="high24">—</div>
+      </div>
+
+      <div class="stat">
+        <label>24h Low</label>
+        <div id="low24">—</div>
+      </div>
+
+      <div class="stat">
+        <label>24h Volume</label>
+        <div id="volume24">—</div>
+      </div>
+
+      <div class="stat">
+        <label>Buy Ratio</label>
+        <div id="buyRatio">—</div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+
+<!-- CHART -->
+
+<div class="panel">
+
+  <div class="controls">
+
     <div>
-      <div class="title">ETH/USDT Predictor</div>
-      <div class="subtitle">Reliable V1 • Binance public market data</div>
+      <button class="small tf active" data-tf="1m">1m</button>
+      <button class="small tf" data-tf="5m">5m</button>
+      <button class="small tf" data-tf="15m">15m</button>
+      <button class="small tf" data-tf="30m">30m</button>
+      <button class="small tf" data-tf="1h">1h</button>
+      <button class="small tf" data-tf="4h">4h</button>
+      <button class="small tf" data-tf="1d">1D</button>
     </div>
 
-    <div class="statusRow">
-      <div id="connBadge" class="badge warn">CONNECTING</div>
-      <div id="dbBadge" class="badge">DB...</div>
-      <div id="dataBadge" class="badge">DATA...</div>
+    <div>
+      <button class="small range active" data-range="1D">1D</button>
+      <button class="small range" data-range="1W">1W</button>
+      <button class="small range" data-range="1M">1M</button>
+      <button class="small range" data-range="3M">3M</button>
+      <button class="small range" data-range="6M">6M</button>
+      <button class="small range" data-range="1Y">1Y</button>
+      <button class="small range" data-range="ALL">ALL</button>
     </div>
+
+    <button id="zoomIn" class="small">＋ Zoom</button>
+    <button id="zoomOut" class="small">－ Zoom</button>
+    <button id="fit" class="small">Fit</button>
+
   </div>
 
-  <div class="panel">
-    <div class="section">
-      <div class="priceHeader">
-        <div>
-          <div id="price" class="price">—</div>
-          <div id="priceMeta" class="priceMeta">Waiting for market data</div>
-        </div>
+  <div id="chart"></div>
 
-        <button id="refreshBtn">↻ Refresh</button>
-      </div>
-
-      <div class="marketStats">
-        <div class="stat">
-          <div class="statLabel">24h High</div>
-          <div id="high24" class="statValue">—</div>
-        </div>
-        <div class="stat">
-          <div class="statLabel">24h Low</div>
-          <div id="low24" class="statValue">—</div>
-        </div>
-        <div class="stat">
-          <div class="statLabel">Volume</div>
-          <div id="volume24" class="statValue">—</div>
-        </div>
-        <div class="stat">
-          <div class="statLabel">Buy Ratio</div>
-          <div id="buyRatio" class="statValue">—</div>
-        </div>
-      </div>
+  <div class="section">
+    <div class="note">
+      Real OHLC candles + volume only. No RSI, MACD or drawing tools.
+      Candles use translucent glass-style green/red rendering.
     </div>
-  </div>
-
-  <div class="panel">
-    <div class="controls">
-
-      <div class="tfGroup">
-        <button class="small tf active" data-tf="1m">1m</button>
-        <button class="small tf" data-tf="5m">5m</button>
-        <button class="small tf" data-tf="15m">15m</button>
-        <button class="small tf" data-tf="30m">30m</button>
-        <button class="small tf" data-tf="1h">1h</button>
-        <button class="small tf" data-tf="4h">4h</button>
-        <button class="small tf" data-tf="1d">1D</button>
-      </div>
-
-      <div class="rangeGroup">
-        <button class="small range active" data-range="1D">1D</button>
-        <button class="small range" data-range="1W">1W</button>
-        <button class="small range" data-range="1M">1M</button>
-        <button class="small range" data-range="3M">3M</button>
-        <button class="small range" data-range="6M">6M</button>
-        <button class="small range" data-range="1Y">1Y</button>
-        <button class="small range" data-range="ALL">ALL</button>
-      </div>
-
-      <button id="zoomIn" class="small">＋ Zoom</button>
-      <button id="zoomOut" class="small">－ Zoom</button>
-      <button id="fitBtn" class="small">Fit</button>
-    </div>
-
-    <div id="chart"></div>
-
-    <div class="section">
-      <div class="note">
-        Real OHLC candles and volume. No drawing layer. Pinch/drag/zoom are enabled by
-        Lightweight Charts.
-      </div>
-    </div>
-  </div>
-
-  <div class="panel">
-    <div class="section">
-      <div style="font-size:16px;font-weight:750;margin-bottom:10px">
-        Automatic Predictions
-      </div>
-
-      <div class="predGrid">
-
-        <div id="pred15" class="pred">
-          <div class="predTitle">
-            <strong>15 Minute</strong>
-            <span class="direction">WAITING</span>
-          </div>
-          <div class="predPrice">—</div>
-          <div class="predRow">
-            <span>Target</span><span>—</span>
-          </div>
-          <div class="predRow">
-            <span>Confidence</span><span>—</span>
-          </div>
-          <div class="conf"><div style="width:0%"></div></div>
-        </div>
-
-        <div id="pred30" class="pred">
-          <div class="predTitle">
-            <strong>30 Minute</strong>
-            <span class="direction">WAITING</span>
-          </div>
-          <div class="predPrice">—</div>
-          <div class="predRow">
-            <span>Target</span><span>—</span>
-          </div>
-          <div class="predRow">
-            <span>Confidence</span><span>—</span>
-          </div>
-          <div class="conf"><div style="width:0%"></div></div>
-        </div>
-
-      </div>
-    </div>
-  </div>
-
-  <div class="panel">
-    <div class="section">
-      <div style="font-size:16px;font-weight:750;margin-bottom:10px">
-        Forecast Engines
-      </div>
-
-      <div class="engineGrid">
-
-        <div class="engine">
-          <div class="engineNum">01</div>
-          <div class="engineName">CHRONOLOGICAL</div>
-          <div id="e1" class="engineValue">—</div>
-          <div id="e1r" class="engineReason">Waiting</div>
-        </div>
-
-        <div class="engine">
-          <div class="engineNum">02</div>
-          <div class="engineName">MATHEMATICAL</div>
-          <div id="e2" class="engineValue">—</div>
-          <div id="e2r" class="engineReason">Waiting</div>
-        </div>
-
-        <div class="engine">
-          <div class="engineNum">03</div>
-          <div class="engineName">INFORMATION / REGIME</div>
-          <div id="e3" class="engineValue">—</div>
-          <div id="e3r" class="engineReason">Waiting</div>
-        </div>
-
-        <div class="engine">
-          <div class="engineNum">04</div>
-          <div class="engineName">ERROR CORRECTION</div>
-          <div id="e4" class="engineValue">—</div>
-          <div id="e4r" class="engineReason">Waiting</div>
-        </div>
-
-        <div class="engine">
-          <div class="engineNum">05</div>
-          <div class="engineName">CONSULTATION / META</div>
-          <div id="e5" class="engineValue">—</div>
-          <div id="e5r" class="engineReason">Waiting</div>
-        </div>
-
-      </div>
-    </div>
-  </div>
-
-  <div class="panel">
-    <div class="section">
-
-      <div style="display:flex;justify-content:space-between;gap:10px;align-items:center">
-        <div style="font-size:16px;font-weight:750">
-          Prediction History
-        </div>
-
-        <div style="display:flex;gap:6px">
-          <button id="exportBtn" class="small">Export</button>
-          <button id="resetBtn" class="small">Reset</button>
-        </div>
-      </div>
-
-      <div id="historyStats" class="note" style="margin:9px 0">
-        No completed predictions yet.
-      </div>
-
-      <div class="tableWrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Time</th>
-              <th>Horizon</th>
-              <th>Forecast</th>
-              <th>Actual</th>
-              <th>Error</th>
-              <th>Method</th>
-            </tr>
-          </thead>
-          <tbody id="historyBody"></tbody>
-        </table>
-      </div>
-
-    </div>
-  </div>
-
-  <div class="panel">
-    <div class="section">
-      <div style="font-size:16px;font-weight:750;margin-bottom:7px">
-        Reliability
-      </div>
-
-      <div id="reliabilityText" class="note">
-        Initializing...
-      </div>
-    </div>
-  </div>
-
-  <div class="footer">
-    Charts by TradingView Lightweight Charts™ • Market data from Binance public APIs
   </div>
 
 </div>
+
+
+<!-- PREDICTIONS -->
+
+<div class="panel">
+  <div class="section">
+
+    <div style="font-size:16px;font-weight:800;margin-bottom:10px">
+      Locked Automatic Predictions
+    </div>
+
+    <div class="predGrid">
+
+      <div id="p15" class="pred">
+
+        <div class="predHead">
+          <b>15 MIN</b>
+          <span class="direction">WAITING</span>
+        </div>
+
+        <div class="predPrice">—</div>
+
+        <div class="predRow">
+          <span>Target</span>
+          <b>—</b>
+        </div>
+
+        <div class="predRow">
+          <span>Entry</span>
+          <b>—</b>
+        </div>
+
+        <div class="predRow">
+          <span>Confidence</span>
+          <b>—</b>
+        </div>
+
+        <div class="bar">
+          <div style="width:0%"></div>
+        </div>
+
+      </div>
+
+
+      <div id="p30" class="pred">
+
+        <div class="predHead">
+          <b>30 MIN</b>
+          <span class="direction">WAITING</span>
+        </div>
+
+        <div class="predPrice">—</div>
+
+        <div class="predRow">
+          <span>Target</span>
+          <b>—</b>
+        </div>
+
+        <div class="predRow">
+          <span>Entry</span>
+          <b>—</b>
+        </div>
+
+        <div class="predRow">
+          <span>Confidence</span>
+          <b>—</b>
+        </div>
+
+        <div class="bar">
+          <div style="width:0%"></div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ENGINES -->
+
+<div class="panel">
+
+<div class="section">
+
+<div style="font-size:16px;font-weight:800;margin-bottom:10px">
+Live 5-Engine Analysis
+</div>
+
+<div class="engines">
+
+<div class="engine">
+<div class="engineNum">01</div>
+<div class="engineName">CHRONOLOGICAL</div>
+<div id="e1" class="engineValue">—</div>
+<div class="engineInfo">Momentum and time-series behaviour</div>
+</div>
+
+<div class="engine">
+<div class="engineNum">02</div>
+<div class="engineName">MATHEMATICAL</div>
+<div id="e2" class="engineValue">—</div>
+<div class="engineInfo">EMA, geometry and volatility</div>
+</div>
+
+<div class="engine">
+<div class="engineNum">03</div>
+<div class="engineName">INFORMATION / REGIME</div>
+<div id="e3" class="engineValue">—</div>
+<div class="engineInfo">Volume, pressure and regime</div>
+</div>
+
+<div class="engine">
+<div class="engineNum">04</div>
+<div class="engineName">ERROR CORRECTION</div>
+<div id="e4" class="engineValue">—</div>
+<div class="engineInfo">Learns from previous prediction errors</div>
+</div>
+
+<div class="engine">
+<div class="engineNum">05</div>
+<div class="engineName">CONSULTATION / META</div>
+<div id="e5" class="engineValue">—</div>
+<div class="engineInfo">Consults the other engines</div>
+</div>
+
+</div>
+
+<div id="engineStatus" class="note" style="margin-top:10px">
+Waiting for sufficient market data...
+</div>
+
+</div>
+</div>
+
+
+<!-- HISTORY -->
+
+<div class="panel">
+
+<div class="section">
+
+<div style="display:flex;justify-content:space-between;align-items:center">
+<div style="font-size:16px;font-weight:800">
+Completed Prediction History
+</div>
+
+<button id="exportBtn" class="small">
+Export
+</button>
+
+</div>
+
+<div id="historyStats" class="note" style="margin:9px 0">
+No completed predictions yet.
+</div>
+
+<div class="tableWrap">
+
+<table>
+
+<thead>
+<tr>
+<th>Settled</th>
+<th>Horizon</th>
+<th>Forecast</th>
+<th>Actual</th>
+<th>Error</th>
+<th>Settlement</th>
+</tr>
+</thead>
+
+<tbody id="historyBody"></tbody>
+
+</table>
+
+</div>
+
+</div>
+</div>
+
+
+<div class="panel">
+<div class="section">
+
+<div style="font-size:16px;font-weight:800">
+Reliability Monitor
+</div>
+
+<div id="reliability" class="note" style="margin-top:7px">
+Starting...
+</div>
+
+</div>
+</div>
+
+
+<div class="footer">
+ETH/USDT • Binance public market data • Lightweight Charts
+</div>
+
+</div>
+
 
 <script>
 "use strict";
 
 /* =========================================================
-   CONFIGURATION
+CONFIG
 ========================================================= */
 
 const SYMBOL = "ETHUSDT";
@@ -660,7 +684,8 @@ const REST_BASES = [
   "https://api1.binance.com/api/v3",
   "https://api2.binance.com/api/v3",
   "https://api3.binance.com/api/v3",
-  "https://api4.binance.com/api/v3"
+  "https://api4.binance.com/api/v3",
+  "https://data-api.binance.vision/api/v3"
 ];
 
 const WS_URLS = [
@@ -668,7 +693,7 @@ const WS_URLS = [
   "wss://stream.binance.com:443/ws/ethusdt@kline_1m"
 ];
 
-const DB_NAME = "ETH_PREDICTOR_V1";
+const DB_NAME = "ETH_PREDICTOR_V2";
 const DB_VERSION = 1;
 
 const STORE_CANDLES = "candles";
@@ -677,101 +702,114 @@ const STORE_HISTORY = "history";
 const STORE_META = "meta";
 
 const TF_MS = {
-  "1m": 60 * 1000,
-  "5m": 5 * 60 * 1000,
-  "15m": 15 * 60 * 1000,
-  "30m": 30 * 60 * 1000,
-  "1h": 60 * 60 * 1000,
-  "4h": 4 * 60 * 60 * 1000,
-  "1d": 24 * 60 * 60 * 1000
+  "1m":60000,
+  "5m":300000,
+  "15m":900000,
+  "30m":1800000,
+  "1h":3600000,
+  "4h":14400000,
+  "1d":86400000
 };
 
 const RANGE_MS = {
-  "1D": 24 * 60 * 60 * 1000,
-  "1W": 7 * 24 * 60 * 60 * 1000,
-  "1M": 30 * 24 * 60 * 60 * 1000,
-  "3M": 90 * 24 * 60 * 60 * 1000,
-  "6M": 180 * 24 * 60 * 60 * 1000,
-  "1Y": 365 * 24 * 60 * 60 * 1000,
-  "ALL": null
+  "1D":86400000,
+  "1W":604800000,
+  "1M":2592000000,
+  "3M":7776000000,
+  "6M":15552000000,
+  "1Y":31536000000,
+  "ALL":null
 };
 
-let db = null;
 
-let selectedTF = "1m";
-let selectedRange = "1D";
+/* =========================================================
+STATE
+========================================================= */
+
+let db = null;
 
 let chart = null;
 let candleSeries = null;
 let volumeSeries = null;
 
-let candles = [];
+let selectedTF = "1m";
+let selectedRange = "1D";
+
 let oneMin = [];
+let candles = [];
+
+let activePredictions = [];
+let history = [];
 
 let ws = null;
 let wsIndex = 0;
 let reconnectTimer = null;
 
-let lastMarketUpdate = 0;
-let lastRestUpdate = 0;
-let lastWSUpdate = 0;
-
-let currentPrice = null;
 let serverOffset = 0;
 
-let activePredictions = [];
-let history = [];
+let lastWSUpdate = 0;
+let lastRESTUpdate = 0;
+let lastMarketUpdate = 0;
 
-let busyLoad = false;
-let predictionBusy = false;
-let settlementBusy = false;
+let currentPrice = 0;
 
-let lastForecast = null;
+let enginePerf = {
+  chronological:{count:0,mae:.003,bias:0},
+  mathematical:{count:0,mae:.003,bias:0},
+  information:{count:0,mae:.003,bias:0},
+  correction:{count:0,mae:.003,bias:0},
+  consultation:{count:0,mae:.003,bias:0}
+};
+
+let liveForecast = null;
 
 
 /* =========================================================
-   DOM HELPERS
+HELPERS
 ========================================================= */
 
 const $ = id => document.getElementById(id);
 
-function setBadge(id, text, type=""){
-  const el = $(id);
-  if(!el) return;
+function clamp(x,a,b){
+  return Math.max(a,Math.min(b,x));
+}
 
-  el.textContent = text;
-  el.className = "badge";
+function mean(a){
+  return a.length ? a.reduce((x,y)=>x+y,0)/a.length : 0;
+}
 
-  if(type) el.classList.add(type);
+function stdev(a){
+  if(a.length<2) return 0;
+
+  const m=mean(a);
+
+  return Math.sqrt(
+    mean(a.map(x=>(x-m)*(x-m)))
+  );
 }
 
 function fmtPrice(x){
   if(!Number.isFinite(x)) return "—";
 
-  if(x >= 1000) return x.toLocaleString(undefined,{
-    minimumFractionDigits:2,
-    maximumFractionDigits:2
-  });
-
   return x.toLocaleString(undefined,{
     minimumFractionDigits:2,
-    maximumFractionDigits:4
+    maximumFractionDigits:x>=1000?2:4
   });
 }
 
 function fmtPct(x){
   if(!Number.isFinite(x)) return "—";
-  return `${x >= 0 ? "+" : ""}${x.toFixed(3)}%`;
+
+  return `${x>=0?"+":""}${x.toFixed(3)}%`;
 }
 
 function fmtTime(ms){
   if(!ms) return "—";
 
-  return new Date(ms).toLocaleString([],{
-    month:"short",
-    day:"numeric",
+  return new Date(ms).toLocaleTimeString([],{
     hour:"2-digit",
-    minute:"2-digit"
+    minute:"2-digit",
+    second:"2-digit"
   });
 }
 
@@ -787,88 +825,64 @@ function fmtTarget(ms){
   });
 }
 
-function clamp(x,a,b){
-  return Math.max(a,Math.min(b,x));
-}
+function setBadge(id,text,type=""){
+  const e=$(id);
 
-function mean(arr){
-  if(!arr.length) return 0;
-  return arr.reduce((a,b)=>a+b,0)/arr.length;
-}
+  e.textContent=text;
+  e.className="badge";
 
-function stdev(arr){
-  if(arr.length < 2) return 0;
-
-  const m = mean(arr);
-  const v = mean(arr.map(x => (x-m)*(x-m)));
-
-  return Math.sqrt(v);
-}
-
-function pctReturn(a,b){
-  if(!Number.isFinite(a) || !Number.isFinite(b) || a <= 0) return 0;
-  return Math.log(b/a);
+  if(type) e.classList.add(type);
 }
 
 
 /* =========================================================
-   INDEXED DB
+INDEXED DB
 ========================================================= */
 
 function openDB(){
+
   return new Promise((resolve,reject)=>{
 
-    if(!("indexedDB" in window)){
-      reject(new Error("IndexedDB unavailable"));
-      return;
-    }
-
-    const request = indexedDB.open(DB_NAME,DB_VERSION);
+    const request =
+      indexedDB.open(DB_NAME,DB_VERSION);
 
     request.onupgradeneeded = event => {
 
-      const database = event.target.result;
+      const database=event.target.result;
 
       if(!database.objectStoreNames.contains(STORE_CANDLES)){
-        const s = database.createObjectStore(
-          STORE_CANDLES,
-          {keyPath:"id"}
-        );
 
-        s.createIndex(
+        const store =
+          database.createObjectStore(
+            STORE_CANDLES,
+            {keyPath:"id"}
+          );
+
+        store.createIndex(
           "tf_time",
           ["tf","time"],
-          {unique:true}
+          {unique:false}
         );
       }
 
       if(!database.objectStoreNames.contains(STORE_PRED)){
-        const s = database.createObjectStore(
+
+        database.createObjectStore(
           STORE_PRED,
           {keyPath:"id"}
-        );
-
-        s.createIndex(
-          "status",
-          "status",
-          {unique:false}
         );
       }
 
       if(!database.objectStoreNames.contains(STORE_HISTORY)){
-        const s = database.createObjectStore(
+
+        database.createObjectStore(
           STORE_HISTORY,
           {keyPath:"id"}
-        );
-
-        s.createIndex(
-          "settledAt",
-          "settledAt",
-          {unique:false}
         );
       }
 
       if(!database.objectStoreNames.contains(STORE_META)){
+
         database.createObjectStore(
           STORE_META,
           {keyPath:"key"}
@@ -876,239 +890,204 @@ function openDB(){
       }
     };
 
-    request.onsuccess = event => {
-      db = event.target.result;
+    request.onsuccess=()=>{
+      db=request.result;
 
-      db.onversionchange = () => {
-        db.close();
-      };
+      setBadge("dbStatus","DB OK","ok");
 
       resolve(db);
     };
 
-    request.onerror = () => reject(request.error);
+    request.onerror=()=>{
+      setBadge("dbStatus","DB ERROR","bad");
+      reject(request.error);
+    };
+
   });
 }
 
-function dbTx(storeNames,mode="readonly"){
-  return db.transaction(storeNames,mode);
-}
 
-function dbPut(storeName,obj){
+function dbPut(storeName,value){
+
   return new Promise((resolve,reject)=>{
-    const tx = dbTx([storeName],"readwrite");
-    tx.objectStore(storeName).put(obj);
 
-    tx.oncomplete = () => resolve();
-    tx.onerror = () => reject(tx.error);
-  });
-}
-
-function dbGetAll(storeName){
-  return new Promise((resolve,reject)=>{
-    const tx = dbTx([storeName],"readonly");
-    const req = tx.objectStore(storeName).getAll();
-
-    req.onsuccess = () => resolve(req.result || []);
-    req.onerror = () => reject(req.error);
-  });
-}
-
-function dbClear(storeName){
-  return new Promise((resolve,reject)=>{
-    const tx = dbTx([storeName],"readwrite");
-    tx.objectStore(storeName).clear();
-
-    tx.oncomplete = resolve;
-    tx.onerror = () => reject(tx.error);
-  });
-}
-
-async function loadDatabase(){
-
-  try{
-    await openDB();
-
-    setBadge("dbBadge","DB READY","ok");
-
-    const pred = await dbGetAll(STORE_PRED);
-    const hist = await dbGetAll(STORE_HISTORY);
-
-    activePredictions = pred.filter(
-      p => p.status === "active"
-    );
-
-    history = hist
-      .sort((a,b)=>(b.settledAt||0)-(a.settledAt||0));
-
-  }catch(err){
-
-    console.error(err);
-
-    setBadge("dbBadge","DB ERROR","bad");
-
-    throw err;
-  }
-}
-
-
-/* =========================================================
-   LOCAL STORAGE MIGRATION
-========================================================= */
-
-async function migrateLegacyData(){
-
-  if(!db) return;
-
-  const marker = await new Promise((resolve,reject)=>{
-    const tx = dbTx([STORE_META],"readonly");
-    const req = tx.objectStore(STORE_META).get("legacyMigrationDone");
-
-    req.onsuccess = () => resolve(req.result);
-    req.onerror = () => reject(req.error);
-  });
-
-  if(marker) return;
-
-  try{
-
-    const oldActive =
-      JSON.parse(
-        localStorage.getItem("eth_active_reliable_v4") || "[]"
-      );
-
-    const oldHistory =
-      JSON.parse(
-        localStorage.getItem("eth_history_reliable_v4") || "[]"
-      );
-
-    const tx = dbTx(
-      [STORE_PRED,STORE_HISTORY,STORE_META],
+    const tx=db.transaction(
+      [storeName],
       "readwrite"
     );
 
-    const ps = tx.objectStore(STORE_PRED);
-    const hs = tx.objectStore(STORE_HISTORY);
-    const ms = tx.objectStore(STORE_META);
+    tx.objectStore(storeName).put(value);
 
-    if(Array.isArray(oldActive)){
-      for(const p of oldActive){
-        if(p && p.id){
-          ps.put({
-            ...p,
-            status:"active",
-            migratedFrom:"v4"
-          });
-        }
-      }
-    }
+    tx.oncomplete=resolve;
+    tx.onerror=()=>reject(tx.error);
 
-    if(Array.isArray(oldHistory)){
-      for(const h of oldHistory){
-        if(h && h.id){
-          hs.put({
-            ...h,
-            migratedFrom:"v4"
-          });
-        }
-      }
-    }
+  });
+}
 
-    ms.put({
-      key:"legacyMigrationDone",
-      at:Date.now()
-    });
 
-    await new Promise((resolve,reject)=>{
-      tx.oncomplete = resolve;
-      tx.onerror = () => reject(tx.error);
-    });
+function dbGetAll(storeName){
 
-    const pred = await dbGetAll(STORE_PRED);
-    const hist = await dbGetAll(STORE_HISTORY);
+  return new Promise((resolve,reject)=>{
 
-    activePredictions = pred.filter(p=>p.status==="active");
-    history = hist.sort(
-      (a,b)=>(b.settledAt||0)-(a.settledAt||0)
+    const tx=db.transaction(
+      [storeName],
+      "readonly"
     );
 
-  }catch(err){
-    console.warn("Migration skipped:",err);
-  }
+    const request =
+      tx.objectStore(storeName).getAll();
+
+    request.onsuccess=()=>{
+      resolve(request.result||[]);
+    };
+
+    request.onerror=()=>{
+      reject(request.error);
+    };
+
+  });
+}
+
+
+function dbClear(storeName){
+
+  return new Promise((resolve,reject)=>{
+
+    const tx=db.transaction(
+      [storeName],
+      "readwrite"
+    );
+
+    tx.objectStore(storeName).clear();
+
+    tx.oncomplete=resolve;
+    tx.onerror=()=>reject(tx.error);
+
+  });
+}
+
+
+async function saveMeta(key,value){
+
+  await dbPut(
+    STORE_META,
+    {key,value}
+  );
+
+}
+
+
+async function getMeta(key){
+
+  return new Promise((resolve,reject)=>{
+
+    const tx=db.transaction(
+      [STORE_META],
+      "readonly"
+    );
+
+    const req =
+      tx.objectStore(STORE_META).get(key);
+
+    req.onsuccess=()=>{
+      resolve(req.result ? req.result.value : null);
+    };
+
+    req.onerror=()=>{
+      reject(req.error);
+    };
+
+  });
 }
 
 
 /* =========================================================
-   BINANCE REST
+CLOCK
 ========================================================= */
-
-async function rest(path,params={}){
-
-  let lastError = null;
-
-  const query = new URLSearchParams(params).toString();
-
-  for(const base of REST_BASES){
-
-    try{
-
-      const controller = new AbortController();
-
-      const timeout = setTimeout(
-        ()=>controller.abort(),
-        9000
-      );
-
-      const url =
-        `${base}${path}?${query}`;
-
-      const response = await fetch(
-        url,
-        {
-          cache:"no-store",
-          signal:controller.signal
-        }
-      );
-
-      clearTimeout(timeout);
-
-      if(!response.ok){
-        throw new Error(`HTTP ${response.status}`);
-      }
-
-      return await response.json();
-
-    }catch(err){
-      lastError = err;
-    }
-  }
-
-  throw lastError || new Error("REST unavailable");
-}
 
 async function syncClock(){
 
   try{
 
-    const data = await rest("/time");
+    const data =
+      await api("/time");
 
-    if(data && Number.isFinite(data.serverTime)){
+    if(Number.isFinite(data.serverTime)){
+
       serverOffset =
-        data.serverTime - Date.now();
+        data.serverTime-Date.now();
+
     }
 
-  }catch(err){
-    console.warn("Clock sync failed",err);
+  }catch(e){
+
+    console.warn("clock sync failed");
+
   }
 }
 
 function nowServer(){
-  return Date.now() + serverOffset;
+  return Date.now()+serverOffset;
 }
 
 
 /* =========================================================
-   BINANCE KLINES
+BINANCE REST
+========================================================= */
+
+async function api(path,params={}){
+
+  let lastError;
+
+  const query =
+    new URLSearchParams(params).toString();
+
+  for(const base of REST_BASES){
+
+    try{
+
+      const controller =
+        new AbortController();
+
+      const timer =
+        setTimeout(
+          ()=>controller.abort(),
+          10000
+        );
+
+      const response =
+        await fetch(
+          `${base}${path}?${query}`,
+          {
+            cache:"no-store",
+            signal:controller.signal
+          }
+        );
+
+      clearTimeout(timer);
+
+      if(!response.ok){
+
+        throw new Error(
+          `HTTP ${response.status}`
+        );
+      }
+
+      return await response.json();
+
+    }catch(e){
+
+      lastError=e;
+
+    }
+  }
+
+  throw lastError || new Error("API unavailable");
+}
+
+
+/* =========================================================
+KLINES
 ========================================================= */
 
 function parseKline(k){
@@ -1126,61 +1105,69 @@ function parseKline(k){
     takerBuyVolume:Number(k[9]),
     takerBuyQuote:Number(k[10])
   };
+
 }
+
 
 async function fetchKlines(tf,limit=1000){
 
-  const raw = await rest(
-    "/klines",
-    {
-      symbol:SYMBOL,
-      interval:tf,
-      limit:String(limit)
-    }
-  );
-
-  return raw
-    .map(parseKline)
-    .filter(x =>
-      Number.isFinite(x.time) &&
-      Number.isFinite(x.open) &&
-      Number.isFinite(x.high) &&
-      Number.isFinite(x.low) &&
-      Number.isFinite(x.close)
+  const raw =
+    await api(
+      "/klines",
+      {
+        symbol:SYMBOL,
+        interval:tf,
+        limit:String(limit)
+      }
     );
-}
-
-async function fetchKlinesRange(tf,startTime,endTime){
-
-  const raw = await rest(
-    "/klines",
-    {
-      symbol:SYMBOL,
-      interval:tf,
-      startTime:String(startTime),
-      endTime:String(endTime),
-      limit:"1000"
-    }
-  );
 
   return raw.map(parseKline);
+
+}
+
+
+async function fetchKlinesRange(tf,start,end){
+
+  const raw =
+    await api(
+      "/klines",
+      {
+        symbol:SYMBOL,
+        interval:tf,
+        startTime:String(start),
+        endTime:String(end),
+        limit:"1000"
+      }
+    );
+
+  return raw.map(parseKline);
+
 }
 
 
 /* =========================================================
-   CANDLE DATABASE
+CANDLE DB
 ========================================================= */
 
 function candleId(tf,time){
+
   return `${SYMBOL}|${tf}|${time}`;
+
 }
+
 
 async function saveCandles(tf,list){
 
-  if(!db || !list.length) return;
+  if(!list.length) return;
 
-  const tx = dbTx([STORE_CANDLES],"readwrite");
-  const store = tx.objectStore(STORE_CANDLES);
+  const tx =
+    db.transaction(
+      [STORE_CANDLES],
+      "readwrite"
+    );
+
+  const store =
+    tx.objectStore(STORE_CANDLES);
 
   for(const c of list){
 
@@ -1188,1943 +1175,2550 @@ async function saveCandles(tf,list){
       id:candleId(tf,c.time),
       symbol:SYMBOL,
       tf,
-      ...c,
-      savedAt:Date.now()
+      ...c
     });
+
   }
 
   await new Promise((resolve,reject)=>{
+
     tx.oncomplete=resolve;
     tx.onerror=()=>reject(tx.error);
+
   });
+
+}
+
+
+async function getStoredCandles(tf,limit=1500){
+
+  return new Promise((resolve,reject)=>{
+
+    const tx =
+      db.transaction(
+        [STORE_CANDLES],
+        "readonly"
+      );
+
+    const store =
+      tx.objectStore(STORE_CANDLES);
+
+    const index =
+      store.index("tf_time");
+
+    const range =
+      IDBKeyRange.bound(
+        [tf,0],
+        [tf,Date.now()+86400000]
+      );
+
+    const request =
+      index.openCursor(range,"prev");
+
+    const result=[];
+
+    request.onsuccess=e=>{
+
+      const cursor=e.target.result;
+
+      if(!cursor || result.length>=limit){
+
+        result.reverse();
+
+        resolve(result);
+
+        return;
+      }
+
+      result.push(cursor.value);
+
+      cursor.continue();
+
+    };
+
+    request.onerror=()=>{
+      reject(request.error);
+    };
+
+  });
+
 }
 
 
 /* =========================================================
-   1-MINUTE SOURCE DATA
+MERGE
+========================================================= */
+
+function mergeCandles(a,b){
+
+  const map=new Map();
+
+  for(const c of [...a,...b]){
+
+    if(c && Number.isFinite(c.time)){
+
+      map.set(c.time,c);
+
+    }
+
+  }
+
+  return [...map.values()]
+    .sort((x,y)=>x.time-y.time);
+
+}
+
+
+/* =========================================================
+INITIAL 1M LOAD + GAP RECOVERY
 ========================================================= */
 
 async function loadOneMinute(){
 
   try{
 
-    const list = await fetchKlines("1m",1000);
+    let start;
 
-    oneMin = mergeCandles(oneMin,list);
+    if(oneMin.length){
 
-    await saveCandles("1m",list);
+      start =
+        oneMin[oneMin.length-1].time+
+        60000;
 
-    lastRestUpdate = Date.now();
+    }else{
+
+      start =
+        nowServer()-
+        1000*60000;
+
+    }
+
+    const end=nowServer();
+
+    let all=[];
+
+    let cursor=start;
+
+    for(let page=0;page<10;page++){
+
+      if(cursor>=end) break;
+
+      const rows =
+        await fetchKlinesRange(
+          "1m",
+          cursor,
+          end
+        );
+
+      if(!rows.length) break;
+
+      all.push(...rows);
+
+      const last =
+        rows[rows.length-1];
+
+      cursor =
+        last.time+60000;
+
+      if(rows.length<1000) break;
+
+    }
+
+    if(!all.length && !oneMin.length){
+
+      const latest =
+        await fetchKlines("1m",1000);
+
+      all=latest;
+
+    }
+
+    oneMin =
+      mergeCandles(oneMin,all);
+
+    if(oneMin.length>2000){
+
+      oneMin =
+        oneMin.slice(-2000);
+
+    }
+
+    await saveCandles("1m",all);
+
+    lastRESTUpdate=Date.now();
+
+    if(oneMin.length){
+
+      currentPrice =
+        oneMin[oneMin.length-1].close;
+
+      updateMarketUI(
+        oneMin[oneMin.length-1]
+      );
+
+    }
+
+    setBadge(
+      "dataStatus",
+      `1m ${oneMin.length}`,
+      "ok"
+    );
 
     return true;
 
-  }catch(err){
+  }catch(e){
 
-    console.error("1m load error",err);
+    console.warn("1m recovery failed",e);
+
+    if(!oneMin.length){
+
+      try{
+
+        oneMin =
+          await getStoredCandles(
+            "1m",
+            2000
+          );
+
+      }catch(_){}
+
+    }
+
+    setBadge(
+      "dataStatus",
+      "STALE",
+      "warn"
+    );
+
     return false;
   }
 }
 
 
 /* =========================================================
-   CHART
+CHART
 ========================================================= */
 
 function initChart(){
 
-  if(!window.LightweightCharts){
-    throw new Error("Lightweight Charts failed to load");
+  chart =
+    LightweightCharts.createChart(
+      $("chart"),
+      {
+        layout:{
+          background:{color:"transparent"},
+          textColor:"#9baaa3"
+        },
+
+        grid:{
+          vertLines:{
+            color:"rgba(255,255,255,.035)"
+          },
+          horzLines:{
+            color:"rgba(255,255,255,.035)"
+          }
+        },
+
+        rightPriceScale:{
+          borderColor:"rgba(255,255,255,.08)"
+        },
+
+        timeScale:{
+          borderColor:"rgba(255,255,255,.08)",
+          timeVisible:true,
+          secondsVisible:false,
+          rightOffset:5
+        },
+
+        crosshair:{
+          mode:LightweightCharts.CrosshairMode.Normal
+        },
+
+        handleScale:{
+          mouseWheel:true,
+          pinch:true,
+          axisPressedMouseMove:true
+        },
+
+        handleScroll:{
+          mouseWheel:true,
+          pressedMouseMove:true,
+          horzTouchDrag:true,
+          vertTouchDrag:true
+        }
+      }
+    );
+
+
+  /*
+     PRICE CANDLES
+     Transparent glass appearance.
+  */
+
+  candleSeries =
+    chart.addSeries(
+      LightweightCharts.CandlestickSeries,
+      {
+        upColor:"rgba(57,242,154,.42)",
+        downColor:"rgba(255,88,121,.40)",
+
+        borderUpColor:"#39f29a",
+        borderDownColor:"#ff5879",
+
+        wickUpColor:"#71ffc0",
+        wickDownColor:"#ff829b",
+
+        lastValueVisible:true,
+        priceLineVisible:true
+      },
+      0
+    );
+
+
+  /*
+     VOLUME ONLY AS THE SECOND PANE.
+  */
+
+  volumeSeries =
+    chart.addSeries(
+      LightweightCharts.HistogramSeries,
+      {
+        priceFormat:{
+          type:"volume"
+        },
+
+        lastValueVisible:false,
+        priceLineVisible:false
+      },
+      1
+    );
+
+
+  if(chart.panes().length>1){
+
+    chart.panes()[1].setHeight(135);
+
   }
 
-  const container = $("chart");
-
-  chart = LightweightCharts.createChart(
-    container,
-    {
-      autoSize:true,
-
-      layout:{
-        background:{
-          type:"solid",
-          color:"transparent"
-        },
-        textColor:"#a9b7b0",
-        panes:{
-          separatorColor:"rgba(255,255,255,.06)",
-          separatorHoverColor:"rgba(255,255,255,.10)",
-          enableResize:false
-        }
-      },
-
-      grid:{
-        vertLines:{
-          color:"rgba(255,255,255,.035)"
-        },
-        horzLines:{
-          color:"rgba(255,255,255,.035)"
-        }
-      },
-
-      crosshair:{
-        mode:LightweightCharts.CrosshairMode.Normal
-      },
-
-      rightPriceScale:{
-        borderColor:"rgba(255,255,255,.08)"
-      },
-
-      timeScale:{
-        borderColor:"rgba(255,255,255,.08)",
-        timeVisible:true,
-        secondsVisible:false,
-        rightOffset:4
-      },
-
-      handleScale:{
-        mouseWheel:true,
-        pinch:true,
-        axisPressedMouseMove:true
-      },
-
-      handleScroll:{
-        mouseWheel:true,
-        pressedMouseMove:true,
-        horzTouchDrag:true,
-        vertTouchDrag:true
-      }
-    }
-  );
-
-  candleSeries = chart.addSeries(
-    LightweightCharts.CandlestickSeries,
-    {
-      upColor:"rgba(57,242,154,.46)",
-      downColor:"rgba(255,88,121,.44)",
-
-      borderUpColor:"rgba(101,255,185,.92)",
-      borderDownColor:"rgba(255,123,148,.92)",
-
-      wickUpColor:"rgba(101,255,185,.95)",
-      wickDownColor:"rgba(255,123,148,.95)"
-    },
-    0
-  );
-
-  volumeSeries = chart.addSeries(
-    LightweightCharts.HistogramSeries,
-    {
-      priceFormat:{
-        type:"volume"
-      },
-
-      priceScaleId:""
-    },
-    1
-  );
-
-  chart.panes()[1].setHeight(105);
 
   window.addEventListener(
     "resize",
-    ()=>chart.resize(
-      container.clientWidth,
-      container.clientHeight
-    )
+    ()=>{
+      chart.resize(
+        $("chart").clientWidth,
+        $("chart").clientHeight
+      );
+    }
   );
+
 }
 
 
 /* =========================================================
-   CANDLE HELPERS
+RENDER CHART
 ========================================================= */
-
-function mergeCandles(a,b){
-
-  const map = new Map();
-
-  for(const c of [...a,...b]){
-    if(c && Number.isFinite(c.time)){
-      map.set(c.time,c);
-    }
-  }
-
-  return [...map.values()]
-    .sort((x,y)=>x.time-y.time);
-}
-
-function chartCandle(c){
-
-  return {
-    time:Math.floor(c.time/1000),
-    open:c.open,
-    high:c.high,
-    low:c.low,
-    close:c.close
-  };
-}
-
-function chartVolume(c){
-
-  return {
-    time:Math.floor(c.time/1000),
-    value:c.volume,
-    color:
-      c.close >= c.open
-        ? "rgba(57,242,154,.28)"
-        : "rgba(255,88,121,.27)"
-  };
-}
 
 function renderChart(preserve=true){
 
-  if(!chart || !candleSeries || !volumeSeries) return;
+  if(!candleSeries || !volumeSeries) return;
 
-  let oldRange = null;
+  let oldRange=null;
 
   if(preserve){
+
     try{
+
       oldRange =
-        chart.timeScale().getVisibleLogicalRange();
+        chart.timeScale()
+          .getVisibleLogicalRange();
+
     }catch(_){}
+
   }
 
-  candleSeries.setData(
-    candles.map(chartCandle)
-  );
 
-  volumeSeries.setData(
-    candles.map(chartVolume)
-  );
+  const candleData =
+    candles.map(c=>({
+
+      time:Math.floor(c.time/1000),
+
+      open:c.open,
+      high:c.high,
+      low:c.low,
+      close:c.close
+
+    }));
+
+
+  const volumeData =
+    candles.map(c=>({
+
+      time:Math.floor(c.time/1000),
+
+      value:c.volume,
+
+      color:
+        c.close>=c.open
+        ? "rgba(57,242,154,.32)"
+        : "rgba(255,88,121,.30)"
+
+    }));
+
+
+  candleSeries.setData(candleData);
+
+  volumeSeries.setData(volumeData);
+
 
   if(oldRange){
+
     try{
-      chart.timeScale().setVisibleLogicalRange(oldRange);
-    }catch(_){}
+
+      chart.timeScale()
+        .setVisibleLogicalRange(oldRange);
+
+    }catch(_){
+
+      chart.timeScale().fitContent();
+
+    }
+
   }else{
+
     chart.timeScale().fitContent();
+
   }
+
 }
 
 
 /* =========================================================
-   MARKET LOADING
+LOAD SELECTED TIMEFRAME
 ========================================================= */
 
-async function loadMarket(preserve=true){
-
-  if(busyLoad) return;
-
-  busyLoad = true;
-
-  setBadge("dataBadge","LOADING","warn");
+async function loadMarket(){
 
   try{
 
-    const list = await fetchKlines(
+    const data =
+      await fetchKlines(
+        selectedTF,
+        1000
+      );
+
+    candles =
+      mergeCandles([],data);
+
+    await saveCandles(
       selectedTF,
-      1000
+      data
     );
 
-    candles = mergeCandles(candles,list);
+    renderChart(true);
 
-    /* Only keep the chart dataset bounded. */
-    if(candles.length > 1500){
-      candles = candles.slice(-1500);
+    if(data.length){
+
+      updateMarketUI(
+        data[data.length-1]
+      );
+
     }
 
-    await saveCandles(selectedTF,list);
+  }catch(e){
 
-    renderChart(preserve);
+    console.warn("selected TF REST failed");
 
-    if(list.length){
-      const latest = list[list.length-1];
+    candles =
+      await getStoredCandles(
+        selectedTF,
+        1500
+      );
 
-      currentPrice = latest.close;
+    renderChart(true);
 
-      updatePriceUI(latest);
-
-      lastMarketUpdate = Date.now();
-    }
-
-    setBadge(
-      "dataBadge",
-      `${selectedTF} • ${list.length}`,
-      "ok"
-    );
-
-  }catch(err){
-
-    console.error(err);
-
-    setBadge(
-      "dataBadge",
-      "REST ERROR",
-      "bad"
-    );
-
-  }finally{
-
-    busyLoad=false;
   }
+
 }
 
 
 /* =========================================================
-   LIVE 1M WEBSOCKET
+24H TICKER
+========================================================= */
+
+async function load24h(){
+
+  try{
+
+    const t =
+      await api(
+        "/ticker/24hr",
+        {symbol:SYMBOL}
+      );
+
+    $("high24").textContent =
+      "$"+fmtPrice(Number(t.highPrice));
+
+    $("low24").textContent =
+      "$"+fmtPrice(Number(t.lowPrice));
+
+    $("volume24").textContent =
+      Number(t.volume).toLocaleString(
+        undefined,
+        {maximumFractionDigits:2}
+      );
+
+  }catch(e){}
+
+}
+
+
+/* =========================================================
+MARKET UI
+========================================================= */
+
+function updateMarketUI(c){
+
+  if(!c) return;
+
+  currentPrice=c.close;
+
+  $("price").textContent =
+    "$"+fmtPrice(c.close);
+
+  $("priceMeta").textContent =
+    `${selectedTF} • ${fmtTime(c.time)} • LIVE`;
+
+  const ratio =
+    c.volume>0
+    ? c.takerBuyVolume/c.volume*100
+    : NaN;
+
+  $("buyRatio").textContent =
+    Number.isFinite(ratio)
+    ? ratio.toFixed(1)+"%"
+    : "—";
+
+}
+
+
+/* =========================================================
+WEBSOCKET
 ========================================================= */
 
 function connectWS(){
 
   clearTimeout(reconnectTimer);
 
-  if(ws){
-    try{
-      ws.close();
-    }catch(_){}
-  }
+  try{
+    if(ws) ws.close();
+  }catch(_){}
 
-  const url = WS_URLS[wsIndex % WS_URLS.length];
 
-  setBadge("connBadge","CONNECTING","warn");
+  const url =
+    WS_URLS[
+      wsIndex%WS_URLS.length
+    ];
+
+  setBadge(
+    "wsStatus",
+    "CONNECTING",
+    "warn"
+  );
+
 
   try{
 
-    ws = new WebSocket(url);
+    ws=new WebSocket(url);
 
-  }catch(err){
+  }catch(e){
 
     scheduleReconnect();
+
     return;
+
   }
 
-  ws.onopen = async ()=>{
 
-    setBadge("connBadge","LIVE","ok");
+  ws.onopen=async()=>{
 
-    wsIndex = 0;
+    setBadge(
+      "wsStatus",
+      "LIVE",
+      "ok"
+    );
 
-    lastWSUpdate = Date.now();
+    wsIndex=0;
+
+    lastWSUpdate=Date.now();
 
     await loadOneMinute();
 
-    await refreshChartFromOneMinuteIfNeeded();
   };
 
-  ws.onmessage = event => {
+
+  ws.onmessage=event=>{
 
     try{
 
-      const msg = JSON.parse(event.data);
+      const msg =
+        JSON.parse(event.data);
 
       if(!msg.k) return;
 
-      const k = msg.k;
+      const k=msg.k;
 
-      const c = {
+      const c={
+
         time:Number(k.t),
+
         open:Number(k.o),
+
         high:Number(k.h),
+
         low:Number(k.l),
+
         close:Number(k.c),
+
         volume:Number(k.v),
+
         closeTime:Number(k.T),
+
         quoteVolume:Number(k.q),
+
         trades:Number(k.n),
+
         takerBuyVolume:Number(k.V),
+
         takerBuyQuote:Number(k.Q)
+
       };
 
-      if(
-        !Number.isFinite(c.time) ||
-        !Number.isFinite(c.close)
-      ) return;
 
-      oneMin = mergeCandles(oneMin,[c]);
+      if(!Number.isFinite(c.close)) return;
 
-      if(oneMin.length > 1200){
-        oneMin = oneMin.slice(-1200);
+
+      oneMin =
+        mergeCandles(oneMin,[c]);
+
+
+      if(oneMin.length>2000){
+
+        oneMin=
+          oneMin.slice(-2000);
+
       }
 
-      currentPrice = c.close;
 
-      lastWSUpdate = Date.now();
-      lastMarketUpdate = Date.now();
+      currentPrice=c.close;
 
-      updatePriceUI(c);
+      lastWSUpdate=Date.now();
 
-      updateSelectedLiveBucket(c);
+      lastMarketUpdate=Date.now();
 
-      if(c.k){
-        // defensive only
+      updateMarketUI(c);
+
+
+      /*
+        Live selected timeframe update.
+      */
+
+      if(selectedTF==="1m"){
+
+        candleSeries.update({
+
+          time:Math.floor(c.time/1000),
+
+          open:c.open,
+          high:c.high,
+          low:c.low,
+          close:c.close
+
+        });
+
+
+        volumeSeries.update({
+
+          time:Math.floor(c.time/1000),
+
+          value:c.volume,
+
+          color:
+            c.close>=c.open
+            ? "rgba(57,242,154,.32)"
+            : "rgba(255,88,121,.30)"
+
+        });
+
+      }else{
+
+        const bucket =
+          Math.floor(
+            c.time/TF_MS[selectedTF]
+          )*TF_MS[selectedTF];
+
+        const agg =
+          aggregateBucket(
+            selectedTF,
+            bucket
+          );
+
+        if(agg){
+
+          candleSeries.update({
+
+            time:Math.floor(agg.time/1000),
+
+            open:agg.open,
+            high:agg.high,
+            low:agg.low,
+            close:agg.close
+
+          });
+
+          volumeSeries.update({
+
+            time:Math.floor(agg.time/1000),
+
+            value:agg.volume,
+
+            color:
+              agg.close>=agg.open
+              ? "rgba(57,242,154,.32)"
+              : "rgba(255,88,121,.30)"
+
+          });
+
+        }
+
       }
 
-    }catch(err){
-      console.warn("WS message error",err);
+
+      /*
+        Closed 1m candle is persisted.
+      */
+
+      if(k.x){
+
+        saveCandles(
+          "1m",
+          [c]
+        ).catch(()=>{});
+
+      }
+
+
+      /*
+        Engines continuously analyse
+        incoming raw market data.
+      */
+
+      runLiveAnalysis();
+
+    }catch(e){
+
+      console.warn(
+        "WS message error",
+        e
+      );
+
     }
+
   };
 
-  ws.onerror = ()=>{
-    setBadge("connBadge","ERROR","bad");
+
+  ws.onerror=()=>{
+
+    setBadge(
+      "wsStatus",
+      "ERROR",
+      "bad"
+    );
+
   };
 
-  ws.onclose = ()=>{
 
-    setBadge("connBadge","RECONNECTING","warn");
+  ws.onclose=()=>{
+
+    setBadge(
+      "wsStatus",
+      "RECONNECTING",
+      "warn"
+    );
 
     wsIndex++;
 
     scheduleReconnect();
+
   };
+
 }
+
 
 function scheduleReconnect(){
 
   clearTimeout(reconnectTimer);
 
-  reconnectTimer = setTimeout(
-    ()=>connectWS(),
+  const delay =
     Math.min(
       30000,
-      2000 * Math.max(1,wsIndex)
-    )
-  );
+      2000*Math.max(1,wsIndex)
+    );
+
+  reconnectTimer =
+    setTimeout(
+      connectWS,
+      delay
+    );
+
 }
 
 
 /* =========================================================
-   LIVE CHART BUCKET
+AGGREGATION
 ========================================================= */
 
-function bucketStart(ms,tf){
-  const size = TF_MS[tf];
+function aggregateBucket(tf,bucket){
 
-  return Math.floor(ms/size)*size;
-}
+  const size=TF_MS[tf];
 
-function aggregateBucket(tf,bucketTime){
-
-  const size = TF_MS[tf];
-
-  const end = bucketTime + size;
-
-  const list = oneMin.filter(
-    c => c.time >= bucketTime && c.time < end
-  );
+  const list =
+    oneMin.filter(
+      c=>
+        c.time>=bucket &&
+        c.time<bucket+size
+    );
 
   if(!list.length) return null;
 
-  const first = list[0];
-  const last = list[list.length-1];
+  const first=list[0];
+
+  const last=list[list.length-1];
 
   return {
-    time:bucketTime,
+
+    time:bucket,
+
     open:first.open,
-    high:Math.max(...list.map(x=>x.high)),
-    low:Math.min(...list.map(x=>x.low)),
-    close:last.close,
-    volume:list.reduce(
-      (sum,x)=>sum+x.volume,
-      0
+
+    high:Math.max(
+      ...list.map(x=>x.high)
     ),
-    closeTime:end-1
+
+    low:Math.min(
+      ...list.map(x=>x.low)
+    ),
+
+    close:last.close,
+
+    volume:list.reduce(
+      (s,x)=>s+x.volume,
+      0
+    )
+
   };
-}
 
-function updateSelectedLiveBucket(c){
-
-  if(!candleSeries) return;
-
-  const bucket = bucketStart(
-    c.time,
-    selectedTF
-  );
-
-  if(selectedTF === "1m"){
-
-    candleSeries.update(
-      chartCandle(c)
-    );
-
-    volumeSeries.update(
-      chartVolume(c)
-    );
-
-    return;
-  }
-
-  const agg = aggregateBucket(
-    selectedTF,
-    bucket
-  );
-
-  if(!agg) return;
-
-  candleSeries.update(
-    chartCandle(agg)
-  );
-
-  volumeSeries.update(
-    chartVolume(agg)
-  );
-}
-
-async function refreshChartFromOneMinuteIfNeeded(){
-
-  if(selectedTF === "1m") return;
-
-  const latest = oneMin[oneMin.length-1];
-
-  if(!latest) return;
-
-  const bucket = bucketStart(
-    latest.time,
-    selectedTF
-  );
-
-  const agg = aggregateBucket(
-    selectedTF,
-    bucket
-  );
-
-  if(!agg) return;
-
-  try{
-    candleSeries.update(chartCandle(agg));
-    volumeSeries.update(chartVolume(agg));
-  }catch(_){}
 }
 
 
 /* =========================================================
-   PRICE UI
+FEATURES
 ========================================================= */
 
-function updatePriceUI(c){
+function logReturns(data,n){
 
-  if(!c) return;
+  const r=[];
 
-  $("price").textContent =
-    `$${fmtPrice(c.close)}`;
+  for(let i=n;i<data.length;i++){
 
-  $("priceMeta").textContent =
-    `${selectedTF} • ${fmtTime(c.time)} • ${SYMBOL}`;
+    if(data[i-n].close>0){
 
-  $("high24").textContent =
-    fmtPrice(c.high);
-
-  $("low24").textContent =
-    fmtPrice(c.low);
-
-  $("volume24").textContent =
-    c.volume
-      ? Number(c.volume).toLocaleString(undefined,{
-          maximumFractionDigits:2
-        })
-      : "—";
-
-  const ratio =
-    c.volume > 0
-      ? (c.takerBuyVolume / c.volume) * 100
-      : NaN;
-
-  $("buyRatio").textContent =
-    Number.isFinite(ratio)
-      ? `${ratio.toFixed(1)}%`
-      : "—";
-}
-
-
-/* =========================================================
-   FEATURE ENGINE
-========================================================= */
-
-function returns(list,n){
-
-  const out=[];
-
-  for(let i=n;i<list.length;i++){
-    const a=list[i-n].close;
-    const b=list[i].close;
-
-    if(a>0 && b>0){
-      out.push(
-        Math.log(b/a)
+      r.push(
+        Math.log(
+          data[i].close/
+          data[i-n].close
+        )
       );
+
     }
+
   }
 
-  return out;
+  return r;
+
 }
 
-function ema(list,period){
 
-  if(list.length < period) return null;
+function ema(values,period){
 
-  const alpha = 2/(period+1);
-
-  let value = mean(
-    list.slice(0,period)
-  );
-
-  for(let i=period;i<list.length;i++){
-    value =
-      alpha*list[i]
-      +(1-alpha)*value;
-  }
-
-  return value;
-}
-
-function featureSet(){
-
-  const data = oneMin.filter(
-    x =>
-      Number.isFinite(x.close) &&
-      x.close > 0
-  );
-
-  if(data.length < 80){
+  if(values.length<period)
     return null;
+
+  const alpha=
+    2/(period+1);
+
+  let e=
+    mean(
+      values.slice(0,period)
+    );
+
+  for(
+    let i=period;
+    i<values.length;
+    i++
+  ){
+
+    e=
+      alpha*values[i]+
+      (1-alpha)*e;
+
   }
 
-  const closes =
+  return e;
+
+}
+
+
+function getFeatures(){
+
+  const data=
+    oneMin.filter(
+      x=>
+        Number.isFinite(x.close)
+    );
+
+  if(data.length<80)
+    return null;
+
+  const closes=
     data.map(x=>x.close);
 
-  const shortR =
-    mean(returns(data,3).slice(-12));
+  const r1=
+    logReturns(data,1);
 
-  const mediumR =
-    mean(returns(data,10).slice(-12));
-
-  const longR =
-    mean(returns(data,30).slice(-12));
-
-  const r1 =
-    returns(data,1);
-
-  const vol =
-    stdev(r1.slice(-60));
-
-  const ema21 =
-    ema(closes.slice(-100),21);
-
-  const ema50 =
-    ema(closes.slice(-100),50);
-
-  const last =
-    closes[closes.length-1];
-
-  const trend =
-    ema21 && ema50
-      ? (ema21-ema50)/last
-      : 0;
-
-  const recent =
-    data.slice(-30);
-
-  const volumeMean =
-    mean(
-      data
-        .slice(-90,-30)
-        .map(x=>x.volume)
+  const ema21=
+    ema(
+      closes.slice(-100),
+      21
     );
 
-  const recentVolume =
+  const ema50=
+    ema(
+      closes.slice(-100),
+      50
+    );
+
+  const last=
+    closes[closes.length-1];
+
+  const shortReturn=
+    Math.log(
+      last/
+      closes[Math.max(0,closes.length-6)]
+    );
+
+  const mediumReturn=
+    Math.log(
+      last/
+      closes[Math.max(0,closes.length-16)]
+    );
+
+  const longReturn=
+    Math.log(
+      last/
+      closes[Math.max(0,closes.length-31)]
+    );
+
+  const volatility=
+    stdev(
+      r1.slice(-60)
+    );
+
+  const trend=
+    ema21 && ema50
+    ? (ema21-ema50)/last
+    : 0;
+
+
+  const recent=
+    data.slice(-30);
+
+  const old=
+    data.slice(-90,-30);
+
+  const recentVol=
     mean(
       recent.map(x=>x.volume)
     );
 
-  const rvol =
-    volumeMean > 0
-      ? recentVolume/volumeMean
-      : 1;
-
-  const buyRatio =
+  const oldVol=
     mean(
-      recent.map(x =>
-        x.volume > 0
+      old.map(x=>x.volume)
+    );
+
+  const rvol=
+    oldVol>0
+    ? recentVol/oldVol
+    : 1;
+
+
+  const buyRatio=
+    mean(
+      recent.map(
+        x=>
+          x.volume>0
           ? x.takerBuyVolume/x.volume
           : .5
       )
     );
 
-  const range =
+
+  const directionProbability=
     mean(
-      recent.map(x =>
-        x.open > 0
-          ? (x.high-x.low)/x.open
-          : 0
+      recent.map(
+        x=>x.close>=x.open?1:0
       )
     );
+
 
   return {
     data,
     last,
-    shortR,
-    mediumR,
-    longR,
-    vol,
-    ema21,
-    ema50,
+    shortReturn,
+    mediumReturn,
+    longReturn,
+    volatility,
     trend,
     rvol,
     buyRatio,
-    range
+    directionProbability
   };
+
 }
 
 
 /* =========================================================
-   ERROR CORRECTION
+5 ENGINES
 ========================================================= */
 
-function historicalCorrection(){
+function makeForecast(horizon){
 
-  const recent =
-    history
-      .filter(x =>
-        Number.isFinite(x.errorPct)
-      )
-      .slice(0,30);
+  const f=getFeatures();
 
-  if(recent.length < 5){
-    return 0;
-  }
+  if(!f)
+    return null;
 
-  /*
-    If previous predictions systematically
-    overshot/undershot, apply a small correction.
-  */
+  const scale=
+    Math.sqrt(
+      horizon/15
+    );
 
-  const errors =
-    recent.map(x => x.errorPct);
-
-  const correction =
-    mean(errors)/100;
-
-  return clamp(
-    correction,
-    -.01,
-    .01
-  );
-}
-
-
-/* =========================================================
-   FIVE-ENGINE FORECAST
-========================================================= */
-
-function forecast(horizonMinutes){
-
-  const f = featureSet();
-
-  if(!f){
-    return {
-      ok:false,
-      reason:"Not enough 1m data"
-    };
-  }
-
-  const h = horizonMinutes;
 
   /*
     ENGINE 1
-    Chronological / multi-window momentum
+    Chronological
   */
 
-  const e1Return =
+  const e1=
     (
-      .42*f.shortR +
-      .36*f.mediumR +
-      .22*f.longR
-    ) * Math.sqrt(h/15);
+      .45*f.shortReturn+
+      .35*f.mediumReturn+
+      .20*f.longReturn
+    )*scale;
 
 
   /*
     ENGINE 2
-    Mathematical / EMA + volatility
+    Mathematical
   */
 
-  const emaSignal =
-    f.ema21 && f.ema50
-      ? (f.ema21-f.ema50)/f.last
-      : 0;
+  const emaSignal=
+    f.trend;
 
-  const e2Return =
+  const zLike=
+    f.mediumReturn/
+    Math.max(
+      f.volatility,
+      .00001
+    );
+
+  const e2=
     (
-      .70*emaSignal +
-      .30*f.trend
-    ) * Math.sqrt(h/15);
+      .75*emaSignal+
+      .00025*zLike
+    )*scale;
 
 
   /*
     ENGINE 3
-    Information / volume / regime
+    Information / Regime
   */
 
-  const volumePressure =
-    clamp(
-      (f.buyRatio-.5)*2,
-      -.5,
-      .5
-    );
+  const volumePressure=
+    (f.buyRatio-.5)*2;
 
-  const regimePressure =
+  const directionPressure=
+    (f.directionProbability-.5)*2;
+
+  const regime=
     clamp(
-      f.rvol-1,
+      (f.rvol-1),
       -1,
       1
-    ) * .001;
+    );
 
-  const e3Return =
+  const e3=
     (
-      .004*volumePressure +
-      regimePressure +
-      f.trend*.25
-    ) * Math.sqrt(h/15);
+      .0025*volumePressure+
+      .0015*directionPressure+
+      .001*regime+
+      .25*f.trend
+    )*scale;
 
 
   /*
     ENGINE 4
-    Error correction
+    Adaptive error correction
   */
 
-  const correction =
-    historicalCorrection();
+  const bias=
+    enginePerf.chronological.bias+
+    enginePerf.mathematical.bias+
+    enginePerf.information.bias;
 
-  const base =
-    mean([
-      e1Return,
-      e2Return,
-      e3Return
-    ]);
+  const averageBias=
+    bias/3;
 
-  const e4Return =
-    base + correction;
+  const base=
+    mean([e1,e2,e3]);
+
+  const e4=
+    base-averageBias;
 
 
   /*
     ENGINE 5
-    Meta-consultation.
-
-    It does NOT blindly average.
-    It checks disagreement and adjusts
-    confidence/weight.
+    Consultation / Meta Ensemble
   */
 
-  const engineReturns = [
-    e1Return,
-    e2Return,
-    e3Return,
-    e4Return
+  const corrected=[
+    e1-enginePerf.chronological.bias,
+    e2-enginePerf.mathematical.bias,
+    e3-enginePerf.information.bias,
+    e4-enginePerf.correction.bias
   ];
 
-  const avg =
-    mean(engineReturns);
 
-  const disagreement =
-    stdev(engineReturns);
+  const maes=[
+    enginePerf.chronological.mae,
+    enginePerf.mathematical.mae,
+    enginePerf.information.mae,
+    enginePerf.correction.mae
+  ];
 
-  const regimeCompatibility =
-    clamp(
-      1 - Math.abs(f.trend)*20,
-      .25,
-      1
+
+  const weights=
+    maes.map(
+      x=>1/
+      Math.max(x,.0002)
     );
 
-  const agreementScore =
+
+  const weightSum=
+    weights.reduce(
+      (a,b)=>a+b,
+      0
+    );
+
+
+  const normalized=
+    weights.map(
+      x=>x/weightSum
+    );
+
+
+  let finalReturn=0;
+
+  for(
+    let i=0;
+    i<corrected.length;
+    i++
+  ){
+
+    finalReturn+=
+      corrected[i]*
+      normalized[i];
+
+  }
+
+
+  const disagreement=
+    stdev(corrected);
+
+
+  const agreement=
     clamp(
-      1 - disagreement/.01,
+      1-
+      disagreement/
+      Math.max(
+        f.volatility*2,
+        .0005
+      ),
       0,
       1
     );
 
-  const dataScore =
+
+  const dataScore=
     clamp(
       f.data.length/500,
       .25,
       1
     );
 
-  const confidence =
+
+  const confidence=
     clamp(
       (
-        .40*agreementScore +
-        .25*regimeCompatibility +
-        .35*dataScore
-      ) * 100,
+        agreement*.55+
+        dataScore*.45
+      )*100,
       20,
-      92
+      95
     );
 
-  const metaReturn =
-    (
-      .30*e1Return +
-      .25*e2Return +
-      .25*e3Return +
-      .20*e4Return
+
+  /*
+    Do not allow mathematically
+    absurd forecasts.
+  */
+
+  const maxMove=
+    Math.max(
+      .002,
+      f.volatility*
+      Math.sqrt(horizon)*
+      3
     );
 
-  const corrected =
-    metaReturn *
+
+  finalReturn=
     clamp(
-      .70 + agreementScore*.30,
-      .70,
-      1
+      finalReturn,
+      -maxMove,
+      maxMove
     );
 
-  const predictedPrice =
-    f.last * Math.exp(corrected);
+
+  const forecastPrice=
+    f.last*
+    Math.exp(finalReturn);
+
 
   let direction="flat";
 
-  if(corrected > 0.00015)
+  if(
+    finalReturn>
+    Math.max(
+      .00015,
+      f.volatility*.15
+    )
+  ){
+
     direction="up";
 
-  if(corrected < -0.00015)
+  }else if(
+    finalReturn<
+    -Math.max(
+      .00015,
+      f.volatility*.15
+    )
+  ){
+
     direction="down";
 
-  return {
-    ok:true,
+  }
 
-    horizon:h,
+
+  return {
 
     current:f.last,
 
-    price:predictedPrice,
+    price:forecastPrice,
 
-    returnPct:corrected*100,
+    returnPct:finalReturn*100,
 
     direction,
 
     confidence,
 
-    disagreement,
+    engines:{
+      chronological:e1,
+      mathematical:e2,
+      information:e3,
+      correction:e4,
+      consultation:finalReturn
+    },
 
     sampleSize:f.data.length,
 
-    engines:{
-      chronological:e1Return,
-      mathematical:e2Return,
-      information:e3Return,
-      correction:e4Return,
-      consultation:corrected
-    },
-
     features:f
+
   };
+
 }
 
 
 /* =========================================================
-   PREDICTION STORAGE
+LIVE ENGINE ANALYSIS
 ========================================================= */
 
-function predictionId(horizon,targetAt){
-  return `${SYMBOL}|${horizon}|${targetAt}`;
-}
+function runLiveAnalysis(){
 
-async function putPrediction(p){
+  const f=
+    makeForecast(15);
 
-  await dbPut(
-    STORE_PRED,
-    p
-  );
-}
+  if(!f) return;
 
-async function deletePrediction(id){
+  liveForecast=f;
 
-  return new Promise((resolve,reject)=>{
+  $("e1").textContent=
+    fmtPct(f.engines.chronological*100);
 
-    const tx =
-      dbTx([STORE_PRED],"readwrite");
+  $("e2").textContent=
+    fmtPct(f.engines.mathematical*100);
 
-    tx.objectStore(STORE_PRED).delete(id);
+  $("e3").textContent=
+    fmtPct(f.engines.information*100);
 
-    tx.oncomplete=resolve;
-    tx.onerror=()=>reject(tx.error);
-  });
-}
+  $("e4").textContent=
+    fmtPct(f.engines.correction*100);
 
-async function putHistory(h){
+  $("e5").textContent=
+    fmtPct(f.engines.consultation*100);
 
-  await dbPut(
-    STORE_HISTORY,
-    h
-  );
+
+  $("engineStatus").textContent=
+    `All 5 engines analysing live raw 1m data • `+
+    `sample ${f.sampleSize} • `+
+    `meta confidence ${f.confidence.toFixed(0)}%`;
+
 }
 
 
 /* =========================================================
-   PREDICTION CREATION
+PREDICTIONS
 ========================================================= */
+
+function predictionId(
+  horizon,
+  targetAt
+){
+
+  return `${SYMBOL}-${horizon}-${targetAt}`;
+
+}
+
 
 async function ensurePredictions(){
 
-  if(predictionBusy) return;
+  for(
+    const horizon of [15,30]
+  ){
 
-  predictionBusy=true;
+    const existing=
+      activePredictions.find(
+        p=>
+          p.horizon===horizon &&
+          p.status==="active"
+      );
 
-  try{
+    if(existing) continue;
 
-    const horizons=[15,30];
 
-    for(const horizon of horizons){
+    const fc=
+      makeForecast(horizon);
 
-      const existing =
-        activePredictions.find(
-          p =>
-            p.horizon === horizon &&
-            p.status === "active"
-        );
+    if(!fc) continue;
 
-      if(existing) continue;
 
-      const fc =
-        forecast(horizon);
+    const createdAt=
+      nowServer();
 
-      if(!fc.ok) continue;
+    /*
+      IMPORTANT:
+      targetAt is locked here.
+      It never moves.
+    */
 
-      const createdAt =
-        nowServer();
+    const targetAt=
+      createdAt+
+      horizon*60000;
 
-      const targetAt =
-        createdAt +
-        horizon*60*1000;
 
-      const p = {
-        id:predictionId(horizon,targetAt),
+    const p={
 
-        symbol:SYMBOL,
-
+      id:predictionId(
         horizon,
+        targetAt
+      ),
 
-        createdAt,
+      symbol:SYMBOL,
 
-        targetAt,
+      horizon,
 
-        entryPrice:fc.current,
+      createdAt,
 
-        forecastPrice:fc.price,
+      targetAt,
 
-        forecastReturnPct:fc.returnPct,
+      entryPrice:fc.current,
 
-        direction:fc.direction,
+      forecastPrice:fc.price,
 
-        confidence:fc.confidence,
+      forecastReturnPct:
+        fc.returnPct,
 
-        sampleSize:fc.sampleSize,
+      direction:
+        fc.direction,
 
-        engineSnapshot:fc.engines,
+      confidence:
+        fc.confidence,
 
-        status:"active",
+      sampleSize:
+        fc.sampleSize,
 
-        version:"V1"
-      };
+      engineSnapshot:
+        fc.engines,
 
-      await putPrediction(p);
+      status:"active"
 
-      activePredictions.push(p);
-    }
+    };
 
-    renderPredictions();
 
-  }catch(err){
-
-    console.error(
-      "Prediction creation error",
-      err
+    await dbPut(
+      STORE_PRED,
+      p
     );
 
-  }finally{
 
-    predictionBusy=false;
+    activePredictions.push(p);
+
   }
+
+
+  renderPredictions();
+
 }
 
 
 /* =========================================================
-   TARGET SETTLEMENT
+TARGET SETTLEMENT
 ========================================================= */
 
-/*
-  Settlement rule:
-
-  The target time is locked when prediction
-  is created.
-
-  We do NOT use the current price later.
-
-  We use the close of the first completed
-  1-minute candle whose closeTime is at
-  or after the locked target.
-
-  This creates a deterministic settlement
-  definition and avoids using a later
-  arbitrary market price.
-*/
-
-async function findTargetSettlement(targetAt){
-
-  const searchStart =
-    targetAt - 60*1000;
-
-  const searchEnd =
-    targetAt + 5*60*1000;
-
-  let list = [];
+async function findSettlement(
+  targetAt
+){
 
   try{
 
-    list =
+    /*
+      We deliberately look around
+      the locked target.
+
+      The first completed 1m candle
+      whose closeTime >= targetAt
+      is the settlement price.
+    */
+
+    const rows=
       await fetchKlinesRange(
         "1m",
-        searchStart,
-        searchEnd
+        targetAt-60000,
+        targetAt+300000
       );
 
-  }catch(err){
 
-    console.warn(
-      "Target REST query failed",
-      err
-    );
-
-    return null;
-  }
-
-  const current =
-    nowServer();
-
-  const candidates =
-    list
+    const candidates=
+      rows
       .map(parseKline)
-      .filter(k =>
-        k.closeTime >= targetAt &&
-        k.closeTime <= current
+      .filter(
+        x=>
+          x.closeTime>=targetAt &&
+          x.closeTime<=nowServer()
       )
       .sort(
-        (a,b)=>a.closeTime-b.closeTime
+        (a,b)=>
+          a.closeTime-b.closeTime
       );
 
-  if(!candidates.length){
-    return null;
+
+    if(!candidates.length)
+      return null;
+
+
+    const c=candidates[0];
+
+
+    return {
+      price:c.close,
+      observedAt:c.closeTime,
+      method:"1m-close-at-or-after-target"
+    };
+
+  }catch(e){
+
+    /*
+      Fallback to locally stored
+      1m candles.
+    */
+
+    const local=
+      oneMin
+      .filter(
+        x=>
+          x.closeTime>=targetAt &&
+          x.closeTime<=nowServer()
+      )
+      .sort(
+        (a,b)=>
+          a.closeTime-b.closeTime
+      );
+
+
+    if(!local.length)
+      return null;
+
+
+    return {
+      price:local[0].close,
+      observedAt:local[0].closeTime,
+      method:"local-1m-close"
+    };
+
   }
 
-  const c =
-    candidates[0];
-
-  return {
-    price:c.close,
-    observedAt:c.closeTime,
-    method:"1m-close-at-or-after-target"
-  };
 }
 
 
 /* =========================================================
-   ATOMIC SETTLEMENT
+LEARNING FROM SETTLEMENT
 ========================================================= */
 
-async function settlePrediction(p){
+async function updateEngineLearning(
+  prediction,
+  actual
+){
 
-  if(settlementBusy) return;
+  const actualReturn=
+    Math.log(
+      actual/
+      prediction.entryPrice
+    );
 
-  settlementBusy=true;
 
-  try{
+  const engines=[
+    ["chronological",
+      prediction.engineSnapshot.chronological],
 
-    const settlement =
-      await findTargetSettlement(
+    ["mathematical",
+      prediction.engineSnapshot.mathematical],
+
+    ["information",
+      prediction.engineSnapshot.information],
+
+    ["correction",
+      prediction.engineSnapshot.correction],
+
+    ["consultation",
+      prediction.engineSnapshot.consultation]
+  ];
+
+
+  for(
+    const [name,predicted]
+    of engines
+  ){
+
+    const perf=
+      enginePerf[name];
+
+
+    const error=
+      predicted-
+      actualReturn;
+
+
+    perf.bias=
+      perf.bias*.90+
+      error*.10;
+
+
+    perf.mae=
+      perf.mae*.90+
+      Math.abs(error)*.10;
+
+
+    perf.count++;
+
+  }
+
+
+  await saveMeta(
+    "enginePerf",
+    enginePerf
+  );
+
+}
+
+
+/* =========================================================
+SETTLEMENT
+========================================================= */
+
+async function settleDue(){
+
+  const now=
+    nowServer();
+
+
+  const due=
+    activePredictions.filter(
+      p=>
+        p.status==="active" &&
+        p.targetAt<=now
+    );
+
+
+  for(
+    const p of due
+  ){
+
+    const settlement=
+      await findSettlement(
         p.targetAt
       );
 
-    if(!settlement){
-      return;
-    }
 
-    const actual =
+    if(!settlement)
+      continue;
+
+
+    const actual=
       settlement.price;
 
-    const errorPct =
-      p.forecastPrice > 0
-        ? (
-            (actual-p.forecastPrice) /
-            p.forecastPrice
-          )*100
-        : NaN;
 
-    const settled = {
+    const errorPct=
+      (
+        (actual-p.forecastPrice)/
+        p.forecastPrice
+      )*100;
+
+
+    const settled={
+
       ...p,
 
       status:"settled",
 
       actualPrice:actual,
 
-      actualAt:settlement.observedAt,
+      actualAt:
+        settlement.observedAt,
 
-      settlementMethod:settlement.method,
+      settlementMethod:
+        settlement.method,
 
       errorPct,
 
-      absErrorPct:Math.abs(errorPct),
+      absErrorPct:
+        Math.abs(errorPct),
 
-      settledAt:Date.now()
+      settledAt:
+        Date.now()
+
     };
 
+
     /*
-      Single IndexedDB transaction:
-
-      1. Remove active prediction.
-      2. Save completed history.
-
-      This prevents the same prediction from
-      being recorded twice after a reload.
+      Learn only after
+      actual target result exists.
     */
 
-    await new Promise((resolve,reject)=>{
+    await updateEngineLearning(
+      p,
+      actual
+    );
 
-      const tx =
-        dbTx(
-          [STORE_PRED,STORE_HISTORY],
-          "readwrite"
-        );
 
-      tx.objectStore(
-        STORE_PRED
-      ).delete(p.id);
+    /*
+      Atomic-ish state transition:
+      remove active + save history.
+    */
 
-      tx.objectStore(
-        STORE_HISTORY
-      ).put(settled);
+    const tx=
+      db.transaction(
+        [STORE_PRED,STORE_HISTORY],
+        "readwrite"
+      );
 
-      tx.oncomplete=resolve;
-      tx.onerror=()=>reject(tx.error);
-    });
 
-    activePredictions =
+    tx.objectStore(
+      STORE_PRED
+    ).delete(p.id);
+
+
+    tx.objectStore(
+      STORE_HISTORY
+    ).put(settled);
+
+
+    await new Promise(
+      (resolve,reject)=>{
+        tx.oncomplete=resolve;
+        tx.onerror=()=>reject(tx.error);
+      }
+    );
+
+
+    activePredictions=
       activePredictions.filter(
         x=>x.id!==p.id
       );
 
-    history.unshift(settled);
 
-    history =
-      history.sort(
-        (a,b)=>
-          (b.settledAt||0) -
-          (a.settledAt||0)
-      );
+    history.unshift(
+      settled
+    );
+
 
     renderHistory();
 
+
     /*
-      Immediately create a new prediction
-      for the same horizon.
+      Immediately create the next
+      prediction of the same horizon.
     */
 
-    await ensurePredictions();
-
-  }catch(err){
-
-    console.error(
-      "Settlement error",
-      err
+    await createNextPrediction(
+      p.horizon
     );
 
-  }finally{
-
-    settlementBusy=false;
   }
-}
 
-async function settleDuePredictions(){
-
-  const now =
-    nowServer();
-
-  const due =
-    activePredictions.filter(
-      p =>
-        p.status === "active" &&
-        p.targetAt <= now
-    );
-
-  for(const p of due){
-
-    await settlePrediction(p);
-  }
 }
 
 
-/* =========================================================
-   PREDICTION UI
-========================================================= */
-
-function renderOnePrediction(
-  elementId,
+async function createNextPrediction(
   horizon
 ){
 
-  const el = $(elementId);
+  const fc=
+    makeForecast(horizon);
 
-  const p =
-    activePredictions.find(
-      x =>
-        x.horizon === horizon &&
-        x.status === "active"
-    );
+  if(!fc) return;
 
-  if(!p){
 
-    el.querySelector(
-      ".direction"
-    ).textContent="WAITING";
+  const createdAt=
+    nowServer();
 
-    el.querySelector(
-      ".direction"
-    ).className="direction";
+  const targetAt=
+    createdAt+
+    horizon*60000;
 
-    el.querySelector(
-      ".predPrice"
-    ).textContent="—";
 
-    el.querySelectorAll(
-      ".predRow span:last-child"
-    )[0].textContent="—";
+  const p={
 
-    el.querySelectorAll(
-      ".predRow span:last-child"
-    )[1].textContent="—";
+    id:predictionId(
+      horizon,
+      targetAt
+    ),
 
-    el.querySelector(
-      ".conf > div"
-    ).style.width="0%";
+    symbol:SYMBOL,
 
-    return;
-  }
+    horizon,
 
-  const dir =
-    el.querySelector(".direction");
+    createdAt,
 
-  dir.textContent =
-    p.direction.toUpperCase();
+    targetAt,
 
-  dir.className =
-    `direction ${p.direction}`;
+    entryPrice:fc.current,
 
-  el.querySelector(".predPrice")
-    .textContent =
-    `$${fmtPrice(p.forecastPrice)}`;
+    forecastPrice:fc.price,
 
-  el.querySelectorAll(
-    ".predRow span:last-child"
-  )[0].textContent =
-    fmtTarget(p.targetAt);
+    forecastReturnPct:
+      fc.returnPct,
 
-  el.querySelectorAll(
-    ".predRow span:last-child"
-  )[1].textContent =
-    `${p.confidence.toFixed(0)}%`;
+    direction:
+      fc.direction,
 
-  el.querySelector(
-    ".conf > div"
-  ).style.width =
-    `${p.confidence}%`;
-}
+    confidence:
+      fc.confidence,
 
-function renderPredictions(){
+    sampleSize:
+      fc.sampleSize,
 
-  renderOnePrediction(
-    "pred15",
-    15
+    engineSnapshot:
+      fc.engines,
+
+    status:"active"
+
+  };
+
+
+  await dbPut(
+    STORE_PRED,
+    p
   );
 
-  renderOnePrediction(
-    "pred30",
-    30
-  );
 
-  renderEngines();
-}
+  activePredictions.push(p);
 
-function renderEngines(){
+  renderPredictions();
 
-  if(!lastForecast || !lastForecast.ok){
-    return;
-  }
-
-  const e =
-    lastForecast.engines;
-
-  $("e1").textContent =
-    fmtPct(e.chronological*100);
-
-  $("e2").textContent =
-    fmtPct(e.mathematical*100);
-
-  $("e3").textContent =
-    fmtPct(e.information*100);
-
-  $("e4").textContent =
-    fmtPct(e.correction*100);
-
-  $("e5").textContent =
-    fmtPct(e.consultation*100);
-
-  $("e1r").textContent =
-    "Short/medium/long chronological momentum";
-
-  $("e2r").textContent =
-    "EMA structure and trend geometry";
-
-  $("e3r").textContent =
-    "Volume pressure and regime";
-
-  $("e4r").textContent =
-    "Historical residual correction";
-
-  $("e5r").textContent =
-    `Agreement ${(100 -
-      lastForecast.disagreement*10000
-    ).toFixed(0)}% • confidence ${
-      lastForecast.confidence.toFixed(0)
-    }%`;
 }
 
 
 /* =========================================================
-   HISTORY UI
+PREDICTION UI
+========================================================= */
+
+function renderPrediction(
+  id,
+  horizon
+){
+
+  const box=$(id);
+
+  const p=
+    activePredictions.find(
+      x=>
+        x.horizon===horizon &&
+        x.status==="active"
+    );
+
+
+  if(!p){
+
+    box.querySelector(
+      ".direction"
+    ).textContent="WAITING";
+
+    box.querySelector(
+      ".direction"
+    ).className="direction";
+
+    box.querySelector(
+      ".predPrice"
+    ).textContent="—";
+
+    box.querySelectorAll(
+      ".predRow b"
+    ).forEach(
+      x=>x.textContent="—"
+    );
+
+    box.querySelector(
+      ".bar div"
+    ).style.width="0%";
+
+    return;
+
+  }
+
+
+  const direction=
+    box.querySelector(
+      ".direction"
+    );
+
+
+  direction.textContent=
+    p.direction.toUpperCase();
+
+
+  direction.className=
+    `direction ${p.direction}`;
+
+
+  box.querySelector(
+    ".predPrice"
+  ).textContent=
+    "$"+fmtPrice(
+      p.forecastPrice
+    );
+
+
+  const rows=
+    box.querySelectorAll(
+      ".predRow b"
+    );
+
+
+  rows[0].textContent=
+    fmtTarget(p.targetAt);
+
+  rows[1].textContent=
+    "$"+fmtPrice(p.entryPrice);
+
+  rows[2].textContent=
+    p.confidence.toFixed(0)+"%";
+
+
+  box.querySelector(
+    ".bar div"
+  ).style.width=
+    p.confidence+"%";
+
+}
+
+
+function renderPredictions(){
+
+  renderPrediction(
+    "p15",
+    15
+  );
+
+  renderPrediction(
+    "p30",
+    30
+  );
+
+}
+
+
+/* =========================================================
+HISTORY
 ========================================================= */
 
 function renderHistory(){
 
-  const body =
+  const body=
     $("historyBody");
 
   body.innerHTML="";
 
+
   if(!history.length){
 
-    $("historyStats").textContent =
+    $("historyStats").textContent=
       "No completed predictions yet.";
 
     return;
+
   }
 
-  const errors =
+
+  const errors=
     history
-      .map(x=>x.absErrorPct)
-      .filter(Number.isFinite)
-      .slice(0,30);
+    .map(x=>x.absErrorPct)
+    .filter(Number.isFinite)
+    .slice(0,30);
 
-  const mae =
+
+  const mae=
     errors.length
-      ? mean(errors)
-      : NaN;
+    ? mean(errors)
+    : NaN;
 
-  $("historyStats").textContent =
-    `${history.length} completed • ` +
-    `MAE last ${errors.length}: ` +
-    `${Number.isFinite(mae) ? mae.toFixed(3)+"%" : "—"}`;
 
-  for(const h of history.slice(0,100)){
+  $("historyStats").textContent=
+    `${history.length} completed • `+
+    `MAE last ${errors.length}: `+
+    (
+      Number.isFinite(mae)
+      ? mae.toFixed(3)+"%"
+      : "—"
+    );
 
-    const tr =
+
+  for(
+    const h of history.slice(0,100)
+  ){
+
+    const tr=
       document.createElement("tr");
 
+
     tr.innerHTML=`
+
       <td>${fmtTime(h.settledAt)}</td>
+
       <td>${h.horizon}m</td>
+
       <td>$${fmtPrice(h.forecastPrice)}</td>
+
       <td>$${fmtPrice(h.actualPrice)}</td>
-      <td class="${Math.abs(h.errorPct||0)<.25 ? "good":"badText"}">
+
+      <td class="${
+        Math.abs(h.errorPct)<.25
+        ? "good"
+        : "badText"
+      }">
         ${fmtPct(h.errorPct)}
       </td>
-      <td>${h.settlementMethod || "—"}</td>
+
+      <td>
+        ${h.settlementMethod||"—"}
+      </td>
+
     `;
 
+
     body.appendChild(tr);
+
   }
+
 }
 
 
 /* =========================================================
-   MODEL REFRESH
+RANGE
 ========================================================= */
-
-function refreshForecast(){
-
-  const fc =
-    forecast(15);
-
-  if(!fc.ok){
-    lastForecast=null;
-    return;
-  }
-
-  lastForecast=fc;
-
-  renderEngines();
-}
-
-async function predictionLoop(){
-
-  refreshForecast();
-
-  await settleDuePredictions();
-
-  await ensurePredictions();
-
-  renderPredictions();
-
-  const age =
-    Date.now() -
-    lastMarketUpdate;
-
-  if(age > 90000){
-
-    setBadge(
-      "dataBadge",
-      "STALE",
-      "warn"
-    );
-
-    if(age > 150000){
-      loadMarket(true);
-    }
-  }
-}
-
-
-/* =========================================================
-   TIMEFRAME / RANGE
-========================================================= */
-
-document.querySelectorAll(".tf")
-  .forEach(btn=>{
-
-    btn.addEventListener(
-      "click",
-      async ()=>{
-
-        document
-          .querySelectorAll(".tf")
-          .forEach(x=>x.classList.remove("active"));
-
-        btn.classList.add("active");
-
-        selectedTF =
-          btn.dataset.tf;
-
-        candles=[];
-
-        await loadMarket(false);
-
-        refreshChartFromOneMinuteIfNeeded();
-      }
-    );
-  });
-
-document.querySelectorAll(".range")
-  .forEach(btn=>{
-
-    btn.addEventListener(
-      "click",
-      async ()=>{
-
-        document
-          .querySelectorAll(".range")
-          .forEach(x=>x.classList.remove("active"));
-
-        btn.classList.add("active");
-
-        selectedRange =
-          btn.dataset.range;
-
-        await loadMarket(false);
-
-        applyRange();
-      }
-    );
-  });
 
 function applyRange(){
 
-  if(!chart || !candles.length) return;
+  if(!candles.length) return;
 
-  const end =
+
+  const end=
     candles[candles.length-1].time;
 
-  const duration =
+
+  const duration=
     RANGE_MS[selectedRange];
 
-  if(duration == null){
-    chart.timeScale().fitContent();
+
+  if(duration===null){
+
+    chart.timeScale()
+      .fitContent();
+
     return;
+
   }
 
-  const start =
+
+  const start=
     end-duration;
 
-  const visible =
-    candles.filter(
-      c =>
-        c.time >= start &&
-        c.time <= end
-    );
 
-  if(!visible.length){
-    chart.timeScale().fitContent();
-    return;
-  }
+  chart.timeScale()
+    .setVisibleRange({
 
-  chart.timeScale().setVisibleRange({
-    from:Math.floor(visible[0].time/1000),
-    to:Math.floor(end/1000)
-  });
+      from:
+        Math.floor(start/1000),
+
+      to:
+        Math.floor(end/1000)
+
+    });
+
 }
 
 
 /* =========================================================
-   CHART BUTTONS
+BUTTONS
 ========================================================= */
 
-$("zoomIn").addEventListener(
-  "click",
-  ()=>{
-    const r =
-      chart.timeScale().getVisibleLogicalRange();
+document.querySelectorAll(".tf")
+.forEach(button=>{
 
-    if(!r) return;
+  button.onclick=async()=>{
 
-    const center =
-      (r.from+r.to)/2;
+    document.querySelectorAll(
+      ".tf"
+    ).forEach(
+      x=>x.classList.remove("active")
+    );
 
-    const half =
-      Math.max(
-        5,
-        (r.to-r.from)*.35
+    button.classList.add("active");
+
+    selectedTF=
+      button.dataset.tf;
+
+    await loadMarket();
+
+    applyRange();
+
+  };
+
+});
+
+
+document.querySelectorAll(".range")
+.forEach(button=>{
+
+  button.onclick=()=>{
+
+    document.querySelectorAll(
+      ".range"
+    ).forEach(
+      x=>x.classList.remove("active")
+    );
+
+    button.classList.add("active");
+
+    selectedRange=
+      button.dataset.range;
+
+    applyRange();
+
+  };
+
+});
+
+
+$("zoomIn").onclick=()=>{
+
+  const r=
+    chart.timeScale()
+      .getVisibleLogicalRange();
+
+  if(!r) return;
+
+  const center=
+    (r.from+r.to)/2;
+
+  const half=
+    Math.max(
+      5,
+      (r.to-r.from)*.35
+    );
+
+  chart.timeScale()
+    .setVisibleLogicalRange({
+
+      from:center-half,
+      to:center+half
+
+    });
+
+};
+
+
+$("zoomOut").onclick=()=>{
+
+  const r=
+    chart.timeScale()
+      .getVisibleLogicalRange();
+
+  if(!r) return;
+
+  const center=
+    (r.from+r.to)/2;
+
+  const half=
+    (r.to-r.from)*.7;
+
+  chart.timeScale()
+    .setVisibleLogicalRange({
+
+      from:center-half,
+      to:center+half
+
+    });
+
+};
+
+
+$("fit").onclick=()=>{
+
+  chart.timeScale()
+    .fitContent();
+
+};
+
+
+$("refreshBtn").onclick=
+async()=>{
+
+  await syncClock();
+
+  await loadOneMinute();
+
+  await loadMarket();
+
+  await load24h();
+
+  await ensurePredictions();
+
+};
+
+
+/* =========================================================
+EXPORT
+========================================================= */
+
+$("exportBtn").onclick=
+async()=>{
+
+  try{
+
+    const backup={
+
+      exportedAt:
+        new Date().toISOString(),
+
+      predictions:
+        await dbGetAll(
+          STORE_PRED
+        ),
+
+      history:
+        await dbGetAll(
+          STORE_HISTORY
+        ),
+
+      enginePerf
+
+    };
+
+
+    const blob=
+      new Blob(
+        [
+          JSON.stringify(
+            backup,
+            null,
+            2
+          )
+        ],
+        {
+          type:"application/json"
+        }
       );
 
-    chart.timeScale()
-      .setVisibleLogicalRange({
-        from:center-half,
-        to:center+half
-      });
+
+    const url=
+      URL.createObjectURL(blob);
+
+
+    const a=
+      document.createElement("a");
+
+
+    a.href=url;
+
+    a.download=
+      "eth-predictor-backup.json";
+
+
+    a.click();
+
+
+    setTimeout(
+      ()=>URL.revokeObjectURL(url),
+      1000
+    );
+
+  }catch(e){
+
+    alert(
+      "Export failed: "+
+      e.message
+    );
+
   }
-);
 
-$("zoomOut").addEventListener(
-  "click",
-  ()=>{
-    const r =
-      chart.timeScale().getVisibleLogicalRange();
+};
 
-    if(!r) return;
 
-    const center =
-      (r.from+r.to)/2;
+/* =========================================================
+RECOVERY
+========================================================= */
 
-    const half =
-      (r.to-r.from)*.72;
+async function recover(){
 
-    chart.timeScale()
-      .setVisibleLogicalRange({
-        from:center-half,
-        to:center+half
-      });
-  }
-);
+  const age=
+    Date.now()-lastWSUpdate;
 
-$("fitBtn").addEventListener(
-  "click",
-  ()=>{
-    chart.timeScale().fitContent();
-  }
-);
 
-$("refreshBtn").addEventListener(
-  "click",
-  async ()=>{
-    await syncClock();
+  if(age>30000){
+
+    setBadge(
+      "wsStatus",
+      "RECOVERING",
+      "warn"
+    );
+
     await loadOneMinute();
-    await loadMarket(true);
-    await ensurePredictions();
+
   }
-);
 
 
-/* =========================================================
-   EXPORT
-========================================================= */
-
-$("exportBtn").addEventListener(
-  "click",
-  async ()=>{
+  if(age>90000){
 
     try{
+      ws.close();
+    }catch(_){}
 
-      const candleData =
-        await dbGetAll(STORE_CANDLES);
-
-      const predData =
-        await dbGetAll(STORE_PRED);
-
-      const histData =
-        await dbGetAll(STORE_HISTORY);
-
-      const backup={
-        app:"ETH/USDT Predictor V1",
-        version:1,
-        exportedAt:new Date().toISOString(),
-        candles:candleData,
-        predictions:predData,
-        history:histData
-      };
-
-      const blob =
-        new Blob(
-          [JSON.stringify(backup,null,2)],
-          {type:"application/json"}
-        );
-
-      const url =
-        URL.createObjectURL(blob);
-
-      const a =
-        document.createElement("a");
-
-      a.href=url;
-      a.download=
-        `eth-predictor-backup-${Date.now()}.json`;
-
-      a.click();
-
-      setTimeout(
-        ()=>URL.revokeObjectURL(url),
-        1000
-      );
-
-    }catch(err){
-
-      alert(
-        "Export failed: " +
-        err.message
-      );
-    }
   }
-);
+
+
+  await settleDue();
+
+  await ensurePredictions();
+
+}
 
 
 /* =========================================================
-   RESET
-========================================================= */
-
-$("resetBtn").addEventListener(
-  "click",
-  async ()=>{
-
-    const ok =
-      confirm(
-        "Delete V1 predictions, history and stored candles?"
-      );
-
-    if(!ok) return;
-
-    try{
-
-      await dbClear(STORE_CANDLES);
-      await dbClear(STORE_PRED);
-      await dbClear(STORE_HISTORY);
-
-      activePredictions=[];
-      history=[];
-      oneMin=[];
-      candles=[];
-
-      localStorage.removeItem(
-        "eth_active_reliable_v4"
-      );
-
-      localStorage.removeItem(
-        "eth_history_reliable_v4"
-      );
-
-      renderHistory();
-      renderPredictions();
-
-      await loadOneMinute();
-      await loadMarket(false);
-      await ensurePredictions();
-
-    }catch(err){
-
-      alert(
-        "Reset failed: " +
-        err.message
-      );
-    }
-  }
-);
-
-
-/* =========================================================
-   RELIABILITY STATUS
+RELIABILITY
 ========================================================= */
 
 function updateReliability(){
 
-  const wsAge =
+  const wsAge=
     lastWSUpdate
-      ? Date.now()-lastWSUpdate
-      : Infinity;
+    ? Date.now()-lastWSUpdate
+    : Infinity;
 
-  const restAge =
-    lastRestUpdate
-      ? Date.now()-lastRestUpdate
-      : Infinity;
 
-  let text =
-    `1m source candles: ${oneMin.length}. `;
+  const restAge=
+    lastRESTUpdate
+    ? Date.now()-lastRESTUpdate
+    : Infinity;
 
-  text +=
-    `Active predictions: ${activePredictions.length}. `;
 
-  text +=
-    `Completed predictions: ${history.length}. `;
+  let status;
 
-  if(wsAge < 90000){
-    text +=
-      "WebSocket data is fresh. ";
+
+  if(wsAge<15000){
+
+    status="LIVE";
+
+  }else if(wsAge<60000){
+
+    status="RECOVERING";
+
   }else{
-    text +=
-      "WebSocket data is stale or disconnected. ";
+
+    status="STALE";
+
   }
 
-  if(restAge < 120000){
-    text +=
-      "REST fallback is fresh.";
-  }else{
-    text +=
-      "REST data needs refresh.";
-  }
 
-  $("reliabilityText").textContent=text;
+  $("reliability").textContent=
+
+    `Connection: ${status} • `+
+
+    `1m candles: ${oneMin.length} • `+
+
+    `Active predictions: ${activePredictions.length} • `+
+
+    `Completed: ${history.length} • `+
+
+    `REST age: ${
+      restAge===Infinity
+      ? "—"
+      : Math.round(restAge/1000)+"s"
+    } • `+
+
+    `Server clock offset: ${
+      serverOffset
+    }ms`;
+
 }
 
 
 /* =========================================================
-   INITIALIZATION
+VISIBILITY RECOVERY
+========================================================= */
+
+document.addEventListener(
+  "visibilitychange",
+  async()=>{
+
+    if(
+      document.visibilityState==="visible"
+    ){
+
+      await syncClock();
+
+      await loadOneMinute();
+
+      await recover();
+
+      await loadMarket();
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+BACKGROUND LOOPS
+========================================================= */
+
+setInterval(
+  async()=>{
+
+    runLiveAnalysis();
+
+    await settleDue();
+
+    await ensurePredictions();
+
+    renderPredictions();
+
+  },
+  5000
+);
+
+
+setInterval(
+  async()=>{
+
+    if(
+      Date.now()-lastWSUpdate>30000
+    ){
+
+      await recover();
+
+    }
+
+  },
+  15000
+);
+
+
+setInterval(
+  async()=>{
+
+    await load24h();
+
+  },
+  30000
+);
+
+
+setInterval(
+  async()=>{
+
+    await syncClock();
+
+  },
+  300000
+);
+
+
+setInterval(
+  updateReliability,
+  3000
+);
+
+
+/* =========================================================
+BOOT
 ========================================================= */
 
 async function boot(){
 
   try{
 
-    setBadge(
-      "connBadge",
-      "STARTING",
-      "warn"
+    await openDB();
+
+    /*
+      Restore persistent predictions.
+    */
+
+    activePredictions=
+      await dbGetAll(
+        STORE_PRED
+      );
+
+
+    history=
+      await dbGetAll(
+        STORE_HISTORY
+      );
+
+
+    history.sort(
+      (a,b)=>
+        (b.settledAt||0)-
+        (a.settledAt||0)
     );
 
-    setBadge(
-      "dbBadge",
-      "OPENING",
-      "warn"
-    );
 
-    await loadDatabase();
+    const savedPerf=
+      await getMeta(
+        "enginePerf"
+      );
 
-    await migrateLegacyData();
+
+    if(savedPerf){
+
+      enginePerf=
+        savedPerf;
+
+    }
+
 
     await syncClock();
 
+
     initChart();
 
-    /*
-      Load 1m data first because the
-      prediction engine depends on it.
-    */
-
-    const sourceOK =
-      await loadOneMinute();
-
-    if(!sourceOK){
-      setBadge(
-        "dataBadge",
-        "1m FAILED",
-        "bad"
-      );
-    }
 
     /*
-      Load the selected chart timeframe.
+      First load.
     */
 
-    await loadMarket(false);
+    await loadOneMinute();
 
-    refreshForecast();
+    await loadMarket();
+
+    await load24h();
+
+
+    /*
+      Create only if there
+      isn't already a locked
+      prediction.
+    */
 
     await ensurePredictions();
 
+
     renderPredictions();
+
     renderHistory();
+
+
+    /*
+      Start WebSocket.
+    */
 
     connectWS();
 
-    setInterval(
-      predictionLoop,
-      10000
-    );
-
-    setInterval(
-      async ()=>{
-        await syncClock();
-      },
-      5*60*1000
-    );
-
-    setInterval(
-      async ()=>{
-        if(
-          Date.now()-lastRestUpdate >
-          60000
-        ){
-          await loadOneMinute();
-        }
-      },
-      60000
-    );
-
-    setInterval(
-      updateReliability,
-      5000
-    );
 
     updateReliability();
 
-  }catch(err){
 
-    console.error(err);
+  }catch(e){
 
-    $("reliabilityText").innerHTML =
-      `<div class="errorBox">
-        Startup failed: ${String(err.message || err)}
-        <br><br>
-        Check your internet connection and reload.
-      </div>`;
+    console.error(e);
 
     setBadge(
-      "connBadge",
+      "wsStatus",
       "FAILED",
       "bad"
     );
+
+    $("reliability").textContent=
+      "Startup error: "+
+      e.message;
+
   }
+
 }
+
 
 boot();
 
 </script>
+
 </body>
 </html>
