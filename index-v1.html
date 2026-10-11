@@ -1525,6 +1525,406 @@ function renderBase(){
 }
 setInterval(renderBase,5000);
 
+/* ===== v12 detailed history ===== */
+let hFilter='ALL',hLimit=50;const hOpen=new Set();
+const fdt=t=>t?new Date(t).toLocaleString([],{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):'--';
+const sp2=x=>(x>=0?'+':'')+x.toFixed(3)+'%';
+(function(){
+ const bar=document.createElement('div');bar.className='scroll';bar.id='hbar';
+ bar.innerHTML=['ALL','10m','15m','30m','CUSTOM_TIME','TARGET_PRICE'].map(k=>`<button class="chip${k==='ALL'?' active':''}" data-f="${k}">${k==='CUSTOM_TIME'?'CUSTOM':k==='TARGET_PRICE'?'TARGETS':k}</button>`).join('');
+ $('history').parentNode.insertBefore(bar,$('history'));
+ bar.onclick=e=>{const b=e.target.closest('[data-f]');if(!b)return;hFilter=b.dataset.f;hLimit=50;bar.querySelectorAll('.chip').forEach(x=>x.classList.toggle('active',x===b));renderHistory()};
+ $('history').onclick=e=>{
+  if(e.target.closest('[data-more]')){hLimit+=50;renderHistory();return}
+  const r=e.target.closest('[data-row]');if(!r)return;
+  const id=r.dataset.row;hOpen.has(id)?hOpen.delete(id):hOpen.add(id);renderHistory();
+ };
+})();
+const ROW='padding:9px 0;border-bottom:1px solid #e1e5e8;font-size:10px;line-height:1.7;cursor:pointer';
+function histRow(h){
+ const open=hOpen.has(h.id);
+ if(h.type==='TARGET_PRICE'){
+  const hit=h.result==='HIT';
+  return `<div data-row="${h.id}" style="${ROW}"><div><b>TARGET ${h.direction>0?'▲':'▼'} $${price(h.targetPrice)}</b> <b class="${hit?'green':'red'}">${h.result||'--'}</b></div><div>Set ${fdt(h.createdAt)} at $${price(h.entry)} • ${hit?'touched':'ended'} ${fdt(h.settledAt)}</div><div>Took ${fmtDur(h.hitAfterMin||0)} • estimate was ${fmtDur(h.estimatedMinutes||0)}</div></div>`;
+ }
+ const pm=(h.forecast-h.entry)/h.entry*100,am=(h.actual-h.entry)/h.entry*100,ok=Math.sign(pm)===Math.sign(am);
+ const eng=open&&h.engines?Object.entries(h.engines).filter(([k,v])=>typeof v==='number'&&v!==0).map(([k,v])=>{const g=Math.sign(v)===Math.sign(am);return `<span class="${g?'green':'red'}" style="display:inline-block;margin:2px 10px 0 0">${k.toUpperCase()} ${sp2(v*100)} ${g?'✔':'✖'}</span>`}).join(''):'';
+ return `<div data-row="${h.id}" style="${ROW}"><div><b>${h.type==='CUSTOM_TIME'?'CUSTOM':h.type}</b> <b class="${ok?'green':'red'}">${ok?'✔':'✖'} called ${pm>=0?'UP':'DOWN'}, went ${am>=0?'UP':'DOWN'}</b><span style="float:right">${fdt(h.targetAt)}</span></div><div>Entry $${price(h.entry)} → forecast $${price(h.forecast)} (${sp2(pm)}) → actual $${price(h.actual)} (${sp2(am)})</div><div>Error ${sp2(h.errorPct)} • P(dir) ${h.confidence==null?'--':h.confidence+'%'} • ${h.context||'--'} regime • locked ${fdt(h.createdAt)}</div>${open?`<div style="margin-top:4px;color:#53636e">Engine calls vs outcome:<br>${eng||'no engine data'}</div>`:'<div style="color:#87939b">tap for engine details</div>'}</div>`;
+}
+function histSummary(list){
+ const a=list.filter(h=>h.type!=='TARGET_PRICE'&&Number.isFinite(h.actual));
+ if(!a.length)return '';
+ const n=a.length,ok=a.filter(h=>Math.sign(h.forecast-h.entry)===Math.sign(h.actual-h.entry)).length;
+ const mae=mean(a.map(h=>Math.abs(h.errorPct))),bias=mean(a.map(h=>h.errorPct)),up=a.filter(h=>h.actual>h.entry).length;
+ const am=mean(a.map(h=>Math.abs(h.actual-h.entry)/h.entry*100)),fm=mean(a.map(h=>Math.abs(h.forecast-h.entry)/h.entry*100));
+ const worst=a.reduce((w,h)=>Math.abs(h.errorPct)>Math.abs(w.errorPct)?h:w,a[0]);
+ return `Predictions: <b>${n}</b> • Direction right: <b>${ok}/${n} (${(ok/n*100).toFixed(1)}%)</b><br>Price actually rose in <b>${(up/n*100).toFixed(0)}%</b> of cases<br>Average error: <b>${mae.toFixed(3)}%</b> • Bias: <b>${sp2(bias)}</b> (${bias<0?'forecasts too high':'forecasts too low'})<br>Average real move: <b>${am.toFixed(3)}%</b> • Average forecast move: <b>${fm.toFixed(3)}%</b><br>Worst miss: <b>${sp2(worst.errorPct)}</b> (${worst.type}, ${fdt(worst.targetAt)})`;
+}
+function renderHistory(){
+ const list=hist.filter(h=>hFilter==='ALL'||h.type===hFilter).slice().sort((a,b)=>(b.settledAt||0)-(a.settledAt||0));
+ if(!list.length){
+  $('history').innerHTML='<div class="empty">No completed predictions here yet.</div>';
+  $('metrics').innerHTML=hFilter==='ALL'?'Waiting for completed observations.':'';
+  updateWalkForwardPanel();return;
+ }
+ const tg=hist.filter(h=>h.type==='TARGET_PRICE');
+ $('metrics').innerHTML=histSummary(list)+(tg.length?`<br>Targets reached: <b>${tg.filter(h=>h.result==='HIT').length}/${tg.length}</b>`:'')+`<br>Learner memory samples: <b>${learner.samples}</b>`;
+ $('history').innerHTML=list.slice(0,hLimit).map(histRow).join('')+(list.length>hLimit?`<button class="primary" data-more="1" style="width:100%;margin-top:8px">SHOW MORE (${list.length-hLimit} left)</button>`:'');
+ updateWalkForwardPanel();
+}
+
+/* ===== v13 OUTLOOK board: tomorrow + 7-day probability cone ===== */
+let OL=null;
+(function(){
+ const scr=document.createElement('section');scr.id='screen-outlook';scr.className='screen';
+ scr.innerHTML='<div class="panel"><div class="section-title">TOMORROW &amp; 7-DAY OUTLOOK</div><canvas id="olCanvas" style="width:100%;height:300px;display:block"></canvas><div id="olNote" class="notice"></div></div><div class="panel"><div class="section-title">DAY BY DAY</div><div id="olRows"></div></div><div class="panel"><div class="section-title">HOW RELIABLE IS THIS METHOD?</div><div id="olCheck" class="notice">Loading…</div></div>';
+ $('screen-settings').after(scr);
+ const nav=document.querySelector('.nav'),nb=document.createElement('button');
+ nb.dataset.screen='outlook';nb.innerHTML='<span class="navicon">◔</span>OUTLOOK';
+ nav.insertBefore(nb,nav.querySelector('[data-screen="settings"]'));
+ nav.style.gridTemplateColumns='repeat(5,1fr)';
+ nb.onclick=()=>{
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));scr.classList.add('active');
+  document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x===nb));
+  loadOutlook().catch(e=>{$('olCheck').textContent='Outlook data failed: '+e.message});
+ };
+})();
+function slope(c,i,w){let sx=0,sy=0,sxy=0,sxx=0;for(let j=0;j<w;j++){const y=Math.log(c[i-w+1+j]);sx+=j;sy+=y;sxy+=j*y;sxx+=j*j}return (w*sxy-sx*sy)/(w*sxx-sx*sx)}
+async function loadOutlook(){
+ const k=parseKlines(await api('/api/v3/klines?symbol=ETHUSDT&interval=1h&limit=1000')).slice(0,-1);
+ const c=k.map(x=>x.close),r=[];
+ for(let i=1;i<c.length;i++)r.push(Math.log(c[i]/c[i-1]));
+ let v=r[r.length-336]**2;for(const x of r.slice(-336))v=.94*v+.06*x*x;
+ const sig=.5*std(r.slice(-168))+.5*Math.sqrt(v);
+ const mu=clamp(slope(c,c.length-1,72)*.25,-.0003,.0003);
+ let in24=0,n24=0,hit24=0,in7=0,n7=0;
+ for(let i=200;i<c.length-24;i++){
+  const s=std(r.slice(i-168,i)),f=Math.log(c[i+24]/c[i]);
+  n24++;if(Math.abs(f)<=Math.sqrt(24)*s*1.2816)in24++;
+  if(Math.sign(slope(c,i,72))===Math.sign(f))hit24++;
+  if(i<c.length-168){n7++;if(Math.abs(Math.log(c[i+168]/c[i]))<=Math.sqrt(168)*s*1.2816)in7++}
+ }
+ OL={p0:lastPrice||c[c.length-1],sig,mu,hist:c.slice(-48),in24,n24,hit24,in7,n7,at:Date.now()};
+ renderOutlook();
+}
+function olBand(h){const sd=OL.sig*Math.sqrt(h),m=OL.p0*Math.exp(OL.mu*h),q=z=>m*Math.exp(z*sd);return {m,lo:q(-1.2816),hi:q(1.2816),lo5:q(-.6745),hi5:q(.6745),sd}}
+function renderOutlook(){
+ if(!OL)return;
+ const rows=[];
+ for(let d=1;d<=7;d++){
+  const b=olBand(24*d),pUp=ncdf(OL.mu*24*d/b.sd);
+  const day=d===1?'Tomorrow':new Date(Date.now()+d*864e5).toLocaleDateString([],{weekday:'short',day:'2-digit',month:'short'});
+  rows.push(`<div class="row"><span><b>${day}</b><br>P(higher than now) ${(pUp*100).toFixed(0)}%</span><span style="text-align:right"><b>$${price(b.m)}</b><br>80%: $${price(b.lo)} – $${price(b.hi)}</span></div>`);
+ }
+ $('olRows').innerHTML=rows.join('');
+ $('olNote').innerHTML='Dark band: 50% chance price lands inside. Light band: 80%. Dashed line: median path with a small tilt (25% of the last 72h trend, capped). The bands matter more than the line: they widen because uncertainty grows with time.';
+ const p24=OL.in24/OL.n24*100,p7=OL.n7?OL.in7/OL.n7*100:0,h24=OL.hit24/OL.n24*100;
+ $('olCheck').innerHTML=`Backtest on the last ~40 days of hourly data (no hindsight): the 24h 80% band contained the real price <b>${p24.toFixed(0)}%</b> of the time (n=${OL.n24}); the 7-day band <b>${p7.toFixed(0)}%</b> (n=${OL.n7}, heavily overlapping, so treat as rough). The trend tilt picked the right 24h direction <b>${h24.toFixed(0)}%</b> of the time; near 50% means it adds no proven direction. Use the ranges, not the line. This is a statistical estimate, not financial advice.`;
+ drawOutlook();
+}
+function drawOutlook(){
+ if(!OL)return;
+ const cv=$('olCanvas'),dpr=window.devicePixelRatio||1,W=cv.clientWidth||320,H=cv.clientHeight||300;
+ cv.width=W*dpr;cv.height=H*dpr;
+ const x=cv.getContext('2d');x.setTransform(dpr,0,0,dpr,0,0);
+ x.fillStyle='#fff';x.fillRect(0,0,W,H);
+ const pad=58,B=22,T0=-48,T1=168,hs=OL.hist,end=olBand(168);
+ const lo0=Math.min(end.lo,...hs)*.998,hi0=Math.max(end.hi,...hs)*1.002;
+ const X=h=>(h-T0)/(T1-T0)*(W-pad),Y=p=>(hi0-p)/(hi0-lo0)*(H-B);
+ x.font='10px sans-serif';x.lineWidth=1;
+ for(let i=0;i<=5;i++){const p=lo0+(hi0-lo0)*i/5,yy=Y(p);x.strokeStyle='#edf0f2';x.beginPath();x.moveTo(0,yy);x.lineTo(W-pad,yy);x.stroke();x.fillStyle='#586873';x.fillText(p.toFixed(0),W-pad+4,yy+3)}
+ for(let d=0;d<=7;d++){const xx=X(24*d);x.strokeStyle=d===0?'#7a8790':'#edf0f2';x.beginPath();x.moveTo(xx,0);x.lineTo(xx,H-B);x.stroke();x.fillStyle='#586873';x.fillText(d===0?'NOW':'+'+d+'d',xx+2,H-6)}
+ const poly=(a,b,col)=>{x.beginPath();for(let h=0;h<=168;h+=6){const p=olBand(h)[a];h?x.lineTo(X(h),Y(p)):x.moveTo(X(h),Y(p))}for(let h=168;h>=0;h-=6)x.lineTo(X(h),Y(olBand(h)[b]));x.closePath();x.fillStyle=col;x.fill()};
+ poly('hi','lo','rgba(31,95,139,.12)');poly('hi5','lo5','rgba(31,95,139,.22)');
+ x.beginPath();hs.forEach((p,i)=>{const h=T0+i+1;i?x.lineTo(X(h-1),Y(p)):x.moveTo(X(h-1),Y(p))});
+ x.strokeStyle='#18232d';x.lineWidth=1.5;x.stroke();
+ x.beginPath();x.setLineDash([5,4]);for(let h=0;h<=168;h+=6){const p=olBand(h).m;h?x.lineTo(X(h),Y(p)):x.moveTo(X(h),Y(p))}
+ x.strokeStyle='#1f5f8b';x.lineWidth=1.5;x.stroke();x.setLineDash([]);
+}
+window.addEventListener('resize',()=>{if($('screen-outlook').classList.contains('active'))drawOutlook()});
+setInterval(()=>{if($('screen-outlook').classList.contains('active'))loadOutlook().catch(()=>{})},600000);
+
+/* ===== v14 WEEK ENGINE: 4 daily-data engines, walk-forward weights, locked 1d + 7d predictions ===== */
+let WK=null;
+function wSig(c,i){
+ const p=c[i],ema=n=>{const k=2/(n+1);let e=c[i-n*3];for(let j=i-n*3+1;j<=i;j++)e=c[j]*k+e*(1-k);return e};
+ const m=c.slice(i-19,i+1),mu=mean(m),sd=std(m)||1;
+ const lo=Math.min(...c.slice(i-59,i+1)),hi=Math.max(...c.slice(i-59,i+1));
+ return [
+  clamp((ema(10)-ema(30))/p/.05,-1,1),
+  clamp(Math.log(p/c[i-20])/.15,-1,1),
+  clamp(-(p-mu)/sd/2,-1,1),
+  hi>lo?clamp(-((p-lo)/(hi-lo)-.5)*2,-1,1):0
+ ];
+}
+function wRun(c,H){
+ const N=c.length,K=4,W=60,sig=[],y=[];
+ for(let i=120;i<N-H;i++){sig.push(wSig(c,i));y.push(Math.log(c[i+H]/c[i]))}
+ const n=y.length;
+ const wf=(lo,hi)=>{
+  const w=Array(K).fill(0);if(hi-lo+1<20)return w;
+  for(let k=0;k<K;k++){let h=0,m=0;for(let s=lo;s<=hi;s++){if(!sig[s][k])continue;m++;if(Math.sign(sig[s][k])===Math.sign(y[s]))h++}w[k]=m?Math.max(0,h/m-.5):0}
+  return w;
+ };
+ const eh=Array(K).fill(0),ec=Array(K).fill(0);let bh=0,bn=0;
+ for(let t=0;t<n;t++){
+  for(let k=0;k<K;k++)if(sig[t][k]){ec[k]++;if(Math.sign(sig[t][k])===Math.sign(y[t]))eh[k]++}
+  const w=wf(Math.max(0,t-H-W+1),t-H),tot=w.reduce((a,b)=>a+b,0);
+  const sc=tot?w.reduce((a,v,k)=>a+v*sig[t][k],0)/tot:0;
+  if(sc){bn++;if(Math.sign(sc)===Math.sign(y[t]))bh++}
+ }
+ const w=wf(Math.max(0,n-W),n-1),tot=w.reduce((a,b)=>a+b,0),sg=wSig(c,N-1);
+ const score=tot?w.reduce((a,v,k)=>a+v*sg[k],0)/tot:0;
+ const r=[];for(let i=N-30;i<N;i++)r.push(Math.log(c[i]/c[i-1]));
+ const sH=std(r)*Math.sqrt(H),hr=bn>=30?bh/bn:.5,shrink=clamp((hr-.5)*6+.25,.25,1);
+ const effN=Math.floor(bn/H),ok=effN>=20&&wilsonLB(Math.round(hr*effN),effN)>.5;
+ return {H,sig:sg,w:tot?w.map(v=>v/tot):w,eh:eh.map((v,k)=>ec[k]?v/ec[k]:.5),score,sH,ret:score*sH*.25*shrink,hr,bn,bh,effN,ok,shrink};
+}
+async function runWeek(){
+ const d=parseKlines(await api('/api/v3/klines?symbol=ETHUSDT&interval=1d&limit=400')).slice(0,-1).map(x=>x.close);
+ if(d.length<200)return;
+ WK={1:wRun(d,1),7:wRun(d,7),at:Date.now()};
+ if(OL){OL.mu=WK[7].ret/168;renderOutlook();$('olNote').innerHTML='Dark band: 50% chance price lands inside. Light band: 80%. Dashed line: the Week Engine\'s shrunk 7-day lean. The bands matter more than the line.'}
+ renderWeek();lockWeek();
+}
+const _lo=loadOutlook;
+loadOutlook=async function(){await _lo();await runWeek()};
+(function(){
+ const p=document.createElement('div');p.className='panel';
+ p.innerHTML='<div class="section-title">WEEK ENGINE (daily data, walk-forward tested)</div><div id="weekBody" class="notice">Loading daily history…</div>';
+ $('olRows').closest('.panel').before(p);
+ const bar=$('hbar');
+ if(bar)[['WEEK_1D','DAY'],['WEEK_7D','WEEK']].forEach(([f,l])=>{const b=document.createElement('button');b.className='chip';b.dataset.f=f;b.textContent=l;bar.appendChild(b)});
+})();
+function renderWeek(){
+ if(!WK)return;
+ const names=['W1 Trend','W2 Momentum','W3 Mean reversion','W4 Range position'];
+ const live=T=>{const a=hist.filter(h=>h.type===T&&Number.isFinite(h.actual));const ok=a.filter(h=>Math.sign(h.forecast-h.entry)===Math.sign(h.actual-h.entry)).length;return a.length?ok+'/'+a.length+' right':'none settled yet'};
+ $('weekBody').innerHTML=[1,7].map(H=>{
+  const r=WK[H],tgt=lastPrice*Math.exp(r.ret);
+  return `<div style="margin:6px 0 4px;font-size:11px;color:#18232d"><b>${H===1?'TOMORROW':'NEXT 7 DAYS'}</b>: lean <b class="${r.ret>=0?'green':'red'}">${r.ret>=0?'UP':'DOWN'} ${sp2(r.ret*100)}</b> → <b>$${price(tgt)}</b> ${r.ok?'<b class="green">✔ RELIABLE in backtest</b>':'<b class="warn">✖ UNPROVEN</b>'}</div>`+
+  names.map((n,k)=>`<div class="row"><span>${n}</span><b class="${r.sig[k]>.05?'green':r.sig[k]<-.05?'red':''}">${r.sig[k]>=0?'▲':'▼'} ${Math.abs(r.sig[k]*100).toFixed(0)} • hit ${(r.eh[k]*100).toFixed(0)}% • weight ${(r.w[k]*100).toFixed(0)}%</b></div>`).join('')+
+  `<div class="notice">Blend was right ${(r.hr*100).toFixed(0)}% of ${r.bn} backtest calls (about ${r.effN} independent). Skill gate ${(r.shrink*100).toFixed(0)}% of raw signal. Locked live record: ${live(H===1?'WEEK_1D':'WEEK_7D')}.</div>`;
+ }).join('')+'<div class="notice">Engine weights come only from past outcomes (no hindsight). An engine gets weight only if it beat 50% in its last 60 tests. If none did, the lean is zero. Predictions lock automatically while AUTO is ON and settle after 1 and 7 days.</div>';
+}
+async function lockWeek(){
+ if(!WK||settings.auto===false||!lastPrice||(typeof isStale==='function'&&isStale()))return;
+ const now=nowServer();
+ for(const [type,H] of [['WEEK_1D',1],['WEEK_7D',7]]){
+  if(active.some(p=>p.type===type&&!p.settled))continue;
+  const r=WK[H];
+  const p={id:uid(),type,createdAt:now,targetAt:now+H*864e5,entry:lastPrice,forecast:lastPrice*Math.exp(r.ret),confidence:Math.round(clamp(r.hr*100,40,80)),context:r.ok?'proven':'unproven',engines:Object.fromEntries(r.sig.map((s,k)=>['w'+(k+1),s*r.sH*.25]))};
+  active.push(p);
+  await dbPut(STORE.predictions,p);
+ }
+ renderActive();
+}
+setTimeout(()=>loadOutlook().catch(()=>{}),8000);
+setInterval(()=>loadOutlook().catch(()=>{}),1800000);
+setInterval(()=>{lockWeek();if($('screen-outlook').classList.contains('active'))renderWeek()},60000);
+
+/* ===== v15 ENGINE AUDIT: backtest replay, calibration, pruning, exact entry and settlement ===== */
+document.querySelector('.sub').textContent='CLASSIC MARKET TERMINAL • INTELLIGENCE v15';
+const BT_KEYS=['e1','e2','e3','e4','e5','e7','e8','e9','e10'],HMIN={'10m':10,'15m':15,'30m':30};
+async function fetch1m(pages){
+ let end=Date.now(),all=[];
+ for(let p=0;p<pages;p++){
+  const d=parseKlines(await api('/api/v3/klines?symbol=ETHUSDT&interval=1m&limit=1000&endTime='+end));
+  if(!d.length)break;all=d.concat(all);end=d[0].time*1000-1;
+ }
+ return all;
+}
+function regStats(x,y){
+ const n=x.length;if(n<30)return null;
+ const mx=mean(x),my=mean(y);let sxx=0,sxy=0,syy=0,hit=0,m=0;
+ for(let i=0;i<n;i++){const a=x[i]-mx,b=y[i]-my;sxx+=a*a;sxy+=a*b;syy+=b*b;if(x[i]){m++;if(Math.sign(x[i])===Math.sign(y[i]))hit++}}
+ if(!sxx||!syy)return null;
+ const ic=sxy/Math.sqrt(sxx*syy);
+ return {n,beta:sxy/sxx,ic,t:ic*Math.sqrt((n-2)/Math.max(1e-9,1-ic*ic)),hit:m?hit/m:.5,m};
+}
+const passes=a=>a&&a.beta>0&&a.tEff>=2.5;
+let auditBusy=false;
+function setAuditMsg(t){const e=$('auditBody');if(e)e.textContent=t}
+async function runAudit(){
+ if(auditBusy)return;auditBusy=true;
+ const saved=oneMin;
+ try{
+  setAuditMsg('Auditing engines on about 4 days of minute data…');
+  const all=await fetch1m(6),STEP=3,res={at:Date.now(),span:all.length};
+  for(const type of TYPES){
+   const H=HMIN[type],xs={},ys=[];BT_KEYS.forEach(k=>xs[k]=[]);
+   for(let i=100,c=0;i<all.length-H;i+=STEP,c++){
+    oneMin=all.slice(i-100,i+1);
+    const f=featurePack();if(!f)continue;
+    const e=engineForecasts(f,H,type);
+    ys.push(Math.log(all[i+H].close/all[i].close));
+    BT_KEYS.forEach(k=>xs[k].push(Number.isFinite(e[k])?e[k]:0));
+    if(c%120===0){oneMin=saved;await new Promise(r=>setTimeout(r))}
+   }
+   oneMin=saved;
+   const A={};
+   for(const k of BT_KEYS){const s=regStats(xs[k],ys);if(s)A[k]={...s,tEff:s.t*Math.sqrt(Math.min(1,STEP/H)),src:'backtest'}}
+   for(const k of KEYS.filter(k=>!BT_KEYS.includes(k))){
+    const hs=hist.filter(p=>p.type===type&&p.engines&&Number.isFinite(p.engines[k])&&p.engines[k]!==0&&Number.isFinite(p.actual));
+    const s=regStats(hs.map(p=>p.engines[k]),hs.map(p=>Math.log(p.actual/p.entry)));
+    if(s)A[k]={...s,tEff:s.t,src:'live'};
+   }
+   res[type]=A;
+  }
+  learner.audit=res;await saveLearner();renderAudit();
+ }catch(e){setAuditMsg('Audit failed: '+e.message)}
+ finally{oneMin=saved;auditBusy=false}
+}
+const _pi15=predictionImprover;
+predictionImprover=function(f,h,engines,type){
+ const base=_pi15(f,h,engines,type),A=learner.audit&&learner.audit[type];
+ if(!A)return base;
+ let s=0,w=0,used=0;
+ for(const k of KEYS){const a=A[k],v=engines[k];if(!passes(a)||!Number.isFinite(v))continue;s+=a.tEff*a.beta*.5*v;w+=a.tEff;used++}
+ const ret=w?clamp(s/w,-.035,.035):0;
+ return {...base,ret,base:ret,shrink:used?1:0,used};
+};
+const _mf15=makeForecast;
+makeForecast=function(m){
+ const r=_mf15(m);
+ if(r&&lastPrice&&Math.abs(lastPrice/r.entry-1)<.01){const k=lastPrice/r.entry;r.entry=lastPrice;r.target*=k}
+ return r;
+};
+async function settleDue(){
+ if(settling)return;
+ settling=true;
+ try{
+  const now=nowServer();
+  for(const p of active.filter(p=>!p.settled&&p.type!=='TARGET_PRICE'&&p.targetAt<=now)){
+   const t=p.targetAt;let px=null,at=t;
+   try{
+    const d=parseKlines(await api('/api/v3/klines?symbol=ETHUSDT&interval=1s&startTime='+(t-4000)+'&endTime='+t+'&limit=5'));
+    const c=[...d].reverse().find(c=>c.time*1000<=t);
+    if(c){px=c.open;at=c.time*1000}
+   }catch(e){}
+   if(px==null){
+    let obs=[...oneMin].reverse().find(c=>c.closeTime<=t&&c.closeTime>t-120000);
+    if(!obs){const d=await api('/api/v3/klines?symbol=ETHUSDT&interval=1m&startTime='+(t-180000)+'&endTime='+t+'&limit=5').catch(()=>[]);obs=parseKlines(d).reverse().find(c=>c.closeTime<=t)}
+    if(obs){px=obs.close;at=obs.closeTime}
+   }
+   if(px==null)continue;
+   await finish(p,px,at);
+  }
+  await settleTargets(now);
+  if(active.some(p=>p.settled)){active=active.filter(p=>!p.settled);await saveLearner();renderHistory()}
+  renderActive();
+  await ensureAuto();
+ }finally{settling=false}
+}
+(function(){
+ const p=document.createElement('div');p.className='panel';
+ p.innerHTML='<div class="section-title">ENGINE AUDIT (15m) <button id="auditBtn" class="primary" style="float:right;padding:4px 8px">RE-AUDIT</button></div><div id="auditBody" class="notice">Runs automatically after start.</div>';
+ $('screen-history').appendChild(p);$('auditBtn').onclick=()=>runAudit();
+})();
+function renderAudit(){
+ const A=learner.audit&&learner.audit['15m'];if(!A)return;
+ const rows=KEYS.map(k=>{
+  const a=A[k],nm=k.toUpperCase()+' '+(typeof NAMES!=='undefined'&&NAMES[k]||'');
+  if(!a)return `<div class="row"><span>${nm}</span><b>not enough data</b></div>`;
+  return `<div class="row"><span>${nm}</span><b class="${passes(a)?'green':''}">${passes(a)?'USED':'PRUNED'} • hit ${(a.hit*100).toFixed(0)}% • t ${a.tEff.toFixed(1)} • ${a.src}</b></div>`;
+ }).join('');
+ const used=KEYS.filter(k=>passes(A[k])).length;
+ $('auditBody').innerHTML=`<div style="color:#18232d;font-size:11px;margin-bottom:6px"><b>${used}</b> of ${KEYS.length} engines passed (positive slope and t ≥ 2.5). ${used?'Forecasts blend only these, calibrated to real outcomes.':'None passed, so forecasts equal the current price (no change), the honest baseline.'}<br>Tested on ${learner.audit.span} minutes, run ${fdt(learner.audit.at)}.</div>`+rows;
+}
+setTimeout(()=>{if(!learner.audit||Date.now()-learner.audit.at>216e5)runAudit();else renderAudit()},12000);
+setInterval(()=>{if(!learner.audit||Date.now()-learner.audit.at>216e5)runAudit()},600000);
+
+/* ===== v16 UI update: dark mode, sticky header, collapsible panels, countdown strip, bigger text ===== */
+document.querySelector('.sub').textContent='CLASSIC MARKET TERMINAL • v16';
+const uiCss=document.createElement('style');
+uiCss.textContent=`
+:root{--bg:#eef1f4;--card:#fff;--card2:#f7f8fa;--ink:#18232d;--line2:#e1e5e8;--acc:#e7f0f6}
+[data-theme=dark]{--bg:#0b1116;--card:#111b22;--card2:#0e171d;--ink:#e6eef2;--text:#e6eef2;--muted:#8fa3ad;--line:#26363f;--line2:#1d2b33;--acc:#17323f;--green:#3ddc84;--red:#ff6b6b;--blue:#6db6e8}
+html,body{background:var(--bg);color:var(--ink)}
+.app{padding-bottom:124px}
+.top{position:sticky;top:0;z-index:30;margin:0 -16px 12px;padding:10px 16px;background:var(--bg);border-bottom:1px solid var(--line)}
+.panel,.forecast,.chartbox,.nav{background:var(--card);border-color:var(--line)}
+.panel{border-radius:12px;padding:14px}.forecast{border-radius:10px}.chartbox{border-radius:12px}.nav{border-radius:14px}
+.engine{background:var(--card2);border-color:var(--line);border-radius:8px}
+.row{border-bottom-color:var(--line2);font-size:12px;padding:10px 0}
+.historyrow,.stats{border-color:var(--line2)}.historyrow{font-size:11px}
+.chip,.zoombtn,.zoomreset,.inputrow input{background:var(--card);color:var(--ink);border-color:var(--line)}
+.chip{font-size:12px;padding:9px 14px}
+.chip.active,.primary,.range button.active,.nav button.active{background:var(--acc);color:var(--blue)}
+.danger{background:transparent}
+.primary,.danger{min-height:36px;font-size:11px}
+.charthead,.range{background:var(--card2);border-color:var(--line);color:var(--muted)}
+.range button{color:var(--muted);font-size:11px;padding:9px 12px}.range button.active{color:var(--blue)}
+.price{color:var(--green)}.title,.val,.fprice{color:var(--ink)}.price{color:var(--green)}
+.section-title,.lab,.ename,.en,.notice,.fmeta,.ftitle,.sub,.ticker,.empty{color:var(--muted)}
+.section-title{font-size:10.5px;letter-spacing:.9px}.lab{font-size:10px}.val{font-size:12px}.ftitle{font-size:10px}.fmeta{font-size:10.5px}
+.notice{font-size:11px;line-height:1.65}.ename{font-size:9.5px}.en{font-size:8.5px}.ev{font-size:10.5px}.status{font-size:10px}
+.bar,.cdi i{background:var(--line2)}
+.nav button{color:var(--muted);font-size:10px;padding:10px 2px}.navicon{font-size:16px}
+#chart{height:min(58vh,440px)}
+.panel.collapsed>*:not(.section-title){display:none}
+.section-title.ct{cursor:pointer;user-select:none}
+.section-title.ct::after{content:'▾';float:right;opacity:.6}
+.panel.collapsed .section-title.ct::after{content:'▸'}
+.panel.collapsed .section-title{margin-bottom:0}
+#countdown{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:12px 14px}
+.cdi{display:flex;flex-direction:column;gap:2px}.cdi span{font-size:10px;color:var(--muted)}.cdi b{font-size:18px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.cdi i{display:block;height:4px;border-radius:4px;overflow:hidden;margin-top:4px}.cdi u{display:block;height:100%;background:var(--blue);text-decoration:none}
+[data-theme=dark] #olCanvas{filter:invert(1) hue-rotate(180deg)}
+[data-theme=dark] [style*="color:#18232d"]{color:var(--ink)!important}
+[data-theme=dark] [data-row]{border-bottom-color:var(--line2)!important}
+`;
+document.head.appendChild(uiCss);
+
+let theme='light';try{theme=localStorage.theme||'light'}catch(e){}
+const themeBtn=mk('themeBtn');addRow('Theme',themeBtn);
+function applyTheme(){
+ const dark=theme==='dark';
+ document.documentElement.dataset.theme=dark?'dark':'light';
+ themeBtn.textContent=dark?'DARK':'LIGHT';
+ if(chart&&chart.applyOptions&&window.LightweightCharts){
+  const bg=dark?'#111b22':'#ffffff',tx=dark?'#9fb3bd':'#586873',gr=dark?'#1d2b33':'#edf0f2',bd=dark?'#26363f':'#cbd3da';
+  chart.applyOptions({layout:{background:{color:bg},textColor:tx},grid:{vertLines:{color:gr},horzLines:{color:gr}},rightPriceScale:{borderColor:bd},timeScale:{borderColor:bd}});
+ }
+ if(typeof drawOutlook==='function')try{drawOutlook()}catch(e){}
+}
+themeBtn.onclick=()=>{theme=theme==='dark'?'light':'dark';try{localStorage.theme=theme}catch(e){}applyTheme()};
+applyTheme();
+const _thm=setInterval(()=>{if(chart&&chart.applyOptions){clearInterval(_thm);applyTheme()}},600);
+
+(function(){
+ let st={};try{st=JSON.parse(localStorage.collapsed||'null')||{}}catch(e){}
+ const def=['MARKET INTELLIGENCE','ADVANCED SIGNALS','PREDICTION IMPROVER','EXTERNAL INFORMATION','MODEL STATUS'];
+ document.querySelectorAll('#screen-chart .panel').forEach(p=>{
+  const t=p.querySelector('.section-title');if(!t||t.querySelector('button'))return;
+  const key=t.textContent.trim().slice(0,24);
+  if(st[key]===undefined&&def.includes(key))st[key]=true;
+  t.classList.add('ct');p.classList.toggle('collapsed',!!st[key]);
+  t.addEventListener('click',()=>{const c=p.classList.toggle('collapsed');st[key]=c;try{localStorage.collapsed=JSON.stringify(st)}catch(e){}});
+ });
+})();
+
+const cd=document.createElement('div');cd.id='countdown';cd.className='panel';
+$('screen-chart').children[0].after(cd);
+function tickCD(){
+ cd.innerHTML=TYPES.map(t=>{
+  const p=active.find(x=>x.type===t&&!x.settled),m=Number(t.slice(0,-1));
+  if(!p)return `<div class="cdi"><span>${t} settles in</span><b>${settings.auto===false?'OFF':'--:--'}</b><i></i></div>`;
+  const rem=Math.max(0,p.targetAt-nowServer()),pct=clamp(100-rem/(m*600),0,100);
+  return `<div class="cdi"><span>${t} settles in</span><b>${Math.floor(rem/60000)}:${String(Math.floor(rem/1000)%60).padStart(2,'0')}</b><i><u style="width:${pct}%"></u></i></div>`;
+ }).join('');
+}
+tickCD();setInterval(tickCD,1000);
+
+(function(){
+ const el=$('status'),pill=el.parentNode,dot=pill.querySelector('.dot');
+ new MutationObserver(()=>{
+  const t=el.textContent,bad=/OFFLINE|ERROR/.test(t),warn=/STALE|RECONNECT|LOADING|STARTING/.test(t);
+  const col=bad?'#c62828':warn?'#b07a00':'';
+  pill.style.color=col;pill.style.borderColor=col;if(dot)dot.style.background=col||'';
+ }).observe(el,{childList:true,characterData:true,subtree:true});
+})();
+
 boot();
 </script>
 </body>
