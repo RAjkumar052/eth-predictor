@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<title>ETH/USDT • Classic Market Terminal v6</title>
+<title>ETH/USDT • Classic Market Terminal v7</title>
 <style>
 :root{--green:#087f3e;--red:#c62828;--blue:#1f5f8b;--text:#18232d;--muted:#66737d;--line:#cbd3da}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -51,7 +51,7 @@ button,input{font:inherit}button{cursor:pointer}
 .engines{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
 .engine{min-width:0;text-align:center;border:1px solid #d1d8dd;border-radius:4px;padding:7px 3px;background:#fafbfc}
 .en{font-size:7px;color:#7a8790}.ename{font-size:8px;color:#5e6c75;min-height:22px;margin-top:4px}.ev{font-size:9px;margin-top:4px}
-.row{display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid #e1e5e8;font-size:10px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #e1e5e8;font-size:10px}
 .row:last-child{border:0}
 .inputrow{display:flex;gap:6px}
 .inputrow input{min-width:0;flex:1;background:#fff;color:var(--text);border:1px solid var(--line);border-radius:4px;padding:9px;font-size:11px}
@@ -71,7 +71,7 @@ button,input{font:inherit}button{cursor:pointer}
 <body>
 <div class="app">
 <header class="top">
- <div class="brand"><div class="logo">◆</div><div><div class="title">ETH/USDT</div><div class="sub">CLASSIC MARKET TERMINAL • INTELLIGENCE v6</div></div></div>
+ <div class="brand"><div class="logo">◆</div><div><div class="title">ETH/USDT</div><div class="sub">CLASSIC MARKET TERMINAL • INTELLIGENCE v7</div></div></div>
  <div class="status"><span class="dot"></span><span id="status">STARTING</span></div>
 </header>
 
@@ -107,14 +107,14 @@ button,input{font:inherit}button{cursor:pointer}
  </div>
 
  <div class="panel">
-  <div class="section-title">LOCKED AUTOMATIC PREDICTIONS</div>
+  <div class="section-title" style="display:flex;justify-content:space-between;align-items:center"><span>LOCKED AUTOMATIC PREDICTIONS</span><button id="autoToggle" class="primary">AUTO: ON</button></div>
   <div class="forecast-grid">
-   <div class="forecast"><div class="ftitle">10 MINUTES</div><div id="f10" class="fprice">--</div><div id="f10meta" class="fmeta">Waiting</div><div class="bar"><i id="f10bar" style="width:0%"></i></div></div>
-   <div class="forecast"><div class="ftitle">15 MINUTES</div><div id="f15" class="fprice">--</div><div id="f15meta" class="fmeta">Waiting</div><div class="bar"><i id="f15bar" style="width:0%"></i></div></div>
-   <div class="forecast"><div class="ftitle">30 MINUTES</div><div id="f30" class="fprice">--</div><div id="f30meta" class="fmeta">Waiting</div><div class="bar"><i id="f30bar" style="width:0%"></i></div></div>
+   <div class="forecast"><div class="ftitle">10 MINUTES</div><div id="f10" class="fprice">--</div><div id="f10meta" class="fmeta">Waiting</div><div class="bar"><i id="f10bar" style="width:0%"></i></div><div id="f10rng" class="fmeta"></div></div>
+   <div class="forecast"><div class="ftitle">15 MINUTES</div><div id="f15" class="fprice">--</div><div id="f15meta" class="fmeta">Waiting</div><div class="bar"><i id="f15bar" style="width:0%"></i></div><div id="f15rng" class="fmeta"></div></div>
+   <div class="forecast"><div class="ftitle">30 MINUTES</div><div id="f30" class="fprice">--</div><div id="f30meta" class="fmeta">Waiting</div><div class="bar"><i id="f30bar" style="width:0%"></i></div><div id="f30rng" class="fmeta"></div></div>
    <div class="forecast violet"><div class="ftitle">NEXT TARGET</div><div id="nextForecast" class="fprice">--</div><div id="nextMeta" class="fmeta">Waiting</div><div class="bar"><i id="nextBar" style="width:0%"></i></div></div>
   </div>
-  <div class="notice">The bar shows P(direction): the recent measured direction hit rate, shrunk toward 50%. It is not a price-accuracy guarantee.</div>
+  <div class="notice">P(dir) is the recent measured direction hit rate, shrunk toward 50%. It is not a price-accuracy guarantee. AUTO OFF stops new locks; ones already locked still settle.</div>
  </div>
 
  <div class="panel">
@@ -131,7 +131,10 @@ button,input{font:inherit}button{cursor:pointer}
    <div class="engine"><div class="en">E9</div><div class="ename">Market Structure</div><div id="e9" class="ev">--</div></div>
    <div class="engine"><div class="en">E10</div><div class="ename">Volatility</div><div id="e10" class="ev">--</div></div>
    <div class="engine"><div class="en">E11</div><div class="ename">BTC Lead</div><div id="e11" class="ev">--</div></div>
-   <div class="engine"><div class="en">E12</div><div class="ename">Social (n/a)</div><div id="e12" class="ev">--</div></div>
+   <div class="engine"><div class="en">E12</div><div class="ename">News & Social</div><div id="e12" class="ev">--</div></div>
+   <div class="engine"><div class="en">E13</div><div class="ename">Order Book</div><div id="e13" class="ev">--</div></div>
+   <div class="engine"><div class="en">E14</div><div class="ename">Derivatives</div><div id="e14" class="ev">--</div></div>
+   <div class="engine"><div class="en">E15</div><div class="ename">Multi-TF</div><div id="e15" class="ev">--</div></div>
   </div>
  </div>
 
@@ -147,6 +150,15 @@ button,input{font:inherit}button{cursor:pointer}
   <div class="row"><span>Volume intelligence</span><b id="flowDirection">--</b></div>
  </div>
 
+ <div class="panel">
+  <div class="section-title">ADVANCED SIGNALS</div>
+  <div class="row"><span>Order-book imbalance (±0.5%)</span><b id="advBook">--</b></div>
+  <div class="row"><span>Funding rate</span><b id="advFund">--</b></div>
+  <div class="row"><span>Long/short accounts</span><b id="advLsr">--</b></div>
+  <div class="row"><span>Trend 5m / 15m / 1h</span><b id="advMtf">--</b></div>
+  <div class="row"><span>Engine agreement (15m)</span><b id="advAgree">--</b></div>
+ </div>
+
  <div class="panel"><div class="section-title">PREDICTION IMPROVER</div><div id="improverText" class="notice">Waiting for all engines.</div></div>
 
  <div class="panel">
@@ -155,6 +167,7 @@ button,input{font:inherit}button{cursor:pointer}
   <div class="row"><span>Social influence</span><b id="socialState">UNAVAILABLE</b></div>
   <div class="row"><span>BTC confirmation</span><b id="btcState">--</b></div>
   <div class="row"><span>News freshness</span><b id="newsFreshness">UNAVAILABLE</b></div>
+  <div id="headlines" class="notice"></div>
  </div>
 
  <div class="panel"><div class="section-title">MODEL STATUS</div>
@@ -163,14 +176,13 @@ button,input{font:inherit}button{cursor:pointer}
 
 <section id="screen-predict" class="screen">
  <div class="panel">
-  <div class="section-title">CUSTOM TIME PREDICTION</div>
+  <div class="section-title">CUSTOM TIME PREDICTION (multiple allowed)</div>
   <div class="inputrow"><input id="customTime" type="datetime-local"><button id="customBtn" class="primary">LOCK</button></div>
   <div id="customMsg" class="notice"></div>
  </div>
  <div class="panel">
-  <div class="section-title">TARGET PRICE PREDICTION</div>
-  <div class="inputrow"><input id="targetPrice" inputmode="decimal" placeholder="Target price"></div>
-  <div class="inputrow" style="margin-top:6px"><input id="targetDeadline" type="datetime-local"><button id="targetBtn" class="primary">LOCK</button></div>
+  <div class="section-title">TARGET PRICE → WHEN WILL IT REACH? (multiple allowed)</div>
+  <div class="inputrow"><input id="targetPrice" inputmode="decimal" placeholder="Target price (e.g. 2700)"><button id="targetBtn" class="primary">LOCK</button></div>
   <div id="targetMsg" class="notice"></div>
  </div>
  <div class="panel"><div class="section-title">ACTIVE PREDICTIONS</div><div id="activePredictions"></div></div>
@@ -202,8 +214,8 @@ button,input{font:inherit}button{cursor:pointer}
   <button id="exportMemory" class="primary">EXPORT MEMORY</button>
   <button id="reset" class="danger">RESET ALL DATA</button>
  </div>
- <div class="panel"><div class="section-title">INTELLIGENCE v6</div>
-  <div class="notice">12 engines feed the Prediction Improver. v6 adds: RSI and order-flow features, a cross-market BTC lead engine, regime-aware engine weights scored by error relative to volatility, a direction-bonus in learning, a skill gate that shrinks forecasts toward the current price when measured direction skill is near 50%, calibrated P(direction) instead of an invented confidence, and first-touch settlement for target-price predictions.</div></div>
+ <div class="panel"><div class="section-title">INTELLIGENCE v7</div>
+  <div class="notice">15 engines feed the Prediction Improver, including BTC lead, news and social sentiment, order-book imbalance, derivatives positioning and multi-timeframe trend. Engine weights are regime-aware and scored by error relative to volatility. A skill gate shrinks forecasts toward the current price when measured direction skill is near 50%. Target prices use a volatility-based first-passage estimate with no expiry.</div></div>
  <div class="panel"><div class="section-title">DATA POLICY</div>
   <div class="notice">Unavailable external information is shown as unavailable. The app does not invent social, news, order-flow or market values.</div></div>
  <div class="footer">ETH/USDT PREDICTOR • REAL DATA • LOCAL LEARNING</div>
@@ -220,14 +232,15 @@ button,input{font:inherit}button{cursor:pointer}
 <script>
 let chart,volume,cs;
 let candles=[],oneMin=[],lastPrice=0,tf='1m',range='1d';
-let active=[],hist=[],learner=null,settings={volume:true};
+let active=[],hist=[],learner=null,settings={volume:true,auto:true};
 let ws=null,wsTimer=null,settling=false,needFit=true;
-let external={btc:null};
+let external={btc:null,news:null,reddit:null,fg:null,newest:null,heads:[],sentAt:0};
+const adv={depth:null,deriv:null,mtf:null};
 let serverOffset=0;
 
 const STORE={predictions:'predictions',history:'history',meta:'meta'};
 const TYPES=['10m','15m','30m'];
-const KEYS=['e1','e2','e3','e4','e5','e6','e7','e8','e9','e10','e11','e12'];
+const KEYS=['e1','e2','e3','e4','e5','e6','e7','e8','e9','e10','e11','e12','e13','e14','e15'];
 const NIN=15;
 const API=['https://api.binance.com','https://data-api.binance.vision'];
 let apiBase=0;
@@ -241,10 +254,12 @@ const uid=()=>'p_'+Date.now()+'_'+Math.random().toString(36).slice(2);
 const nowServer=()=>Date.now()+serverOffset;
 const typeOf=m=>m<=10?'10m':m<=15?'15m':'30m';
 const hhmm=t=>new Date(t).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const sgn=x=>(x>=0?'+':'')+x.toFixed(2);
+function fmtDur(m){return m<90?Math.round(m)+'m':m<2880?(m/60).toFixed(1)+'h':m<172800?(m/1440).toFixed(1)+'d':(m/525600).toFixed(1)+'y'}
 
 function setStatus(t,c){$('status').textContent=t;$('status').className=c||''}
 function setChartStatus(t){$('chartStatus').textContent=t}
-
 function fetchJSON(url){
  return fetch(url,{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json()});
 }
@@ -277,6 +292,7 @@ function tx(store,mode,fn){
  });
 }
 const dbPut=(s,v)=>tx(s,'readwrite',o=>o.put(v)).catch(e=>console.warn('dbPut',e));
+const dbDel=(s,id)=>tx(s,'readwrite',o=>o.delete(id)).catch(()=>{});
 const dbAll=s=>tx(s,'readonly',o=>o.getAll()).then(r=>r||[]);
 const dbClear=s=>tx(s,'readwrite',o=>o.clear());
 
@@ -295,11 +311,11 @@ const saveState=()=>dbPut(STORE.meta,{id:'settings',data:settings});
 
 /* ---------- learner ---------- */
 function defaultLearner(){
- return {version:6,samples:0,global:Object.fromEntries(KEYS.map(k=>[k,1])),contexts:{},neural:{'10m':null,'15m':null,'30m':null},recentErrors:[],engineErrors:{},lastUpdate:0};
+ return {version:7,samples:0,global:Object.fromEntries(KEYS.map(k=>[k,1])),contexts:{},neural:{'10m':null,'15m':null,'30m':null},recentErrors:[],engineErrors:{},lastUpdate:0};
 }
 function migrateLearner(old){
  const L=Object.assign(defaultLearner(),old||{});
- L.version=6;
+ L.version=7;
  L.global=Object.assign(defaultLearner().global,L.global||{});
  L.contexts=L.contexts||{};L.recentErrors=L.recentErrors||[];L.engineErrors=L.engineErrors||{};
  L.neural=L.neural||{};
@@ -343,6 +359,59 @@ function initChart(){
  volume=chart.addHistogramSeries({priceFormat:{type:'volume'},priceScaleId:'vol',color:'#9bb4c2'});
  chart.priceScale('vol').applyOptions({scaleMargins:{top:.78,bottom:0}});
  new ResizeObserver(()=>{chart.resize(el.clientWidth,el.clientHeight)}).observe(el);
+}
+function miniChart(el){
+ const cv=document.createElement('canvas');
+ cv.style.cssText='width:100%;height:100%;display:block;touch-action:none';
+ el.appendChild(cv);
+ const ctx=cv.getContext('2d');
+ let data=[],vm={},vis=150,off=0,showVol=true,raf=0,bw=6;
+ const sched=()=>{if(!raf)raf=requestAnimationFrame(()=>{raf=0;draw()})};
+ function draw(){
+  const dpr=window.devicePixelRatio||1,W=el.clientWidth||300,H=el.clientHeight||300;
+  cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);
+  if(!data.length)return;
+  off=clamp(off,0,Math.max(0,data.length-10));
+  const end=data.length-off,start=Math.max(0,end-Math.min(vis,data.length)),sl=data.slice(start,end);
+  const pad=58,ch=H-22;
+  let hi=-1e18,lo=1e18,vmax=0;
+  for(const c of sl){hi=Math.max(hi,c.high);lo=Math.min(lo,c.low);vmax=Math.max(vmax,vm[c.time]||0)}
+  const mg=(hi-lo)*.06||1;hi+=mg;lo-=mg;
+  const y=p=>(hi-p)/(hi-lo)*ch;
+  bw=(W-pad)/sl.length;
+  ctx.font='10px sans-serif';ctx.lineWidth=1;
+  for(let i=0;i<=5;i++){
+   const p=lo+(hi-lo)*i/5,yy=y(p);
+   ctx.strokeStyle='#edf0f2';ctx.beginPath();ctx.moveTo(0,yy);ctx.lineTo(W-pad,yy);ctx.stroke();
+   ctx.fillStyle='#586873';ctx.fillText(p.toFixed(2),W-pad+4,yy+3);
+  }
+  sl.forEach((c,i)=>{
+   const x=i*bw+bw/2,up=c.close>=c.open,col=up?'#087f3e':'#c62828';
+   if(showVol&&vmax){const vh=(vm[c.time]||0)/vmax*ch*.2;ctx.fillStyle=up?'#8fbba4':'#d59aa3';ctx.fillRect(x-bw*.4,ch-vh,bw*.8,vh)}
+   ctx.strokeStyle=col;ctx.fillStyle=col;
+   ctx.beginPath();ctx.moveTo(x,y(c.high));ctx.lineTo(x,y(c.low));ctx.stroke();
+   const t=y(Math.max(c.open,c.close)),b=y(Math.min(c.open,c.close));
+   ctx.fillRect(x-bw*.35,t,Math.max(bw*.7,1),Math.max(b-t,1));
+  });
+  ctx.fillStyle='#586873';
+  for(let i=0;i<4;i++){const j=Math.floor(sl.length*i/4);if(sl[j])ctx.fillText(hhmm(sl[j].time*1000),j*bw,H-6)}
+  const last=data.at(-1).close,ly=y(last);
+  ctx.fillStyle='#1f5f8b';ctx.fillRect(W-pad,ly-8,pad,16);ctx.fillStyle='#fff';ctx.fillText(last.toFixed(2),W-pad+4,ly+3);
+ }
+ let dragX=null;
+ cv.addEventListener('pointerdown',e=>{dragX=e.clientX;cv.setPointerCapture(e.pointerId)});
+ cv.addEventListener('pointermove',e=>{if(dragX===null)return;const d=Math.round((e.clientX-dragX)/Math.max(bw,1));if(d){off+=d;dragX=e.clientX;sched()}});
+ cv.addEventListener('pointerup',()=>{dragX=null});
+ new ResizeObserver(sched).observe(el);
+ return {
+  chart:{resize:sched,timeScale:()=>({
+   fitContent:()=>{vis=Math.min(Math.max(data.length,10),180);off=0;sched()},
+   getVisibleLogicalRange:()=>({from:0,to:vis}),
+   setVisibleLogicalRange:r=>{vis=clamp(Math.round(r.to-r.from),10,Math.max(10,data.length));sched()}})},
+  cs:{setData:a=>{data=a.slice();sched()},update:c=>{const l=data[data.length-1];if(l&&l.time===c.time)data[data.length-1]=c;else if(!l||c.time>l.time)data.push(c);sched()}},
+  volume:{setData:a=>{vm={};a.forEach(v=>vm[v.time]=v.value);sched()},update:v=>{vm[v.time]=v.value;sched()},applyOptions:o=>{if('visible' in o){showVol=o.visible;sched()}}}
+ };
 }
 
 /* ---------- market data ---------- */
@@ -417,7 +486,63 @@ function connectWS(){
  ws.onerror=()=>{try{ws.close()}catch(e){}};
 }
 
-/* ---------- external (real data only) ---------- */
+/* ---------- external: BTC, news, social (real data only) ---------- */
+const POSW=/\b(surge|surges|rally|rallies|soar|soars|jump|jumps|gain|gains|bullish|record|approve|approved|approval|adoption|upgrade|inflows?|breakout|rise|rises|rising|growth|partnership|launch|recover|recovers|accumulat\w*|spike)\b/gi;
+const NEGW=/\b(crash|crashes|plunge|plunges|drop|drops|fall|falls|falling|bearish|hack|hacked|exploit|ban|bans|lawsuit|sues?|outflows?|sell-?off|liquidat\w*|fraud|scam|decline|declines|loss|losses|slump|fear|dump|probe|halt|warning)\b/gi;
+function titleScore(t){const p=(t.match(POSW)||[]).length,n=(t.match(NEGW)||[]).length;return p+n?(p-n)/(p+n):0}
+function sentimentOf(items){
+ const now=Date.now();let s=0,w=0;
+ for(const it of items){
+  const age=(now-it.ts)/36e5;
+  if(age<0||age>12)continue;
+  const wt=Math.exp(-age/3)*it.w*(/\b(eth|ether|ethereum)\b/i.test(it.t)?1.5:1);
+  s+=titleScore(it.t)*wt;w+=wt;
+ }
+ return w?{bias:clamp(s/w*Math.min(1,w/2),-1,1),n:items.length}:null;
+}
+async function fetchNews(){
+ const feeds=['https://www.coindesk.com/arc/outboundfeeds/rss/','https://cointelegraph.com/rss'];
+ const items=[];
+ for(const f of feeds){
+  try{
+   const d=await fetchJSON('https://api.rss2json.com/v1/api.json?rss_url='+encodeURIComponent(f));
+   for(const i of d.items||[])items.push({t:i.title||'',ts:Date.parse((i.pubDate||'').replace(' ','T')+'Z'),w:1});
+  }catch(e){}
+ }
+ return items.filter(i=>i.t&&Number.isFinite(i.ts));
+}
+async function fetchReddit(){
+ try{
+  const d=await fetchJSON('https://www.reddit.com/r/ethereum/new.json?limit=30');
+  return d.data.children.map(c=>({t:c.data.title,ts:c.data.created_utc*1000,w:Math.log(2+Math.max(0,c.data.score||0))}));
+ }catch(e){return []}
+}
+async function fetchFG(){
+ try{const d=await fetchJSON('https://api.alternative.me/fng/?limit=1');const x=d.data[0];return {value:+x.value,label:x.value_classification}}catch(e){return null}
+}
+function renderExternal(){
+ const n=external.news,r=external.reddit,g=external.fg;
+ const set=(id,txt,v)=>{const el=$(id);el.textContent=txt;el.className=v>.05?'green':v<-.05?'red':''};
+ if(n)set('internetState',sgn(n.bias)+' • '+n.n+' headlines',n.bias);else set('internetState','UNAVAILABLE',0);
+ const parts=[];
+ if(g)parts.push('F&G '+g.value+' '+g.label);
+ if(r)parts.push('Reddit '+sgn(r.bias));
+ set('socialState',parts.length?parts.join(' • '):'UNAVAILABLE',r?r.bias:0);
+ if(external.newest){const m=Math.round((Date.now()-external.newest)/60000);set('newsFreshness',m<90?m+'m ago':(m/60).toFixed(1)+'h ago',0)}
+ else set('newsFreshness','UNAVAILABLE',0);
+ $('headlines').innerHTML=(external.heads||[]).map(h=>'• '+esc(h.t)+' ('+sgn(titleScore(h.t))+')').join('<br>');
+}
+async function refreshSentiment(){
+ if(Date.now()-external.sentAt<300000)return;
+ external.sentAt=Date.now();
+ const [news,red,fg]=await Promise.all([fetchNews(),fetchReddit(),fetchFG()]);
+ external.news=sentimentOf(news);
+ external.reddit=sentimentOf(red);
+ external.fg=fg;
+ external.newest=news.length?Math.max(...news.map(i=>i.ts)):null;
+ external.heads=[...news].sort((a,b)=>b.ts-a.ts).slice(0,3);
+ renderExternal();
+}
 async function refreshExternalInfluence(){
  try{
   const d=parseKlines(await api('/api/v3/klines?symbol=BTCUSDT&interval=1m&limit=30'));
@@ -429,6 +554,51 @@ async function refreshExternalInfluence(){
    $('btcState').className=external.btc.ret15>=0?'green':'red';
   }
  }catch(e){$('btcState').textContent='UNAVAILABLE'}
+ refreshSentiment().catch(()=>{});
+}
+
+/* ---------- advanced signals ---------- */
+async function refreshDepth(){
+ try{
+  const d=await api('/api/v3/depth?symbol=ETHUSDT&limit=500');
+  const bids=d.bids.map(x=>[+x[0],+x[1]]),asks=d.asks.map(x=>[+x[0],+x[1]]);
+  const mid=(bids[0][0]+asks[0][0])/2,band=mid*.005;
+  const B=bids.filter(x=>x[0]>=mid-band).reduce((a,x)=>a+x[1],0);
+  const A=asks.filter(x=>x[0]<=mid+band).reduce((a,x)=>a+x[1],0);
+  adv.depth={imb:(B-A)/((B+A)||1),at:Date.now()};
+ }catch(e){}
+}
+async function refreshDeriv(){
+ try{
+  const F='https://fapi.binance.com';
+  const [pi,ls]=await Promise.all([fetchJSON(F+'/fapi/v1/premiumIndex?symbol=ETHUSDT'),fetchJSON(F+'/futures/data/globalLongShortAccountRatio?symbol=ETHUSDT&period=5m&limit=1')]);
+  adv.deriv={fund:+pi.lastFundingRate,basis:(+pi.markPrice-+pi.indexPrice)/+pi.indexPrice,lsr:+(ls[0]&&ls[0].longShortRatio)||1,at:Date.now()};
+ }catch(e){}
+}
+async function refreshMTF(){
+ try{
+  const ema=(a,n)=>{const k=2/(n+1);let e=a[0];for(const x of a)e=x*k+e*(1-k);return e};
+  const out={};
+  for(const iv of ['5m','15m','1h']){
+   const c=parseKlines(await api('/api/v3/klines?symbol=ETHUSDT&interval='+iv+'&limit=60')).slice(0,-1).map(x=>x.close);
+   out[iv]=(ema(c,8)-ema(c,21))/c.at(-1);
+  }
+  adv.mtf={...out,at:Date.now()};
+ }catch(e){}
+}
+function renderAdvanced(){
+ const d=adv.depth,v=adv.deriv,m=adv.mtf;
+ const set=(id,t,x)=>{const el=$(id);el.textContent=t;el.className=x>0?'green':x<0?'red':''};
+ d?set('advBook',(d.imb>=0?'+':'')+(d.imb*100).toFixed(1)+'% bids',d.imb):set('advBook','UNAVAILABLE',0);
+ v?set('advFund',(v.fund*100).toFixed(4)+'% • basis '+(v.basis*100).toFixed(3)+'%',-v.fund):set('advFund','UNAVAILABLE',0);
+ v?set('advLsr',v.lsr.toFixed(2)+(v.lsr>1.3?' crowded long':v.lsr<.8?' crowded short':' balanced'),0):set('advLsr','UNAVAILABLE',0);
+ m?set('advMtf',['5m','15m','1h'].map(k=>m[k]>0?'▲':'▼').join(' '),m['5m']+m['15m']+m['1h']):set('advMtf','UNAVAILABLE',0);
+ const f=featurePack();
+ if(f){
+  const e=engineForecasts(f,15,'15m'),vals=KEYS.map(k=>e[k]).filter(Number.isFinite),net=mean(vals);
+  const agree=vals.filter(x=>Math.sign(x)===Math.sign(net)).length;
+  set('advAgree',agree+'/'+vals.length+(net>=0?' up':' down'),net);
+ }
 }
 
 /* ---------- features ---------- */
@@ -497,7 +667,7 @@ function neuralTrain(m,x,actualReturn,h){
 
 /* ---------- engines + improver ---------- */
 function engineForecasts(f,minutes,type){
- const h=minutes/15,P=f.price,dist=P-f.vwap;
+ const h=minutes/15,P=f.price,dist=P-f.vwap,now=Date.now();
  const e1=clamp(f.longMomentum*h*.9+f.mediumMomentum*h*.5,-.025,.025);
  const e2=clamp(-dist/P*.35+f.mediumMomentum*.35,-.025,.025);
  const e3=clamp(f.trend*.35+(f.buyPct-.5)*.06+f.volAccel*.012,-.025,.025);
@@ -511,11 +681,23 @@ function engineForecasts(f,minutes,type){
  e9=clamp(e9*h,-.03,.03);
  const e10=clamp(f.momentum*h*(1+f.recentVol*80),-.035,.035);
  let e11=null;
- if(external.btc&&Date.now()-external.btc.at<180000){
+ if(external.btc&&now-external.btc.at<180000){
   const eth15=f.closes.at(-1)/f.closes.at(-16)-1;
   e11=clamp((external.btc.ret15-eth15)*.25*Math.min(h,2),-.02,.02);
  }
- return {e1,e2,e3,e4,e5,e6,e7,e8,e9,e10,e11,e12:null};
+ let e12=null;
+ if(now-external.sentAt<900000){
+  const parts=[];
+  if(external.news)parts.push(external.news.bias);
+  if(external.reddit)parts.push(external.reddit.bias);
+  if(parts.length)e12=clamp(mean(parts)*.0012*Math.min(h,2),-.008,.008);
+ }
+ const e13=adv.depth&&now-adv.depth.at<60000?clamp(adv.depth.imb*.0008*Math.min(h,2),-.003,.003):null;
+ const d=adv.deriv;
+ const e14=d&&now-d.at<300000?clamp(-(clamp(d.fund/.0003,-2,2)*.0005+(d.lsr-1)*.0006)*Math.min(h,2),-.006,.006):null;
+ const q=adv.mtf;
+ const e15=q&&now-q.at<300000?clamp((q['5m']*.2+q['15m']*.35+q['1h']*.45)*.8*Math.min(h,3),-.01,.01):null;
+ return {e1,e2,e3,e4,e5,e6,e7,e8,e9,e10,e11,e12,e13,e14,e15};
 }
 function skillOf(type){
  const hs=hist.filter(p=>p.type===type&&Number.isFinite(p.actual)).slice(-60);
@@ -549,6 +731,20 @@ function makeForecast(minutes){
  return {entry:f.price,target:f.price*(1+imp.ret),ret:imp.ret,
   confidence:Math.round(clamp(imp.skill.p*100,40,80)),skillN:imp.skill.n,
   engines,features:f,context:imp.regime,learnerWeights:imp.weights,disagreement:imp.disagreement};
+}
+
+/* ---------- target-price ETA (first-passage estimate) ---------- */
+function ncdf(x){const t=1/(1+.2316419*Math.abs(x)),d=.3989423*Math.exp(-x*x/2),p=d*t*(.3193815+t*(-.3565638+t*(1.781478+t*(-1.821256+t*1.330274))));return x>0?1-p:p}
+function sigmaPerMin(){
+ const c=oneMin.map(x=>x.close);if(c.length<60)return null;
+ const r=[];for(let i=1;i<c.length;i++)r.push(Math.log(c[i]/c[i-1]));
+ return std(r);
+}
+function etaFor(target,pn){
+ const s=sigmaPerMin();if(!s||!pn)return null;
+ const d=Math.abs(Math.log(target/pn));
+ const P=m=>Math.min(1,2*(1-ncdf(d/(s*Math.sqrt(m)))));
+ return {T:Math.pow(d/(.6745*s),2),probs:{'1h':P(60),'24h':P(1440),'7d':P(10080),'30d':P(43200)},sigma:s};
 }
 
 /* ---------- rendering ---------- */
@@ -586,32 +782,44 @@ function renderForecast(type){
  const id={'10m':'f10','15m':'f15','30m':'f30'}[type];
  const minutes=Number(type.slice(0,-1));
  const p=active.find(x=>x.type===type&&!x.settled);
+ const f=featurePack();
  if(!p){
-  const f=makeForecast(minutes);if(!f)return;
-  $(id).textContent='$'+price(f.target);
-  $(id+'meta').textContent='Preview • P(dir) '+f.confidence+'%';
-  $(id+'bar').style.width=f.confidence+'%';
-  return;
+  const pf=makeForecast(minutes);if(!pf)return;
+  $(id).textContent='$'+price(pf.target);
+  $(id+'meta').textContent=(settings.auto===false?'AUTO OFF • preview':'Preview')+' • P(dir) '+pf.confidence+'%';
+  $(id+'bar').style.width=pf.confidence+'%';
+ }else{
+  $(id).textContent='$'+price(p.forecast);
+  const rem=Math.max(0,p.targetAt-nowServer());
+  $(id+'meta').textContent='Target '+hhmm(p.targetAt)+' • '+Math.ceil(rem/60000)+'m • P(dir) '+p.confidence+'%';
+  $(id+'bar').style.width=p.confidence+'%';
  }
- $(id).textContent='$'+price(p.forecast);
- const rem=Math.max(0,p.targetAt-nowServer());
- $(id+'meta').textContent='Target '+hhmm(p.targetAt)+' • '+Math.ceil(rem/60000)+'m • P(dir) '+p.confidence+'%';
- $(id+'bar').style.width=p.confidence+'%';
+ if(f){
+  const s=f.volatility*Math.sqrt(minutes)*1.28,c=p?p.forecast:f.price;
+  $(id+'rng').textContent='80% range $'+price(c*(1-s))+' – $'+price(c*(1+s));
+ }
 }
 function renderNext(){
  const pend=active.filter(p=>!p.settled).sort((a,b)=>(a.targetAt||a.estimatedAt||9e15)-(b.targetAt||b.estimatedAt||9e15))[0];
  if(!pend){$('nextForecast').textContent='--';$('nextMeta').textContent='Waiting';$('nextBar').style.width='0%';return}
- const t=pend.targetAt||pend.deadlineAt||pend.estimatedAt;
+ const t=pend.targetAt||pend.estimatedAt;
  $('nextForecast').textContent='$'+price(pend.forecast);
  $('nextMeta').textContent=pend.type+' • '+(t?hhmm(t):'')+' • P(dir) '+pend.confidence+'%';
  $('nextBar').style.width=pend.confidence+'%';
 }
+function paintAuto(){$('autoToggle').textContent='AUTO: '+(settings.auto!==false?'ON':'OFF')}
 function renderActive(){
+ paintAuto();
  const rows=active.filter(p=>!p.settled&&!TYPES.includes(p.type));
  $('activePredictions').innerHTML=rows.length?rows.map(p=>{
-  const t=p.targetAt||p.deadlineAt||p.estimatedAt;
-  return `<div class="row"><span>${p.type}<br>${t?new Date(t).toLocaleString():''}</span><b>$${price(p.forecast)}</b></div>`;
- }).join(''):'<div class="empty">No custom predictions currently active.</div>';
+  const x=`<button class="danger" data-cancel="${p.id}" style="padding:4px 8px">✕</button>`;
+  if(p.type==='TARGET_PRICE'){
+   const e=etaFor(p.targetPrice,lastPrice||p.entry);
+   const info=e?'ETA ~'+fmtDur(e.T)+' • 24h '+(e.probs['24h']*100).toFixed(0)+'% • 7d '+(e.probs['7d']*100).toFixed(0)+'% • 30d '+(e.probs['30d']*100).toFixed(0)+'%':'calculating…';
+   return `<div class="row"><span>TARGET ${p.direction>0?'▲':'▼'} <b>$${price(p.targetPrice)}</b><br>${info}</span>${x}</div>`;
+  }
+  return `<div class="row"><span>${p.type}<br>${new Date(p.targetAt).toLocaleString()}</span><span><b>$${price(p.forecast)}</b> ${x}</span></div>`;
+ }).join(''):'<div class="empty">No custom or target predictions active.</div>';
  TYPES.forEach(renderForecast);
  renderNext();
 }
@@ -623,15 +831,15 @@ function renderHistory(){
  }
  const hs=hist.slice(-100).reverse();
  $('history').innerHTML='<div class="historyrow"><b>TYPE</b><b>FORECAST</b><b>ACTUAL</b><b>ERROR</b></div>'+hs.map(h=>{
-  const when=h.targetAt||h.deadlineAt||h.settledAt;
-  const last=h.result?`<span class="${h.result==='HIT'?'green':'red'}">${h.result}</span>`:`<span class="${h.errorPct>=0?'green':'red'}">${h.errorPct>=0?'+':''}${h.errorPct.toFixed(3)}%</span>`;
+  const when=h.targetAt||h.settledAt;
+  const last=h.result?`<span class="${h.result==='HIT'?'green':'red'}">${h.result}${h.hitAfterMin!=null?' '+fmtDur(h.hitAfterMin):''}</span>`:`<span class="${h.errorPct>=0?'green':'red'}">${h.errorPct>=0?'+':''}${h.errorPct.toFixed(3)}%</span>`;
   return `<div class="historyrow"><span>${h.type}<br>${when?hhmm(when):''}</span><span>${price(h.forecast)}</span><span>${price(h.actual)}</span>${last}</div>`;
  }).join('');
  const ms=hs.filter(h=>h.type!=='TARGET_PRICE');
  const mae=mean(ms.map(h=>Math.abs(h.errorPct)));
  const dir=mean(ms.map(h=>Math.sign(h.actual-h.entry)===Math.sign(h.forecast-h.entry)?1:0))*100;
  const tg=hist.filter(h=>h.type==='TARGET_PRICE'),tgHit=tg.filter(h=>h.result==='HIT').length;
- $('metrics').innerHTML=`Completed: <b>${hist.length}</b><br>Recent MAE: <b>${mae.toFixed(3)}%</b><br>Recent direction hit rate: <b>${dir.toFixed(1)}%</b><br>Target-price touches: <b>${tgHit}/${tg.length}</b><br>Learner memory samples: <b>${learner.samples}</b>`;
+ $('metrics').innerHTML=`Completed: <b>${hist.length}</b><br>Recent MAE: <b>${mae.toFixed(3)}%</b><br>Recent direction hit rate: <b>${dir.toFixed(1)}%</b><br>Targets reached: <b>${tgHit}/${tg.length}</b><br>Learner memory samples: <b>${learner.samples}</b>`;
  updateWalkForwardPanel();
 }
 
@@ -671,17 +879,18 @@ async function settleDue(){
 }
 async function settleTargets(now){
  for(const p of active.filter(x=>!x.settled&&x.type==='TARGET_PRICE')){
-  const end=p.deadlineAt||p.createdAt+7*864e5;
   if(now-(p._chk||0)<30000)continue;
   p._chk=now;
-  const upto=Math.min(now,end);
-  const iv=upto-p.createdAt>57600000?'15m':'1m';
-  const d=await api('/api/v3/klines?symbol=ETHUSDT&interval='+iv+'&startTime='+p.createdAt+'&endTime='+upto+'&limit=1000').catch(()=>null);
+  const from=p.scanFrom||p.createdAt,span=now-from;
+  if(span<60000)continue;
+  const iv=span<=57600000?'1m':span<=864e6?'15m':span<=3.54e9?'1h':span<=1.434e10?'4h':'1d';
+  const d=await api('/api/v3/klines?symbol=ETHUSDT&interval='+iv+'&startTime='+from+'&limit=1000').catch(()=>null);
   if(!d)continue;
-  const ks=parseKlines(d);
+  const ks=parseKlines(d).filter(c=>c.closeTime<=now);
+  if(!ks.length)continue;
   const hit=ks.find(c=>p.direction>0?c.high>=p.targetPrice:c.low<=p.targetPrice);
-  if(hit)await finish(p,p.targetPrice,hit.time*1000,{result:'HIT'});
-  else if(now>=end&&ks.length)await finish(p,ks.at(-1).close,end,{result:'MISS'});
+  if(hit)await finish(p,p.targetPrice,hit.time*1000,{result:'HIT',hitAfterMin:Math.round((hit.time*1000-p.createdAt)/60000)});
+  else{p.scanFrom=ks.at(-1).closeTime+1;await dbPut(STORE.predictions,p)}
  }
 }
 function learnFromResult(p){
@@ -710,6 +919,7 @@ function learnFromResult(p){
  learner.recentErrors=[...learner.recentErrors,{type,error:Math.abs(actualReturn-predicted),at:Date.now()}].slice(-200);
 }
 async function ensureAuto(){
+ if(settings.auto===false){renderActive();return}
  const now=nowServer();
  for(const type of TYPES){
   if(active.some(p=>p.type===type&&!p.settled))continue;
@@ -763,40 +973,38 @@ function updateWalkForwardPanel(){
  $('driftState').className=d.state==='DRIFT DETECTED'?'red':d.state==='WATCH'?'warn':'green';
 }
 
-/* ---------- custom predictions ---------- */
+/* ---------- custom + target predictions ---------- */
 async function createCustom(){
  const target=new Date($('customTime').value).getTime(),now=nowServer(),msg=$('customMsg');
  if(!Number.isFinite(target))return msg.textContent='Choose a target time.';
  if(target<now+5*60000)return msg.textContent='Target must be at least 5 minutes ahead.';
- if(target>now+7*864e5)return msg.textContent='Maximum target horizon is 7 days.';
- if(active.some(p=>p.type==='CUSTOM_TIME'&&!p.settled))return msg.textContent='A custom time prediction is already active.';
+ if(active.filter(p=>p.type==='CUSTOM_TIME').length>=20)return msg.textContent='Maximum 20 active custom predictions.';
+ if(active.some(p=>p.type==='CUSTOM_TIME'&&Math.abs(p.targetAt-target)<60000))return msg.textContent='Already locked for that time.';
  const f=makeForecast((target-now)/60000);
  if(!f)return msg.textContent='Not enough live market data.';
  const p={id:uid(),type:'CUSTOM_TIME',createdAt:now,targetAt:target,entry:f.entry,forecast:f.target,confidence:f.confidence,engines:f.engines,context:f.context,learnerWeights:f.learnerWeights,featuresSnapshot:f.features};
  active.push(p);
  await dbPut(STORE.predictions,p);
  renderActive();
- msg.innerHTML=`<span class="ok">LOCKED</span> ${new Date(target).toLocaleString()} → $${price(f.target)} • P(dir) ${f.confidence}%`;
+ msg.innerHTML=`<span class="ok">LOCKED</span> ${new Date(target).toLocaleString()} → $${price(f.target)} • P(dir) ${f.confidence}%. You can lock more times.`;
 }
 async function createTargetPrice(){
- const target=Number($('targetPrice').value),msg=$('targetMsg');
- const deadline=$('targetDeadline').value?new Date($('targetDeadline').value).getTime():null;
- const now=nowServer();
+ const target=Number($('targetPrice').value),msg=$('targetMsg'),now=nowServer();
  if(!Number.isFinite(target)||target<=0)return msg.textContent='Enter a valid target price.';
- if(Math.abs(target-(lastPrice||0))/(lastPrice||1)<.0001)return msg.textContent='Target must differ from current price.';
- if(deadline&&deadline<=now+5*60000)return msg.textContent='Deadline must be at least 5 minutes ahead.';
- if(deadline&&deadline>now+7*864e5)return msg.textContent='Maximum deadline is 7 days.';
- if(active.some(p=>p.type==='TARGET_PRICE'&&!p.settled))return msg.textContent='A target-price prediction is already active.';
- const f=makeForecast(15);
- if(!f)return msg.textContent='Not enough live market data.';
- const direction=target>lastPrice?1:-1;
- const dist=Math.abs(Math.log(target/lastPrice));
- const mins=clamp(Math.round(dist/Math.max(Math.abs(f.ret),.0005)*15),15,10080);
- const p={id:uid(),type:'TARGET_PRICE',createdAt:now,targetPrice:target,deadlineAt:deadline,entry:lastPrice,forecast:target,modelForecast:f.target,confidence:f.confidence,direction,estimatedMinutes:mins,estimatedAt:now+mins*60000,engines:f.engines,context:f.context,featuresSnapshot:f.features};
+ if(!lastPrice)return msg.textContent='Waiting for the live price.';
+ if(Math.abs(target-lastPrice)/lastPrice<.0001)return msg.textContent='Target must differ from current price.';
+ if(active.filter(p=>p.type==='TARGET_PRICE').length>=20)return msg.textContent='Maximum 20 active targets.';
+ if(active.some(p=>p.type==='TARGET_PRICE'&&p.targetPrice===target))return msg.textContent='That target is already tracked.';
+ const e=etaFor(target,lastPrice);
+ if(!e)return msg.textContent='Need about a minute of live data first.';
+ const f=makeForecast(30),direction=target>lastPrice?1:-1;
+ const bias=f?Math.sign(f.ret):0;
+ const p={id:uid(),type:'TARGET_PRICE',createdAt:now,targetPrice:target,entry:lastPrice,forecast:target,confidence:f?f.confidence:50,direction,estimatedMinutes:Math.round(e.T),estimatedAt:now+e.T*60000,probs:e.probs,engines:f?f.engines:{},context:f?f.context:'unknown',scanFrom:now};
  active.push(p);
  await dbPut(STORE.predictions,p);
+ $('targetPrice').value='';
  renderActive();
- msg.innerHTML=`<span class="ok">LOCKED</span> Target $${price(target)} • rough model estimate ${new Date(p.estimatedAt).toLocaleString()}${deadline?' • deadline '+new Date(deadline).toLocaleString():' • expires in 7 days'}. Settles on the first 1m/15m candle that touches the target.`;
+ msg.innerHTML=`<span class="ok">LOCKED</span> $${price(target)} ${direction>0?'▲':'▼'} • median ETA ~${fmtDur(e.T)} (${new Date(p.estimatedAt).toLocaleString()}) • chance within 24h ${(e.probs['24h']*100).toFixed(0)}%, 7d ${(e.probs['7d']*100).toFixed(0)}%, 30d ${(e.probs['30d']*100).toFixed(0)}%. Short-term model bias is ${bias===0?'neutral':bias===direction?'toward':'against'} this target. No expiry; it stays until touched or cancelled.`;
 }
 
 /* ---------- events ---------- */
@@ -827,6 +1035,14 @@ document.querySelectorAll('#rangebar button').forEach(b=>b.onclick=async()=>{
 });
 $('customBtn').onclick=createCustom;
 $('targetBtn').onclick=createTargetPrice;
+$('autoToggle').onclick=()=>{settings.auto=settings.auto===false;saveState();paintAuto();if(settings.auto)ensureAuto()};
+$('activePredictions').addEventListener('click',async e=>{
+ const b=e.target.closest('[data-cancel]');if(!b)return;
+ const id=b.dataset.cancel;
+ active=active.filter(p=>p.id!==id);
+ await dbDel(STORE.predictions,id);
+ renderActive();
+});
 $('volumeToggle').onclick=()=>{
  settings.volume=settings.volume===false;
  volume.applyOptions({visible:settings.volume});
@@ -839,9 +1055,9 @@ $('reset').onclick=async()=>{
  location.reload();
 };
 $('exportMemory').onclick=()=>{
- const blob=new Blob([JSON.stringify({version:6,exportedAt:new Date().toISOString(),learner,active,history:hist},null,2)],{type:'application/json'});
+ const blob=new Blob([JSON.stringify({version:7,exportedAt:new Date().toISOString(),learner,active,history:hist},null,2)],{type:'application/json'});
  const a=document.createElement('a');
- a.href=URL.createObjectURL(blob);a.download='eth-predictor-memory-v6.json';a.click();
+ a.href=URL.createObjectURL(blob);a.download='eth-predictor-memory-v7.json';a.click();
  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
 };
 const zoom=k=>()=>{
@@ -855,71 +1071,6 @@ $('zoomReset').onclick=()=>chart.timeScale().fitContent();
 
 window.addEventListener('error',e=>{console.error('Unhandled app error',e.error||e.message);try{setStatus('APP ERROR','err');$('modelNote').textContent='Script error: '+(e.message||e.error)+' (line '+e.lineno+')'}catch(x){}});
 window.addEventListener('unhandledrejection',e=>{console.error('Unhandled promise rejection',e.reason);try{$('modelNote').textContent='Error: '+((e.reason&&e.reason.message)||e.reason)}catch(x){}});
-
-/* ---------- built-in chart (no external library) ---------- */
-function miniChart(el){
- const cv=document.createElement('canvas');
- cv.style.cssText='width:100%;height:100%;display:block;touch-action:none';
- el.appendChild(cv);
- const ctx=cv.getContext('2d');
- let data=[],vm={},vis=150,off=0,showVol=true,raf=0,bw=6;
- const sched=()=>{if(!raf)raf=requestAnimationFrame(()=>{raf=0;draw()})};
- function draw(){
-  const dpr=window.devicePixelRatio||1,W=el.clientWidth||300,H=el.clientHeight||300;
-  cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);
-  ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);
-  if(!data.length)return;
-  off=clamp(off,0,Math.max(0,data.length-10));
-  const end=data.length-off,start=Math.max(0,end-Math.min(vis,data.length)),sl=data.slice(start,end);
-  const pad=58,ch=H-22;
-  let hi=-1e18,lo=1e18,vmax=0;
-  for(const c of sl){hi=Math.max(hi,c.high);lo=Math.min(lo,c.low);vmax=Math.max(vmax,vm[c.time]||0)}
-  const mg=(hi-lo)*.06||1;hi+=mg;lo-=mg;
-  const y=p=>(hi-p)/(hi-lo)*ch;
-  bw=(W-pad)/sl.length;
-  ctx.font='10px sans-serif';ctx.lineWidth=1;
-  for(let i=0;i<=5;i++){
-   const p=lo+(hi-lo)*i/5,yy=y(p);
-   ctx.strokeStyle='#edf0f2';ctx.beginPath();ctx.moveTo(0,yy);ctx.lineTo(W-pad,yy);ctx.stroke();
-   ctx.fillStyle='#586873';ctx.fillText(p.toFixed(2),W-pad+4,yy+3);
-  }
-  sl.forEach((c,i)=>{
-   const x=i*bw+bw/2,up=c.close>=c.open,col=up?'#087f3e':'#c62828';
-   if(showVol&&vmax){const vh=(vm[c.time]||0)/vmax*ch*.2;ctx.fillStyle=up?'#8fbba4':'#d59aa3';ctx.fillRect(x-bw*.4,ch-vh,bw*.8,vh)}
-   ctx.strokeStyle=col;ctx.fillStyle=col;
-   ctx.beginPath();ctx.moveTo(x,y(c.high));ctx.lineTo(x,y(c.low));ctx.stroke();
-   const t=y(Math.max(c.open,c.close)),b=y(Math.min(c.open,c.close));
-   ctx.fillRect(x-bw*.35,t,Math.max(bw*.7,1),Math.max(b-t,1));
-  });
-  ctx.fillStyle='#586873';
-  for(let i=0;i<4;i++){const j=Math.floor(sl.length*i/4);if(sl[j])ctx.fillText(hhmm(sl[j].time*1000),j*bw,H-6)}
-  const last=data.at(-1).close,ly=y(last);
-  ctx.fillStyle='#1f5f8b';ctx.fillRect(W-pad,ly-8,pad,16);ctx.fillStyle='#fff';ctx.fillText(last.toFixed(2),W-pad+4,ly+3);
- }
- let dragX=null;
- cv.addEventListener('pointerdown',e=>{dragX=e.clientX;cv.setPointerCapture(e.pointerId)});
- cv.addEventListener('pointermove',e=>{if(dragX===null)return;const d=Math.round((e.clientX-dragX)/Math.max(bw,1));if(d){off+=d;dragX=e.clientX;sched()}});
- cv.addEventListener('pointerup',()=>{dragX=null});
- new ResizeObserver(sched).observe(el);
- const chartShim={
-  resize:sched,
-  timeScale:()=>({
-   fitContent:()=>{vis=Math.min(Math.max(data.length,10),180);off=0;sched()},
-   getVisibleLogicalRange:()=>({from:0,to:vis}),
-   setVisibleLogicalRange:r=>{vis=clamp(Math.round(r.to-r.from),10,Math.max(10,data.length));sched()}
-  })
- };
- const csShim={
-  setData:a=>{data=a.slice();sched()},
-  update:c=>{const l=data[data.length-1];if(l&&l.time===c.time)data[data.length-1]=c;else if(!l||c.time>l.time)data.push(c);sched()}
- };
- const volShim={
-  setData:a=>{vm={};a.forEach(v=>vm[v.time]=v.value);sched()},
-  update:v=>{vm[v.time]=v.value;sched()},
-  applyOptions:o=>{if('visible' in o){showVol=o.visible;sched()}}
- };
- return {chart:chartShim,cs:csShim,volume:volShim};
-}
 
 /* ---------- boot ---------- */
 async function boot(){
@@ -936,15 +1087,19 @@ async function boot(){
  catch(e){setStatus('DB ERROR','err');console.warn(e)}
  try{const t=await api('/api/v3/time');serverOffset=t.serverTime-Date.now()}catch(e){}
  if(settings.volume===false){volume.applyOptions({visible:false});$('volumeToggle').textContent='OFF'}
+ paintAuto();
  renderHistory();
  await loadMarket();
+ refreshDepth();refreshDeriv();refreshMTF();
  await refreshExternalInfluence();
  await settleDue();
  await ensureAuto();
  connectWS();
  setInterval(()=>{settleDue().catch(e=>console.warn('settlement',e));renderActive()},5000);
- setInterval(()=>{updateAnalysis();ensureAuto()},5000);
+ setInterval(()=>{updateAnalysis();renderAdvanced();ensureAuto()},5000);
  setInterval(()=>{loadMarket().catch(()=>{});refreshExternalInfluence().catch(()=>{});saveLearner()},60000);
+ setInterval(refreshDepth,15000);
+ setInterval(()=>{refreshDeriv();refreshMTF()},60000);
 }
 boot();
 </script>
