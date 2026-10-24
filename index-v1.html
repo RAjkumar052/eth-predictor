@@ -1925,6 +1925,513 @@ tickCD();setInterval(tickCD,1000);
  }).observe(el,{childList:true,characterData:true,subtree:true});
 })();
 
+/* ===== v17 WEEK: multi-layer chart, kept history with day checks, live learning, simple summary ===== */
+document.querySelector('.sub').textContent='CLASSIC MARKET TERMINAL • v17';
+const OLL=(()=>{const d={cone:1,lean:1,base:1,eng:0,lock:1};try{return Object.assign(d,JSON.parse(localStorage.oll||'{}'))}catch(e){return d}})();
+const ENGC=['#e67e22','#8e44ad','#16a085','#a1522b'],WTYPE={1:'WEEK_1D',7:'WEEK_7D'};
+function liveSamples(H){
+ return hist.filter(h=>h.type===WTYPE[H]&&Number.isFinite(h.actual)).sort((a,b)=>a.settledAt-b.settledAt)
+  .map(h=>({sig:h.sig||[1,2,3,4].map(k=>Math.sign((h.engines||{})['w'+k]||0)*.5),y:Math.log(h.actual/h.entry)}));
+}
+function wRun(c,H){
+ const N=c.length,K=4,W=60,sig=[],y=[];
+ for(let i=120;i<N-H;i++){sig.push(wSig(c,i));y.push(Math.log(c[i+H]/c[i]))}
+ const live=liveSamples(H);for(const s of live){sig.push(s.sig);y.push(s.y)}
+ const n=y.length;
+ const wf=(lo,hi)=>{
+  const w=Array(K).fill(0);if(hi-lo+1<20)return w;
+  for(let k=0;k<K;k++){let h=0,m=0;for(let s=lo;s<=hi;s++){if(!sig[s][k])continue;m++;if(Math.sign(sig[s][k])===Math.sign(y[s]))h++}w[k]=m?Math.max(0,h/m-.5):0}
+  return w;
+ };
+ const eh=Array(K).fill(0),ec=Array(K).fill(0);let bh=0,bn=0;
+ for(let t=0;t<n;t++){
+  for(let k=0;k<K;k++)if(sig[t][k]){ec[k]++;if(Math.sign(sig[t][k])===Math.sign(y[t]))eh[k]++}
+  const w=wf(Math.max(0,t-H-W+1),t-H),tot=w.reduce((a,b)=>a+b,0);
+  const sc=tot?w.reduce((a,v,k)=>a+v*sig[t][k],0)/tot:0;
+  if(sc){bn++;if(Math.sign(sc)===Math.sign(y[t]))bh++}
+ }
+ const w=wf(Math.max(0,n-W),n-1),tot=w.reduce((a,b)=>a+b,0),sg=wSig(c,N-1);
+ const score=tot?w.reduce((a,v,k)=>a+v*sg[k],0)/tot:0;
+ const r=[];for(let i=N-30;i<N;i++)r.push(Math.log(c[i]/c[i-1]));
+ const sH=std(r)*Math.sqrt(H),hr=bn>=30?bh/bn:.5,shrink=clamp((hr-.5)*6+.25,.25,1);
+ const effN=Math.floor(bn/H),ok=effN>=20&&wilsonLB(Math.round(hr*effN),effN)>.5;
+ return {H,sig:sg,w:tot?w.map(v=>v/tot):w,eh:eh.map((v,k)=>ec[k]?v/ec[k]:.5),score,sH,ret:score*sH*.25*shrink,hr,bn,bh,effN,ok,shrink,live:live.length};
+}
+async function lockWeek(){
+ if(!WK||settings.auto===false||!lastPrice||(typeof isStale==='function'&&isStale()))return;
+ const now=nowServer();
+ for(const H of [1,7]){
+  const type=WTYPE[H];
+  if(active.some(p=>p.type===type&&!p.settled&&(H===1||now-p.createdAt<864e5)))continue;
+  const r=WK[H],sd=r.sH/Math.sqrt(H)*coneK(),path=[];
+  for(let d=1;d<=H;d++){const m=lastPrice*Math.exp(r.ret*d/H),s=sd*Math.sqrt(d);path.push({d,m,lo:m*Math.exp(-1.2816*s),hi:m*Math.exp(1.2816*s)})}
+  const p={id:uid(),type,createdAt:now,targetAt:now+H*864e5,entry:lastPrice,forecast:lastPrice*Math.exp(r.ret),confidence:Math.round(clamp(r.hr*100,40,80)),context:r.ok?'proven':'unproven',sig:r.sig,path,engines:Object.fromEntries(r.sig.map((s,k)=>['w'+(k+1),s*r.sH*.25]))};
+  active.push(p);await dbPut(STORE.predictions,p);
+ }
+ renderActive();
+}
+async function weekCheck(p){
+ try{
+  if(p.type==='WEEK_1D'&&p.path){const q=p.path[0];p.check=[{d:1,pred:q.m,act:p.actual,inBand:p.actual>=q.lo&&p.actual<=q.hi}]}
+  else if(p.path){
+   const d=parseKlines(await api('/api/v3/klines?symbol=ETHUSDT&interval=1h&startTime='+(p.createdAt-3600000)+'&limit=200'));
+   p.check=p.path.map(q=>{const t=p.createdAt+q.d*864e5,c=d.find(x=>x.time*1000>=t);return c?{d:q.d,pred:q.m,act:c.open,inBand:c.open>=q.lo&&c.open<=q.hi}:null}).filter(Boolean);
+  }
+  await dbPut(STORE.history,p);await dbPut(STORE.predictions,p);
+ }catch(e){}
+}
+const _fin17=finish;
+finish=async function(p,a,t,x){
+ await _fin17(p,a,t,x);
+ if(p.type==='WEEK_1D'||p.type==='WEEK_7D'){await weekCheck(p);runWeek().catch(()=>{});renderWeekHist()}
+};
+const _ra17=renderActive;
+renderActive=function(){
+ _ra17();const box=$('activePredictions');
+ box.querySelectorAll('.row').forEach(r=>{if(/^WEEK_/.test(r.textContent.trim()))r.remove()});
+ if(!box.querySelector('.row'))box.innerHTML='<div class="empty">No custom or target predictions active.</div>';
+};
+
+function olLine(x,X,Y,pts,col,w,dash){x.beginPath();pts.forEach((q,i)=>i?x.lineTo(X(q.h),Y(q.v)):x.moveTo(X(q.h),Y(q.v)));x.strokeStyle=col;x.lineWidth=w;x.setLineDash(dash||[]);x.stroke();x.setLineDash([])}
+function drawOutlook(){
+ if(!OL)return;
+ const cv=$('olCanvas'),dpr=window.devicePixelRatio||1,W=cv.clientWidth||320,H=cv.clientHeight||300;
+ cv.width=W*dpr;cv.height=H*dpr;
+ const x=cv.getContext('2d');x.setTransform(dpr,0,0,dpr,0,0);x.fillStyle='#fff';x.fillRect(0,0,W,H);
+ const pad=58,B=22,T0=-48,T1=168,hs=OL.hist,end=olBand(168),now=Date.now(),w7=WK&&WK[7];
+ const locks=OLL.lock?active.filter(p=>!p.settled&&p.type==='WEEK_7D'&&p.path).map(p=>{const h0=(p.createdAt-now)/36e5;return [{h:h0,v:p.entry}].concat(p.path.map(q=>({h:h0+q.d*24,v:q.m})))}):[];
+ const eng=OLL.eng&&w7?w7.sig.map(s=>s*w7.sH*.25):[];
+ const vals=[end.lo,end.hi,...hs];locks.forEach(L=>L.forEach(q=>{if(q.h>=T0)vals.push(q.v)}));eng.forEach(r=>vals.push(OL.p0*Math.exp(r)));
+ const lo0=Math.min(...vals)*.998,hi0=Math.max(...vals)*1.002;
+ const X=h=>(h-T0)/(T1-T0)*(W-pad),Y=p=>(hi0-p)/(hi0-lo0)*(H-B);
+ x.font='10px sans-serif';x.lineWidth=1;
+ for(let i=0;i<=5;i++){const p=lo0+(hi0-lo0)*i/5,yy=Y(p);x.strokeStyle='#edf0f2';x.beginPath();x.moveTo(0,yy);x.lineTo(W-pad,yy);x.stroke();x.fillStyle='#586873';x.fillText(p.toFixed(0),W-pad+4,yy+3)}
+ for(let d=0;d<=7;d++){const xx=X(24*d);x.strokeStyle=d===0?'#7a8790':'#edf0f2';x.beginPath();x.moveTo(xx,0);x.lineTo(xx,H-B);x.stroke();x.fillStyle='#586873';x.fillText(d===0?'NOW':'+'+d+'d',xx+2,H-6)}
+ x.save();x.beginPath();x.rect(0,0,W-pad,H-B);x.clip();
+ const poly=(a,b,col)=>{x.beginPath();for(let h=0;h<=168;h+=6){const p=olBand(h)[a];h?x.lineTo(X(h),Y(p)):x.moveTo(X(h),Y(p))}for(let h=168;h>=0;h-=6)x.lineTo(X(h),Y(olBand(h)[b]));x.closePath();x.fillStyle=col;x.fill()};
+ if(OLL.cone){poly('hi','lo','rgba(31,95,139,.12)');poly('hi5','lo5','rgba(31,95,139,.24)')}
+ if(OLL.base)olLine(x,X,Y,[{h:0,v:OL.p0},{h:168,v:OL.p0}],'#8a98a3',1,[2,4]);
+ eng.forEach((r,k)=>olLine(x,X,Y,[{h:0,v:OL.p0},{h:168,v:OL.p0*Math.exp(r)}],ENGC[k],1.2));
+ locks.forEach(L=>olLine(x,X,Y,L,'rgba(46,125,50,.65)',1.3,[6,3,1,3]));
+ olLine(x,X,Y,hs.map((p,i)=>({h:T0+i+1,v:p})),'#18232d',1.6);
+ if(OLL.lean){const pts=[];for(let h=0;h<=168;h+=24)pts.push({h,v:olBand(h).m});olLine(x,X,Y,pts,'#1f5f8b',1.8,[5,4]);x.fillStyle='#1f5f8b';pts.slice(1).forEach(q=>{x.beginPath();x.arc(X(q.h),Y(q.v),2.5,0,7);x.fill()})}
+ x.restore();
+ $('olLegend').innerHTML='<span style="color:#18232d">━ real price</span>'+(OLL.cone?' • shaded: 50% / 80% range':'')+(OLL.lean?' • <span style="color:#1f5f8b">╌ week lean</span>':'')+(OLL.base?' • <span style="color:#8a98a3">┈ no change</span>':'')+(OLL.lock?' • <span style="color:#2e7d32">╌· my locked forecasts (one per day)</span>':'')+(OLL.eng?' • '+['W1 trend','W2 momentum','W3 reversion','W4 range'].map((n,k)=>`<span style="color:${ENGC[k]}">━ ${n}</span>`).join(' '):'');
+}
+
+function renderOutSummary(){
+ if(!WK||!lastPrice)return;
+ const row=H=>{
+  const r=WK[H],lo=lastPrice*Math.exp(r.ret-1.2816*r.sH*coneK()),hi=lastPrice*Math.exp(r.ret+1.2816*r.sH*coneK()),flat=Math.abs(r.ret)<.0003;
+  return `<div class="row"><span><b>${H===1?'TOMORROW':'NEXT 7 DAYS'}</b><br>likely range $${price(lo)} – $${price(hi)}</span><span style="text-align:right"><b class="${flat?'':r.ret>0?'green':'red'}">${flat?'■ FLAT':r.ret>0?'▲ UP':'▼ DOWN'} ${sp2(r.ret*100)}</b><br>$${price(lastPrice*Math.exp(r.ret))} ${r.ok?'<b class="green">✔ proven</b>':'<b class="warn">✖ unproven</b>'}</span></div>`;
+ };
+ $('olSummary').innerHTML='<div class="section-title">SUMMARY</div>'+row(1)+row(7)+`<div class="notice">${WK[1].ok||WK[7].ok?'At least one horizon passed its historical test, but past results do not guarantee the future.':'Neither horizon has passed its test yet, so treat the arrows as guesses. The ranges are the dependable part (see How reliable).'} Tap a panel title to fold it.</div>`;
+}
+function renderWeekHist(){
+ const el=$('weekHist');if(!el)return;
+ const done=hist.filter(h=>h.type==='WEEK_1D'||h.type==='WEEK_7D').sort((a,b)=>b.settledAt-a.settledAt);
+ const act=active.filter(p=>!p.settled&&(p.type==='WEEK_1D'||p.type==='WEEK_7D')).sort((a,b)=>a.targetAt-b.targetAt);
+ const called=h=>Math.abs(h.forecast/h.entry-1)>.0002,right=h=>Math.sign(h.forecast-h.entry)===Math.sign(h.actual-h.entry);
+ const st=T=>{const a=done.filter(h=>h.type===T&&called(h));return a.length?a.filter(right).length+'/'+a.length+' right':'none yet'};
+ const ck=done.flatMap(h=>h.check||[]),cov=ck.length?Math.round(ck.filter(c=>c.inBand).length/ck.length*100)+'%':'--';
+ const lbl=T=>T==='WEEK_1D'?'TOMORROW':'WEEK';
+ el.innerHTML=`<div style="color:var(--ink);font-size:11px;margin-bottom:6px">Live record • tomorrow: <b>${st('WEEK_1D')}</b> • week: <b>${st('WEEK_7D')}</b> • price inside 80% range: <b>${cov}</b> (goal 80%)<br>Learning: <b>${WK?WK[1].live+WK[7].live:0}</b> settled results already feed the engine weights. A new week forecast locks every day, so lessons build up faster.</div>`+
+ act.map(p=>`<div class="row"><span><b>${lbl(p.type)}</b> locked ${fdt(p.createdAt)}<br>settles ${fdt(p.targetAt)}</span><b>${p.forecast>=p.entry?'▲':'▼'} $${price(p.forecast)}</b></div>`).join('')+
+ done.slice(0,15).map(h=>{
+  const ok=called(h)?right(h):null,days=(h.check||[]).map(c=>`<span class="${c.inBand?'green':'red'}">D${c.d}${c.inBand?'✔':'✖'}</span>`).join(' ');
+  return `<div style="padding:8px 0;border-top:1px solid var(--line2);font-size:11px;line-height:1.7"><b>${lbl(h.type)}</b> ${fdt(h.createdAt)} ${ok===null?'<b>■ flat call</b>':`<b class="${ok?'green':'red'}">${ok?'✔ right':'✖ wrong'} direction</b>`}<br>$${price(h.entry)} → forecast $${price(h.forecast)} → actual $${price(h.actual)} (${sp2((h.actual/h.entry-1)*100)})${days?'<br>days inside range: '+days:''}</div>`;
+ }).join('');
+}
+const _rw17=renderWeek;
+renderWeek=function(){_rw17();renderOutSummary();renderWeekHist();drawOutlook()};
+(function(){
+ const cp=$('olCanvas').closest('.panel');
+ const sum=document.createElement('div');sum.className='panel';sum.id='olSummary';sum.innerHTML='<div class="section-title">SUMMARY</div><div class="notice">Loading daily history…</div>';cp.before(sum);
+ const chips=document.createElement('div');chips.className='scroll';
+ chips.innerHTML=[['cone','Cone'],['lean','Lean'],['base','No change'],['eng','Engines'],['lock','My locks']].map(([k,l])=>`<button class="chip${OLL[k]?' active':''}" data-l="${k}">${l}</button>`).join('');
+ $('olCanvas').before(chips);
+ chips.onclick=e=>{const b=e.target.closest('[data-l]');if(!b)return;const k=b.dataset.l;OLL[k]=OLL[k]?0:1;b.classList.toggle('active');try{localStorage.oll=JSON.stringify(OLL)}catch(x){}drawOutlook()};
+ const lg=document.createElement('div');lg.id='olLegend';lg.className='notice';$('olCanvas').after(lg);
+ const hp=document.createElement('div');hp.className='panel';
+ hp.innerHTML='<div class="section-title">WEEK PREDICTION HISTORY (saved on this device)</div><div id="weekHist" class="notice">Locked forecasts appear here and settle automatically.</div>';
+ cp.after(hp);
+ const fold=(p,key)=>{const t=p.querySelector('.section-title');if(!t)return;let s={};try{s=JSON.parse(localStorage.collapsed||'null')||{}}catch(e){}if(s[key]===undefined)s[key]=true;t.classList.add('ct');p.classList.toggle('collapsed',!!s[key]);t.addEventListener('click',()=>{const c=p.classList.toggle('collapsed');s[key]=c;try{localStorage.collapsed=JSON.stringify(s)}catch(e){}})};
+ fold($('weekBody').closest('.panel'),'WEEK ENGINE DETAILS');fold($('olCheck').closest('.panel'),'OUTLOOK RELIABILITY');
+})();
+setInterval(()=>{renderWeekHist();if($('screen-outlook').classList.contains('active'))drawOutlook()},60000);
+
+/* ===== v18 LIVE LEARNING LOG: everything the learner changes, visible and saved ===== */
+document.querySelector('.sub').textContent='CLASSIC MARKET TERMINAL • v18';
+/*T1*/
+function logLearn(e){
+ if(!learner)return;
+ learner.log=(learner.log||[]).concat([{t:Date.now(),...e}]).slice(-200);
+ try{renderLearnLog()}catch(x){}
+ saveLearner();
+}
+const _lfr18=learnFromResult;
+learnFromResult=function(p){
+ const g0={...learner.global};
+ _lfr18(p);
+ try{
+  const am=(p.actual/p.entry-1)*100,fm=(p.forecast/p.entry-1)*100;
+  const d=KEYS.map(k=>[k,(learner.global[k]||1)-(g0[k]||1)]).filter(([k,v])=>Math.abs(v)>=.003).sort((a,b)=>Math.abs(b[1])-Math.abs(a[1])).slice(0,4).map(([k,v])=>[k,+v.toFixed(3)]);
+  logLearn({k:'min',type:p.type,ok:Math.sign(am)===Math.sign(fm),am,fm,d,nn:(learner.neural[p.type]||{}).trained||0});
+ }catch(e){}
+};
+const _rw18=runWeek;
+runWeek=async function(){
+ const b=WK?{1:WK[1].live,7:WK[7].live,w1:WK[1].w.slice(),w7:WK[7].w.slice()}:null;
+ await _rw18();
+ if(b&&WK)for(const H of [1,7]){
+  if(WK[H].live>b[H]){const old=b['w'+H],cur=WK[H].w;logLearn({k:'week',H,live:WK[H].live,d:cur.map((v,i)=>['W'+(i+1),v-old[i],v])})}
+ }
+};
+const _au18=runAudit;
+runAudit=async function(){
+ const at0=learner.audit&&learner.audit.at;
+ await _au18();
+ const A=learner.audit;
+ if(A&&A.at!==at0)logLearn({k:'audit',used:KEYS.filter(k=>A['15m']&&passes(A['15m'][k])),span:A.span});
+};
+/*T2*/
+(function(){
+ const p=document.createElement('div');p.className='panel';
+ p.innerHTML='<div class="section-title">LIVE LEARNING LOG</div><div id="learnBody" class="notice">Waiting for the first settled prediction…</div>';
+ $('screen-history').insertBefore(p,$('screen-history').children[0]);
+ const ll=document.createElement('div');ll.id='lastLesson';ll.className='notice';ll.style.cssText='margin:-4px 2px 10px;font-size:11px';
+ const anchor=$('countdown')||$('screen-chart').children[0];anchor.after(ll);
+})();
+function renderLearnLog(){
+ const el=$('learnBody');if(!el||!learner)return;
+ const names=typeof NAMES!=='undefined'?NAMES:{},log=(learner.log||[]).slice().reverse();
+ const bars=KEYS.map(k=>[k,learner.global[k]||1]).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div style="display:flex;align-items:center;gap:6px;font-size:10px;margin:3px 0"><span style="width:116px">${k.toUpperCase()} ${names[k]||''}</span><i style="flex:1;height:6px;background:var(--line2);border-radius:3px;overflow:hidden"><u style="display:block;height:100%;text-decoration:none;width:${Math.min(100,v/3*100)}%;background:${v>=1?'var(--green)':'var(--red)'}"></u></i><b style="width:34px;text-align:right">${v.toFixed(2)}</b></div>`).join('');
+ const nn=TYPES.map(t=>t+' '+((learner.neural[t]||{}).trained||0)).join(' • '),lg=TYPES.map(t=>t+' '+(((learner.logit||{})[t]||{}).n||0)).join(' • ');
+ const wk=WK?`week lessons: tomorrow ${WK[1].live} • week ${WK[7].live}`:'week lessons: loading';
+ const line=e=>{
+  const tm=`<span style="color:var(--muted)">${fdt(e.t)}</span> `;
+  if(e.k==='min')return tm+`<b>${e.type}</b> <b class="${e.ok?'green':'red'}">${e.ok?'✔ direction right':'✖ direction wrong'}</b> (forecast ${sp2(e.fm)}, real ${sp2(e.am)})<br>${e.d.length?'weights: '+e.d.map(([k,v])=>`${k.toUpperCase()} <span class="${v>0?'green':'red'}">${v>0?'▲':'▼'}${Math.abs(v).toFixed(3)}</span>`).join(' • '):'weights barely moved'} • online net trained ${e.nn}×`;
+  if(e.k==='week')return tm+`<b>${e.H===1?'TOMORROW':'WEEK'}</b> result learned (lesson ${e.live})<br>`+e.d.map(([n,dv,v])=>`${n} ${(v*100).toFixed(0)}% <span class="${dv>.0005?'green':dv<-.0005?'red':''}">(${dv>=0?'+':''}${(dv*100).toFixed(1)})</span>`).join(' • ');
+  return tm+`<b>Audit</b>: ${e.used.length} engines passed (${e.used.map(k=>k.toUpperCase()).join(', ')||'none, so forecasts equal the current price'}) on ${e.span} minutes`;
+ };
+ el.innerHTML=`<div style="color:var(--ink);font-size:11px;margin-bottom:6px"><b>${learner.samples}</b> minute-horizon lessons • ${wk}<br>online net trained: ${nn}<br>AI classifier lessons: ${lg}</div><div style="font-size:10px;color:var(--muted);margin:6px 0 2px">ENGINE WEIGHTS (1.00 neutral, green above, red below)</div>${bars}<div style="font-size:10px;color:var(--muted);margin:10px 0 2px">WHAT IT LEARNED, NEWEST FIRST</div>`+(log.slice(0,40).map(e=>`<div style="padding:7px 0;border-top:1px solid var(--line2);font-size:11px;line-height:1.6">${line(e)}</div>`).join('')||'<div class="empty">No lessons yet. The first appears when a 10, 15 or 30 minute prediction settles.</div>');
+ const ll=$('lastLesson');
+ if(ll){const e=log[0];ll.innerHTML=e?'Last lesson: '+line(e).replace(/<br>.*$/,''):'Learning log: waiting for the first result.'}
+}
+setTimeout(renderLearnLog,3500);setInterval(renderLearnLog,30000);
+
+/*v19 calibration*/
+function etaCal(){
+ const r=[];for(const h of (hist||[])){if(h.type==='TARGET_PRICE'&&h.result==='HIT'&&h.hitAfterMin>0&&h.estimatedMinutes>0&&!h.etaCalUsed)r.push(Math.log(h.hitAfterMin/h.estimatedMinutes))}
+ const n=r.length;if(n<2)return {K:1,n,sd:.8,raw:[]};
+ const s=r.slice().sort((a,b)=>a-b),med=n%2?s[(n-1)/2]:(s[n/2-1]+s[n/2])/2;
+ const m=r.reduce((a,b)=>a+b,0)/n,sd=Math.max(.5,Math.sqrt(r.reduce((a,b)=>a+(b-m)**2,0)/n));
+ return {K:Math.min(1.5,Math.max(.05,Math.exp(med*n/(n+3)))),n,sd,raw:r.map(Math.exp)};
+}
+const _eta19=etaFor;
+etaFor=function(target,pn){
+ const e=_eta19(target,pn);if(!e)return e;
+ const c=etaCal();if(c.n<2)return e;
+ const s=e.sigma,d=Math.abs(Math.log(target/pn));
+ const P=m=>Math.min(1,2*(1-ncdf(d/(s*Math.sqrt(m/c.K)))));
+ e.T=e.T*c.K;e.probs={'1h':P(60),'24h':P(1440),'7d':P(10080),'30d':P(43200)};
+ e.cal=c;e.lo=e.T*Math.exp(-.6745*c.sd);e.hi=e.T*Math.exp(.6745*c.sd);
+ return e;
+};
+const _ctp19=createTargetPrice;
+createTargetPrice=async function(){
+ const before=active.length;await _ctp19();
+ if(active.length>before){const p=active[active.length-1],c=etaCal(),msg=$('targetMsg');
+  if(p&&p.type==='TARGET_PRICE'&&c.n>=2&&msg){const T=p.estimatedMinutes;
+   msg.innerHTML+=` <b>Calibrated</b> from ${c.n} past targets: usually between ${fmtDur(T*Math.exp(-.6745*c.sd))} and ${fmtDur(T*Math.exp(.6745*c.sd))}.`}}
+};
+function coneK(){
+ let n=0,ok=0;for(const h of (hist||[])){if(h.check)for(const q of h.check){n++;if(q.inBand)ok++}}
+ if(n<5)return 1.2;const rate=ok/n;return rate>=.78?1.2:Math.min(2,1.2+(.8-rate)*1.6);
+}
+function coneStat(){let n=0,ok=0;for(const h of (hist||[])){if(h.check)for(const q of h.check){n++;if(q.inBand)ok++}}return {n,ok}}
+function scoreboard(){
+ const S=(hist||[]).filter(p=>/^(10m|15m|30m)$/.test(p.type)&&p.settled&&p.actual);
+ const out={};for(const t of ['10m','15m','30m']){
+  const X=S.filter(p=>p.type===t);if(!X.length){continue}
+  const mae=X.reduce((a,p)=>a+Math.abs(p.forecast-p.actual),0)/X.length,base=X.reduce((a,p)=>a+Math.abs(p.entry-p.actual),0)/X.length;
+  const D=X.filter(p=>p.forecast!==p.entry&&p.actual!==p.entry),h=D.filter(p=>(p.forecast-p.entry)*(p.actual-p.entry)>0).length;
+  out[t]={n:X.length,mae,base,calls:D.length,hit:h,fb:X.length-D.length};
+ }
+ return out;
+}
+(function(){
+ const p=document.createElement('div');p.className='panel';
+ p.innerHTML='<div class="section-title">CALIBRATION & SCOREBOARD</div><div id="calBody" class="notice">Waiting for data…</div>';
+ const hs=$('screen-history');hs.insertBefore(p,hs.children[1]||null);
+})();
+function renderCal(){
+ const el=$('calBody');if(!el)return;
+ const c=etaCal(),cs=coneStat(),sb=scoreboard();
+ let h='<div style="font-size:12px;line-height:1.6">';
+ h+=`<b>Target ETA fix:</b> ${c.n<2?'needs 2+ finished targets (have '+c.n+')':'actual time is typically <b>'+(c.K*100).toFixed(0)+'%</b> of the raw estimate (from '+c.n+' hits) — estimates are scaled automatically'}<br>`;
+ h+=`<b>Week cone:</b> ${cs.n<5?'widened ×1.20 by default; auto-tunes after 5 checks (have '+cs.n+')':'80% band caught '+cs.ok+'/'+cs.n+' ('+Math.round(100*cs.ok/cs.n)+'%) → width ×'+coneK().toFixed(2)}<br>`;
+ h+='<b>Model vs "no change" (lower error is better):</b><br>';
+ const ks=Object.keys(sb);if(!ks.length)h+='no settled minute predictions yet';
+ for(const t of ks){const x=sb[t],win=x.mae<x.base;h+=`${t}: model $${x.mae.toFixed(2)} vs no-change $${x.base.toFixed(2)} <b class="${win?'green':'red'}">${win?'BEATS':'LOSES'}</b> • ${x.calls} direction calls, ${x.calls?Math.round(100*x.hit/x.calls):'--'}% right • ${x.fb} fell back to no-change<br>`}
+ try{const A=learner&&learner.audit;if(A&&A['10m']){const bad=Object.entries(A['10m']).filter(([k,v])=>v&&typeof v.tEff==='number'&&v.tEff<-2).map(([k,v])=>k.toUpperCase()+' (t '+v.tEff.toFixed(1)+')');
+  if(bad.length)h+='<b>Reliably wrong engines (kept out):</b> '+bad.join(', ')+'<br>'}}catch(e){}
+ h+='</div>';el.innerHTML=h;
+}
+try{$('targetBtn').onclick=createTargetPrice}catch(e){}
+const _fin19=finish;
+finish=async function(p,a,t,x){await _fin19(p,a,t,x);try{renderCal()}catch(e){}};
+setTimeout(()=>renderCal(),3000);setInterval(()=>renderCal(),30000);
+
+/*v20 TRADE (paper)*/
+(function(){
+ const p=document.createElement('div');p.className='panel';p.id='tradePanel';
+ p.innerHTML=`<div class="section-title">TRADE <span style="font-weight:400;font-size:11px">(paper money — simulated, no real orders)</span></div>
+ <div class="inputrow"><input id="trAmt" inputmode="decimal" placeholder="Amount in USDT, e.g. 1000"><input id="trPct" inputmode="decimal" placeholder="Profit target %, e.g. 0.5"></div>
+ <div class="inputrow" style="margin-top:6px"><input id="trStop" inputmode="decimal" placeholder="Stop-loss % (optional)"><button id="trSide" class="primary" style="max-width:110px">LONG ▲</button></div>
+ <div id="trPrev" class="notice">Enter an amount and a profit % to see how long it should take.</div>
+ <button id="trGo" class="primary" style="width:100%;margin-top:8px">TRADE</button>
+ <div id="trOpen" style="margin-top:10px"></div>
+ <div class="section-title" style="margin-top:10px">TRADE HISTORY</div><div id="trHist" class="notice">No trades yet.</div>`;
+ const scr=$('screen-predict');scr.insertBefore(p,scr.children[0]);
+ $('trSide').onclick=()=>{settings.trSide=settings.trSide==='short'?'long':'short';saveState();paintSide();trPreview()};
+ ['trAmt','trPct','trStop'].forEach(i=>$(i).addEventListener('input',trPreview));
+ $('trGo').onclick=trOpenPos;
+ paintSide();
+})();
+const TR_FEE=.001;
+function paintSide(){$('trSide').textContent=settings.trSide==='short'?'SHORT ▼':'LONG ▲'}
+function trInputs(){
+ const amt=parseFloat($('trAmt').value),pct=parseFloat($('trPct').value),st=parseFloat($('trStop').value);
+ const short=settings.trSide==='short';
+ if(!(amt>0)||!(pct>0)||!lastPrice)return null;
+ const tp=lastPrice*(1+(short?-1:1)*pct/100);
+ const sp=st>0?lastPrice*(1+(short?1:-1)*st/100):null;
+ return {amt,pct,st:st>0?st:0,short,tp,sp};
+}
+function trPreview(){
+ const el=$('trPrev');if(!el)return;const t=trInputs();
+ if(!t){el.textContent='Enter an amount and a profit % to see how long it should take.';return}
+ const e=etaFor(t.tp,lastPrice);
+ const gross=t.amt*t.pct/100,fees=t.amt*TR_FEE*2,net=gross-fees;
+ let h=`${t.short?'SHORT':'LONG'} $${t.amt.toFixed(2)} at $${price(lastPrice)} → close at <b>$${price(t.tp)}</b> (${t.short?'-':'+'}${t.pct}%).<br>Profit if reached: <b class="${net>0?'green':'red'}">${net>=0?'+':''}$${net.toFixed(2)}</b> after ~0.1%/side fees.`;
+ if(net<=0)h+=' <b class="red">Target is below the fees — you would lose money even if it is reached.</b>';
+ if(!e)h+='<br>Need about a minute of live data for the time estimate.';
+ else{
+  h+=`<br><b>Expected time: ~${fmtDur(e.T)}</b>`;
+  if(e.lo)h+=` (usually ${fmtDur(e.lo)} – ${fmtDur(e.hi)})`;
+  h+=`<br>Chance of touching it within 1h ${(e.probs['1h']*100).toFixed(0)}% • 24h ${(e.probs['24h']*100).toFixed(0)}% • 7d ${(e.probs['7d']*100).toFixed(0)}%`;
+  if(t.sp){const es=etaFor(t.sp,lastPrice);if(es)h+=`<br>Stop-loss $${price(t.sp)} (-$${(t.amt*t.st/100+fees).toFixed(2)} incl. fees) would be hit in ~${fmtDur(es.T)} typically — the market can reach it first, so there is no guarantee of profit.`}
+ }
+ el.innerHTML=h;
+}
+async function trOpenPos(){
+ const t=trInputs();if(!t){toast('Enter amount and profit %');return}
+ if(typeof isStale==='function'&&isStale()){toast('Price is stale — wait for live data');return}
+ settings.trades=settings.trades||[];
+ const e=etaFor(t.tp,lastPrice);
+ const pos={id:uid(),side:t.short?'short':'long',amount:t.amt,qty:t.amt/lastPrice,entry:lastPrice,pct:t.pct,tp:t.tp,stopPct:t.st,sp:t.sp,openAt:nowServer(),estMin:e?Math.round(e.T):null,status:'open'};
+ settings.trades.push(pos);await saveState();
+ $('trAmt').value='';$('trPct').value='';$('trStop').value='';
+ trPreview();renderTrades();toast('Paper trade opened');
+}
+function trPnl(p,px){const m=(p.side==='short'?-1:1)*(px/p.entry-1);return p.amount*m-p.amount*TR_FEE*2}
+async function trClose(p,px,at,why){
+ p.status='closed';p.exit=px;p.closeAt=at;p.why=why;p.pnl=trPnl(p,px);p.tookMin=Math.round((at-p.openAt)/60000);
+ await saveState();renderTrades();
+ toast((why==='TARGET'?'Target reached: ':why==='STOP'?'Stop-loss hit: ':'Closed: ')+(p.pnl>=0?'+':'')+'$'+p.pnl.toFixed(2));
+}
+let trBusy=false;
+async function trCheck(){
+ if(trBusy)return;const open=(settings.trades||[]).filter(p=>p.status==='open');if(!open.length)return;
+ trBusy=true;
+ try{
+  const now=nowServer();
+  for(const p of open){
+   const span=now-p.openAt;
+   if(span>=60000){
+    const iv=span<=57600000?'1m':span<=864e6?'15m':'1h';
+    const d=parseKlines(await api('/api/v3/klines?symbol=ETHUSDT&interval='+iv+'&startTime='+(p.openAt-60000)+'&limit=1000'));
+    for(const c of d){
+     if(c.time*1000+(iv==='1m'?0:0)<p.openAt-60000)continue;
+     const hiHit=p.side==='long'?c.high>=p.tp:c.low<=p.tp,stHit=p.sp&&(p.side==='long'?c.low<=p.sp:c.high>=p.sp);
+     if(stHit){await trClose(p,p.sp,c.time*1000+60000,'STOP');break}
+     if(hiHit){await trClose(p,p.tp,c.time*1000+60000,'TARGET');break}
+    }
+   }
+  }
+ }catch(e){}
+ trBusy=false;renderTrades();
+}
+function renderTrades(){
+ const tr=settings.trades||[],op=tr.filter(p=>p.status==='open'),cl=tr.filter(p=>p.status==='closed').sort((a,b)=>b.closeAt-a.closeAt);
+ const ro=$('trOpen');if(!ro)return;
+ ro.innerHTML=op.length?'<div class="section-title">OPEN TRADES</div>'+op.map(p=>{
+  const pn=lastPrice?trPnl(p,lastPrice):0,done=lastPrice?Math.max(0,Math.min(1,((p.side==='long'?1:-1)*(lastPrice/p.entry-1))/(p.pct/100))):0;
+  const eta=p.estMin?Math.max(0,p.estMin-(nowServer()-p.openAt)/60000):null;
+  return `<div class="row" style="display:block;padding:8px 0;border-top:1px solid #333"><div><b>${p.side==='long'?'LONG ▲':'SHORT ▼'}</b> $${p.amount.toFixed(2)} @ $${price(p.entry)} → <b>$${price(p.tp)}</b>${p.sp?' • stop $'+price(p.sp):''}</div><div>Now $${price(lastPrice)} • P/L <b class="${pn>=0?'green':'red'}">${pn>=0?'+':''}$${pn.toFixed(2)}</b> • ${(done*100).toFixed(0)}% of the way</div><div style="font-size:11px">Opened ${fdt(p.openAt)} • est. total ${p.estMin?fmtDur(p.estMin):'--'}${eta!=null?' • about '+fmtDur(eta)+' left by estimate':''}</div><button class="primary" data-trc="${p.id}" style="margin-top:6px">CLOSE NOW</button></div>`}).join(''):'';
+ ro.querySelectorAll('[data-trc]').forEach(b=>b.onclick=()=>{const p=tr.find(x=>x.id===b.dataset.trc);if(p&&lastPrice)trClose(p,lastPrice,nowServer(),'MANUAL')});
+ const h=$('trHist');
+ if(!cl.length){h.textContent='No trades yet.';return}
+ const tot=cl.reduce((a,p)=>a+p.pnl,0),w=cl.filter(p=>p.pnl>0).length;
+ h.innerHTML=`<div style="margin-bottom:6px"><b>${cl.length}</b> trades • ${w} won • total <b class="${tot>=0?'green':'red'}">${tot>=0?'+':''}$${tot.toFixed(2)}</b></div>`+cl.slice(0,30).map(p=>`<div class="row" style="display:block;padding:5px 0;border-top:1px solid #333"><b>${p.side==='long'?'LONG':'SHORT'}</b> $${p.amount.toFixed(2)} ${price(p.entry)} → ${price(p.exit)} <b class="${p.pnl>=0?'green':'red'}">${p.pnl>=0?'+':''}$${p.pnl.toFixed(2)}</b><div style="font-size:11px">${p.why} • took ${fmtDur(p.tookMin)}${p.estMin?' (estimate '+fmtDur(p.estMin)+')':''} • ${fdt(p.closeAt)}</div></div>`).join('');
+}
+setInterval(()=>{trPreview();renderTrades()},5000);
+setInterval(trCheck,20000);
+setTimeout(()=>{renderTrades();trCheck()},4000);
+
+/*v21 REAL trade via private worker (CoinDCX, INR)*/
+(function(){
+ const p=$('tradePanel');
+ const bar=document.createElement('div');
+ bar.innerHTML=`<div class="inputrow" style="margin:6px 0"><button id="trMode" class="primary">MODE: PAPER</button><input id="trFee" inputmode="decimal" placeholder="Exchange fee % per side (default 0.2)"></div>
+ <details id="trCfg" style="margin:6px 0"><summary style="cursor:pointer">REAL-TRADE SETUP (CoinDCX ₹)</summary>
+ <div class="notice">Keys are NOT stored here. They live in your private Cloudflare Worker. Paste only its address and your passcode.</div>
+ <div class="inputrow"><input id="wkUrl" placeholder="https://your-worker.workers.dev"></div>
+ <div class="inputrow" style="margin-top:6px"><input id="wkPass" type="password" placeholder="App passcode"><button id="wkSave" class="primary">SAVE</button></div>
+ <div id="wkMsg" class="notice"></div></details>
+ <div id="rtList"></div>`;
+ p.insertBefore(bar,$('trPrev'));
+ $('trMode').onclick=()=>{settings.trReal=!settings.trReal;saveState();paintMode();trPreview()};
+ $('wkSave').onclick=async()=>{settings.wkUrl=$('wkUrl').value.trim().replace(/\/+$/,'');settings.wkPass=$('wkPass').value;await saveState();
+  try{const t=await wk('/ticker');$('wkMsg').innerHTML='<span class="ok">Connected.</span> ETH/INR now ₹'+t.last.toLocaleString('en-IN')}catch(e){$('wkMsg').textContent='Failed: '+e.message}};
+ $('trFee').addEventListener('input',()=>{settings.trFee=parseFloat($('trFee').value)||0;saveState();trPreview()});
+ setTimeout(()=>{if(settings.wkUrl)$('wkUrl').value=settings.wkUrl;if(settings.wkPass)$('wkPass').value=settings.wkPass;if(settings.trFee)$('trFee').value=settings.trFee;paintMode()},1500);
+ $('trGo').onclick=()=>settings.trReal?realOpen():trOpenPos();
+})();
+function paintMode(){const r=!!settings.trReal;const b=$('trMode');b.textContent=r?'MODE: REAL ₹':'MODE: PAPER';b.style.background=r?'#a33':'';
+ $('trAmt').placeholder=r?'Amount in ₹ (INR), e.g. 500':'Amount in USDT, e.g. 1000';$('trSide').style.display=r?'none':'';$('trStop').placeholder=r?'Stop-loss % (needs this page open)':'Stop-loss % (optional)';
+ $('trGo').textContent=r?'TRADE WITH REAL ₹':'TRADE'}
+async function wk(path,body){
+ if(!settings.wkUrl||!settings.wkPass)throw new Error('Set worker address and passcode first');
+ const r=await fetch(settings.wkUrl+path,{method:body?'POST':'GET',headers:{'Content-Type':'application/json','X-PASS':settings.wkPass},body:body?JSON.stringify(body):undefined});
+ const j=await r.json().catch(()=>({error:'bad response'}));
+ if(!r.ok||j.error)throw new Error(j.error||('HTTP '+r.status));return j;
+}
+const INR=x=>'₹'+Number(x).toLocaleString('en-IN',{maximumFractionDigits:2});
+function realMath(amt,pct){
+ const f=(settings.trFee>0?settings.trFee:.2)/100;
+ const sell=amt*(1+pct/100),feeB=amt*f,feeS=sell*f,tds=sell*.01,gain=Math.max(0,sell-amt),tax=.3*gain;
+ return {sell,feeB,feeS,tds,tax,net:sell-feeS-amt-feeB-tax,gross:sell-amt};
+}
+const _tp21=trPreview;
+trPreview=function(){
+ if(!settings.trReal)return _tp21();
+ const el=$('trPrev'),amt=parseFloat($('trAmt').value),pct=parseFloat($('trPct').value);
+ if(!(amt>0)||!(pct>0)){el.textContent='REAL mode (long only, spot ETH/INR on CoinDCX). Enter ₹ amount and profit %.';return}
+ const m=realMath(amt,pct),e=lastPrice?etaFor(lastPrice*(1+pct/100),lastPrice):null;
+ let h=`BUY ${INR(amt)} of ETH now, sell when price is +${pct}%.<br>Before tax/fees: <b>+${INR(m.gross)}</b>. After fees (${(settings.trFee>0?settings.trFee:.2)}%/side) and 30% tax: <b class="${m.net>0?'green':'red'}">${m.net>=0?'+':''}${INR(m.net)}</b>. 1% TDS (${INR(m.tds)}) is also held at sale.`;
+ if(m.net<=0)h+=' <b class="red">At this target you lose money after fees — raise the %.</b>';
+ if(e)h+=`<br><b>Expected time: ~${fmtDur(e.T)}</b>${e.lo?' (usually '+fmtDur(e.lo)+' – '+fmtDur(e.hi)+')':''} • chance within 1h ${(e.probs['1h']*100).toFixed(0)}%, 24h ${(e.probs['24h']*100).toFixed(0)}%, 7d ${(e.probs['7d']*100).toFixed(0)}%`;
+ h+='<br>The sell order sits on CoinDCX, so it fills even if this page is closed. A loss is possible if the price falls and never recovers.';
+ el.innerHTML=h;
+};
+async function realOpen(){
+ const amt=parseFloat($('trAmt').value),pct=parseFloat($('trPct').value),st=parseFloat($('trStop').value)||0;
+ if(!(amt>0)||!(pct>0)){toast('Enter ₹ amount and profit %');return}
+ let tk;try{tk=await wk('/ticker')}catch(e){toast('Worker: '+e.message);return}
+ const tp=tk.ask*(1+pct/100),m=realMath(amt,pct);
+ if(m.net<=0&&!confirm('After fees and tax this target LOSES money. Continue anyway?'))return;
+ const ok=confirm(`REAL MONEY\n\nBuy ${INR(amt)} of ETH at about ${INR(tk.ask)}\nSell at ${INR(tp)} (+${pct}%)\n${st?'Stop-loss at -'+st+'% (only works while this page is open)\n':'No stop-loss\n'}Estimated profit after fees+tax: ${INR(m.net)}\n\nPress OK to place the order.`);
+ if(!ok)return;
+ $('trGo').disabled=true;
+ try{
+  const r=await wk('/trade',{inr:amt,tp});
+  const e=lastPrice?etaFor(lastPrice*(1+pct/100),lastPrice):null;
+  (settings.realTrades=settings.realTrades||[]).push({id:uid(),inr:amt,qty:r.qty,entry:r.avg,tp:r.tp,pct,stopPct:st,sp:st?r.avg*(1-st/100):0,sellId:r.sellId,buyId:r.buyId,openAt:nowServer(),estMin:e?Math.round(e.T):null,status:'open'});
+  await saveState();toast('Real buy filled, sell order placed');
+  $('trAmt').value='';$('trPct').value='';$('trStop').value='';
+ }catch(e){alert('Trade failed: '+e.message)}
+ $('trGo').disabled=false;renderReal();
+}
+async function realCheck(){
+ const op=(settings.realTrades||[]).filter(p=>p.status==='open');if(!op.length||!settings.wkUrl)return;
+ let tk=null;try{tk=await wk('/ticker')}catch(e){}
+ for(const p of op){
+  try{
+   const s=await wk('/status',{sellId:p.sellId});
+   if(s.status==='filled'){p.status='closed';p.exit=s.avg||p.tp;p.closeAt=nowServer();p.why='TARGET';p.pnl=p.qty*p.exit-p.inr;p.took=Math.round((p.closeAt-p.openAt)/60000);toast('Real target reached');continue}
+   if(s.status==='cancelled'||s.status==='rejected'){p.status='closed';p.why='CANCELLED on exchange';p.exit=0;p.pnl=0;p.closeAt=nowServer();p.took=0;continue}
+   if(p.sp&&tk&&tk.bid<=p.sp){await realExit(p,'STOP')}
+  }catch(e){}
+ }
+ await saveState();renderReal();
+}
+async function realExit(p,why){
+ const r=await wk('/exit',{sellId:p.sellId});
+ p.status='closed';p.exit=r.avg||0;p.closeAt=nowServer();p.why=why;p.pnl=p.qty*p.exit-p.inr;p.took=Math.round((p.closeAt-p.openAt)/60000);
+ await saveState();toast('Real position closed: '+INR(p.pnl));
+}
+function renderReal(){
+ const el=$('rtList');if(!el)return;const t=settings.realTrades||[];
+ if(!t.length){el.innerHTML='';return}
+ const op=t.filter(p=>p.status==='open'),cl=t.filter(p=>p.status==='closed').sort((a,b)=>b.closeAt-a.closeAt);
+ let h='';
+ if(op.length)h+='<div class="section-title">REAL OPEN TRADES</div>'+op.map(p=>`<div class="row" style="display:block;padding:8px 0;border-top:1px solid #333"><b>REAL LONG</b> ${INR(p.inr)} @ ${INR(p.entry)} → sell ${INR(p.tp)}${p.sp?' • stop '+INR(p.sp):''}<div style="font-size:11px">Opened ${fdt(p.openAt)} • est. ${p.estMin?fmtDur(p.estMin):'--'} • sell order is live on CoinDCX</div><button class="primary" data-rx="${p.id}" style="margin-top:6px">SELL NOW (market)</button></div>`).join('');
+ if(cl.length){const tot=cl.reduce((a,p)=>a+p.pnl,0);h+=`<div class="section-title" style="margin-top:8px">REAL TRADE HISTORY</div><div>${cl.length} closed • before-tax total <b class="${tot>=0?'green':'red'}">${tot>=0?'+':''}${INR(tot)}</b></div>`+cl.slice(0,20).map(p=>`<div class="row" style="display:block;padding:5px 0;border-top:1px solid #333">${INR(p.inr)} → ${p.exit?INR(p.exit):'--'} <b class="${p.pnl>=0?'green':'red'}">${p.pnl>=0?'+':''}${INR(p.pnl)}</b><div style="font-size:11px">${p.why} • took ${fmtDur(p.took)}${p.estMin?' (est '+fmtDur(p.estMin)+')':''}</div></div>`).join('')}
+ el.innerHTML=h;
+ el.querySelectorAll('[data-rx]').forEach(b=>b.onclick=async()=>{const p=t.find(x=>x.id===b.dataset.rx);if(p&&confirm('Sell this position now at market price?')){b.disabled=true;try{await realExit(p,'MANUAL')}catch(e){alert('Exit failed: '+e.message)}renderReal()}});
+}
+['trAmt','trPct','trStop'].forEach(i=>$(i).addEventListener('input',()=>trPreview()));
+setInterval(realCheck,20000);setTimeout(()=>{renderReal();realCheck()},5000);
+
+/*v22 away summary, risk radar, target helper, uptime*/
+function invN(q){/* inverse normal upper tail: z with 2*(1-ncdf(z))=q */let lo=0,hi=6;for(let i=0;i<40;i++){const m=(lo+hi)/2;if(2*(1-ncdf(m))>q)lo=m;else hi=m}return (lo+hi)/2}
+function lvl(q,mins,dir){const s=sigmaPerMin();if(!s||!lastPrice)return null;const K=etaCal().K||1;const d=invN(q)*s*Math.sqrt(mins/K);return lastPrice*Math.exp(dir*d)}
+function probMove(pct,mins,dir){const s=sigmaPerMin();if(!s)return null;const K=etaCal().K||1;const d=Math.abs(Math.log(1+dir*pct/100));return Math.min(1,2*(1-ncdf(d/(s*Math.sqrt(mins/K)))))}
+(function(){
+ const p=document.createElement('div');p.className='panel';p.id='radarPanel';
+ p.innerHTML='<div class="section-title">RISK RADAR & TARGET HELPER</div><div id="radarBody" class="notice">Waiting for live data…</div>';
+ const scr=$('screen-predict');scr.insertBefore(p,scr.children[1]);
+})();
+function renderRadar(){
+ const el=$('radarBody');if(!el||!lastPrice||!sigmaPerMin())return;
+ const rows=[[2,'1d',1440],[5,'1d',1440],[3,'7d',10080],[6,'7d',10080]];
+ let h='<div style="font-size:12px;line-height:1.7"><b>Chance ETH touches a move at any time within the window:</b><br>';
+ for(const [pc,l,m] of rows){const u=probMove(pc,m,1),d=probMove(pc,m,-1);h+=`±${pc}% in ${l}: <b class="green">▲ ${(u*100).toFixed(0)}%</b> • <b class="red">▼ ${(d*100).toFixed(0)}%</b><br>`}
+ h+='<div style="margin-top:6px"><b>Realistic targets</b> (tap to fill the target box):</div>';
+ const ch=[];for(const [q,m,l] of [[.5,1440,'24h'],[.25,1440,'24h'],[.5,10080,'7d'],[.25,10080,'7d']])for(const dir of [1,-1]){const v=lvl(q,m,dir);if(v)ch.push(`<button class="primary" data-tl="${v.toFixed(2)}" style="margin:2px;padding:4px 8px;font-size:11px">${dir>0?'▲':'▼'} $${price(v)} • ${Math.round(q*100)}% in ${l}</button>`)}
+ h+=ch.join('')+'<div style="font-size:11px;margin-top:4px">Far-away targets can sit open for weeks. These levels are the ones the price tends to touch soon.</div></div>';
+ el.innerHTML=h;
+ el.querySelectorAll('[data-tl]').forEach(b=>b.onclick=()=>{$('targetPrice').value=b.dataset.tl;$('targetPrice').scrollIntoView({behavior:'smooth',block:'center'});toast('Target filled — press LOCK')});
+}
+setInterval(renderRadar,10000);setTimeout(renderRadar,4000);
+async function cleanFarTargets(){
+ const far=active.filter(p=>p.type==='TARGET_PRICE'&&!p.settled&&(p.estimatedMinutes||0)>129600);
+ if(!far.length){toast('No targets over 90 days away');return}
+ if(!confirm('Cancel '+far.length+' target(s) estimated over 90 days away?'))return;
+ for(const p of far){active=active.filter(x=>x.id!==p.id);try{await dbDel(STORE.predictions,p.id)}catch(e){}}
+ renderActive();toast('Removed '+far.length);
+}
+(function(){
+ const b=document.createElement('button');b.className='primary';b.textContent='CLEAN UP FAR-AWAY TARGETS (>90 days)';b.style.cssText='width:100%;margin-top:8px;font-size:12px';
+ b.onclick=cleanFarTargets;$('radarPanel').appendChild(b);
+})();
+function uptime(){
+ const now=Date.now(),H=168,hrs=new Set();
+ for(const p of (hist||[]).concat(active||[])){const t=p.createdAt;if(t&&now-t<H*36e5)hrs.add(Math.floor(t/36e5))}
+ return {on:hrs.size,of:H};
+}
+const _rc22=renderCal;
+renderCal=function(){_rc22();const el=$('calBody');if(!el)return;const u=uptime();
+ const pc=Math.round(100*u.on/u.of);
+ el.innerHTML+=`<div style="font-size:12px;margin-top:6px"><b>Tracking uptime (7 days):</b> ${u.on} of ${u.of} hours recorded (${pc}%). ${pc<50?'<b class="red">The page was closed most of the time — predictions only run while it is open. Keep one tab open on a charger.</b>':'Good coverage.'}</div>`};
+/* away summary */
+function seenTick(){try{if(lastPrice){settings.lastSeen={t:Date.now(),p:lastPrice};saveState()}}catch(e){}}
+setInterval(seenTick,30000);document.addEventListener('visibilitychange',()=>{if(document.hidden)seenTick()});
+setTimeout(async()=>{
+ try{
+  const ls=settings.lastSeen;if(!ls||!lastPrice)return;const gap=Date.now()-ls.t;if(gap<45*60000)return;
+  const iv=gap<864e5?'5m':gap<864e6?'1h':'4h';
+  const d=parseKlines(await api('/api/v3/klines?symbol=ETHUSDT&interval='+iv+'&startTime='+ls.t+'&limit=1000'));
+  if(!d.length)return;
+  const hi=Math.max(...d.map(x=>x.high)),lo=Math.min(...d.map(x=>x.low)),mv=100*(lastPrice/ls.p-1);
+  const c=document.createElement('div');c.className='panel';
+  c.innerHTML=`<div class="section-title">WHILE YOU WERE AWAY (${fmtDur(gap/60000)})</div><div class="notice" style="font-size:12px;line-height:1.6">ETH went $${price(ls.p)} → $${price(lastPrice)} (<b class="${mv>=0?'green':'red'}">${mv>=0?'+':''}${mv.toFixed(2)}%</b>). Range $${price(lo)} – $${price(hi)}.<br>Targets and real/paper trades are re-checked against this period automatically. 10/15/30-minute predictions could not run while the page was closed.<br><button class="primary" id="awayX" style="margin-top:6px">DISMISS</button></div>`;
+  const s=$('screen-chart');s.insertBefore(c,s.children[0]);$('awayX').onclick=()=>c.remove();
+ }catch(e){}
+},9000);
+
 boot();
 </script>
 </body>
