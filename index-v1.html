@@ -2110,7 +2110,7 @@ function renderLearnLog(){
  const wk=WK?`week lessons: tomorrow ${WK[1].live} • week ${WK[7].live}`:'week lessons: loading';
  const line=e=>{
   const tm=`<span style="color:var(--muted)">${fdt(e.t)}</span> `;
-  if(e.k==='min')return tm+`<b>${e.type}</b> <b class="${e.ok?'green':'red'}">${e.ok?'✔ direction right':'✖ direction wrong'}</b> (forecast ${sp2(e.fm)}, real ${sp2(e.am)})<br>${e.d.length?'weights: '+e.d.map(([k,v])=>`${k.toUpperCase()} <span class="${v>0?'green':'red'}">${v>0?'▲':'▼'}${Math.abs(v).toFixed(3)}</span>`).join(' • '):'weights barely moved'} • online net trained ${e.nn}×`;
+  if(e.k==='min')return tm+`<b>${e.type}</b> ${Math.abs(e.fm)<.0005?'<b>— no call (forecast was flat)</b>':`<b class="${e.ok?'green':'red'}">${e.ok?'✔ direction right':'✖ direction wrong'}</b>`} (forecast ${sp2(e.fm)}, real ${sp2(e.am)})<br>${e.d.length?'weights: '+e.d.map(([k,v])=>`${k.toUpperCase()} <span class="${v>0?'green':'red'}">${v>0?'▲':'▼'}${Math.abs(v).toFixed(3)}</span>`).join(' • '):'weights barely moved'} • online net trained ${e.nn}×`;
   if(e.k==='week')return tm+`<b>${e.H===1?'TOMORROW':'WEEK'}</b> result learned (lesson ${e.live})<br>`+e.d.map(([n,dv,v])=>`${n} ${(v*100).toFixed(0)}% <span class="${dv>.0005?'green':dv<-.0005?'red':''}">(${dv>=0?'+':''}${(dv*100).toFixed(1)})</span>`).join(' • ');
   return tm+`<b>Audit</b>: ${e.used.length} engines passed (${e.used.map(k=>k.toUpperCase()).join(', ')||'none, so forecasts equal the current price'}) on ${e.span} minutes`;
  };
@@ -2395,7 +2395,7 @@ function renderRadar(){
  el.innerHTML=h;
  el.querySelectorAll('[data-tl]').forEach(b=>b.onclick=()=>{$('targetPrice').value=b.dataset.tl;$('targetPrice').scrollIntoView({behavior:'smooth',block:'center'});toast('Target filled — press LOCK')});
 }
-setInterval(renderRadar,10000);setTimeout(renderRadar,4000);
+setInterval(()=>renderRadar(),10000);setTimeout(()=>renderRadar(),4000);
 async function cleanFarTargets(){
  const far=active.filter(p=>p.type==='TARGET_PRICE'&&!p.settled&&(p.estimatedMinutes||0)>129600);
  if(!far.length){toast('No targets over 90 days away');return}
@@ -2431,6 +2431,330 @@ setTimeout(async()=>{
   const s=$('screen-chart');s.insertBefore(c,s.children[0]);$('awayX').onclick=()=>c.remove();
  }catch(e){}
 },9000);
+
+/*v23 collapse everything + strategy review*/
+(function(){
+ const css=document.createElement('style');
+ css.textContent='.panel.collapsed>*:not(.section-title){display:none}.section-title.ct{cursor:pointer;user-select:none}.section-title.ct::after{content:"▾";float:right;opacity:.6;padding-left:12px}.panel.collapsed .section-title.ct::after{content:"▸"}.panel.collapsed .section-title{margin-bottom:0}';
+ document.head.appendChild(css);
+ let st={};try{st=JSON.parse(localStorage.collapsed||'null')||{}}catch(e){}
+ function wire(p){
+  const t=p.querySelector(':scope>.section-title');if(!t||t.classList.contains('ct')||t.querySelector('button'))return;
+  const key=t.textContent.trim().slice(0,24);
+  t.classList.add('ct');p.classList.toggle('collapsed',!!st[key]);
+  t.addEventListener('click',()=>{const c=p.classList.toggle('collapsed');st[key]=c;try{localStorage.collapsed=JSON.stringify(st)}catch(e){}});
+ }
+ window.wireAll=()=>document.querySelectorAll('.panel').forEach(wire);
+ wireAll();
+ new MutationObserver(()=>wireAll()).observe(document.body,{childList:true,subtree:true});
+})();
+(function(){
+ const p=document.createElement('div');p.className='panel';p.id='stratPanel';
+ p.innerHTML='<div class="section-title">STRATEGY REVIEW: USED → WENT WRONG → NEXT</div><div id="stratBody" class="notice">Waiting for results…</div>';
+ const hs=$('screen-history');hs.insertBefore(p,hs.children[1]||null);
+})();
+function stratEval(){
+ const S=(hist||[]).filter(p=>/^(10m|15m|30m)$/.test(p.type)&&p.settled&&p.actual&&p.engines).sort((a,b)=>a.createdAt-b.createdAt);
+ const sig=p=>Object.entries(p.engines).filter(([k,v])=>typeof v==='number'&&Math.abs(v)>1e-7).map(([k,v])=>[k,Math.sign(v)]);
+ const out={vote:[0,0],contra:[0,0],top3:[0,0],best1:[0,0],vote_t:[0,0],top3_t:[0,0]};
+ const third=Math.floor(S.length*2/3);
+ S.forEach((p,i)=>{
+  const mv=Math.sign(p.actual-p.entry);if(!mv)return;
+  const sg=sig(p);if(!sg.length)return;
+  const v=Math.sign(sg.reduce((a,[k,s])=>a+s,0));
+  if(v){out.vote[1]++;if(v===mv)out.vote[0]++;out.contra[1]++;if(-v===mv)out.contra[0]++;if(i>=third){out.vote_t[1]++;if(v===mv)out.vote_t[0]++}}
+  const E={};for(let j=Math.max(0,i-30);j<i;j++){const m2=Math.sign(S[j].actual-S[j].entry);if(!m2)continue;for(const [k,s] of sig(S[j])){(E[k]=E[k]||[0,0])[1]++;if(s===m2)E[k][0]++}}
+  const rk=Object.entries(E).filter(([k,x])=>x[1]>=8&&x[0]/x[1]>.5).sort((a,b)=>b[1][0]/b[1][1]-a[1][0]/a[1][1]);
+  if(rk.length){
+   const top=rk.slice(0,3).map(r=>r[0]),vs=Math.sign(sg.filter(([k])=>top.includes(k)).reduce((a,[k,s])=>a+s,0));
+   if(vs){out.top3[1]++;if(vs===mv)out.top3[0]++;if(i>=third){out.top3_t[1]++;if(vs===mv)out.top3_t[0]++}}
+   const b=sg.find(([k])=>k===rk[0][0]);if(b){out.best1[1]++;if(b[1]===mv)out.best1[0]++}
+  }
+ });
+ return {out,n:S.length,S};
+}
+function stratWorst(S){
+ const E={};for(const p of S.slice(-60)){const mv=Math.sign(p.actual-p.entry);if(!mv)continue;for(const [k,v] of Object.entries(p.engines)){if(typeof v!=='number'||Math.abs(v)<1e-7)continue;(E[k]=E[k]||[0,0])[1]++;if(Math.sign(v)===mv)E[k][0]++}}
+ return Object.entries(E).filter(([k,x])=>x[1]>=15).map(([k,x])=>[k,x[0]/x[1],x[1]]).sort((a,b)=>a[1]-b[1]);
+}
+function renderStrat(){
+ const el=$('stratBody');if(!el||!learner)return;
+ const {out,n,S}=stratEval();
+ const names={vote:'Majority vote of all engines',contra:'Opposite of the majority (contrarian)',top3:'Follow the 3 engines that were best recently',best1:'Follow the single best recent engine'};
+ const lb=(k)=>out[k][1]>=20?wilsonLB(out[k][0],out[k][1]):0;
+ let best=null;for(const k of ['vote','contra','top3','best1']){if(out[k][1]>=20&&(!best||lb(k)>lb(best)))best=k}
+ const adopt=best&&out[best][1]>=60&&lb(best)>.5;
+ const audits=(learner.log||[]).filter(e=>e.k==='audit'),la=audits[audits.length-1];
+ const used=la?la.used:[];
+ const tw=KEYS.map(k=>[k,learner.global[k]||1]).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([k,v])=>k.toUpperCase()+' '+v.toFixed(2)).join(', ');
+ const mins=(learner.log||[]).filter(e=>e.k==='min').slice(-40);
+ const calls=mins.filter(e=>Math.abs(e.fm)>=.0005),flat=mins.length-calls.length,right=calls.filter(e=>e.ok).length;
+ const lastS=S.slice(-60),flatMoved=lastS.filter(p=>Math.abs(p.forecast-p.entry)<1e-9&&Math.abs(p.actual/p.entry-1)>.0015).length,flatAll=lastS.filter(p=>Math.abs(p.forecast-p.entry)<1e-9).length;
+ const worst=stratWorst(S).slice(0,3),cs=coneStat(),up=uptime(),upc=Math.round(100*up.on/up.of),c=etaCal();
+ let h='<div style="font-size:12px;line-height:1.65">';
+ h+='<b>1. Strategy used so far</b><br>'+(used.length?`Blend of ${used.map(k=>k.toUpperCase()).join(', ')} (passed the audit).`:'<b>No engine passed the audit, so the app forecasts "no change"</b> (current price) — the safest fallback.')+` Highest learned weights: ${tw}. Audits run on 6,000 minutes of history.<br><br>`;
+ h+='<b>2. What went wrong</b><ul style="margin:2px 0 6px 16px;padding:0">';
+ h+=`<li>Of the last ${mins.length} minute lessons, ${flat} were flat forecasts (no call) and ${calls.length} were real calls: ${right} right, ${calls.length-right} wrong.</li>`;
+ if(flatAll)h+=`<li>${flatMoved} of the last ${flatAll} flat forecasts saw ETH move more than 0.15% — flat forecasts miss real moves.</li>`;
+ if(worst.length)h+=`<li>Weakest recent engines: ${worst.map(w=>w[0].toUpperCase()+' '+Math.round(w[1]*100)+'% ('+w[2]+')').join(', ')}.</li>`;
+ h+=cs.n?`<li>Week band caught the price ${cs.ok} of ${cs.n} checks (${Math.round(100*cs.ok/cs.n)}%).</li>`:'<li>Week band: no finished checks yet.</li>';
+ h+=`<li>Tracking uptime last 7 days: ${upc}%${upc<50?' — too much of the time the page was closed, so lessons are few.':''}</li>`;
+ h+=c.n>=2?`<li>Target times: real hits take ~${Math.round(c.K*100)}% of the raw estimate (from ${c.n} hits) — already corrected.</li>`:'';
+ h+='</ul><b>3. Strategy tests on your history</b> (each is judged only on past results it has not seen)<br>';
+ for(const k of ['vote','contra','top3','best1']){const [a,b]=out[k];h+=`${names[k]}: ${b?Math.round(100*a/b)+'% right in '+b+' calls':'not enough data'}${b>=20?' (reliable floor '+Math.round(lb(k)*100)+'%)':''}<br>`}
+ h+='<br><b>4. Next strategy</b><br>';
+ const decision=adopt?`Test "${names[best]}" live — it clears 50% even at its reliable floor.`:`Stay on "no change" for now — nothing beats a coin flip with confidence${best?` (closest: ${names[best]}, floor ${Math.round(lb(best)*100)}%)`:''}.`;
+ h+=`<b>${decision}</b><ul style="margin:2px 0 0 16px;padding:0">`;
+ if(upc<50)h+='<li>Keep one tab open (charging) so lessons keep arriving — the biggest improvement available.</li>';
+ h+='<li>Keep re-running the audit and the tests above automatically; a strategy is only switched on once it passes on unseen data.</li>';
+ h+=`<li>Week band widths use ×${coneK().toFixed(2)} and keep adjusting as checks arrive.</li>`;
+ if(flatMoved>flatAll*.4&&flatAll>=10)h+='<li>Use Risk Radar for big-move odds, since flat forecasts miss many moves.</li>';
+ h+='</ul>';
+ const sl=settings.stratLog=settings.stratLog||[];
+ if(n>=20&&(!sl.length||sl[sl.length-1].d!==decision)){sl.push({t:Date.now(),d:decision});if(sl.length>30)sl.shift();saveState()}
+ if(sl.length)h+='<div style="margin-top:8px"><b>Strategy history</b><br>'+sl.slice().reverse().slice(0,8).map(x=>`<span style="color:var(--muted)">${fdt(x.t)}</span> ${x.d}`).join('<br>')+'</div>';
+ el.innerHTML=h+'</div>';
+}
+setTimeout(renderStrat,4500);setInterval(renderStrat,30000);
+
+/*v24 detailed week prediction results*/
+const WN=['Trend','Momentum','Mean reversion','Range position'];
+function wsig(h){if(h.sig)return h.sig;const e=h.engines||{};return [e.w1,e.w2,e.w3,e.w4].map(v=>typeof v==='number'?v:0)}
+async function weekDetail(h){
+ if(h.detail||!h.settledAt||h._try)return;h._try=1;
+ try{
+  const d=parseKlines(await api('/api/v3/klines?symbol=ETHUSDT&interval=1h&startTime='+(h.createdAt-36e5)+'&limit=200'));
+  const w=d.filter(c=>c.time*1000>=h.createdAt-36e5&&c.time*1000<=h.settledAt+36e5);if(!w.length)return;
+  let hi=w[0],lo=w[0];for(const c of w){if(c.high>hi.high)hi=c;if(c.low<lo.low)lo=c}
+  const days=[];const H=h.type==='WEEK_1D'?1:7;
+  for(let k=1;k<=H;k++){const t=h.createdAt+k*864e5,c=d.find(x=>x.time*1000+36e5>=t)||w[w.length-1];const q=(h.path||[]).find(x=>x.d===k);
+   days.push({d:k,act:c.close,pred:q?q.m:null,lo:q?q.lo:null,hi:q?q.hi:null,inBand:q?(c.close>=q.lo&&c.close<=q.hi):null})}
+  h.detail={hi:hi.high,hiT:hi.time*1000,lo:lo.low,loT:lo.time*1000,days};
+  await dbPut(STORE.history,h);setTimeout(()=>{try{renderWeekHist()}catch(e){}},0);
+ }catch(e){}
+}
+function weekVerdict(h){
+ const mv=h.actual-h.entry,fc=h.forecast-h.entry,called=Math.abs(h.forecast/h.entry-1)>.0002;
+ const dirOK=called?Math.sign(fc)===Math.sign(mv):null;
+ const errM=Math.abs(h.forecast-h.actual),errB=Math.abs(h.entry-h.actual);
+ return {mv,fc,called,dirOK,errM,errB,beat:errM<errB};
+}
+renderWeekHist=function(){
+ const el=$('weekHist');if(!el)return;const openD=[...el.querySelectorAll('details')].map(x=>x.open);
+ const done=hist.filter(h=>h.type==='WEEK_1D'||h.type==='WEEK_7D').sort((a,b)=>b.settledAt-a.settledAt);
+ const act=active.filter(p=>!p.settled&&(p.type==='WEEK_1D'||p.type==='WEEK_7D')).sort((a,b)=>a.targetAt-b.targetAt);
+ const lbl=T=>T==='WEEK_1D'?'TOMORROW (1 day)':'WEEK (7 days)';
+ const V=done.map(h=>[h,weekVerdict(h)]);
+ const sumFor=T=>{const a=V.filter(([h])=>h.type===T);if(!a.length)return 'none settled yet';const c=a.filter(([h,v])=>v.called),r=c.filter(([h,v])=>v.dirOK).length,b=a.filter(([h,v])=>v.beat).length,e=a.reduce((s,[h,v])=>s+Math.abs(h.actual/h.entry-1)*100,0)/a.length;return `${a.length} settled • direction ${c.length?r+'/'+c.length+' right':'no calls (all flat)'} • beat "no change" ${b}/${a.length} • price moved avg ${e.toFixed(2)}%`};
+ const E=[0,0,0,0].map(()=>[0,0]);for(const [h,v] of V){const s=wsig(h),mv=Math.sign(v.mv);if(!mv)continue;s.forEach((x,k)=>{if(x){E[k][1]++;if(Math.sign(x)===mv)E[k][0]++}})}
+ const ck=done.flatMap(h=>(h.detail?h.detail.days:h.check||[]).filter(c=>c.inBand!==null&&c.inBand!==undefined)),cov=ck.length?Math.round(ck.filter(c=>c.inBand).length/ck.length*100)+'% ('+ck.filter(c=>c.inBand).length+'/'+ck.length+')':'--';
+ let h=`<div style="font-size:12px;line-height:1.7;margin-bottom:8px"><b>SCOREBOARD</b><br>Tomorrow: ${sumFor('WEEK_1D')}<br>Week: ${sumFor('WEEK_7D')}<br>Price inside the 80% range: <b>${cov}</b> (goal 80%)<br>Signals right: ${E.map((x,k)=>'W'+(k+1)+' '+WN[k]+' '+(x[1]?Math.round(100*x[0]/x[1])+'% ('+x[1]+')':'--')).join(' • ')}</div>`;
+ if(act.length){h+='<b style="font-size:12px">WAITING TO SETTLE</b>';h+=act.map(p=>{
+  const left=Math.max(0,p.targetAt-nowServer()),el2=Math.min(1,(nowServer()-p.createdAt)/(p.targetAt-p.createdAt)),day=Math.max(1,Math.ceil(el2*(p.type==='WEEK_1D'?1:7))),q=(p.path||[]).find(x=>x.d===day)||(p.path||[])[0];
+  const now=lastPrice,inb=q&&now?(now>=q.lo&&now<=q.hi):null;
+  return `<div style="padding:8px 0;border-top:1px solid var(--line2);font-size:11px;line-height:1.7"><b>${lbl(p.type)}</b> locked ${fdt(p.createdAt)} • settles ${fdt(p.targetAt)} (in ${fmtDur(left/60000)})<br>Started $${price(p.entry)} • forecast $${price(p.forecast)} (${sp2((p.forecast/p.entry-1)*100)}) • now $${price(now)} (${sp2((now/p.entry-1)*100)})${q?`<br>Today's expected range $${price(q.lo)} – $${price(q.hi)}: price is <b class="${inb?'green':'red'}">${inb?'inside':'outside'}</b>`:''}<br>Progress ${Math.round(el2*100)}%</div>`}).join('')}
+ if(done.length){h+='<div style="margin-top:8px"><b style="font-size:12px">RESULTS (newest first — tap one to open details)</b></div>';
+  h+=done.slice(0,20).map(h2=>{
+   const v=weekVerdict(h2);weekDetail(h2);const d=h2.detail;
+   const badge=v.dirOK===null?'<b>■ no direction call</b>':`<b class="${v.dirOK?'green':'red'}">${v.dirOK?'✔ direction right':'✖ direction wrong'}</b>`;
+   const s=wsig(h2),mvS=Math.sign(v.mv);
+   const eng=s.map((x,k)=>x?`W${k+1} ${WN[k]} ${x>0?'▲':'▼'} <b class="${Math.sign(x)===mvS?'green':'red'}">${Math.sign(x)===mvS?'right':'wrong'}</b>`:`W${k+1} ${WN[k]} –`).join(' • ');
+   const days=(d?d.days:[]).map(x=>`D${x.d}: predicted ${x.pred?'$'+price(x.pred):'--'}${x.lo?' ($'+price(x.lo)+'–'+price(x.hi)+')':''}, actual $${price(x.act)} ${x.inBand===null?'':x.inBand?'<b class="green">✔ inside</b>':'<b class="red">✖ outside</b>'}`).join('<br>');
+   const why=h2.context==='unproven'?'The forecast stayed near flat because no week signal has beaten 50% reliably yet, so the app does not lean.':'Signals had enough proven record to lean.';
+   const lesson=v.dirOK===false?'Lesson: the signals leaned the wrong way; their weights are reduced slightly.':v.dirOK===true?'Lesson: the lean was right; those signals gain weight.':'Lesson: ETH moved '+sp2((v.mv/h2.entry)*100)+' while the app stayed flat — big moves are not predictable yet, use Risk Radar for odds.';
+   return `<details style="padding:8px 0;border-top:1px solid var(--line2);font-size:11px;line-height:1.7"><summary style="cursor:pointer"><b>${lbl(h2.type)}</b> ${fdt(h2.createdAt)} → ${fdt(h2.settledAt)} ${badge} • moved ${sp2((v.mv/h2.entry)*100)} • ${v.beat?'<b class="green">beat</b>':'<b class="red">lost to</b>'} "no change"</summary>
+   Locked at $${price(h2.entry)} • forecast $${price(h2.forecast)} (${sp2((v.fc/h2.entry)*100)}) • actual $${price(h2.actual)} (${sp2((v.mv/h2.entry)*100)})<br>Forecast error $${v.errM.toFixed(2)} vs "no change" error $${v.errB.toFixed(2)}${d?`<br>During the period: high $${price(d.hi)} (${fdt(d.hiT)}) • low $${price(d.lo)} (${fdt(d.loT)}) • swing ${((d.hi/d.lo-1)*100).toFixed(2)}%`:'<br>Loading price history for this period…'}
+   ${days?'<br>'+days:''}<br><b>Why:</b> ${why}<br>Signals: ${eng}<br><b>${lesson}</b></details>`}).join('')}
+ else h+='<div class="notice">No week predictions have settled yet. A tomorrow forecast settles 24 hours after it is locked; a week forecast after 7 days. Keep the page open so they lock and settle.</div>';
+
+ el.innerHTML=h;el.querySelectorAll('details').forEach((x,i)=>{if(openD[i])x.open=true});
+};
+setTimeout(()=>{try{renderWeekHist()}catch(e){}},5000);setInterval(()=>{try{renderWeekHist()}catch(e){}},60000);
+
+/*v25 alerts, volatility, daily summary, journal+tax, backup, risk calc, price alerts*/
+async function notify(title,msg,pri){
+ const t=settings.ntfy;if(!t)return false;
+ try{const r=await fetch('https://ntfy.sh',{method:'POST',body:JSON.stringify({topic:t,title,message:msg,priority:pri||3})});return r.ok}catch(e){return false}
+}
+function dlFile(name,text,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type:type||'text/csv'}));a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{a.remove()},500)}
+/* ---------- volatility label ---------- */
+function volState(){
+ const c=oneMin.map(x=>x.close);if(c.length<300)return null;
+ const r=[];for(let i=1;i<c.length;i++)r.push(Math.log(c[i]/c[i-1]));
+ const now=std(r.slice(-60)),w=[];for(let e=r.length;e>=60;e-=30)w.push(std(r.slice(e-60,e)));
+ const rank=w.filter(x=>x<=now).length/w.length;
+ const l=rank<.3?['CALM','green','Quiet market — moves are small, forecasts are easier to interpret.']:rank<.8?['NORMAL','','Normal activity.']:rank<.95?['BUSY','red','Busier than usual — expect bigger swings.']:['WILD','red','Very volatile — forecasts are least reliable now. Use smaller sizes and wider stops.'];
+ return {label:l[0],cls:l[1],note:l[2],pct:Math.round(rank*100),move:100*now*Math.sqrt(60)};
+}
+(function(){
+ const d=document.createElement('div');d.id='volChip';d.className='notice';d.style.cssText='margin:-4px 2px 10px;font-size:11px';
+ const a=$('lastLesson')||$('countdown');a.after(d);
+})();
+function paintVol(){const v=volState(),el=$('volChip');if(!el)return;el.innerHTML=v?`Market mood: <b class="${v.cls}">${v.label}</b> (busier than ${v.pct}% of the last day) • typical 1h swing ±${v.move.toFixed(2)}% — ${v.note}`:'Market mood: collecting data…'}
+setInterval(paintVol,15000);setTimeout(paintVol,5000);
+const _rr25=renderRadar;renderRadar=function(){_rr25();const v=volState(),el=$('radarBody');if(el&&v)el.insertAdjacentHTML('afterbegin',`<div style="font-size:12px;margin-bottom:6px">Mood now: <b class="${v.cls}">${v.label}</b> — ${v.note}</div>`)};
+/* ---------- price alerts ---------- */
+(function(){
+ const p=document.createElement('div');p.className='panel';p.id='paPanel';
+ p.innerHTML='<div class="section-title">PRICE ALERTS</div><div class="inputrow"><input id="paPrice" inputmode="decimal" placeholder="Alert me at price, e.g. 2500"><button id="paAdd" class="primary">ADD</button></div><div id="paList" class="notice">No alerts. Alerts reach your phone through ntfy (set up in SETTINGS).</div>';
+ const s=$('screen-predict');s.insertBefore(p,s.children[2]||null);
+ $('paAdd').onclick=()=>{const v=parseFloat($('paPrice').value);if(!(v>0)||!lastPrice){toast('Enter a price');return}
+  (settings.palerts=settings.palerts||[]).push({id:uid(),price:v,dir:v>lastPrice?1:-1,fired:false,at:Date.now()});$('paPrice').value='';saveState();renderPA();syncWatcher()};
+})();
+function renderPA(){
+ const el=$('paList');if(!el)return;const a=settings.palerts||[];
+ if(!a.length){el.textContent='No alerts. Alerts reach your phone through ntfy (set up in SETTINGS).';return}
+ el.innerHTML=a.slice().reverse().map(x=>`<div class="row"><span>${x.dir>0?'▲ rises to':'▼ falls to'} <b>$${price(x.price)}</b> ${x.fired?'<b class="green">✔ fired '+fdt(x.firedAt)+'</b>':'<span style="color:var(--muted)">waiting</span>'}</span><button class="primary" data-pd="${x.id}" style="padding:2px 8px">✕</button></div>`).join('');
+ el.querySelectorAll('[data-pd]').forEach(b=>b.onclick=()=>{settings.palerts=(settings.palerts||[]).filter(x=>x.id!==b.dataset.pd);saveState();renderPA();syncWatcher()});
+}
+function checkPA(){
+ if(!lastPrice)return;let ch=false;
+ for(const x of (settings.palerts||[])){if(x.fired)continue;if((x.dir>0&&lastPrice>=x.price)||(x.dir<0&&lastPrice<=x.price)){x.fired=true;x.firedAt=Date.now();ch=true;toast('Price alert: $'+price(x.price));notify('ETH price alert','ETH is $'+price(lastPrice)+' ('+(x.dir>0?'rose to':'fell to')+' your $'+price(x.price)+' alert)',4)}}
+ if(ch){saveState();renderPA()}
+}
+setInterval(checkPA,4000);setTimeout(renderPA,3000);
+/* ---------- push for finished things ---------- */
+function pushEvents(){
+ if(!settings.ntfy)return;const seen=settings.nfSeen=settings.nfSeen||{};let ch=false;
+ const first=!settings.nfInit;if(first){settings.nfInit=1;ch=true}
+ const once=(id,t,m,pr)=>{if(seen[id])return;seen[id]=1;ch=true;if(!first)notify(t,m,pr)};
+ for(const h of (hist||[])){
+  if(!h.settledAt||Date.now()-h.settledAt>3*864e5){if(h.id)seen[h.id]=seen[h.id]||1;continue}
+  if(h.type==='TARGET_PRICE'&&h.result==='HIT')once(h.id,'Target reached','ETH touched $'+price(h.targetPrice)+' after '+fmtDur(h.hitAfterMin||0),4);
+  if(h.type==='WEEK_1D'||h.type==='WEEK_7D'){const mv=(h.actual/h.entry-1)*100;once(h.id,(h.type==='WEEK_1D'?'Tomorrow':'Week')+' prediction settled','Locked $'+price(h.entry)+' → forecast $'+price(h.forecast)+' → actual $'+price(h.actual)+' ('+(mv>=0?'+':'')+mv.toFixed(2)+'%)',3)}
+ }
+ for(const t of (settings.trades||[]))if(t.status==='closed')once(t.id,'Paper trade closed',t.why+': '+(t.pnl>=0?'+':'')+'$'+t.pnl.toFixed(2),3);
+ for(const t of (settings.realTrades||[]))if(t.status==='closed')once(t.id,'REAL trade closed',t.why+': '+(t.pnl>=0?'+':'')+'₹'+t.pnl.toFixed(2),5);
+ const k=Object.keys(seen);if(k.length>400)k.slice(0,k.length-400).forEach(x=>delete seen[x]);
+ if(ch)saveState();
+}
+setInterval(pushEvents,20000);setTimeout(pushEvents,8000);
+/* ---------- always-on watcher sync ---------- */
+async function syncWatcher(){
+ if(!settings.wtUrl||!settings.wtPass||!settings.ntfy)return false;
+ try{
+  const targets=(active||[]).filter(p=>p.type==='TARGET_PRICE'&&!p.settled).map(p=>({id:p.id,price:p.targetPrice,dir:p.direction,from:p.scanFrom||p.createdAt}));
+  const alerts=(settings.palerts||[]).filter(x=>!x.fired).map(x=>({id:x.id,price:x.price,dir:x.dir,from:x.at}));
+  const r=await fetch(settings.wtUrl.replace(/\/+$/,'')+'/sync',{method:'POST',headers:{'Content-Type':'application/json','X-PASS':settings.wtPass},body:JSON.stringify({topic:settings.ntfy,targets,alerts,volAlert:settings.volAlert!==false,daily:settings.dailyPush!==false})});
+  return r.ok;
+ }catch(e){return false}
+}
+setInterval(syncWatcher,300000);setTimeout(syncWatcher,10000);
+/* ---------- settings panels ---------- */
+(function(){
+ const p=document.createElement('div');p.className='panel';p.id='alertPanel';
+ p.innerHTML=`<div class="section-title">PHONE ALERTS & ALWAYS-ON WATCHER</div>
+ <div class="notice" style="font-size:11px">1) Install the free <b>ntfy</b> app, subscribe to a private topic name only you know (e.g. raj-eth-8f3k2). 2) Type that same topic below. Alerts work while this page is open; the optional watcher keeps checking targets and price alerts when it is closed.</div>
+ <div class="inputrow"><input id="ntTopic" placeholder="ntfy topic name"><button id="ntTest" class="primary">TEST</button></div>
+ <div class="inputrow" style="margin-top:6px"><input id="wtUrl" placeholder="Watcher address (optional) https://…workers.dev"></div>
+ <div class="inputrow" style="margin-top:6px"><input id="wtPass" type="password" placeholder="Watcher passcode"><button id="ntSave" class="primary">SAVE</button></div>
+ <div id="ntMsg" class="notice"></div>`;
+ $('screen-settings').appendChild(p);
+ setTimeout(()=>{$('ntTopic').value=settings.ntfy||'';$('wtUrl').value=settings.wtUrl||'';$('wtPass').value=settings.wtPass||''},1500);
+ $('ntSave').onclick=async()=>{settings.ntfy=$('ntTopic').value.trim();settings.wtUrl=$('wtUrl').value.trim();settings.wtPass=$('wtPass').value;await saveState();
+  const ok=settings.wtUrl?await syncWatcher():null;$('ntMsg').textContent='Saved.'+(settings.wtUrl?(ok?' Watcher connected and synced.':' Watcher did not answer — check address/passcode.'):'')};
+ $('ntTest').onclick=async()=>{settings.ntfy=$('ntTopic').value.trim();await saveState();const ok=await notify('ETH app test','Alerts are working. ETH is $'+price(lastPrice||0),3);$('ntMsg').textContent=ok?'Test sent — check your phone.':'Could not send. Check the topic name and internet.'};
+ const b=document.createElement('div');b.className='panel';b.id='backupPanel';
+ b.innerHTML=`<div class="section-title">BACKUP & RESTORE</div><div class="notice" style="font-size:11px">Saves all predictions, history, learning, trades and settings (not your passwords or keys) to one file. Clearing the browser deletes app data, so keep a backup.</div>
+ <div class="inputrow"><button id="bkOut" class="primary" style="width:100%">SAVE BACKUP FILE</button></div>
+ <div class="inputrow" style="margin-top:6px"><input id="bkIn" type="file" accept=".json,application/json"></div>
+ <div id="bkMsg" class="notice"></div>`;
+ $('screen-settings').appendChild(b);
+ $('bkOut').onclick=async()=>{
+  const meta=await dbAll(STORE.meta);
+  const safe=meta.map(m=>{if(m.id==='settings'){const d={...m.data};['aiKey','wkPass','wtPass'].forEach(k=>delete d[k]);return {...m,data:d}}return m});
+  const o={format:'eth-terminal-backup',version:1,at:new Date().toISOString(),predictions:await dbAll(STORE.predictions),history:await dbAll(STORE.history),meta:safe};
+  dlFile('eth-backup-'+new Date().toISOString().slice(0,10)+'.json',JSON.stringify(o),'application/json');
+  settings.lastBackup=Date.now();saveState();$('bkMsg').textContent='Backup file created ('+o.history.length+' history items). Keep it somewhere safe.';
+ };
+ $('bkIn').onchange=async e=>{
+  const f=e.target.files[0];if(!f)return;
+  try{
+   const o=JSON.parse(await f.text());if(o.format!=='eth-terminal-backup')throw new Error('not a backup file');
+   if(!confirm('Restore '+o.history.length+' history items and learning from this backup? Current data with the same IDs will be replaced.'))return;
+   for(const p of o.predictions||[])await dbPut(STORE.predictions,p);
+   for(const h of o.history||[])await dbPut(STORE.history,h);
+   for(const m of o.meta||[]){if(m.id==='settings'){const keep={};['aiKey','wkPass','wtPass'].forEach(k=>{if(settings[k])keep[k]=settings[k]});m.data={...m.data,...keep}}await dbPut(STORE.meta,m)}
+   $('bkMsg').textContent='Restored. Reloading…';setTimeout(()=>location.reload(),900);
+  }catch(err){$('bkMsg').textContent='Restore failed: '+err.message}
+ };
+})();
+/* ---------- risk calculator ---------- */
+(function(){
+ const d=document.createElement('details');d.style.margin='8px 0';
+ d.innerHTML=`<summary style="cursor:pointer">RISK CALCULATOR (how big should a trade be?)</summary><div class="inputrow"><input id="rcCap" inputmode="decimal" placeholder="Total money you can risk ₹"><input id="rcRisk" inputmode="decimal" placeholder="Max loss per trade % (e.g. 1)"></div><div class="inputrow" style="margin-top:6px"><input id="rcStop" inputmode="decimal" placeholder="Stop-loss % you will use (e.g. 1)"></div><div id="rcOut" class="notice"></div>`;
+ $('tradePanel').insertBefore(d,$('trGo'));
+ const f=settings.trFee>0?settings.trFee:.2;
+ const run=()=>{const cap=parseFloat($('rcCap').value),rk=parseFloat($('rcRisk').value),sp=parseFloat($('rcStop').value);const fee=(settings.trFee>0?settings.trFee:.2);
+  const be=(2*fee/.7);let h=`Break-even profit target with your fee (${fee}%/side) and 30% tax: <b>${be.toFixed(2)}%</b> — anything lower loses money.`;
+  if(cap>0&&rk>0&&sp>0){const loss=cap*rk/100,size=loss/(sp/100);h+=`<br>Risking ${rk}% = <b>₹${loss.toFixed(0)}</b>. With a ${sp}% stop, the biggest position is <b>₹${size.toFixed(0)}</b>${size>cap?' (more than your money — use at most ₹'+cap.toFixed(0)+')':''}.`}
+  $('rcOut').innerHTML=h};
+ ['rcCap','rcRisk','rcStop'].forEach(i=>$(i).addEventListener('input',run));run();
+})();
+/* ---------- trade journal + tax ---------- */
+(function(){
+ const p=document.createElement('div');p.className='panel';p.id='journalPanel';
+ p.innerHTML='<div class="section-title">TRADE JOURNAL & TAX (₹)</div><div id="jrBody" class="notice">No trades yet.</div><button id="jrCsv" class="primary" style="width:100%;margin-top:8px">EXPORT JOURNAL (CSV)</button>';
+ const hs=$('screen-history');hs.insertBefore(p,hs.children[3]||null);
+ $('jrCsv').onclick=()=>{const rows=journalRows();dlFile('eth-journal-'+new Date().toISOString().slice(0,10)+'.csv',['type,side,opened,closed,amount,entry,exit,why,pnl_before_tax,fee_est,tds_1pct,tax_30pct,pnl_after_tax'].concat(rows.map(r=>r.join(','))).join('\n'))};
+})();
+function journalRows(){
+ const f=(settings.trFee>0?settings.trFee:.2)/100,out=[];
+ for(const t of (settings.realTrades||[]))if(t.status==='closed'){
+  const sell=t.qty*t.exit,gain=sell-t.inr,fee=(t.inr+sell)*f,tds=sell*.01,tax=gain>0?gain*.3:0;
+  out.push(['REAL','LONG',new Date(t.openAt).toISOString(),new Date(t.closeAt).toISOString(),t.inr.toFixed(2),t.entry,t.exit,t.why,gain.toFixed(2),fee.toFixed(2),tds.toFixed(2),tax.toFixed(2),(gain-fee-tax).toFixed(2)])}
+ for(const t of (settings.trades||[]))if(t.status==='closed')out.push(['PAPER(USDT)',t.side.toUpperCase(),new Date(t.openAt).toISOString(),new Date(t.closeAt).toISOString(),t.amount.toFixed(2),t.entry,t.exit,t.why,(t.pnl).toFixed(2),'','','',''.toString()]);
+ return out;
+}
+function renderJournal(){
+ const el=$('jrBody');if(!el)return;const rows=journalRows(),real=rows.filter(r=>r[0]==='REAL'),paper=rows.filter(r=>r[0]!=='REAL');
+ if(!rows.length){el.textContent='No finished trades yet. Real trades show ₹ results with fees, 1% TDS and 30% tax estimated.';return}
+ const S=i=>real.reduce((a,r)=>a+(+r[i]||0),0),g=S(8),fee=S(9),tds=S(10),tax=S(11),net=S(12);
+ let h='<div style="font-size:12px;line-height:1.7">';
+ if(real.length){h+=`<b>REAL (${real.length} trades)</b><br>Profit/loss before tax: <b class="${g>=0?'green':'red'}">₹${g.toFixed(2)}</b><br>Fees (est.): ₹${fee.toFixed(2)} • 1% TDS held: ₹${tds.toFixed(2)} • 30% tax on winning trades (losses can't offset): ₹${tax.toFixed(2)}<br><b>Take-home estimate: <span class="${net>=0?'green':'red'}">₹${net.toFixed(2)}</span></b><br><span style="color:var(--muted)">Estimates only — check current rules with a tax professional.</span><br>`}
+ if(paper.length){const pp=paper.reduce((a,r)=>a+(+r[8]||0),0);h+=`<br><b>PAPER (${paper.length} trades)</b>: <span class="${pp>=0?'green':'red'}">${pp>=0?'+':''}$${pp.toFixed(2)}</span> after fees`}
+ el.innerHTML=h+'</div>';
+}
+setInterval(renderJournal,10000);setTimeout(renderJournal,5000);
+/* ---------- daily summary card ---------- */
+setTimeout(()=>{
+ try{
+  const day=new Date().toDateString();if(settings.sumDay===day||!lastPrice)return;
+  const since=Date.now()-864e5,S=(hist||[]).filter(h=>h.settledAt&&h.settledAt>since);
+  const mins=S.filter(h=>/^(10m|15m|30m)$/.test(h.type)),calls=mins.filter(h=>Math.abs(h.forecast-h.entry)>1e-9&&h.actual!==h.entry),ok=calls.filter(h=>(h.forecast-h.entry)*(h.actual-h.entry)>0).length;
+  const th=S.filter(h=>h.type==='TARGET_PRICE'&&h.result==='HIT').length,wk=S.filter(h=>/^WEEK_/.test(h.type));
+  const tr=(settings.trades||[]).filter(t=>t.status==='closed'&&t.closeAt>since).reduce((a,t)=>a+t.pnl,0),rt=(settings.realTrades||[]).filter(t=>t.status==='closed'&&t.closeAt>since).reduce((a,t)=>a+t.pnl,0);
+  const w7=typeof WK!=='undefined'&&WK&&WK[7]?WK[7]:null,v=volState();
+  const c=document.createElement('div');c.className='panel';
+  c.innerHTML=`<div class="section-title">TODAY'S SUMMARY</div><div class="notice" style="font-size:12px;line-height:1.7">ETH now <b>$${price(lastPrice)}</b>${v?' • market mood <b>'+v.label+'</b>':''}<br>Last 24h: ${mins.length} minute predictions settled, ${calls.length} real calls (${ok} right).${th?' Targets reached: '+th+'.':''}${wk.length?' Week/tomorrow results: '+wk.length+'.':''}<br>${Math.abs(tr)>0?'Paper trades: '+(tr>=0?'+':'')+'$'+tr.toFixed(2)+'. ':''}${Math.abs(rt)>0?'Real trades: '+(rt>=0?'+':'')+'₹'+rt.toFixed(2)+'. ':''}${w7?'Week engine leans '+(Math.abs(w7.ret)<.0003?'flat (no proven edge)':w7.ret>0?'up':'down')+'.':''}<br>${!settings.lastBackup||Date.now()-settings.lastBackup>7*864e5?'<b class="red">No backup in 7+ days — SETTINGS → Save backup.</b><br>':''}<button class="primary" id="sumX" style="margin-top:6px">DISMISS</button></div>`;
+  const s=$('screen-chart');s.insertBefore(c,s.children[0]);$('sumX').onclick=()=>{c.remove();settings.sumDay=day;saveState()};
+ }catch(e){}
+},12000);
+/* ---------- phone app mode ---------- */
+(function(){const m=[['apple-mobile-web-app-capable','yes'],['mobile-web-app-capable','yes'],['apple-mobile-web-app-status-bar-style','black-translucent'],['apple-mobile-web-app-title','ETH Terminal']];m.forEach(([n,c])=>{if(!document.querySelector('meta[name="'+n+'"]')){const e=document.createElement('meta');e.name=n;e.content=c;document.head.appendChild(e)}})})();
+
+/*v26 one-file: embedded worker code + unified worker address*/
+const WORKER_B64="Ly8gRVRIIFRFUk1JTkFMIOKAlCBPTkUgV09SS0VSIEZPUiBFVkVSWVRISU5HIChDbG91ZGZsYXJlIFdvcmtlcnMsIGZyZWUgcGxhbikKLy8gICAqIFJlYWwgdHJhZGluZyBvbiBDb2luRENYIChJTlIpOiAgL3RpY2tlciAvdHJhZGUgL3N0YXR1cyAvZXhpdAovLyAgICogQWx3YXlzLW9uIHdhdGNoZXIgKGV2ZXJ5IDUgbWluKTogL3N5bmMgKyBjcm9uICAtPiBhbGVydHMsIHRhcmdldHMsIGJpZyBtb3ZlcywgZGFpbHkgc3VtbWFyeQovLyBTRVRVUCAoYWJvdXQgMTAgbWludXRlcykKLy8gICAxKSBDbG91ZGZsYXJlIC0+IFdvcmtlcnMgJiBQYWdlcyAtPiBDcmVhdGUgLT4gSGVsbG8gV29ybGQgLT4gRWRpdCBjb2RlIC0+IHBhc3RlIHRoaXMgd2hvbGUgZmlsZSAtPiBEZXBsb3kuCi8vICAgMikgU3RvcmFnZSAmIERhdGFiYXNlcyAtPiBLViAtPiBDcmVhdGUgbmFtZXNwYWNlLiBXb3JrZXIgLT4gU2V0dGluZ3MgLT4gQmluZGluZ3MgLT4gQWRkIC0+IEtWIG5hbWVzcGFjZSwgdmFyaWFibGUgbmFtZTogIFNUQVRFCi8vICAgMykgV29ya2VyIC0+IFNldHRpbmdzIC0+IFZhcmlhYmxlcyBhbmQgU2VjcmV0cywgYWRkOgovLyAgICAgICAgQVBQX1BBU1NDT0RFICAgKHNlY3JldCkgICBhbnkgbG9uZyBwYXNzd29yZCB5b3UgaW52ZW50Ci8vICAgICAgICBBTExPV19PUklHSU4gICAodGV4dCkgICAgIGh0dHBzOi8vcmFqa3VtYXIwNTIuZ2l0aHViLmlvCi8vICAgICAgICBDT0lORENYX0tFWSwgQ09JTkRDWF9TRUNSRVQgKHNlY3JldHMpICBvbmx5IGlmIHlvdSB3YW50IHJlYWwgdHJhZGluZzsga2V5IG11c3QgaGF2ZSBUUkFERSBwZXJtaXNzaW9uIG9ubHksIHdpdGhkcmF3YWxzIE9GRgovLyAgICAgICAgTUFYX0lOUiAgICAgICAgKHRleHQpICAgICBtYXggcnVwZWVzIHBlciByZWFsIHRyYWRlLCBlLmcuIDUwMAovLyAgIDQpIFdvcmtlciAtPiBTZXR0aW5ncyAtPiBUcmlnZ2VycyAtPiBDcm9uIFRyaWdnZXJzIC0+IGFkZDogICAqLzUgKiAqICogKgovLyAgIDUpIEluIHRoZSBhcHAgKFNFVFRJTkdTKSBwYXN0ZSB0aGUgV29ya2VyIGFkZHJlc3MgKyBBUFBfUEFTU0NPREUuCmNvbnN0IEFQSSA9ICdodHRwczovL2FwaS5jb2luZGN4LmNvbSc7CmNvbnN0IE1BUktFVCA9ICdFVEhJTlInOwoKY29uc3QgY29ycyA9IChlbnYpID0+ICh7CiAgJ0FjY2Vzcy1Db250cm9sLUFsbG93LU9yaWdpbic6IGVudi5BTExPV19PUklHSU4gfHwgJyonLAogICdBY2Nlc3MtQ29udHJvbC1BbGxvdy1IZWFkZXJzJzogJ0NvbnRlbnQtVHlwZSwgWC1QQVNTJywKICAnQWNjZXNzLUNvbnRyb2wtQWxsb3ctTWV0aG9kcyc6ICdHRVQsIFBPU1QsIE9QVElPTlMnLAp9KTsKY29uc3QgSiA9IChlbnYsIG9iaiwgc3RhdHVzID0gMjAwKSA9PgogIG5ldyBSZXNwb25zZShKU09OLnN0cmluZ2lmeShvYmopLCB7IHN0YXR1cywgaGVhZGVyczogeyAnQ29udGVudC1UeXBlJzogJ2FwcGxpY2F0aW9uL2pzb24nLCAuLi5jb3JzKGVudikgfSB9KTsKCmFzeW5jIGZ1bmN0aW9uIHNpZ24oc2VjcmV0LCBib2R5KSB7CiAgY29uc3QgayA9IGF3YWl0IGNyeXB0by5zdWJ0bGUuaW1wb3J0S2V5KCdyYXcnLCBuZXcgVGV4dEVuY29kZXIoKS5lbmNvZGUoc2VjcmV0KSwgeyBuYW1lOiAnSE1BQycsIGhhc2g6ICdTSEEtMjU2JyB9LCBmYWxzZSwgWydzaWduJ10pOwogIGNvbnN0IHMgPSBhd2FpdCBjcnlwdG8uc3VidGxlLnNpZ24oJ0hNQUMnLCBrLCBuZXcgVGV4dEVuY29kZXIoKS5lbmNvZGUoYm9keSkpOwogIHJldHVybiBbLi4ubmV3IFVpbnQ4QXJyYXkocyldLm1hcCgoYikgPT4gYi50b1N0cmluZygxNikucGFkU3RhcnQoMiwgJzAnKSkuam9pbignJyk7Cn0KYXN5bmMgZnVuY3Rpb24gcHJpdihlbnYsIHBhdGgsIHBheWxvYWQpIHsKICBjb25zdCBib2R5ID0gSlNPTi5zdHJpbmdpZnkoeyAuLi5wYXlsb2FkLCB0aW1lc3RhbXA6IERhdGUubm93KCkgfSk7CiAgY29uc3QgciA9IGF3YWl0IGZldGNoKEFQSSArIHBhdGgsIHsKICAgIG1ldGhvZDogJ1BPU1QnLAogICAgaGVhZGVyczogeyAnQ29udGVudC1UeXBlJzogJ2FwcGxpY2F0aW9uL2pzb24nLCAnWC1BVVRILUFQSUtFWSc6IGVudi5DT0lORENYX0tFWSwgJ1gtQVVUSC1TSUdOQVRVUkUnOiBhd2FpdCBzaWduKGVudi5DT0lORENYX1NFQ1JFVCwgYm9keSkgfSwKICAgIGJvZHksCiAgfSk7CiAgY29uc3QgdCA9IGF3YWl0IHIudGV4dCgpOwogIGxldCBqOyB0cnkgeyBqID0gSlNPTi5wYXJzZSh0KTsgfSBjYXRjaCB7IGogPSB7IHJhdzogdCB9OyB9CiAgaWYgKCFyLm9rKSB0aHJvdyBuZXcgRXJyb3IoJ0NvaW5EQ1ggJyArIHIuc3RhdHVzICsgJzogJyArIHQuc2xpY2UoMCwgMzAwKSk7CiAgcmV0dXJuIGo7Cn0KY29uc3QgcHViID0gYXN5bmMgKHBhdGgpID0+IChhd2FpdCBmZXRjaChBUEkgKyBwYXRoKSkuanNvbigpOwpjb25zdCBmbG9vclRvID0gKHgsIHApID0+IHsgY29uc3QgbSA9IDEwICoqIHA7IHJldHVybiBNYXRoLmZsb29yKHggKiBtICsgMWUtOSkgLyBtOyB9Owpjb25zdCByb3VuZFRvID0gKHgsIHApID0+IHsgY29uc3QgbSA9IDEwICoqIHA7IHJldHVybiBNYXRoLnJvdW5kKHggKiBtKSAvIG07IH07CmNvbnN0IHNsZWVwID0gKG1zKSA9PiBuZXcgUHJvbWlzZSgocikgPT4gc2V0VGltZW91dChyLCBtcykpOwoKYXN5bmMgZnVuY3Rpb24gdGlja2VyKCkgewogIGNvbnN0IGFsbCA9IGF3YWl0IHB1YignL2V4Y2hhbmdlL3RpY2tlcicpOwogIGNvbnN0IHQgPSBhbGwuZmluZCgoeCkgPT4geC5tYXJrZXQgPT09IE1BUktFVCk7CiAgaWYgKCF0KSB0aHJvdyBuZXcgRXJyb3IoJ0VUSElOUiB0aWNrZXIgbm90IGZvdW5kJyk7CiAgcmV0dXJuIHsgbGFzdDogK3QubGFzdF9wcmljZSwgYmlkOiArdC5iaWQsIGFzazogK3QuYXNrIH07Cn0KYXN5bmMgZnVuY3Rpb24gZGV0YWlscygpIHsKICBjb25zdCBhbGwgPSBhd2FpdCBwdWIoJy9leGNoYW5nZS92MS9tYXJrZXRzX2RldGFpbHMnKTsKICBjb25zdCBtID0gYWxsLmZpbmQoKHgpID0+IHguY29pbmRjeF9uYW1lID09PSBNQVJLRVQgfHwgeC5zeW1ib2wgPT09IE1BUktFVCk7CiAgaWYgKCFtKSB0aHJvdyBuZXcgRXJyb3IoJ0VUSElOUiBtYXJrZXQgZGV0YWlscyBub3QgZm91bmQnKTsKICByZXR1cm4gbTsKfQphc3luYyBmdW5jdGlvbiBldGhCYWxhbmNlKGVudikgewogIGNvbnN0IGIgPSBhd2FpdCBwcml2KGVudiwgJy9leGNoYW5nZS92MS91c2Vycy9iYWxhbmNlcycsIHt9KTsKICBjb25zdCBlID0gKEFycmF5LmlzQXJyYXkoYikgPyBiIDogW10pLmZpbmQoKHgpID0+IHguY3VycmVuY3kgPT09ICdFVEgnKTsKICByZXR1cm4gZSA/ICtlLmJhbGFuY2UgOiAwOwp9CmNvbnN0IG9yZCA9IChyKSA9PiAociAmJiByLm9yZGVycyA/IHIub3JkZXJzWzBdIDogcik7CgoKY29uc3QgSE9TVFMgPSBbJ2h0dHBzOi8vYXBpLmJpbmFuY2UuY29tJywgJ2h0dHBzOi8vZGF0YS1hcGkuYmluYW5jZS52aXNpb24nXTsKCmFzeW5jIGZ1bmN0aW9uIGtsaW5lcyhpbnRlcnZhbCwgbGltaXQsIHN0YXJ0VGltZSkgewogIGZvciAoY29uc3QgaCBvZiBIT1NUUykgewogICAgdHJ5IHsKICAgICAgY29uc3QgdSA9IGAke2h9L2FwaS92My9rbGluZXM/c3ltYm9sPUVUSFVTRFQmaW50ZXJ2YWw9JHtpbnRlcnZhbH0mbGltaXQ9JHtsaW1pdH1gICsgKHN0YXJ0VGltZSA/IGAmc3RhcnRUaW1lPSR7c3RhcnRUaW1lfWAgOiAnJyk7CiAgICAgIGNvbnN0IHIgPSBhd2FpdCBmZXRjaCh1KTsKICAgICAgaWYgKHIub2spIHJldHVybiAoYXdhaXQgci5qc29uKCkpLm1hcCgoaykgPT4gKHsgdDoga1swXSwgbzogK2tbMV0sIGg6ICtrWzJdLCBsOiAra1szXSwgYzogK2tbNF0gfSkpOwogICAgfSBjYXRjaCAoZSkge30KICB9CiAgdGhyb3cgbmV3IEVycm9yKCdCaW5hbmNlIHVucmVhY2hhYmxlJyk7Cn0KYXN5bmMgZnVuY3Rpb24gcHVzaCh0b3BpYywgdGl0bGUsIG1lc3NhZ2UsIHByaW9yaXR5ID0gMykgewogIGF3YWl0IGZldGNoKCdodHRwczovL250Znkuc2gnLCB7IG1ldGhvZDogJ1BPU1QnLCBib2R5OiBKU09OLnN0cmluZ2lmeSh7IHRvcGljLCB0aXRsZSwgbWVzc2FnZSwgcHJpb3JpdHkgfSkgfSk7Cn0KY29uc3QgcHggPSAoeCkgPT4geC50b0ZpeGVkKDIpOwoKYXN5bmMgZnVuY3Rpb24gcnVuKGVudikgewogIGNvbnN0IGNmZyA9IGF3YWl0IGVudi5TVEFURS5nZXQoJ2NmZycsICdqc29uJyk7CiAgaWYgKCFjZmcgfHwgIWNmZy50b3BpYykgcmV0dXJuOwogIGNvbnN0IG5vdyA9IERhdGUubm93KCk7CiAgY29uc3QgbGFzdCA9ICsoYXdhaXQgZW52LlNUQVRFLmdldCgnbGFzdCcpKSB8fCBub3cgLSAxMCAqIDYwMDAwOwogIGNvbnN0IGdhcCA9IG5vdyAtIGxhc3Q7CiAgY29uc3QgaXYgPSBnYXAgPD0gMTYgKiAzNjAwMDAwID8gJzFtJyA6IGdhcCA8PSAxMCAqIDg2NGU1ID8gJzE1bScgOiAnMWgnOwogIGNvbnN0IGNzID0gYXdhaXQga2xpbmVzKGl2LCAxMDAwLCBsYXN0IC0gNjAwMDApOwogIGlmICghY3MubGVuZ3RoKSByZXR1cm47CiAgY29uc3QgZnJlc2ggPSAoYywgZnJvbSkgPT4gYy50ICsgNjAwMDAgPiBNYXRoLm1heChsYXN0LCBmcm9tIHx8IDApOwogIGNvbnN0IGhpdCA9IChjLCB4KSA9PiAoeC5kaXIgPiAwID8gYy5oID49IHgucHJpY2UgOiBjLmwgPD0geC5wcmljZSk7CiAgY29uc3QgcHJpY2UgPSBjc1tjcy5sZW5ndGggLSAxXS5jOwoKICBjb25zdCBrZWVwVCA9IFtdOwogIGZvciAoY29uc3QgeCBvZiBjZmcudGFyZ2V0cyB8fCBbXSkgewogICAgY29uc3QgYyA9IGNzLmZpbmQoKHEpID0+IGZyZXNoKHEsIHguZnJvbSkgJiYgaGl0KHEsIHgpKTsKICAgIGlmIChjKSB7IGF3YWl0IHB1c2goY2ZnLnRvcGljLCAnVGFyZ2V0IHJlYWNoZWQnLCBgRVRIIHRvdWNoZWQgJCR7cHgoeC5wcmljZSl9IChub3cgJCR7cHgocHJpY2UpfSkuYCwgNCk7IChjZmcuZmlyZWQgPSBjZmcuZmlyZWQgfHwgW10pLnB1c2goeC5pZCk7IH0KICAgIGVsc2Uga2VlcFQucHVzaCh4KTsKICB9CiAgY2ZnLnRhcmdldHMgPSBrZWVwVDsKICBjb25zdCBrZWVwQSA9IFtdOwogIGZvciAoY29uc3QgeCBvZiBjZmcuYWxlcnRzIHx8IFtdKSB7CiAgICBjb25zdCBjID0gY3MuZmluZCgocSkgPT4gZnJlc2gocSwgeC5mcm9tKSAmJiBoaXQocSwgeCkpOwogICAgaWYgKGMpIHsgYXdhaXQgcHVzaChjZmcudG9waWMsICdFVEggcHJpY2UgYWxlcnQnLCBgRVRIICR7eC5kaXIgPiAwID8gJ3Jvc2UgdG8nIDogJ2ZlbGwgdG8nfSAkJHtweCh4LnByaWNlKX0gKG5vdyAkJHtweChwcmljZSl9KS5gLCA0KTsgKGNmZy5maXJlZCA9IGNmZy5maXJlZCB8fCBbXSkucHVzaCh4LmlkKTsgfQogICAgZWxzZSBrZWVwQS5wdXNoKHgpOwogIH0KICBjZmcuYWxlcnRzID0ga2VlcEE7CgogIGlmIChjZmcudm9sQWxlcnQgIT09IGZhbHNlICYmIG5vdyAtIChjZmcubGFzdFZvbCB8fCAwKSA+IDMgKiAzNjAwMDAwKSB7CiAgICBjb25zdCBoID0gYXdhaXQga2xpbmVzKCcxbScsIDYxKTsKICAgIGlmIChoLmxlbmd0aCA+IDUwKSB7CiAgICAgIGNvbnN0IG12ID0gKGhbaC5sZW5ndGggLSAxXS5jIC8gaFswXS5vIC0gMSkgKiAxMDA7CiAgICAgIGlmIChNYXRoLmFicyhtdikgPj0gMikgewogICAgICAgIGF3YWl0IHB1c2goY2ZnLnRvcGljLCAnQmlnIEVUSCBtb3ZlJywgYEVUSCAke212ID4gMCA/ICdyb3NlJyA6ICdmZWxsJ30gJHtNYXRoLmFicyhtdikudG9GaXhlZCgyKX0lIGluIHRoZSBsYXN0IGhvdXIgKG5vdyAkJHtweChwcmljZSl9KS5gLCA0KTsKICAgICAgICBjZmcubGFzdFZvbCA9IG5vdzsKICAgICAgfQogICAgfQogIH0KCiAgY29uc3QgZCA9IG5ldyBEYXRlKG5vdyksIGtleSA9IGQudG9JU09TdHJpbmcoKS5zbGljZSgwLCAxMCk7CiAgaWYgKGNmZy5kYWlseSAhPT0gZmFsc2UgJiYgZC5nZXRVVENIb3VycygpID09PSAzICYmIGQuZ2V0VVRDTWludXRlcygpID49IDMwICYmIGNmZy5sYXN0U3VtICE9PSBrZXkpIHsKICAgIGNvbnN0IGRheSA9IGF3YWl0IGtsaW5lcygnMWgnLCAyNCk7CiAgICBjb25zdCBoaSA9IE1hdGgubWF4KC4uLmRheS5tYXAoKGMpID0+IGMuaCkpLCBsbyA9IE1hdGgubWluKC4uLmRheS5tYXAoKGMpID0+IGMubCkpLCBjaCA9IChkYXlbZGF5Lmxlbmd0aCAtIDFdLmMgLyBkYXlbMF0ubyAtIDEpICogMTAwOwogICAgYXdhaXQgcHVzaChjZmcudG9waWMsICdHb29kIG1vcm5pbmcg4oCUIEVUSCBzdW1tYXJ5JywgYEVUSCAkJHtweChwcmljZSl9ICgke2NoID49IDAgPyAnKycgOiAnJ30ke2NoLnRvRml4ZWQoMil9JSBpbiAyNGgpLiBSYW5nZSAkJHtweChsbyl9IOKAkyAkJHtweChoaSl9LiBPcGVuIHRhcmdldHM6ICR7Y2ZnLnRhcmdldHMubGVuZ3RofSwgYWxlcnRzOiAke2NmZy5hbGVydHMubGVuZ3RofS5gLCAzKTsKICAgIGNmZy5sYXN0U3VtID0ga2V5OwogIH0KICBhd2FpdCBlbnYuU1RBVEUucHV0KCdjZmcnLCBKU09OLnN0cmluZ2lmeShjZmcpKTsKICBhd2FpdCBlbnYuU1RBVEUucHV0KCdsYXN0JywgU3RyaW5nKG5vdykpOwp9CgoKYXN5bmMgZnVuY3Rpb24gdHJhZGUocmVxLCBlbnYsIHVybCkgewppZiAodXJsLnBhdGhuYW1lID09PSAnL3RpY2tlcicpIHJldHVybiBKKGVudiwgYXdhaXQgdGlja2VyKCkpOwoKICAgICAgaWYgKHVybC5wYXRobmFtZSA9PT0gJy90cmFkZScgJiYgcmVxLm1ldGhvZCA9PT0gJ1BPU1QnKSB7CiAgICAgICAgY29uc3QgeyBpbnIsIHRwIH0gPSBhd2FpdCByZXEuanNvbigpOwogICAgICAgIGNvbnN0IGNhcCA9ICtlbnYuTUFYX0lOUiB8fCA1MDA7CiAgICAgICAgaWYgKCEoaW5yID4gMCkgfHwgaW5yID4gY2FwKSByZXR1cm4gSihlbnYsIHsgZXJyb3I6IGBhbW91bnQgbXVzdCBiZSBiZXR3ZWVuIDEgYW5kICR7Y2FwfSBJTlIgKE1BWF9JTlIgY2FwKWAgfSwgNDAwKTsKICAgICAgICBjb25zdCBbdGssIG1kXSA9IGF3YWl0IFByb21pc2UuYWxsKFt0aWNrZXIoKSwgZGV0YWlscygpXSk7CiAgICAgICAgY29uc3QgcXAgPSBtZC50YXJnZXRfY3VycmVuY3lfcHJlY2lzaW9uID8/IDQsIHBwID0gbWQuYmFzZV9jdXJyZW5jeV9wcmVjaXNpb24gPz8gMjsKICAgICAgICBpZiAoISh0cCA+IHRrLmFzayAqIDEuMDAyKSkgcmV0dXJuIEooZW52LCB7IGVycm9yOiAndGFyZ2V0IHByaWNlIG11c3QgYmUgYWJvdmUgdGhlIGN1cnJlbnQgcHJpY2UnIH0sIDQwMCk7CiAgICAgICAgY29uc3QgcXR5ID0gZmxvb3JUbyhpbnIgLyB0ay5hc2ssIHFwKTsKICAgICAgICBpZiAocXR5IDwgK21kLm1pbl9xdWFudGl0eSB8fCBxdHkgKiB0ay5hc2sgPCArbWQubWluX25vdGlvbmFsKSByZXR1cm4gSihlbnYsIHsgZXJyb3I6IGBiZWxvdyBleGNoYW5nZSBtaW5pbXVtIChtaW4gcXR5ICR7bWQubWluX3F1YW50aXR5fSwgbWluIHZhbHVlICR7bWQubWluX25vdGlvbmFsfSlgIH0sIDQwMCk7CiAgICAgICAgY29uc3QgYnV5SWQgPSAnYnV5JyArIERhdGUubm93KCk7CiAgICAgICAgY29uc3QgYnV5ID0gb3JkKGF3YWl0IHByaXYoZW52LCAnL2V4Y2hhbmdlL3YxL29yZGVycy9jcmVhdGUnLCB7IHNpZGU6ICdidXknLCBvcmRlcl90eXBlOiAnbWFya2V0X29yZGVyJywgbWFya2V0OiBNQVJLRVQsIHRvdGFsX3F1YW50aXR5OiBxdHksIGNsaWVudF9vcmRlcl9pZDogYnV5SWQgfSkpOwogICAgICAgIGxldCBzdCA9IGJ1eTsKICAgICAgICBmb3IgKGxldCBpID0gMDsgaSA8IDg7IGkrKykgewogICAgICAgICAgYXdhaXQgc2xlZXAoMTIwMCk7CiAgICAgICAgICBzdCA9IGF3YWl0IHByaXYoZW52LCAnL2V4Y2hhbmdlL3YxL29yZGVycy9zdGF0dXMnLCB7IGlkOiBidXkuaWQgfSk7CiAgICAgICAgICBpZiAoc3Quc3RhdHVzID09PSAnZmlsbGVkJyB8fCBzdC5zdGF0dXMgPT09ICdjYW5jZWxsZWQnIHx8IHN0LnN0YXR1cyA9PT0gJ3JlamVjdGVkJykgYnJlYWs7CiAgICAgICAgfQogICAgICAgIGlmIChzdC5zdGF0dXMgIT09ICdmaWxsZWQnKSByZXR1cm4gSihlbnYsIHsgZXJyb3I6ICdidXkgbm90IGNvbmZpcm1lZCBmaWxsZWQgKHN0YXR1cyAnICsgc3Quc3RhdHVzICsgJykuIENoZWNrIENvaW5EQ1ggYXBwIGJlZm9yZSByZXRyeWluZy4nLCBidXk6IHN0IH0sIDUwMik7CiAgICAgICAgY29uc3QgaGF2ZSA9IGF3YWl0IGV0aEJhbGFuY2UoZW52KTsKICAgICAgICBjb25zdCBzZWxsUXR5ID0gZmxvb3JUbyhNYXRoLm1pbihoYXZlLCArc3QudG90YWxfcXVhbnRpdHkpLCBxcCk7CiAgICAgICAgY29uc3Qgc2VsbCA9IG9yZChhd2FpdCBwcml2KGVudiwgJy9leGNoYW5nZS92MS9vcmRlcnMvY3JlYXRlJywgeyBzaWRlOiAnc2VsbCcsIG9yZGVyX3R5cGU6ICdsaW1pdF9vcmRlcicsIG1hcmtldDogTUFSS0VULCBwcmljZV9wZXJfdW5pdDogcm91bmRUbyh0cCwgcHApLCB0b3RhbF9xdWFudGl0eTogc2VsbFF0eSwgY2xpZW50X29yZGVyX2lkOiAnc2VsbCcgKyBEYXRlLm5vdygpIH0pKTsKICAgICAgICByZXR1cm4gSihlbnYsIHsgb2s6IHRydWUsIGJ1eUlkOiBidXkuaWQsIHNlbGxJZDogc2VsbC5pZCwgcXR5OiBzZWxsUXR5LCBhdmc6ICtzdC5hdmdfcHJpY2UgfHwgdGsuYXNrLCB0cDogcm91bmRUbyh0cCwgcHApIH0pOwogICAgICB9CgogICAgICBpZiAodXJsLnBhdGhuYW1lID09PSAnL3N0YXR1cycgJiYgcmVxLm1ldGhvZCA9PT0gJ1BPU1QnKSB7CiAgICAgICAgY29uc3QgeyBzZWxsSWQgfSA9IGF3YWl0IHJlcS5qc29uKCk7CiAgICAgICAgY29uc3Qgc3QgPSBhd2FpdCBwcml2KGVudiwgJy9leGNoYW5nZS92MS9vcmRlcnMvc3RhdHVzJywgeyBpZDogc2VsbElkIH0pOwogICAgICAgIHJldHVybiBKKGVudiwgeyBzdGF0dXM6IHN0LnN0YXR1cywgYXZnOiArc3QuYXZnX3ByaWNlLCBxdHk6ICtzdC50b3RhbF9xdWFudGl0eSwgcmVtYWluaW5nOiArc3QucmVtYWluaW5nX3F1YW50aXR5IH0pOwogICAgICB9CgogICAgICBpZiAodXJsLnBhdGhuYW1lID09PSAnL2V4aXQnICYmIHJlcS5tZXRob2QgPT09ICdQT1NUJykgewogICAgICAgIGNvbnN0IHsgc2VsbElkIH0gPSBhd2FpdCByZXEuanNvbigpOwogICAgICAgIGNvbnN0IHN0ID0gYXdhaXQgcHJpdihlbnYsICcvZXhjaGFuZ2UvdjEvb3JkZXJzL3N0YXR1cycsIHsgaWQ6IHNlbGxJZCB9KTsKICAgICAgICBpZiAoc3Quc3RhdHVzID09PSAnZmlsbGVkJykgcmV0dXJuIEooZW52LCB7IG9rOiB0cnVlLCBhbHJlYWR5OiB0cnVlLCBhdmc6ICtzdC5hdmdfcHJpY2UgfSk7CiAgICAgICAgYXdhaXQgcHJpdihlbnYsICcvZXhjaGFuZ2UvdjEvb3JkZXJzL2NhbmNlbCcsIHsgaWQ6IHNlbGxJZCB9KTsKICAgICAgICBhd2FpdCBzbGVlcCg4MDApOwogICAgICAgIGNvbnN0IG1kID0gYXdhaXQgZGV0YWlscygpOwogICAgICAgIGNvbnN0IHF0eSA9IGZsb29yVG8oTWF0aC5taW4oYXdhaXQgZXRoQmFsYW5jZShlbnYpLCArc3QudG90YWxfcXVhbnRpdHkpLCBtZC50YXJnZXRfY3VycmVuY3lfcHJlY2lzaW9uID8/IDQpOwogICAgICAgIGNvbnN0IHMgPSBvcmQoYXdhaXQgcHJpdihlbnYsICcvZXhjaGFuZ2UvdjEvb3JkZXJzL2NyZWF0ZScsIHsgc2lkZTogJ3NlbGwnLCBvcmRlcl90eXBlOiAnbWFya2V0X29yZGVyJywgbWFya2V0OiBNQVJLRVQsIHRvdGFsX3F1YW50aXR5OiBxdHksIGNsaWVudF9vcmRlcl9pZDogJ2V4aXQnICsgRGF0ZS5ub3coKSB9KSk7CiAgICAgICAgbGV0IGYgPSBzOwogICAgICAgIGZvciAobGV0IGkgPSAwOyBpIDwgODsgaSsrKSB7IGF3YWl0IHNsZWVwKDEyMDApOyBmID0gYXdhaXQgcHJpdihlbnYsICcvZXhjaGFuZ2UvdjEvb3JkZXJzL3N0YXR1cycsIHsgaWQ6IHMuaWQgfSk7IGlmIChmLnN0YXR1cyA9PT0gJ2ZpbGxlZCcpIGJyZWFrOyB9CiAgICAgICAgcmV0dXJuIEooZW52LCB7IG9rOiBmLnN0YXR1cyA9PT0gJ2ZpbGxlZCcsIHN0YXR1czogZi5zdGF0dXMsIGF2ZzogK2YuYXZnX3ByaWNlLCBxdHkgfSk7CiAgICAgIH0KCiAgICAgIHJldHVybiBKKGVudiwgeyBlcnJvcjogJ25vdCBmb3VuZCcgfSwgNDA0KTsKfQoKY29uc3QgV0FUQ0ggPSBuZXcgU2V0KFsnL3N5bmMnLCAnL3J1biddKTsKZXhwb3J0IGRlZmF1bHQgewogIGFzeW5jIGZldGNoKHJlcSwgZW52KSB7CiAgICBpZiAocmVxLm1ldGhvZCA9PT0gJ09QVElPTlMnKSByZXR1cm4gbmV3IFJlc3BvbnNlKG51bGwsIHsgaGVhZGVyczogY29ycyhlbnYpIH0pOwogICAgaWYgKCFlbnYuQVBQX1BBU1NDT0RFIHx8IHJlcS5oZWFkZXJzLmdldCgnWC1QQVNTJykgIT09IGVudi5BUFBfUEFTU0NPREUpIHJldHVybiBKKGVudiwgeyBlcnJvcjogJ2JhZCBwYXNzY29kZScgfSwgNDAxKTsKICAgIGNvbnN0IHVybCA9IG5ldyBVUkwocmVxLnVybCk7CiAgICB0cnkgewogICAgICBpZiAodXJsLnBhdGhuYW1lID09PSAnL3N5bmMnICYmIHJlcS5tZXRob2QgPT09ICdQT1NUJykgewogICAgICAgIGNvbnN0IGIgPSBhd2FpdCByZXEuanNvbigpOwogICAgICAgIGNvbnN0IG9sZCA9IChhd2FpdCBlbnYuU1RBVEUuZ2V0KCdjZmcnLCAnanNvbicpKSB8fCB7fTsKICAgICAgICBjb25zdCBjZmcgPSB7CiAgICAgICAgICB0b3BpYzogU3RyaW5nKGIudG9waWMgfHwgJycpLnNsaWNlKDAsIDgwKSwKICAgICAgICAgIHRhcmdldHM6IChiLnRhcmdldHMgfHwgW10pLmZpbHRlcigoeCkgPT4gIShvbGQuZmlyZWQgfHwgW10pLmluY2x1ZGVzKHguaWQpKS5zbGljZSgwLCA1MCksCiAgICAgICAgICBhbGVydHM6IChiLmFsZXJ0cyB8fCBbXSkuZmlsdGVyKCh4KSA9PiAhKG9sZC5maXJlZCB8fCBbXSkuaW5jbHVkZXMoeC5pZCkpLnNsaWNlKDAsIDUwKSwKICAgICAgICAgIGZpcmVkOiAob2xkLmZpcmVkIHx8IFtdKS5zbGljZSgtMjAwKSwKICAgICAgICAgIHZvbEFsZXJ0OiBiLnZvbEFsZXJ0ICE9PSBmYWxzZSwKICAgICAgICAgIGRhaWx5OiBiLmRhaWx5ICE9PSBmYWxzZSwKICAgICAgICAgIGxhc3RWb2w6IG9sZC5sYXN0Vm9sIHx8IDAsCiAgICAgICAgICBsYXN0U3VtOiBvbGQubGFzdFN1bSB8fCAnJywKICAgICAgICB9OwogICAgICAgIGF3YWl0IGVudi5TVEFURS5wdXQoJ2NmZycsIEpTT04uc3RyaW5naWZ5KGNmZykpOwogICAgICAgIGlmICghKGF3YWl0IGVudi5TVEFURS5nZXQoJ2xhc3QnKSkpIGF3YWl0IGVudi5TVEFURS5wdXQoJ2xhc3QnLCBTdHJpbmcoRGF0ZS5ub3coKSkpOwogICAgICAgIHJldHVybiBKKGVudiwgeyBvazogdHJ1ZSwgdGFyZ2V0czogY2ZnLnRhcmdldHMubGVuZ3RoLCBhbGVydHM6IGNmZy5hbGVydHMubGVuZ3RoIH0pOwogICAgICB9CiAgICAgIGlmICh1cmwucGF0aG5hbWUgPT09ICcvcnVuJykgeyBhd2FpdCBydW4oZW52KTsgcmV0dXJuIEooZW52LCB7IG9rOiB0cnVlIH0pOyB9CiAgICAgIHJldHVybiBhd2FpdCB0cmFkZShyZXEsIGVudiwgdXJsKTsKICAgIH0gY2F0Y2ggKGUpIHsKICAgICAgcmV0dXJuIEooZW52LCB7IGVycm9yOiBTdHJpbmcoZS5tZXNzYWdlIHx8IGUpIH0sIDUwMCk7CiAgICB9CiAgfSwKICBhc3luYyBzY2hlZHVsZWQoZXYsIGVudiwgY3R4KSB7IGN0eC53YWl0VW50aWwocnVuKGVudikpOyB9LAp9Owo=";
+function workerCode(){const bin=atob(WORKER_B64),u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return new TextDecoder().decode(u)}
+(function(){
+ const p=document.createElement('div');p.className='panel';p.id='workerPanel';
+ p.innerHTML=`<div class="section-title">ONE WORKER FOR EVERYTHING (code is inside this app)</div>
+ <div class="notice" style="font-size:11px;line-height:1.6">Real ₹ trading and the always-on watcher both run from this single free Cloudflare Worker. Steps: (1) Press COPY CODE. (2) Cloudflare → Workers &amp; Pages → Create → Hello World → Edit code → paste → Deploy. (3) Add the KV binding, secrets and the 5-minute cron trigger listed in the first lines of the pasted code. (4) Paste the Worker address and passcode into the boxes in TRADE and PHONE ALERTS — one address works for both.</div>
+ <div class="inputrow"><button id="wcCopy" class="primary" style="width:100%">COPY WORKER CODE</button></div><div id="wcMsg" class="notice"></div>`;
+ $('screen-settings').appendChild(p);
+ $('wcCopy').onclick=async()=>{const t=workerCode();let ok=false;try{await navigator.clipboard.writeText(t);ok=true}catch(e){}
+  if(!ok){const ta=document.createElement('textarea');ta.value=t;ta.style.cssText='position:fixed;top:0;left:0;width:1px;height:1px';document.body.appendChild(ta);ta.focus();ta.select();try{ok=document.execCommand('copy')}catch(e){}ta.remove()}
+  $('wcMsg').textContent=ok?'Copied ('+t.length+' characters). Paste it into Cloudflare.':'Copy blocked by the browser — tap again or use the Save button below.'};
+ const s=document.createElement('button');s.className='primary';s.style.cssText='width:100%;margin-top:6px';s.textContent='SAVE WORKER CODE AS FILE';s.onclick=()=>dlFile('eth-worker.js',workerCode(),'text/javascript');p.appendChild(s);
+})();
+(function(){
+ const sync=()=>{if(!settings.wtUrl&&settings.wkUrl){settings.wtUrl=settings.wkUrl;settings.wtPass=settings.wkPass}
+  if(!settings.wkUrl&&settings.wtUrl){settings.wkUrl=settings.wtUrl;settings.wkPass=settings.wtPass}};
+ setTimeout(sync,1200);
+ const w=$('wkSave'),n=$('ntSave');
+ if(w){const o=w.onclick;w.onclick=async()=>{await o();settings.wtUrl=settings.wkUrl;settings.wtPass=settings.wkPass;saveState();if($('wtUrl'))$('wtUrl').value=settings.wtUrl;if($('wtPass'))$('wtPass').value=settings.wtPass}}
+ if(n){const o=n.onclick;n.onclick=async()=>{if($('wtUrl').value.trim()){settings.wkUrl=$('wtUrl').value.trim().replace(/\/+$/,'');settings.wkPass=$('wtPass').value}await o()}}
+})();
 
 boot();
 </script>
